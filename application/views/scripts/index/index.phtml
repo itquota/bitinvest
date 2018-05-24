@@ -1,0 +1,37 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+</head>
+<body>
+<div id="loginbg" >
+<form id="loginForm" name="loginForm" method="post">
+  <div class="headbg">Welcome to Aranca</div>
+  <br class="clear">
+  <div class="fieldset">
+  <div align="center" style="margin:5px 0px 10px 0px;font-weight:bold;color:red;">
+  	<?php
+			
+			if(isset($this->msg) && $this->msg=="inactive") echo "Invalid Username or Password";
+			else if(isset($_GET["msg"]) && $_GET["msg"]!="")echo "You have logged out successfully";
+			//else if(isset($_GET["status"]) && $_GET["status"]="logout")echo "Password updated successfully";
+			else echo "&nbsp;";
+		?>
+  </div>
+  	<p><label>Username</label><input type="text" class="field med" name="username" id="username"></p>
+    <p><label>Password</label><input type="password" class="field med" name="password" id="password"></p>
+    <p><label style="width:85px;">&nbsp;</label><input type="submit" class="searchbg" value="Login" name="login" id="login"></p>
+  </div>
+  </form>
+</div>
+</body>
+</html>

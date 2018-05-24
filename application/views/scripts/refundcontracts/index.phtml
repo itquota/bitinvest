@@ -1,0 +1,251 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+   <style>
+.req-table {
+	margin-bottom: 20px;
+	width: 100%;
+}
+
+.req-admin .modal-body {
+	background: none repeat scroll 0 0 #e6e7e8;
+}
+
+.modal-header {
+	color: #fff;
+	font: 20px "robotobold";
+}
+
+.req-table>tbody>tr>td,.req-table>thead>tr>th {
+	font-family: "robotobold";
+	font-size: 16px;
+	padding: 5px 0;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.req-table>tbody>tr>td {
+	font-family: "robotoregular";
+	text-transform: none;
+}
+
+.search-con input {
+	border: medium none;
+	border-radius: 0;
+	margin-bottom: 10px;
+}
+
+.req-btn,.req-btn:hover {
+	background: none repeat scroll 0 0 #34495e;
+	color: #fff;
+}
+.inputhodler input{
+	border: 1px solid #dadada;
+    box-shadow: none !important;
+    padding: 6px 8px;
+    text-align: center;
+    vertical-align: top;
+    width: 60%;
+    font-weight:bold;
+}
+.modal-body.g-auth-body {
+    background: #e6e7e8 none repeat scroll 0 0;
+    padding: 20px;
+}
+.inputhodler{
+	 margin: 0 0 10px;
+}
+.inputhodler .formsubmit {
+    background: #34495e none repeat scroll 0 0;
+    border: medium none;
+    box-shadow: none;
+    color: #fff;
+    font-size: 20px;
+    padding: 6px 8px;
+    text-align: center !important;
+    width: 80%;
+}
+.inputhodler textarea {
+    border: 1px solid #dadada;
+    box-shadow: none !important;
+    padding: 6px 8px;
+    resize: none;
+    text-align: left;
+    vertical-align: top;
+    width: 80%;
+}
+</style>
+  <div id="innerpage-wrapper">
+    <div class="row lightgraybg">
+      <div class="col-lg-12 offset-1">
+        <h1 class="page-header gain-bit-Titletxt innpercontentPad">My Contracts</h1>
+      </div>
+      <!-- /.col-lg-12 --> 
+    </div>
+    <!-- /.row -->
+    <div class="row">
+      <ol class="breadcrumb">
+        <li class="active"> <a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+        <li><a href="#">My Contracts</a></li>
+      </ol>
+
+      
+      
+
+      <div class="clearfix">
+
+        <div class="clearfix">&nbsp;</div>
+        <div class="col-lg-12 ">
+          <div class="clearfix lightgraybg">
+            <div class="bs-example table-responsive" data-example-id="bordered-table">
+          <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th class="sortdesc">Sr.<br>
+                      No </th>
+                    <th class="sortboth">Date/Time </th>
+                    <th class="sortboth">Invoice <br>
+                      Id</th>
+                    <th class="sortboth">Qty</th>
+                    <th class="sortboth">Rate</th>
+                    <th class="sortboth">Paid <br>
+                      Amount</th>
+                    <th class="sortboth">Status</th>
+                    <th class="sortboth">Action</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+				<?php
+				if(isset($this->result) && sizeof($this->result) > 0){ 
+				$sn=1;
+				foreach($this->result as $invoiceDetails)
+				{
+
+				$date =isset($invoiceDetails['created_on']) ? date("D jS M, y h:i A", strtotime($invoiceDetails['created_on'])) : '';
+							
+																	$invoiceId = isset($invoiceDetails['invoice_id']) ? $invoiceDetails['invoice_id'] : '';
+							
+																	$qty = isset($invoiceDetails['contract_qty']) ? $invoiceDetails['contract_qty'] : '';
+							
+																	$rate = isset($invoiceDetails['contract_rate']) ? $invoiceDetails['contract_rate'] : '';
+							
+																	$amtpaid = isset($invoiceDetails['amtPaid']) ? $invoiceDetails['amtPaid'] : '';
+							
+																	$status = isset($invoiceDetails['invoice_status']) ? $invoiceDetails['invoice_status'] : '';
+				?>
+                  <tr>
+                    <td scope="row"><?php echo $sn; ?></td>
+                    <td><?php echo $invoiceDetails['contract_qty']; ?></td>
+                    <td><?php echo $invoiceId; ?></td>
+                    <td><?php echo $qty; ?></td>
+                    <td><?php echo $rate; ?></td>
+                    <td><?php echo $amtpaid; ?></td>
+                    <td><?php if($status=='1'){$st='Active';}else {$st='Inactive';}echo $st; ?></td>
+                    <td><a href="#" onclick="openRefund('<?php echo $invoiceId; ?>')">Cancel</a></td>
+                    
+                  </tr>
+                  <?php $sn++; }
+					}				 
+					?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+    
+    <!-- /.row --> 
+    
+    <!-- /.row --> 
+  </div>
+  
+  
+  
+  
+  
+  	<div
+			class="modal changestatus"
+			id="changestatus"
+		>	
+		<div class="modal-dialog popup" >
+		<div class="modal-content">
+		<div class="modal-header">
+		Refund Request
+		<button
+			type="button"
+			class="close"
+			data-dismiss="modal"
+			aria-hidden="true" onclick="closeRefund();"
+		><i class="is close-btn"></i></button>
+		</div>
+		<div class="modal-body g-auth-body">
+			<form name="refInvoice" id="refInvoice" action='' method="post">
+				<div class="inputhodler" id="refund_err" style="display:none;">
+	               
+	            </div>	          
+	            <div class="inputhodler">
+	                <p> Wallet Address:</p> <input type="text" name="wadd" id="wadd" placeholder=""  Value="">
+	            </div>
+	        	<input type="hidden"name="invoiceId" id="invoiceId" value="">
+	            <div class="inputhodler">
+	                <p> Comment:</p> <textarea type="textarea" name="comment" id="comment" placeholder="" value="" ></textarea>
+	            </div>	
+	            <div class="inputhodler btncls" >
+	                <input style="width:30%;" type="button" value="Submit" name="refund" onclick="refundInvoice()" class="formsubmit inputcls">
+	            </div>	
+            </form>	
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+		<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script>
+function openRefund(invoice_id)
+{
+	$('#invoiceId').val();
+	$('#invoiceId').val(invoice_id);
+	$('#changestatus').addClass('openpop');
+}
+function closeRefund()
+{
+	$('.modal').removeClass('openpop');
+}
+function submitStatus()
+{
+	var wadd = $('#wadd').val();
+	var comment = $('#comment').val();
+	var invoiceId = $('#invoiceId').val();
+
+	if(!wadd || wadd=='')
+	{
+		$('#refund_err').empty();
+		$('#refund_err').append('Please enter Wallet Address');
+	}
+	else
+	{
+		 $.ajax({			
+				url:"<?php echo BASEPATH; ?>/Refundcontracts/refund", 
+				type: "POST",    
+			    data: 'wadd='+wadd+'&comment='+comment+'&invoiceId='+invoiceId,	
+			    async:false,		
+		  		success:function(response)
+		  		{
+					if(response!='failed')
+					{
+						$("#main"+ticket).text(status);
+						$("#child"+ticket).text('');
+						
+					}
+		  		}
+		 });
+	}
+}
+</script>

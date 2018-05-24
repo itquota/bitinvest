@@ -1,0 +1,119 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group {
+	width: 418px;
+	float:left;
+}
+.clearfix {
+ 			 margin-top:35px;
+		}
+</style>
+
+<div id="innerpage-wrapper">
+	<div class="row lightgraybg">
+		<div class="col-lg-12">
+			<h1 class="page-header gain-bit-txt"></h1>
+		</div>
+	</div>
+
+	<div class="row">
+		<ol class="breadcrumb">
+			<li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+			<li class="active"><a href="<?php echo BASEPATH?>/managegallery">Manage Gallery</a> > </li>
+			<li>Add Gallery</li>
+		</ol>
+		<div class="clearfix"></div>
+		<div class="panel panel-primary buynowbox col-lg-12">
+
+			<div class="panel-heading buynowbox heading" style="background-color:#34495e;">Add Gallery</div>
+
+			<div class="panel-body revenuebg">
+				<form method="post" enctype="multipart/form-data" Action="<?php echo BASEPATH; ?>/Addgallery">
+				<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+				if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+				{
+				?>
+				   <div class="form-group">
+					<label for="" class="lblTxt alert alert-success" style="margin-bottom:0px;"><?php echo $authUserNamespace->msg; ?></label>
+
+				  </div>
+				 <?php $authUserNamespace->msg=""; }?>
+				<?php if(!empty($authUserNamespace->msgErr) && $authUserNamespace->msgErr!='')
+				{
+				?>
+					<label for="" class="lblTxt alert alert-danger" style="margin-bottom:0px;"><?php echo $authUserNamespace->msgErr; ?></label>
+
+				 <?php $authUserNamespace->msgErr=""; }?>					
+					<div class="form-group err1" style="width: 100%; margin-bottom: 0px;">
+						<label for="" class="lblTxt" style="color: red;"></label>
+					</div>
+
+					<div class="form-group">
+						<div class="form-group">
+							<label for="" class="lblTxt">Gallery Title</label>
+							<input type="text" class="form-control CommonInputBox" id="title"	name="title" placeholder=""/>
+						</div>
+
+						<div class="form-group">
+							<label style="width: 100%; margin-bottom: 0px; padding-top: 11px;" for="" class="lblTxt">Cover Image</label> 
+							<img name="image" id="image" value="" style="width: 100px; height: 100px;" class="profile-pic" src="images/no_image.png" />
+						</div>
+
+						<div style="width:100%;">
+							<input class="file-upload" name="imgs" id="imgs" type="file" />
+						</div>
+
+						<div class="form-group">
+							<label style="width: 100%; margin-bottom: 0px; padding-top: 11px;" for="" class="lblTxt">Scroller Image</label> 
+						</div>
+
+						<div style="width:100%;">
+							<input type="file" name="files[]" multiple/>
+							<p>Note: Supported image format: .jpeg, .jpg, .png, .gif</p>
+						</div>
+						<div class="form-group">
+							<label for="" class="lblTxt">Video Links</label>
+							<input type="text" class="form-control CommonInputBox" id="links"	name="links" placeholder=""/>
+						</div>					
+						<div class="form-group" style="width:100%;">
+							<input type="hidden" name='id' value=''> 
+							<input type="submit" name="sub" id="sub" value="Submit" class="btn btn-default Commonbtn"> 
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+    
+    /*** upload image ******/
+    
+    $(document).ready(function(){   
+	    var readURL = function(input) {
+	        if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	
+	            reader.onload = function (e) {
+	                $('.profile-pic').attr('src', e.target.result);
+	            }
+	    
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	    }
+	    
+	
+	    $(".file-upload").on('change', function(){
+	        readURL(this);
+	    });
+	    
+	    
+	});
+
+
+    </script>
+

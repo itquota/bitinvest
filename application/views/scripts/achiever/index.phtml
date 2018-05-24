@@ -1,0 +1,141 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.mobile-menu{
+	display:none !important;
+}
+.tabNav ul {
+    border-bottom: 0 none;
+}
+.tabNav{display:Block !important;}
+.content{display:block !important;}
+
+@media (min-width: 480px) and (max-width:767px) {
+	.achievers-row .tabNav ul li {
+		    width: 20%;
+		}
+}
+</style>
+    <div id="innerpage-wrapper">
+      <div class="row lightgraybg">
+        <div class="col-lg-12 offset-1">
+          <h1 class="page-header gain-bit-Titletxt innpercontentPad">Achievers</h1>
+        </div>
+        <!-- /.col-lg-12 --> 
+      </div>
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+
+      <!-- /.row -->
+      <div class="row">
+        <ol class="breadcrumb">
+          <li class="active"> <a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+          <li>Achievers</li>
+        </ol>
+      </div>
+      <div class="clearfix">&nbsp;</div>
+      <div class="row achievers-row">
+        <div class="col-lg-12">
+
+
+          <div class="tabCnt">
+            <div class="tabNav">
+              <ul>
+              <?php if(empty($_GET['a']) || $_GET['a']=='') 
+              {
+              ?>
+                <li class="<?php if(empty($_GET['a']) || $_GET['a']=='') { echo 'activeli'; } else { echo (isset($_GET['a']) && $_GET['a'] !=   $this->result1['Param1'])?'':'activeli'; } ?>"><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param1']; ?>" rel="tab1" ><?php echo $this->result1['month1']; ?></a></li>
+                <li class=""><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param2']; ?>" rel="tab2" ><?php echo $this->result1['month2']; ?></a></li>
+                <li class=""><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param3']; ?>" rel="tab3" ><?php echo $this->result1['month3']; ?></a></li>
+              	<li class=""><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param4']; ?>" rel="tab4" ><?php echo $this->result1['month4']; ?></a></li>
+              
+              <?php }
+				else {
+              ?>
+                <li class="<?php if(empty($_GET['a']) || $_GET['a']=='') { echo 'activeli'; } else { echo (isset($_GET['a']) && $_GET['a'] !=   $this->result1['Param1'])?'':'activeli'; } ?>"><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param1']; ?>" rel="tab1" ><?php echo $this->result1['month1']; ?></a></li>
+                <li class="<?php echo (isset($_GET['a']) && $_GET['a'] !=   $this->result1['Param2'])?'':'activeli';?>"><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param2']; ?>" rel="tab2" ><?php echo $this->result1['month2']; ?></a></li>
+                <li class="<?php echo (isset($_GET['a']) && $_GET['a'] !=   $this->result1['Param3'])?'':'activeli';?>"><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param3']; ?>" rel="tab3" ><?php echo $this->result1['month3']; ?></a></li>
+              	<li class="<?php echo (isset($_GET['a']) && $_GET['a'] !=   $this->result1['Param4'])?'':'activeli';?>"><a href="<?php echo BASEPATH; ?>/Achiever?a=<?php echo $this->result1['Param4']; ?>" rel="tab4" ><?php echo $this->result1['month4']; ?></a></li>
+              
+              <?php } ?>
+              
+
+              </ul>
+            </div>
+
+
+            <div class="tabResult">
+              <div class="tabBx overview" id="tab1" style="display: block;">
+                <div class="content">
+                  <div class="col-lg-12">
+                    <div class="clearfix">
+
+                </div>
+
+
+
+
+
+
+                <div data-example-id="bordered-table" class="bs-example table-responsive">
+                  <table id="data-table-simple" class="table table-bordered innertbl display">
+
+
+                    <thead>
+                      <tr>
+                        <th class="sortdesc">Sr. No  </th>
+                          <th class="sortboth">Username</th>
+                          <th class="sortboth">Binary Pairs</th>
+                          <th class="sortboth">Direct Pairs</th>
+                          <th class="sortboth">Price</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+ 
+      <?php //for($j=0;$j<sizeof($this->result['data']);$j++)
+	  //print_r($this->result1[0]['username']);exit;
+          $sn=1;
+          for($j=0;$j<sizeof($this->result1['data']);$j++) { ?>
+                    <tr>
+                    <td scope="row"><?php echo $sn;?></td>
+                    <td><?php echo $this->result1['data'][$j]['username'];?></td>
+                    <td><?php echo $this->result1['data'][$j]['pairs'];?></td>
+                    <td><?php echo $this->result1['data'][$j]['direct_pairs'];?></td>
+                    <td><?php echo $this->result1['data'][$j]['prize'];?></td>
+                   
+                  </tr>
+            <?php $sn++; } ?>
+
+                      </tbody>
+                    </table>
+                  </div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+          <!--    <div class="tabBx overview" id="tab2">
+                <div class="content">Content for Tab 2</div>
+              </div>
+              <div class="tabBx overview" id="tab3">
+                <div class="content">Content for Tab 3</div>
+              </div>
+              <div class="tabBx overview" id="tab4">
+                <div class="content">Content for Tab 4</div>
+              </div>-->
+            </div>
+
+
+
+
+          </div>
+         
+         
+        </div>
+        <!-- /.row --> 
+        <!-- /.row --> 
+      </div>
+      <!-- /#page-wrapper -->
+    </div>
+  

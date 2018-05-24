@@ -1,0 +1,121 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12 offset-1">
+<h1 class="page-header gain-bit-Titletxt innpercontentPad">Kit Detail</h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+<ol class="breadcrumb">
+	<li class="active">Dashboard</a></li>
+	<li><a href="#">Kit Details</a></li>
+
+</ol>
+
+<div class="col-lg-12 ">
+<div class="btn-group btn-group-justified" role="group" aria-label="...">
+<div class="btn-group" role="group">
+<a href="<?php echo BASEPATH; ?>/Kitsdetail"><button type="button"
+	class="btn btn-default gain-bit-stepbg text-uppercase ">Step 1 (My
+Kits)</button></a>
+</div>
+<div class="btn-group" role="group">
+<button type="button"
+	class="btn btn-default gain-bit-stepbg text-uppercase active">Step 2
+(Buy New Contract)</button>
+</div>
+<div class="btn-group" role="group">
+<a href="<?php echo BASEPATH; ?>/Contracts"><button type="button"
+	class="btn btn-default gain-bit-stepbg text-uppercase">Step 3 (My
+Contract)</button></a>
+</div>
+</div>
+</div>
+
+<div class="clearfix">&nbsp;</div>
+
+
+<div class="col-lg-12">
+
+<?php
+$i=0;
+foreach($this->result['data'] as $getCotracts)
+{
+	if($i == 0){
+		$type = "Gold";
+	}else if($i == 1){
+		$type = "Silver";
+	}else if($i == 2 || $i == 3){
+		$type = "Referral";
+	}else{
+		$type = "ROI";
+	}
+
+
+
+?>
+<form method="POST" action="<?php echo BASEPATH; ?>/Purchasecontract" >
+
+<div class="col-lg-4 offset-0 ">
+
+<div class="panel panel-primary buynowbox">
+<div class="panel-heading buynowbox Titleheading faqtitlebg text-center">SHA
+(BITCOIN) Mining Contract</div>
+<div class="panel-body text-center revenuebg">
+<h3 class="buycontractTitle"><?php echo $getCotracts['contract_qty']?> THS <?php echo ($getCotracts['total_price'])?> BTC</h3>
+<input type="hidden" name="sha_hashrate_qty" id="sha_hashrate_qty" value="<?php echo $getCotracts['contract_id'];?>" /> 
+<input type="hidden" value="<?php echo ($getCotracts['total_price'])?>" id="hid_btc_value" name="hid_btc_value" /> 
+<input type="hidden" value="<?php echo $type ?>" id="contract_type" name="contract_type" /> 
+<button id="scryptBuyNowLink"  type="submit" class="btn btn-info text-uppercase paybtn pull-right"
+	type="submit">BUY NOW !</button>
+
+</div>
+
+</div>
+
+
+
+</div>
+</form>
+	<?php $i++; } ?></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<!-- /.row --> <!-- /.row --></div>
+
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

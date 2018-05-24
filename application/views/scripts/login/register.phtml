@@ -1,0 +1,1179 @@
+<?php
+require("library/recaptcha/captcha.php");
+
+
+$_SESSION['captcha'] = simple_php_captcha();
+$imgc_captcha = $_SESSION['captcha']['image_src'];
+
+$code = $_SESSION['captcha']['code'];
+//$_SESSION['captha_code']=$code;
+
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$misc_obj->generateToken();
+$authUserNamespace->code = $code;
+//$_SESSION['captcha'] = simple_php_captcha();
+//print_r($captcha_config['code'])  ;exit;
+?>
+<script>
+function registerUser(){
+flag=0;
+var i=0;
+if(document.getElementById('agree').checked) {
+//$('.error').hide();
+	setInterval(function(){
+		 
+
+		
+		if(flag==0)
+		{
+			if(i==0)
+			{
+			i++;
+			$('#preloader').css("display","block");
+			$('#err_div_reg').empty();
+			var username=$('#username').val();
+			var ref_sponser_id=$('#ref_sponser_id').val();
+			var email_addr=$('#email_addr').val();
+			var password=$('#password').val();
+			var password_rpt=$('#password_rpt').val();
+			var captcha=$('#captcha').val();
+			var token=$('#token').val();
+			//var og_captcha=$('#og_captcha').val();
+	
+			password = encryptPass(password);
+			//var pass_rpt = encryptPass(password_rpt);
+			
+			password = escape(password);
+			
+			var  child_position = '';
+			
+		
+			var dataString = 'username='+ username+'&password='+password+'&ref_sponser_id='+ref_sponser_id+'&email_addr='+email_addr+'&leg='+child_position+'&token='+token+'&captcha='+captcha;
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Login/checkregister",
+					type: "POST",    
+				    data: dataString,
+			  		success: function(response)
+		      		{
+					 var data=	JSON.parse(response);
+					
+					 if(data['success']!='' && data['success']=='success')
+					 {
+						// alert("You are registered successfully");
+						 $('#preloader').css("display","none");
+						 $("#registid").css("display","block");
+							setTimeout(function(){			
+								window.location="<?php echo BASEPATH;?>/Dashboard";		
+							},3000);
+					 }
+					 else
+					 {
+						
+						 if((data['failure']).indexOf("Duplicate entry") > -1)
+						 {
+							 $('#preloader').css("display","none");
+							 $("#err_div_reg").css("display", "block");
+							 document.getElementById("err_div_reg").innerHTML="Username already present";
+						 }
+						 else							
+						 {
+							 $('#preloader').css("display","none");
+							 $("#err_div_reg").css("display", "block");
+							 document.getElementById("err_div_reg").innerHTML=data['failure'];
+						 }
+					 }		
+		      			
+		      		}
+				});
+			
+		}
+	}
+		setTimeout(function(){
+		//	window.location="<?php echo BASEPATH;?>/Dashboard";
+		},5000);
+});
+
+	
+
+		
+} else {
+  // alert("in else");
+}
+/*setTimeout(function(){
+	
+    $("#registid").hide();
+
+   
+},);*/	
+
+
+
+
+  //  e.preventDefault();
+}
+
+
+</script>
+<script data-cfasync="false" src="<?php echo BASEPATH; ?>/res/js/jquery.validate.min.js"></script>
+<style>
+	
+</style>
+ <div class="loginPadd loreg-page">
+
+	<div class="logincontainer">
+	
+		<form id="registerUserForm" name="registerUserForm" autocomplete="off" novalidate="novalidate" role="form" class="paddAll">
+
+		<div class="form-group">
+			<a href = "https://gainbitcoin.com/"><img src="<?php echo BASEPATH; ?>/images/login-logonew.png" alt="" class="img-responsive" style="margin:0 auto;">
+				</a></div>
+
+		<div class="clearfix"></div>
+
+		<div class="form-group">
+			<p class="text-center white_text">Enter your details to begin</p>
+		</div>
+		
+		<div class="form-group" id="err_div_reg" style="display:none;color:red;"></div>
+		
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="text" class="input-box" placeholder="Ref. Sponsor Id/Ref. Username" name="ref_sponser_id" id="ref_sponser_id">
+			</div>
+		</div>
+
+		<div id = "ref_sponser_id_message"  style = "color:red; font:400 14px Roboto,sans-serif;"></div>
+
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="email" class="input-box" id="email_addr" name="email_addr"	placeholder="Email">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="text" class="input-box" placeholder="Username" id="username" name="username">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="password" class="input-box" placeholder=" Enter Password" name="password" id="password" >
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="password" class="input-box" placeholder="Re-enter Password" id="password_rpt" name="password_rpt">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-btn " style="text-align: center;">
+					<img src="<?php echo $imgc_captcha; ?>" alt="CAPTCHA code">
+				</span>
+			</div>
+		</div> 
+
+
+ 		 <div class="form-group">
+  		    <div class="input-group" style="display:block;">
+  				<input type="password" name="captcha" id="captcha" class="input-box" placeholder="Enter Captcha">
+ 					<input type="hidden" id='og_captcha' value='<?php echo  $code; ?>' /> 
+			</div>
+	    </div>
+
+		<div class="checkbox"><label style="color:#fff;"><input type="checkbox" name="agree" id="agree" class="sel" >I accept the 
+			<a data-toggle="modal" href="#req-admin" name="myname" style="color:#3d8d92"> Terms & Conditions </a></label>
+		</div>
+		
+		<div style="margin-top:-10px;"><label style="display:none;" for="agree" class="error"></label></div>
+
+<br />
+
+<div class="form-group">
+
+<button onclick="registerUser();" class="button">REGISTER
+			<div id="preloader" class="">
+				<img src="<?php echo BASEPATH; ?>/images/ajax_loader_2.gif" height="24" width="24">
+			</div>	
+</button>
+
+
+</div>
+
+
+</form>
+
+           <div class="white_text" style="text-align:center;">
+               <a href="<?php echo BASEPATH; ?>/Login"> <span style="color:#fff;">Back to login</span></a>
+           </div>
+
+	<div class="modal changestatus bg-popup "	id="req-admin">	
+		<div class="modal-dialog popupwidth big-pop-center1" >
+			<div class="modal-content height-popup no-padding">
+				<div class="bg-pop-header"><span class="text-pop-header">TERMS AND CONDITIONS</span>
+					<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true"><i class="fa fa-close" style="color:#fff;"></i></button>
+				</div>  
+		<div class="">
+			<form name="formkit" id=""formkit"" action='' method="post">
+				<div id="tandc" class="pop-body">
+				<p  style = "text-align:center;"><strong>Terms and Conditions</strong></p>
+
+<p  style = "text-align:center;"><em><strong>TERM OF USE</strong></em></p>
+
+<p><em>Introduction</em></p>
+
+<p>By accessing and using our website www.gainbitcoin.com or any affiliated websites of VARIABLETECH PTE LTD, registered and incorporated in Singapore or any associated entity (referred to as &quot;we&quot;, &quot;us&quot;, , &quot;the website&quot;, &quot;www.gainbitcoin.com&quot;, &ldquo;GainBitcoin&rdquo; or &quot;the company&quot;), you agree to be bound by and abide by the following terms and conditions. Your access to and use of the website is also subject to our Privacy Policy.</p>
+
+<p>These terms and conditions (&quot;T&amp;C&quot;) apply to all transactions carried out on this website and any other affiliated websites. Do not use the website or any services if you do not agree with any of these Terms and Conditions.</p>
+
+<p>Prior to executing a transaction on the website or registering with us, you should review the terms and conditions as they may be updated from time to time. Continued use of this website and services means that you agree to our new and existing T&amp;C.</p>
+
+<p>This policy is applicable to all the present as well as prospective Users who use or wish to use GainBitcoin&rsquo;s Services through proper registration. It lays down the procedure that GainBitcoin follows to collect information and maintain a record of all Users. It is the duty of the User to comply with all Policies in order to ensure that it does not abuse the relationship with GainBitcoin for any illegal purposes, including money laundering or other financial crimes. Any action, including those that might not have been foreseen and included in this policy, that has the effect of the abuse as contemplated above shall be restricted under this policy.</p>
+
+<p>GainBitcoin reserves the right to decline its services, at its discretion, with present as well as prospective Users at all times. It is the discretion of the GainBitcoin to suspend or terminate any action in favor of the User until a reasonable and satisfactory explanation with supporting documents is provided, on suspicion of the User abusing the relationship as contemplated above.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Disclaimer</strong></em></p>
+	</li>
+</ul>
+
+<p><em>When purchasing a Bitcoin Cloud Mining Contract through the website the Buyer agrees that he or she is over 18 years of age, have </em><em>your parent or guardian&rsquo;s consent to these Terms, (b) have the power to enter a binding contract with us and are not barred from doing so under any applicable laws, applicable upon you or GainBitcoin</em><em>.</em></p>
+
+<p><em>You must check your local jurisdiction laws applicable before buying the Bitcoin Cloud Mining Contract &amp; only enter into such transaction if you are allowed to do so! GainBitcoin assumes that it is legal for you to enter into a transaction with GainBitcoin and you have perused through the Terms and Conditions and agree to all applicable terms. </em></p>
+
+<p><em>GainBitcoin</em> <em>represents a speculative investment and involves a high degree of risk. Users must have the financial ability, sophistication/experience and willingness to bear the risks of an investment and </em><em>GainBitcoin</em> <em>presumes existence of the same in the User. Information provided on the website is not intended to be, nor should it be construed or used as investment, tax or legal advice, a recommendation, or an offer to sell, or a solicitation of an offer to buy, an interest in transaction. An investment on the Website is not suitable for all investors.</em></p>
+
+<p>Actions with Cryptocurrencies carry inherent risks. Due to the fact that Cryptocurrencies are unregulated and decentralized, their value is not insured by any legal entities. The value of any Contract, any amount of any Cryptocurrency is subject to change as per Hash Rates due to a number of factors. These factors include but are not limited to changes of mining difficulty and/or other mining parameters/properties, fluctuating price of Cryptocurrencies, obsolescence of hardware and amortization of hardware. You understand and agree that the worth of any Contract and any amount of mined Cryptocurrency may lose all worth at any moment of time due to the nature of Cryptocurrencies. You understand that you are solely responsible for management of the Cryptocurrencies in your balance as well as any losses or charges incurred by any third-party entity.</p>
+
+<p>Any information related to Cryptocurrency and Cryptocurrency mining that is/was posted, published and/or provided by GainBitcoin via any channel of communication (including but not limited to: on the Website, in the Panel, via the Support Service, via Email newsletter, in social media) is subject to change.</p>
+
+<p>The User must not buy, sell, exchange, hold, own or otherwise use or exploit Cryptocurrencies in any way which is prohibited by the laws or regulations which apply to the User. Cryptocurrencies may not be appropriate for everyone. Before entering into any transactions for any Cryptocurrencies the User should learn about them to ensure that they are appropriate for the User. Like all currencies, there are disadvantages to using Cryptocurrencies. Some of the risks particular to Cryptocurrencies include:</p>
+
+<ul>
+	<li>
+	<p>currency fluctuation - the price of Bitcoin and/or any other Cryptocurrency may fall sharply and may even fall to zero;</p>
+	</li>
+	<li>
+	<p>transactions with Cryptocurrencies may be unconfirmed for a period of time. Although very unlikely, some Cryptocurrency transactions may never be confirmed - Cryptocurrency transactions which are unconfirmed are not completed;</p>
+	</li>
+	<li>
+	<p>transactions with Cryptocurrencies - if you send any amount of any Cryptocurrency to the wrong person, you may be unable to recover those funds;</p>
+	</li>
+	<li>
+	<p>Cryptocurrencies may be lost if you lose or forget any PINs or passwords necessary to access and spend those Cryptocurrencies;</p>
+	</li>
+	<li>
+	<p>unknown technical defects inherent in Cryptocurrencies; and</p>
+	</li>
+	<li>
+	<p>new regulation which impacts the use of Cryptocurrencies.</p>
+	</li>
+</ul>
+
+<p>By agreeing to these terms of service or by mining Cryptocurrencies by using the Service, you are indicating that you understand, are capable of understanding and accept the risks associated with Cryptocurrencies.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Definitions</strong></em></p>
+	</li>
+</ul>
+
+<p>&ldquo;<em>Bitcoin&rdquo;</em> is a peer-to-peer payment system and a digital currency using cryptography to control the creation and transfer of money. For your better understanding, more about Bitcoin can be found here: http://en.wikipedia.org/wiki/Bitcoin</p>
+
+<p>&ldquo;<em>Bitcoin Contract&rdquo;</em> is a proprietary right to future Bitcoins produced by GainBitcoin&#39;s computer systems applying the hash rate agreed between the Buyer and GainBitcoin for the Term.</p>
+
+<p>&ldquo;<em>Lease Term&rdquo;</em> is 18 months from the Mining Contract Purchase Date unless otherwise agreed in writing between GainBitcoin and the Buyer.</p>
+
+<p>&ldquo;<em>Buyer&rdquo;</em> is the purchaser of a Bitcoin Cloud Mining Contract through the website, hereinafter referred to as &quot;user&quot; or &quot;you&quot;.</p>
+
+<p>&ldquo;<em>GainBitcoin&rdquo;</em> is the company VARIABLETECH PVT LTD that operates the website www.gainbitcoin.com, affiliated websites, and computer systems that produce Bitcoins, and offers Bitcoin Cloud Mining Contracts to its Users.</p>
+
+<p>&ldquo;<em>GainBitcoin&#39;s computer systems&rdquo;</em> are the software and hardware operated and maintained by GainBitcoin to mine Bitcoins.</p>
+
+<p>&ldquo;<em>Hash</em>&rdquo; is a mathematical process that takes a variable amount of data and produces a shorter, fixed-length output. A <em>hashing function</em> has two important characteristics. Firstly, it is mathematically difficult to work out what the original input was by looking at the output. &nbsp;Secondly, changing even the tiniest part of the input will produce an entirely different output.</p>
+
+<p>&ldquo;<em>Hash rate&rdquo;</em> is the number of hashes that can be performed by a bitcoin miner in a given period of time (usually a second).</p>
+
+<p>&ldquo;<em>Hash difficult level&rdquo;</em> is an estimate about how difficult it is to mine (find) a new bitcoin block. Bitcoin mining has two main purposes. One is adding transactions to the bitcoin blockchain. The other purpose is to create new bitcoins.</p>
+
+<p>&ldquo;<em>KYC</em>&rdquo; or &ldquo;<em>Know Your Client/Customer</em>&rdquo; rules force financial institutions to vet the people they are doing business with, ensuring that they are legitimate.</p>
+
+<p>&ldquo;<em>Lease Contract Purchase Date&rdquo;</em> is the date the Buyer submits the request to purchase the Bitcoin Cloud Mining Contract <em>via</em> online form at the website unless otherwise agreed in writing between GainBitcoin and the Buyer.</p>
+
+<p>&ldquo;<em>Mining&rdquo; </em>is the act of generating new bitcoins by solving cryptographic problems using computing hardware;</p>
+
+<p><em>&quot;Support&quot;</em> or &quot;<em>Customer Support&quot;</em> is the technical support service of GainBitcoin that is available where Users can find answers to general questions and request assistance by submitting a request;</p>
+
+<p>&ldquo;<em>Transaction&rdquo;</em> is an agreement between the Buyer and GainBitcoin to purchase a Bitcoin Cloud Mining Contract at an agreed rate.</p>
+
+<p>&ldquo;<em>Price&rdquo;</em> means the price for which the Buyer agrees to purchase a Bitcoin Cloud Mining Contract.</p>
+
+<p>&ldquo;<em>Transaction Price&rdquo;</em> is the total price comprising the Price payable to the GainBitcoin for a Bitcoin Cloud Mining Contract.</p>
+
+<p>GainBitcoin has limited operating history or performance.</p>
+
+<ul>
+	<li>
+	<p>GainBitcoin and its managers or advisors may rely on the trading expertise and experience of third-party managers or advisors, the identity of which shall be fully disclosed on the request of Users.</p>
+	</li>
+	<li>
+	<p>The Bitcoin Cloud Mining Contract may involve a complex tax structure, which should be reviewed carefully, and may involve structures or strategies that may cause delays in important tax information being sent to Users.</p>
+	</li>
+</ul>
+
+<p><em><strong>Scope of Service: </strong></em></p>
+
+<ul>
+	<li>
+	<p><em>Purchase of Bitcoin Cloud Mining Contract</em></p>
+	</li>
+</ul>
+
+<p>(a) The Buyer agrees to pay to GainBitcoin the Transaction Price;</p>
+
+<p>(b) GainBitcoin agrees to use its best endeavors to operate GainBitcoin&#39;s computer systems applying the hash rate agreed between the GainBitcoin and the Buyer to produce Bitcoins; and pay 10% @ current hash difficulty level for a total of 18 months from the date of such Bitcoin Cloud Mining Contract. -</p>
+
+<p>(c) the Buyer agrees that GainBitcoin&#39;s computer systems are operated at the sole discretion of GainBitcoin;</p>
+
+<p>(d) the Buyer is not required to pay any registration fee/entry fee or any other fee for mere participation on the website;</p>
+
+<ul>
+	<li>
+	<p><em><strong>Process of purchasing a Bitcoin Cloud Mining Contract</strong></em></p>
+	</li>
+</ul>
+
+<p>www.gainbitcoin.com offers Bitcoin Cloud Mining Contracts. The Buyer accepts the Transaction Price, Price offered by GainBitcoin upon submitting a <em>valid purchase request </em>via the online form at the website.</p>
+
+<p>By submitting such a purchase request, online payment will be processed and the Transaction is binding upon you. Please make sure that all your data is correct.</p>
+
+<p>That GainBitcoin shall provide/entitle the Buyer to return services purchased by the Buyer within a period of 30 days from the date of such purchase made on the website.</p>
+
+<p>Also, it is your responsibility to ensure that your email communication is safe and protected against third party access and GainBitcoin shall not be held liable for an error or lapse in the safety of your email account and a breach therein.</p>
+
+<p>It is possible that the laws in the country where the User resides and/or accesses the website and Services do not allow the usage of an online tool with the characteristics of Bitcoin or any of its features. GainBitcoin does not encourage or accept the violation of any laws and cannot be held responsible for violation of such laws. It is the duty and responsibility of the User to follow the laws of the country of residence. As long as you agree to and comply with these Terms of Use, GainBitcoin grants you a personal, non-exclusive, non-transferable, non-sublicensable, and limited right to enter and use the website and Services.</p>
+
+<h2 style="font-style:normal">Scope of Business Excluded</h2>
+
+<ul>
+	<li>
+	<p><em>Payout services - </em>GainBitcoin does NOT provide payout services.</p>
+	</li>
+	<li>
+	<p><em>Transfer services- </em>GainBitcoin does NOT provide money transfer services for remittance purposes.</p>
+	</li>
+	<li>
+	<p><em>Wallet App services- </em>GainBitcoin does NOT provide Wallet App services to payers or payees and/or services of a similar nature.</p>
+	</li>
+	<li>
+	<p><em>Payment System services- </em>GainBitcoin does NOT provide payment system accounts to payers or payees and/or services of a similar nature.</p>
+	</li>
+	<li>
+	<p><em>Escrow services - </em>GainBitcoin does NOT provide escrow services.</p>
+	</li>
+	<li>
+	<p>Gain Bitcoin shall not be responsible for any overpayment or loss of money through human error at user end.</p>
+	</li>
+	<li>
+	<p>Gain Bitcoin shall not be responsible for any restriction by the bank.</p>
+	</li>
+	<li>
+	<p>Gain Bitcoin shall not be responsible for any law that does not allow making purchases with us as per local jurisdiction.</p>
+	</li>
+</ul>
+
+<p><br />
+&nbsp;</p>
+
+<ul>
+	<li>
+	<p><em><strong>Eligibility to enter into a Contract - </strong></em></p>
+	</li>
+</ul>
+
+<p>That all agreements entered into on this website shall be in accordance the requirements of entering into a Contract in the respective Contracting States which generally state that <em>all agreements are contracts if they are made by the free consent of parties competent to contract, for a lawful consideration and with a lawful object, and are not expressly declared to be void. Nothing herein contained shall affect any law in force applicable to either Parties, by which any contract is required to be made in writing or in the presence of witnesses, or any law relating to the registration of documents.</em></p>
+
+<p><br />
+&nbsp;</p>
+
+<ul>
+	<li>
+	<p><em><strong>Personal Account</strong></em></p>
+	</li>
+</ul>
+
+<p>In order to purchase a Bitcoin Cloud Mining contract on www.gainbitcoin.com, the user has to create a personal account with GainBitcoin providing -</p>
+
+<ul>
+	<li>
+	<p><em>his or her name, email address, phone number, mail address, Bitcoin wallet ID and a password. </em></p>
+	</li>
+</ul>
+
+<p>Creating a personal account is free of charge, however you have to acknowledge the terms and conditions.</p>
+
+<p>Your username can not be changed once created. The user must ensure that the username and password are kept confidential at all times and the same is protected.</p>
+
+<p>In case of misuse or abuse of the website, the services or of a User&rsquo;s account, GainBitcoin reserves the right to disable your personal account. GainBitcoin will record the amount of Bitcoins produced pursuant to the Buyer&#39;s Bitcoin Cloud Mining Contract, in the Buyer&#39;s personal account from time to time and shall ensure that the amount of Bitcoins produced remains under the permissible limit. While GainBitcoin will use its best efforts to ensure such records are accurate and up to date, GainBitcoin makes no guarantee as to the accuracy of any such records and reserves the absolute right at its sole discretion to vary, correct or alter such records and the Buyer has no right whatsoever to the number of Bitcoins recorded on the Buyer&#39;s personal account from time to time.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Information We Collect - </strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin is also required to keep full records of all transactions and Bitcoin transfers together with identification provided and constantly monitor any unusual or suspicious transactions of any size.</p>
+
+<p>GainBitcoin collects the following basic information from its customers for its records:</p>
+
+<ol>
+	<li>
+	<p>First Name</p>
+	</li>
+	<li>
+	<p>Last Name</p>
+	</li>
+	<li>
+	<p>Residential Address</p>
+	</li>
+	<li>
+	<p>Contact Number</p>
+	</li>
+	<li>
+	<p>Email Address</p>
+	</li>
+	<li>
+	<p>Picture of Permanent Account Number (PAN) Card</p>
+	</li>
+	<li>
+	<p>Bank Details</p>
+	</li>
+</ol>
+
+<p>By using our services you will need to identify yourself with your mobile phone number which is done by SMS-Authentication. www.gainbitcoin.com shall ask you to confirm your identity or other personal details before we transfer Bitcoin to your wallet. This does not mean in any way that the suspicion is falling on you and any information about your identity is held confidentially.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Login</strong></em></p>
+	</li>
+</ul>
+
+<p>As the time you select a contract, you can sign up for free by providing all <em>your true details</em>. We will not be responsible for any wrong, fraud, astray, false or incomplete information provided by you. While creating the account, make sure you use a username that is easy to use and password that is complicated that can not be easily traced. GainBitcoin will record the amount of cryptocurrency produced pursuant to the Buyer&rsquo;s Cloud Mining Contract, in the Buyer&rsquo;s personal account from time to time. While GainBitcoin will use its best efforts to ensure such records are accurate and up to date, GainBitcoin makes no guarantee as to the accuracy of any such records and reserves the absolute right at its sole discretion to vary, correct or alter such records and the Buyer has no absolute right to the amount recorded on the Buyer&rsquo;s personal account from time to time.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Bitcoin transfers</strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin will transfer Bitcoin produced pursuant to the Buyer&#39;s Bitcoin Cloud Mining Contract, to the Buyer&#39;s designated Bitcoin wallet upon request every 15th day paycycle, on 5th &amp; 20th of every month, within a 72 hour grace period and no more than bi-monthly. The Buyer agrees that GainBitcoin will not make any such transfers beyond this date and/or paycycle, despite any request to do so.</p>
+
+<p><a href="http://www.gainbitcoin.com/">www.gainbitcoin.com</a> shall seek details from you for purposes of authenticity, confirmation</p>
+
+<p>Transactions with a cash component of USD$10,000 or more; Any transactions or other activities regarded as suspicious. We have imposed a transaction limit of USD$10,000 per transaction.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Measures for implementation of KYC and Anti-Money Laundering Policy (hereinafter referred to as &ldquo;AML Policy&rdquo;)</strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin shall appoint a competent and qualified employee as an AML and KYC Policy Compliance Person who reviews and updates the KYC and AML Policy to ensure compliance with all relevant and applicable legislation, regulations and recommendations and monitor compliance of KYC and AML Policy. GainBitcoin&rsquo;s employees would be trained to identify and take action on suspicious transactions through the Website and Services and make regular internal reports on such suspicious transactions, if any. GainBitcoin regularly inspects the transactions done through its Website using its Services and would report them to relevant supervisory and/or law enforcement authorities. GainBitcoin reserves the right to determine suspicious and unusual transactions that result into abuse of relationship with the GainBitcoin.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Changes to KYC and AML Policy</strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin reserves the right to change, amend, alter or delete some or all parts of this KYC and AML Policy, include new procedure and exclude existing procedures in this KYC and AML Policy. It is the duty of the User to keep updated and comply at all times with the KYC and AML Policy as and when updated on the Website.</p>
+
+<ul>
+	<li>
+	<p><em><strong>User Obligations</strong></em></p>
+	</li>
+</ul>
+
+<p>The User warrants that he or she will only use the website in accordance with the purpose of the offered service and solely based on the T&amp;Cs. The User further agrees that he or she has the authority and means to enter a transaction. Furthermore, the User warrants that he or she is the legitimate owner of the monetary sums he or she intends to exchange against a Bitcoin Cloud Mining Contract and that he or she does not infringe the rights of any third party or applicable law.</p>
+
+<p>In addition, the User agrees not to use the website or the Bitcoin Cloud Mining Contract, either directly or indirectly for any kind of illegal activity such as money laundering, terrorism financing or negatively affecting the performance of the website. The User is prohibited to use or copy any of the information or contents of this or any other affiliated websites and use such information for any purpose whatsoever. The User is prohibited to send spam or distribute any other material through the website. The User is prohibited from distributing any illegal material through the website or use the website in any other way than as intended by GainBitcoins.</p>
+
+<p>The User must not collect any data from this website or its users without prior written permission by GainBitcoin. The User must not use anonymous networks such as TOR to access our website.</p>
+
+<p>Any misuse of our services based on these T&amp;Cs will result in the seizure of the Bitcoin produced pursuant to the User&#39;s Bitcoin Cloud Mining Contract and any relevant funds.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Security</strong></em></p>
+	</li>
+</ul>
+
+<p>Users are responsible for maintaining the confidentiality for and integrity of their Bitcoin wallet including its access information. The user must notify GainBitcoin of www.gainbitcoin.com immediately if the user&#39;s wallet address has changed or if there is any other change, loss, fraud or suspicion about the user&#39;s Bitcoin wallet or any transfers in or out of it. GainBitcoin shall not be liable for any lost Bitcoin wallet information, hacked Bitcoin wallet accounts or any loss arising &nbsp;as a result including by theft or fraud.</p>
+
+<p>We closely observe any activities that might relate to money laundering or illegal activities. GainBitcoin reserves the right to share users&#39; information with third parties to ensure intended operations of the website and its security.</p>
+
+<p>www.gainbitcoin.com is not liable for any damages incurred as a result of sending emails through the Internet. Emails should only be sent in encrypted format.</p>
+
+<p>GainBitcoin is attentive in maintaining the security of the site and its services. By registering with us, Users agree to provide GainBitcoin with current, accurate, and complete information as prompted by the registration process, and to keep such information updated. Users further agree that they will not access or use any account type (and/or profile type) other than their own at any time, or assist others in obtaining unauthorized access.</p>
+
+<p>GainBitcoin is not responsible for losses suffered by users. Any information related to Buy and Sell, rate of production at hash per second, spot prices, or any investment advice should not be interpreted as such.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Insufficient Funds</strong></em></p>
+	</li>
+</ul>
+
+<p>In case the balance shows no credit, or there are insufficient fund in the linked account to cover any amounts owed to the GainBitcoin hereunder, the User authorizes GainBitcoin to debit the requisite amount. GainBitcoin may resubmit debits or charges until all amounts owed by Authorized User to GainBitcoin hereunder are satisfied in full. In the event of closed accounts, GainBitcoin will issue an invoice for the services rendered, which is due immediately without other requirements. In case of late payments, GainBitcoin is entitled to charge a commonly used interest rate for overdue invoices. The proof of higher damage is not excluded.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Intellectual Property and Linking</strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin owns all intellectual property rights on this and all its affiliated websites. www.gainbitcoin.com has not reviewed all of the sites linked to the website and is not responsible for the contents of any such linked site. The inclusion of any third party links does not imply endorsement by our company of the site. Use of any such linked web site is at the user&#39;s own risk.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Bitcoin Services</strong></em></p>
+	</li>
+</ul>
+
+<p>By purchasing a Bitcoin Cloud Mining Contract on our website you acknowledge and agree that:</p>
+
+<ol>
+	<li>
+	<p>Bitcoin is as-yet an autonomous and largely unregulated worldwide system of value transfer between individuals. It is not backed by any government or central bank backed currencies.</p>
+	</li>
+	<li>
+	<p>There may be additional risks that might not have been foreseen or identified in these Terms of Use.</p>
+	</li>
+	<li>
+	<p>Bitcoin is not recognized as legal tender in certain countries and is not regulated by any central institution and may be subject to extreme price volatility;</p>
+	</li>
+	<li>
+	<p>You understand the risks involved with digital currencies including Bitcoin;</p>
+	</li>
+	<li>
+	<p>You understand that the hash rate required to produce Bitcoin increases about every fortnight resulting in a diminishing return of Bitcoin per hash rate applied to production;</p>
+	</li>
+	<li>
+	<p>You are responsible for protecting your Bitcoin, computer, software bank account, address and personal data against any theft, fraud or illegal activity;</p>
+	</li>
+	<li>
+	<p>We do not accept any responsibility for any loss or damage suffered by you or any of your authorized agents or representatives, in connection with a Bitcoin Cloud Mining Contract, whether directly or indirectly, and including where you provide us with any false information;</p>
+	</li>
+	<li>
+	<p>All concluded Transactions are irreversible;</p>
+	</li>
+	<li>
+	<p>You have obtained independent legal and financial advice about the risks associated with entering into this transaction, or you knowingly and voluntarily elected not to do so;</p>
+	</li>
+	<li>
+	<p>We have the right to refuse any order for any reason, which is at our absolute discretion and you hereby agree to release and indemnify us in the exercise of that discretion.</p>
+	</li>
+</ol>
+
+<p>The Buyer further acknowledges that trading currency including Bitcoin involves risk, especially through price fluctuation. In addition there might be unforeseen risks that are not identified in these T&amp;Cs. We cannot be held liable for any consequences of such unforeseen risks.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Due Diligence</strong></em></p>
+	</li>
+</ul>
+
+<p>GainBitcoin applies global due diligence standards on every transaction. The beneficial owners (Know-Your-Customer rules, KYC) are identified accordingly. Thresholds required by law are set automatically depending on the account type conditional to the purpose of transactions (payment for goods and services or money transmitting).</p>
+
+<p>The User authorizes the GainBitcoin, directly or through third parties, to make any inquiries the GainBitcoin considers necessary to verify the User&rsquo;s identity and/or other information.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Liability</strong></em></p>
+	</li>
+</ul>
+
+<p>www.gainbitcoin.com does not offer any legal, financial, insurance, tax, investment or associated advice. All transactions made are the sole responsibility of the User considering his or her personal circumstances. We do not recommend anything available on the website.</p>
+
+<p>www.gainbitcoin.com is not responsible for any loss suffered by the user. Information such as spot prices, buy and sell prices of Bitcoin, and the rate of production of Bitcoin per hash per second, whether on the website or at other, non affiliated platforms are for information only and is not investment advice in any form and should not be construed as such.</p>
+
+<p>The service on our website is only offered to facilitate transaction relating to Bitcoin Mining Contract for use in international trade which is not regulated.</p>
+
+<p>In no event shall www.gainbitcoin.com or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the website, or any part of it, or a Bitcoin Cloud Mining Contract, even if www.gainbitcoin.com or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+
+<p>Since some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you. In case the applicable law may not allow the limitation or exclusion of liability or incidental or consequential damages, our liability will be limited to the fullest extent permitted by applicable law.</p>
+
+<p>Without limiting the previous paragraph and except as required by, we will not be liable (including in negligence) for any loss of profits, loss of revenue, or any direct, indirect or consequential loss or damage, incurred by or awarded against you or any other person arising directly or indirectly from your use of the website or purchase of a Bitcoin Cloud Mining Contract; or any cost, loss, liability or expense arising from death, personal injury or damage to property resulting directly or indirectly from your use of our service including purchase of a Bitcoin Cloud Mining Contract.</p>
+
+<p>Furthermore, we cannot be held liable for any malfunction, breakdown, delay or interruption to the Internet connection, or if for any reason our website is unavailable at any time or for any period. We also cannot be held liable for any incorrect information from third parties displayed on our website. That applies especially to the displayed spot price of Bitcoin and the rate of production of Bitcoin per hash rate applied.</p>
+
+<p>In the case of fraud, we will report all necessary information, including names, addresses and all other requested information, to the relevant authorities dealing with fraud and breaches of the law.</p>
+
+<p>We give no other warranty in connection with the Website or the Service and we disclaim all liability for:</p>
+
+<ul>
+	<li>
+	<p>the accuracy, currency or validity of information and material contained within and/or provided by the Website, the Panel, the Support Service, in email newsletters and social media;</p>
+	</li>
+	<li>
+	<p>any change in the exchange rate of Bitcoins or any other Cruptocurrency;</p>
+	</li>
+	<li>
+	<p>any change in the difficulty of hash rate;</p>
+	</li>
+	<li>
+	<p>any changes in applicable law or regulation, or the acts of any legislator or regulator in any part of the world;</p>
+	</li>
+	<li>
+	<p>any interruptions to or error of the Website or the Service or other communications network;</p>
+	</li>
+	<li>
+	<p>the infringement by any other person of any copyright or other intellectual property rights of any third party through any User Content or use of the Website or the Service;</p>
+	</li>
+	<li>
+	<p>the availability, quality, content or nature of External Sites;</p>
+	</li>
+	<li>
+	<p>any amount or kind of loss or damage due to viruses or other malicious software that may infect a user&#39;s computer equipment, software, data or other property caused by any other person accessing, using or downloading the Website, the Service or any User Content; and</p>
+	</li>
+	<li>
+	<p>all representations, warranties, conditions and other terms and conditions which, but for this notice, would have effect.</p>
+	</li>
+	<li>
+	<p>We will not be liable in any amount for failure to perform any obligation under these terms of service if that failure is caused by the occurrence of an event beyond our reasonable control.</p>
+	</li>
+	<li>
+	<p>Except as provided above there are no other warranties, conditions or other terms and conditions, express or implied, statutory or otherwise, and all of those terms and conditions are hereby excluded to the maximum extent permitted by law.</p>
+	</li>
+</ul>
+
+<p>To the maximum extent permitted by law, we exclude liability for any losses or damages which may you may suffer, whether the same are suffered directly or indirectly or are immediate or consequential, which fall within any of the following categories:</p>
+
+<ul>
+	<li>
+	<p>special damage even though that party was aware of the circumstances in which such special damage could arise;</p>
+	</li>
+	<li>
+	<p>loss of anticipated savings;</p>
+	</li>
+	<li>
+	<p>loss of business opportunity and management time;</p>
+	</li>
+	<li>
+	<p>loss of goodwill;</p>
+	</li>
+	<li>
+	<p>loss of Cryptocurrency arising as a result of any of your acts or omissions of those of any third party;</p>
+	</li>
+	<li>
+	<p>loss arising out of or in connection with:</p>
+	</li>
+</ul>
+
+<ul>
+	<li>
+	<p>any defect or insecurity in any systems you use to store or transmit Cryptocurrency or to access or use the Website or the Service ;</p>
+	</li>
+	<li>
+	<p>any inaccurate or incomplete information you provide;</p>
+	</li>
+	<li>
+	<p>any changes to the amount of Cryptocurrency awarded to Miners;</p>
+	</li>
+	<li>
+	<p>any changes to the regulatory, legislative or technical environment applicable to Cryptocurrencies;</p>
+	</li>
+	<li>
+	<p>the acts or omissions of any bank or provider of banking services; or</p>
+	</li>
+	<li>
+	<p>any change in the value of Cryptocurrency.</p>
+	</li>
+	<li>
+	<p>To the maximum extent permitted by law, our aggregate liability in respect of any claims made in connection with or arising out of the use of the Website or the Service (whether in contract, tort (including negligence), breach of statutory duty, or otherwise) for direct losses will be limited to the Fees.</p>
+	</li>
+</ul>
+
+<p>You agree not to use the Website or the Service in any way which:</p>
+
+<ul>
+	<li>
+	<p>is unlawful;</p>
+	</li>
+	<li>
+	<p>may give rise to civil or criminal liability for GainBitcoin; or</p>
+	</li>
+	<li>
+	<p>may bring GainBitcoin into disrepute.</p>
+	</li>
+</ul>
+
+<p>The User hereby agrees to indemnify, defend and hold us and our officers, directors, owners, agents, information providers, affiliates, licensors and licensees (collectively, the &quot;Indemnified Parties&quot;) harmless from and against any and all liability and costs (including reasonable legal fees) incurred by the Indemnified Parties in connection with any claim arising out of:</p>
+
+<ul>
+	<li>
+	<p>any fraud or fraudulent misrepresentation you commit;</p>
+	</li>
+	<li>
+	<p>any inaccuracy or defect of any of the information you have provided to us;</p>
+	</li>
+	<li>
+	<p>any breach of applicable law or regulation you commit;</p>
+	</li>
+	<li>
+	<p>any other person&rsquo;s use of your Account;</p>
+	</li>
+	<li>
+	<p>any breach by you of these terms of service; and</p>
+	</li>
+	<li>
+	<p>third party claims arising from your use of the Website or the Service, any of Your Content or any use of your Account (whether or not such use was by you).</p>
+	</li>
+</ul>
+
+<p>The User shall cooperate with us in the defense of any claim. We reserve the right, at our own expense, to assume the exclusive defense and control of any matter otherwise subject to indemnification by you.</p>
+
+<ul>
+	<li>
+	<p><em><strong>As Is As Available</strong></em></p>
+	</li>
+</ul>
+
+<p>The materials on our website are provided on an &quot;as is&quot; and &ldquo;as available&rdquo; basis. www.gainbitcoin.com makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, we do not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on our website or otherwise relating to such materials or on any sites linked to this website. The materials appearing on www.gainbitcoin.com could include technical, typographical, or photographic errors. We may make changes to the materials contained on its web site at any time without notice. We do not, however, make any commitment to update the materials.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Termination or suspension</strong></em></p>
+	</li>
+</ul>
+
+<p>These terms may be terminated by either party without reason at any point of time but with prior notice. However, we may immediately terminate this agreement if the user breaches any of the clauses mentioned in our terms and conditions. In addition we reserve the right to take legal action against the user and suspend access to the website and our services. Therefore, we may block computers using user&#39;s IP address from accessing our website. We may contact your Internet service provider and take such measures to block you from accessing our website and services. In addition, we may take legal action against you and recover the costs of the same from you. If you try to use the website for illegal activities, violate any of these terms or fail to pay for your transaction or any fraud related to that, we also reserve the right to cancel transactions that are not paid for or not confirmed.</p>
+
+<p>We can stop supplying our service at any time without notice to you, and we reserve the right to refuse to supply the service to any person for any reason, especially if the user registers or submits a purchase under false identity or with wrong personal information, including email address, interferes with any of the company&#39;s operations or uses language that we consider is unacceptable including vulgar, racist, sexual or offensive language.</p>
+
+<p><br />
+&nbsp;</p>
+
+<ul>
+	<li>
+	<p><em><strong>Amendment, assignment, and governing law</strong></em></p>
+	</li>
+</ul>
+
+<p>We can assign our various rights under this agreement to any other person without asking your permission. Your rights are personal and not assignable.</p>
+
+<p>The laws of the State of Singapore and India govern these terms and conditions, without regard to its conflict of law provisions, and you irrevocably and unconditionally submit to the non-exclusive jurisdiction of the courts of Singapore and India to resolve any dispute that arises as a result of or in connection with this agreement.</p>
+
+<p>These T&amp;C are to be interpreted so that they comply with all applicable laws and if any provision does not comply then it must be read down so as to give it as much effect as possible however, if it is not possible to give that provision any effect at all then it is to be severed from this agreement in which case the remainder of this agreement will continue to have full force and effect.</p>
+
+<p><br />
+&nbsp;</p>
+
+<ul>
+	<li>
+	<p><em><strong>Dispute Resolution</strong></em></p>
+	</li>
+</ul>
+
+<p>Due to the nature of <em>Bitcoin Cloud Mining Contrac</em>t, any transaction conducted using GainBitcoin&rsquo;s services is final regardless of any defects in or non-delivery of any goods or services purchased in connection with such digital cash transaction, or any other aspect of the User&rsquo;s transaction.</p>
+
+<p>The Relevant User is advised to use adequate care because GainBitcoin cannot reverse a transaction that has been communicated to and confirmed by the network.</p>
+
+<p>If the User experiences a problem with any goods or services purchased from the GainBitcoin in connection with using GainBitcoin&rsquo;s services, or if the User has a dispute with GainBitcoin, the User must handle it directly with GainBitcoin. GainBitcoin has no control over, or liability for, the delivery, quality, safety, or any other aspect of any goods or services that User may purchase from GainBitcoin.</p>
+
+<ul>
+	<li>
+	<p><em><strong>Contact us</strong></em></p>
+	</li>
+</ul>
+
+<p>Please contact us if you have questions or are not satisfied with anything.</p>
+
+<p>E-Mail thegainbitcoin@gmail.com</p>
+
+<p>VARIABLETECH PVT LTD,</p>
+
+<p>THE FRANKLIN,</p>
+
+<p>3 SCIENCE PARK DRIVE,</p>
+
+<p>SINGAPORE-118223</p>
+
+<ul>
+	<li>
+	<p><em><strong>Grievance Redressal Cell</strong></em></p>
+	</li>
+</ul>
+
+<p>If the User believes that GainBitcoin has behaved in a fraudulent, misleading, or inappropriate manner, or if User cannot adequately resolve a dispute with GainBitcoin, the User may notify GainBitcoin&rsquo;s Support Team so that GainBitcoin may consider whether to take any action.</p>
+
+<p>That the Grievance Redressal Cell shall respond to your grievance within a period of 7 days from the date of making such complaints and ensure that the same is dealt with, to the best of their abilities.</p>
+
+<p>Every instance that a complaint is filed a complaint number shall be generated and shared with the complainant for the purpose of tracking the complaint and redressal of the same.</p>
+
+<p><br />
+<br />
+<br />
+<br />
+&nbsp;</p>
+
+<p>&nbsp;</p>
+
+				
+				</div>
+
+            </form>	
+		</div>
+			
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+
+		<div class="modal req-admin bg-popup" id="registid">	
+		<div class="modal-dialog popup pop-center-cl" >
+		<div class="modal-content no-padding">
+		<div class="bg-pop-header">
+			<span class="text-pop-header">CONGRATULATIONS</span>
+			<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="clickbox();">
+				<a href="<?php echo BASEPATH; ?>/Dashboard">
+					<i class="fa fa-close" style="color:#fff;"></i>
+				</a>
+			</button>
+			
+		</div>
+		<div style="padding:30px;height:120px;" id="registcontent">
+			<div class="alert alert-success" style="text-align:center;"><p>You are registered successfully</p></div>		
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+		
+   					 <p class="copy" style="position:relative;">© <?php echo date("Y"); ?> &nbsp;GainBitcoin.com.All rights reserved.</p>
+
+</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script data-cfasync="false" type="text/javascript">
+		var hash = window.location.hash;
+	// alert(hash);
+	if(hash =="#register"){
+		$("#login-box").removeClass("visible");
+		$("#signup-box").addClass("visible");
+	}
+	
+
+	function clickbox()
+	{
+		window.location.assign="<?php echo BASEPATH;?>/Dashboard";
+	}
+	
+		function check_leg(leg){
+			
+			var LegValue  = leg.value;
+			var RefID = $("#ref_sponser_id").val();
+			var token = $('#token').val();
+			/* if(!RefID){
+				var Message = "Please enter a reference";
+				$("#ref_sponser_id_message").text(Message);
+				return false;
+			}else{
+				$("#ref_sponser_id_message").text("");
+			} */
+			// alert(LegValue);
+			if(RefID){
+				$.ajax({
+					type:"POST",
+					url:'<?php echo BASEPATH; ?>/Checkleg',
+					data: {'leg':LegValue,'ref_sponser_id':RefID,'token':token},
+					success:function(html){
+						
+						var data=	JSON.parse(html);
+						 
+						if(data['data'] != "success"){
+							$("#ref_sponser_id_message").text(data['data']);
+						}else{
+							$("#ref_sponser_id_message").text("");
+						}
+					}
+				});
+			}
+		
+		}
+	
+	function closePopup(){
+		// alert("here");
+		// $("#LeadPopup").hide();
+		$(".popup").hide();
+		return false;
+	}
+	
+	var flag=0;
+$(document).ready(function(e){
+	
+	setTimeout(function(){
+	   // $('#registcontent').close();
+	},3000);
+
+	
+	$.validator.addMethod("checkusername",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                  url: '<?php echo BASEPATH; ?>/Checkleg/checkusername',
+                data: {'username':$('#username').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] =='success'){ check=true;}
+                    else{ check=false;}
+                }
+            });
+        return check;
+    });
+	
+	$.validator.addMethod("checkemail",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkemail',
+                data: {'email':$('#email_addr').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {  
+                	var data=	JSON.parse(res); 
+              	  
+                    if(data['success'] =='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+    $.validator.addMethod("check_reg_id",function(value,element){
+		check=false;
+		$.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkregid',
+                data: {'ref_id':$('#ref_sponser_id').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {   
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] !='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+    $.validator.addMethod("check_leg",function(value,element){
+		
+        check=false;
+
+        return true;
+		 
+    });
+	
+	$.validator.addMethod("check_count",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkcount',
+                data: {'ref_id':$('#ref_sponser_id').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {   
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] =='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+	 $.validator.addMethod("loginRegex", function(value, element){
+        return this.optional(element) || /^[a-z0-9]+$/i.test(value);
+    }, "Username must contain only letters or numbers");
+
+	 $.validator.addMethod("checkpass",function(value,element){
+			var password = $("#password").val();
+			
+			check=false;
+			var passw=  /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[@]).+$/;
+		      if(password.match(passw))  
+		      {  
+		    	  check=true; 
+		      }  
+		      else  
+		      {  
+		    	  check=false;
+		      }  
+			return check;
+		});
+
+	 $.validator.addMethod("agree",function(value,element){
+			var agree = $("#agree").val();
+			
+			check=false;
+			
+		  if((agree)  && agree!="")  
+		      {  
+		    	  check=true;
+		    	  
+		      }  
+		      else  
+		      {  
+		    	  check=false;
+		      } 
+			return check;
+		});
+	 
+
+
+
+	 
+        $('#registerUserForm').validate({
+        	 debug: true,
+		// Rules for form validation
+			rules : {
+				username : {
+					required : true,
+					loginRegex:true,
+					minlength: 5,
+					checkusername:true,
+				},
+				email_addr : {
+					required : true,
+					email : true,
+					checkemail:true,
+                                },
+				password : {
+					required : true,
+					minlength: 8,
+					checkpass:true
+                                },
+				password_rpt : {
+					required : true,
+					minlength: 8,
+					checkpass:true,
+					equalTo : "#password",
+                                },
+				ref_sponser_id: {
+					required : true,
+					check_reg_id:true,
+					check_count:true
+						 },
+				address : {
+					required : true
+				},
+				captcha : {
+					required : true,
+					equalTo : "#og_captcha",
+				},
+                                agree:{
+                                    required: true,
+                                    agree:true
+                                },
+                                leg:{
+                                    required: true,
+		
+
+							/* check_leg:true */
+                                },
+                         },
+
+			// Messages for form validation
+
+messages : {
+				username : {
+					required : 'Please enter your first name',
+					checkusername:'Username already taken',
+					minlength: "At least {5} alphanumeric characters required.",
+					loginRegex:'Username must contain only letters or numbers'
+					
+				},
+				
+				email_addr : {
+					required : 'Please enter your email address',
+					email : 'Please enter a VALID email address',
+					checkemail:'Email already registered'
+                                        
+				},
+				password : {
+                       required: "Please enter password.",
+                        minlength: "At least {8} characters required.",
+                        checkpass: "Note: password must start with character, contain digits and only '@' is allowed as special character."
+                                        
+				},
+				password_rpt: {
+                        required: "Please re-enter the password.",
+                        minlength: "At least {8} characters required.",
+                        checkpass: "Note: Password must start with character, contain digits and only '@' is allowed as special character.",
+                        equalTo:"Password not match"
+                },
+				captcha: {
+                        required: "Please enter captcha",
+                        equalTo:"CAPTCHA wrong!!",
+                },
+				ref_sponser_id:{
+						required: "Please enter reference",
+						check_reg_id: 'Reference id wrong',
+						check_count:'Reference id full of level'
+				},	
+				//leg:{
+				//		required: "Please select left or right leg",
+						 /* check_leg: 'Inactivated user', */
+				//},	
+                  agree:{
+                  	required: "Please Confirm agreement",
+                  	
+                   },
+				
+			},
+			
+			// Do not change code below
+			errorPlacement : function(error, element) {
+				flag=1;
+				error.insertAfter(element.parent());
+			}
+		});
+});
+
+			function show_box(id) {
+			 $('.widget-box.visible').removeClass('visible');
+			 $('#'+id).addClass('visible');
+			}
+			function encryptPass(pass)
+			{
+				var flag=1;
+				var newpass	= enc(pass);
+				
+
+				/*if (newpass.indexOf(" ") >= 0 || newpass.indexOf("+") >=0) {
+					return encryptPass();			
+				}
+				else
+				{
+					flag=1;
+				}*/
+				
+				if(flag==0)
+				{
+					//return	encryptPass();
+				}
+				else
+				{
+					return newpass;
+				}
+				
+			}
+		</script>

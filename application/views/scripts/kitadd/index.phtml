@@ -1,0 +1,2128 @@
+<?php
+$unique = rand(1111, 9999);
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$common_obj = new Gbc_Model_Custom_CommonFunc();
+$flag = $common_obj->cleanQueryParameter($_REQUEST['flag']);
+?>
+
+<script data-cfasync='false'>
+
+
+    function ValidationEvent(event) {
+
+//        $('#preloader2').show();
+        var kit_no = $('#kit_number').val();
+
+        var con_type = $('#contract_type1').val();
+        var total_amount = $('#total_amount1').val();
+        var full_name = $('#full_name').val();
+        var email = $('#email').val();
+        var mobile = $('#mobile').val();
+        var address1 = $('textarea#address1').val();
+        var address2 = $('textarea#address2').val();
+        var city = $('#city').val();
+        //var city1 = city.options[city.selectedIndex].value;
+        var state = $('#state').val();
+        // var state1 = state.options[state.selectedIndex].value;
+        var country = $('#country').val();
+        // var country1 = country.options[country.selectedIndex].value;
+
+        var pincode = $('#pincode').val();
+        var kt_type = $('#kt_type').val();
+        if (kt_type == 'hardware' && email != '') {
+            var atpos = email.indexOf("@");
+            var dotpos = email.lastIndexOf(".");
+        }
+        // alert("full name="+full_name+" email="+email+" mobile="+mobile+" address1="+address1+" address2="+address2+" city="+city+" state="+state+" country="+country+" pincode="+pincode+" kt_type="+kt_type);
+//document.getElementById("purchase_kit").addEventListener("click",function(event){ event.preventDefault() });
+        if (kt_type == 'hardware' && (!full_name || full_name == '')) {
+            //alert("inside");
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Full Name.";
+            event.preventDefault();
+            return false;
+        }
+        else if (kt_type == 'hardware' && (!email || email == '')) {
+            //alert("in email");
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Email Id.";
+            event.preventDefault();
+            return false;
+        }
+        else if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email) {			//alert("dsfsdf");
+            $("#err_div").css("display", "block");
+            document.getElementById("err_div").innerHTML = "";
+            document.getElementById("err_div").innerHTML = "Please provide valid Email.";
+            $('#err_div').css('display', 'block');
+            $('#err_div').css('color', 'red');
+            flag == 1;
+            event.preventDefault();
+            return false;
+        }
+        else if (kt_type == 'hardware' && (!mobile || mobile == '')) {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Phone.";
+            event.preventDefault();
+            return false;
+        }
+        else if (kt_type == 'hardware' && (!address1 || address1 == '')) {
+            // alert("insdif");
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Address Line1.";
+            $("#err_purch").empty();
+            $("#err_purch").append("Please enter Address Line1.");
+            return false;
+        }
+        else if (kt_type == 'hardware' && (!address2 || address2 == '')) {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Address Line2.";
+            event.preventDefault();
+            return false;
+        }
+        else if (kt_type == 'hardware' && country == "") {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please select Country.";
+            $("#err_purch").empty();
+            $("#err_purch").append("Please select Country.");
+            return false;
+        }
+
+        else if (kt_type == 'hardware' && state == "") {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please select State.";
+            $("#err_purch").empty();
+            $("#err_purch").append("Please select State.");
+            return false;
+        }
+
+        else if (kt_type == 'hardware' && city == "") {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please selct City.";
+            $("#err_purch").empty();
+            $("#err_purch").append("Please select City.");
+            return false;
+        }
+
+        else if (kt_type == 'hardware' && (!pincode || pincode == '')) {
+            $("#err_purch").css("display", "block");
+            document.getElementById("err_purch").innerHTML = '';
+            document.getElementById("err_purch").innerHTML = "Please enter Pincode.";
+            event.preventDefault();
+            return false;
+        }
+
+        else {
+            //alert("herefdfhfgh");
+            var token = $('#token1').val();
+            $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkkitstatus',
+                data: {'kit_number': kit_no, 'kit_type': con_type, 'total_amount': total_amount, 'token': token},
+//                async: false,
+                beforeSend: function () {
+                    $("#preloader2").show();
+                },
+                complete: function () {
+
+                },
+                success: function (res) {  
+					//alert(res->value);return false;
+					
+                    $("#preloader2").hide();
+                    if (res === 'false') {
+                        $("#err_purch").css("display", "block");
+                        document.getElementById("err_purch").innerHTML = "This kit is not available or already used, pls try with another kit";
+                        //$('#err_purch').empty();
+                    } else if (res == 2) {
+                        $("#err_purch").css("display", "block");
+                        document.getElementById("err_purch").innerHTML = "Contract price is not the same as the kit price";
+                    }
+                    else {
+						if(res != "true"){
+							$("#err_purch").css("display", "block");
+							document.getElementById("err_purch").innerHTML = res;
+						}else{
+							token = $('#token1').val();
+							$("#preloader2").show();
+							$.ajax({
+								type: "POST",
+								url: '<?php echo BASEPATH; ?>/Purchasecontract/purchasekit',
+								data: 'buy_now=' + $('#buy_now').val() + '&contract_type=' + $('#contract_type1').val() + '&hiddencontractId=' + $('#hiddencontractId').val() + '&kit_number=' + $('#kit_number').val() + '&total_amount=' + $('#total_amount1').val() + '&type=' + $('#type').val() + '&full_name=' + full_name + '&email=' + email + '&mobile=' + mobile + '&address1=' + address1 + '&address2=' + address2 + '&city=' + city + '&state=' + state + '&country=' + country + '&pincode=' + pincode + '&kt_type=' + kt_type + '&token=' + token,
+								dataType: "json",
+					//             async: false,
+								beforeSend: function () {
+									$("#preloader2").show();
+								},
+								complete: function () {
+
+								},
+								success: function (res) {
+									$("#preloader2").hide();
+
+                                if (res.success == 'success') {
+                                    if (res.tran_flag != 0) {
+                                        $("#buycontract").css("display", "none");
+                                        $("#select_kit").css("display", "none");
+                                        $("#payment_details").css("display", "none");
+                                        $("#contractlist").css("display", "none");
+                                        $("#contractlist1").css("display", "none");
+                                        $("#confirmation").css("display", "block");
+                                        $("#confirmid").css("display", "block");
+                                        $('#kitselectid').removeClass('active');
+                                        $('#buycontractid').removeClass('active');
+                                        $('#confirmid').addClass('active');
+                                        $('#confirmationPartial').css("display", "none");
+
+                                    }
+                                    else {
+                                        $("#buycontract").css("display", "none");
+                                        $("#select_kit").css("display", "none");
+                                        $("#payment_details").css("display", "none");
+                                        $("#contractlist").css("display", "none");
+                                        $("#contractlist1").css("display", "none");
+                                        $("#confirmation").css("display", "none");
+                                        $("#confirmid").css("display", "none");
+                                        $('#confirmationPartial').css("display", "block");
+                                        $('#kitselectid').removeClass('active');
+                                        $('#buycontractid').removeClass('active');
+                                        $('#confirmid').addClass('active');
+                                        $('#amntpaid').empty();
+                                        $('#amntpaid').append(res.kitprice);
+                                        $('#amntdue').empty();
+                                        $('#amntdue').append(res.amount);
+
+										}
+
+									}
+									else if (res.failure != '') {
+										$("#err_purch").css("display", "block");
+										document.getElementById("err_purch").innerHTML = res.failure;
+
+									}
+									else {
+										$("#err_purch").css("display", "block");
+										document.getElementById("err_purch").innerHTML = "This kit is not available or already used, pls try with another kit!!";
+
+									}
+								}
+							});
+						}
+
+                    }
+                }
+            });
+        }
+//        $('#preloader2').hide();
+        return false;
+
+    }
+
+</script>
+<script>
+    $(document).ready(function () {
+        $("#country").change(function () {
+            var city = $('#city').val();
+            var id = $("#country option:selected").attr("id");
+            //alert( id );
+            $.ajax({
+                type: "POST",
+                url: "<?php echo BASEPATH?>/Statelistmobapi?country_id=" + id,
+
+                success: function (response) {//alert(JSON.stringify(response.data.State_list.State));return;
+
+                    var data = JSON.parse(response);
+                    //alert(data);return;
+                    var innerhtml = '';
+                    innerhtml += '<option value = "">Select State</option>';
+                    //alert(JSON.stringify(data['data']['State_list']));
+                    for (var i = 0; i < (data['data']['State_list']).length; i++) {
+                        //alert(data['data']['State_list'][i]['State']);
+                        innerhtml += '<option id="' + data['data']['State_list'][i]['Id'] + '" value="' + data['data']['State_list'][i]['State'] + '">' + data['data']['State_list'][i]['State'] + '</option>';
+
+                    }
+                    //	innerhtml+='</select>';
+                    //	$('#state').empty();
+                    $('#state').empty();
+                    //$('#state').append("");
+                    $('#state').append(innerhtml);
+
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function () {
+        $("#state").change(function () {
+            var state = $('#state').val();
+            var stateId = $("#state option:selected").attr("id");
+            //alert( stateId );
+            $.ajax({
+                type: "POST",
+                url: "<?php echo BASEPATH?>/Citylistmobapi?stateid=" + stateId,
+
+                success: function (response) {
+                    //alert(response['data']);
+
+
+                    var innerhtml = '';
+                    innerhtml += '<option value = "">Select State</option>';
+                    //alert(JSON.stringify(response['data']));return;
+                    for (var i = 0; i < (response['data']['city_list']).length; i++) {
+                        //alert(data['data']['State_list'][i]['State']);
+                        innerhtml += '<option id="' + response['data']['city_list'][i]['Id'] + '" value="' + response['data']['city_list'][i]['Cityname'] + '">' + response['data']['city_list'][i]['Cityname'] + '</option>';
+
+                    }
+                    //	innerhtml+='</select>';
+                    //	$('#state').empty();
+                    $('#city').empty();
+                    //$('#state').append("");
+                    $('#city').append(innerhtml);
+
+                }
+            });
+        });
+    });
+
+
+</script>
+<style>
+    #menu, #sample .footer, #sample p, .breadcrumb > li + li:before {
+        display: none;
+    }
+	
+	#bg_img{
+		padding:0;
+	}
+
+    li a:hover, a li:focus {
+        background: transparent;
+        color: #364a5e;
+    }
+
+    .req-table {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .req-admin .modal-body {
+        background: none repeat scroll 0 0 #e6e7e8;
+    }
+
+    .req-admin .modal-header {
+        color: #fff;
+        font: 20px "robotobold";
+    }
+
+    .req-table > tbody > tr > td, .req-table > thead > tr > th {
+        font-family: "robotobold";
+        font-size: 16px;
+        padding: 5px 0;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .req-table > tbody > tr > td {
+        font-family: "robotoregular";
+        text-transform: none;
+    }
+
+    .search-con input {
+        border: medium none;
+        border-radius: 0;
+        margin-bottom: 10px;
+    }
+
+    .req-btn, .req-btn:hover {
+        background: none repeat scroll 0 0 #34495e;
+        color: #fff;
+    }
+
+    .sizecls {
+        display: inline-block;
+        float: left;
+        margin-right: 3%;
+        text-align: left;
+        width: 45%;
+    }
+
+    .col-lg-2 {
+        width: 9.667%;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+	
+	
+    #ship_addr {
+        display: none;
+    }
+	
+	input[type="radio"]:checked+label {
+	  background-color: #60b761;
+	}
+
+	.c-con{
+		background: #fff;
+		text-align: center;
+		padding: 10px;	
+	}
+	
+	.panel-body{
+		background: #f0f3f4;
+		text-align:center;
+	}
+	
+	
+    .form-group {
+        text-align: left;
+    }
+
+    textarea.form-control {
+        height: 34px;
+    }
+
+    .col-xs-3, .col-xs-9, .col-xs-6 {
+        padding: 0 5px !important;
+    }
+
+    .shippingadd {
+        float: left;
+        width: 100%;
+
+    }
+
+    @media (min-width: 768px) and (max-width: 870px) {
+        .form-group {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 570px) {
+        .form-group {
+            width: 100%;
+        }
+    }
+    
+    
+	/*
+	.waitingForConnection {
+	  animation: blinker .2s cubic-bezier(.5, 0, 1, 1) infinite alternate;  
+	}
+	@keyframes blinker { to { opacity: 0; } }
+	*/
+	.blink{
+		  font-size: 22px;
+	  	  background: -webkit-linear-gradient(#00F, #F33);
+	  	-webkit-background-clip: text;
+	  	-webkit-text-fill-color: transparent;
+		}
+	
+		 .blink_me {
+		  animation: blinker .5s linear infinite;
+		}
+
+		@keyframes blinker {  
+		  50% { opacity: 0.6; }
+		}
+
+	.gradient{  
+		font-size: 16px;
+		background: -webkit-linear-gradient(#ff0000, #ffff00);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+	
+	}
+    .btn-float{
+        float:left;
+        margin-left:10px;
+    }
+    
+    @media (max-width:480px){
+     .btn-float{
+        float:none;
+    }   
+    
+    }
+</style>
+<input type="hidden" value="<?php echo $authUserNamespace->token; ?>" id="token1" name="token1">
+<div class="modal req-admin" id="req-admin-payment">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">Request Admin to Activate
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeReqAdmin();">
+					<i class="is close-btn"></i>
+				</button>
+			</div>
+			<input type="hidden" id="pmode" name="pmode" value="">
+			<div class="modal-body g-auth-body">
+				<table class="req-table" cellspacing="0">
+					<thead>
+					<tr>
+						<th>Invoice Id</th>
+						<th>Kits Quantity</th>
+						<th>Price in BTC</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td id="td1">&nbsp;</td>
+						<td id="td2">&nbsp;</td>
+						<td id="td3">&nbsp;</td>
+					</tr>
+					</tbody>
+				</table>
+				<div class="search-con">
+					<div class="errortext">
+						<label for="" class="lblTxt" style="color:red;"></label>
+					</div>
+					<input type="text" placeholder="Enter Transaction id" id="txid" name="txid" class="form-control">
+					<button class="btn btn-default text-uppercase req-btn" id="request_admin"
+							onclick="requestPayment();">Request to Admin
+					</button>
+				</div>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
+
+<?php
+	$spec_obj = new Gbc_Model_DbTable_SpecialPermission();
+	$available_kits_qry = $spec_obj->fetchRow($spec_obj->select()
+	);
+	$available_kits = $available_kits_qry->available_kits;
+	if (in_array(date('d'), range(1, 15))) {
+		// echo date('d');
+		$start = "1st";
+		$end = "15th";
+		$nextCycle = "16th " . date('F');
+	} else {
+		$start = "16th";
+		$end = new DateTime("last day of this month");
+		$end = $end->format('d');
+
+		$date = new DateTime();
+		$date->modify('+1 month');
+		$nextMonth = $date->format('F');
+		$nextCycle = "1st " . $nextMonth;
+	}
+	if (!empty($available_kits) && ($available_kits) > 0) {
+		$daterange = 'Contracts Available from ' . $start . ' ' . date('F') . ' to ' . $end . ' ' . date('F') . ' : ' . $available_kits . ' BTC only!!!';
+	} else {
+		$daterange = 'Contracts Available from ' . $start . ' ' . date('F') . ' to ' . $end . ' ' . date('F') . ' : 0 BTC only!!! <br/><br/>No new sales will be accepted for this cycle. Please wait for ' . $nextCycle . '';
+	}
+?>
+
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Contracts</h4>
+		<h5 class="text-muted page-title-alt">Buy Contract</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-content form-compoenent">
+							<div class="clearfix"></div>
+							<br>
+							<div class="row"> 
+								<div class="col-lg-12"> 
+									<div class="panel-group" id="accordion-test-2"> 
+										<div class="panel  panel-primary "> 
+											<div class="panel-heading"> 
+												<h4 class="panel-title"> 
+													<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseOne-2" onclick="show('select_kit');" aria-expanded="true" class="collapsed">
+													   Select Kit Type
+													</a> 
+												</h4> 
+											</div> 
+											<div id="collapseOne-2" class="panel-collapse collapse in" aria-expanded="true" > 
+												<div id = "select_kit">
+													<div style="font-weight:bold; text-align: center;padding:10px 0;"><?php echo $daterange; ?></div>
+													<?php 
+														$permissions_data = $this->permissions_data;
+															if(!empty($permissions_data)){
+																foreach($permissions_data as $data){
+																//	var_dump($data);
+																	if(($data['name'] == "pay_via_wallet_disable") && ($data['value'] == "1")){
+																		$pay_via_wallet_disable = 1;
+																		$pay_via_wallet_disable_start = $data['start'];
+																		$pay_via_wallet_disable_end = $data['end'];
+																	}
+																	if(($data['name'] == "amaze_q_max_date") && ($data['value'] == "1")){
+																		//$withdrawaldisable_startDate = $data['start'];
+																		$amaze_q_max_date = $data['end'];
+																	}
+																	
+																	if($data['name'] == "btc_conversion_value"){
+																		$btc_conversion_value = $data['value'];
+																	}else{
+																		$btc_conversion_value = 2.345;
+																	}
+																	if(($data['name'] == "btc_usd_price")){
+																		$btc_usd_price = $data['value'];
+																	}
+																}
+															}
+													
+														if (!empty($available_kits) && ($available_kits) > 0) {
+													?>
+													<form action="<?php echo BASEPATH; ?>/Invoice" method="post" id="kit_form">
+														<input type="hidden" name="unique" value="<?php echo $unique; ?>">
+														<input type="hidden" value="<?php echo $authUserNamespace->token; ?>" name="token">
+														<div class="panel-body">
+														<?php if (!empty($flag) && $flag != 'hw') { ?>
+															<div class="con-container">
+													<?php
+														$i = 0;
+													//	print_r($this->sha_contract);
+														
+												/*        BTC to USD Conversion         */	
+												/*
+													$Price_in_usd = file_get_contents("http://api.coindesk.com/v1/bpi/currentprice.json");
+													if($Price_in_usd){
+														$Price_in_usd = json_decode($Price_in_usd);
+														$Price_in_usd = $Price_in_usd->bpi->USD->rate;
+													}else{
+														$Price_in_usd = $btc_usd_price;
+													}
+
+													//		print_r($Price_in_usd);
+													//	$Price_in_usd = number_format($Price_in_usd,'4','.','');
+														$Price_in_usd = str_replace(',','',$Price_in_usd);
+														
+												*/
+														
+													/*        BTC to USD Conversion         */		
+														
+														
+												/*        MCAP to BTC Conversion         */			
+											/*			
+											$McapPrice_in_BTC = file_get_contents("https://bitcoingrowthfund.com/api/market_states/mcap/btc");
+													if($McapPrice_in_BTC){
+														$McapPrice_in_BTC = json_decode($McapPrice_in_BTC);
+														$McapPrice_in_BTC = $McapPrice_in_BTC->last_price;
+													}else{
+														$McapPrice_in_BTC = $btc_usd_price;
+													}
+*/
+											/*        MCAP to BTC Conversion         */					
+														
+														
+																	foreach ($this->sha_contract as $getCotracts) {
+																		$AvailableKits = $getCotracts['available_limit'];
+																		$ExpiryDate = date("Y-m-d h:i:s", strtotime($amaze_q_max_date));
+																		$currentDateTime = date("Y-m-d h:i:s");
+																		$contractArray = array(11, 10, 9, 8);
+
+																	/*	if ($getCotracts['max_limit'] > 0 && $AvailableKits == 0) {
+
+																			$disabled = 0;
+																		} else {
+																			$disabled = 0;
+																		}
+																	*/
+																		
+																		if ($getCotracts['contract_type'] != "MS" && $getCotracts['contract_id'] != 23){
+																			$disabled = 1;
+																		}
+
+																		if ($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7) {
+																			$type = "ROI";
+																		} else if ($getCotracts['contract_id'] == 4) {
+																			$type = "Silver";
+																		} else {
+																			$type = "Referral";
+																		}
+																//	if($getCotracts['total_price'] <=  15){
+																		 if ($i % 3 == 0) {
+
+																?>
+																<div class="con-content">
+																	<?php } ?>
+																	<div class="col-lg-4" style ="padding:5px;">
+																		<div class="c-con"  >
+																			<h4><?php echo $getCotracts['contract_name']; ?></h4>
+																			<!--
+																			<span style ="display:block;"><?php echo $getCotracts['contract_qty'] ?> <?php if ($getCotracts['total_price'] <= 0.5) { ?>GHS <?php } else { ?> THS <?php } ?></span>-->
+																			<span style ="display:block;"><?php
+																				//if($getCotracts['total_price'] != $getCotracts['price_paid']){
+																				//	echo '<label style ="text-decoration:line-through; margin: 15px;color:red;">'.($getCotracts['total_price']).' BTC</label>' ;
+																			//		echo '<label>'.($getCotracts['price_paid']).'</label>' ;
+																			//	}else{
+																					//echo  "$ ".($getCotracts['total_price']) ;
+														//	$totalAmountinBTC = round(( $getCotracts['total_price'] / $Price_in_usd), 4);
+
+													//		$totalAmountinBTC += round((( $totalAmountinBTC * $btc_conversion_value) / 100), 4);
+																		
+														//	$totalAmountinMCAP = round(( $totalAmountinBTC / $McapPrice_in_BTC), 4);
+																		
+																		echo '<div style ="font-size:16px; height:30px;text-decoration:line-through; margin: 5px;color:red;">';
+																		if($getCotracts['discount']){
+															//				$netAmountinBTC = round(($totalAmountinBTC - (($totalAmountinBTC * $getCotracts['discount']) / 100)),4);
+														//		$DiscountedTotalAmountinBTC = $netAmountinBTC.' BTC';
+																			
+													//		$DiscountedTotalAmountinMCAP = round(( $DiscountedTotalAmountinBTC / $McapPrice_in_BTC), 4).' MCAP';
+																			
+															$totalAmount = round(($getCotracts['total_price'] - (($getCotracts['total_price'] * $getCotracts['discount']) / 100)),4);			
+																										
+																			echo '$'.$getCotracts['total_price'];
+																		}else{
+																			$totalAmount = $getCotracts['total_price'];
+																		}
+																		 echo '</div>';
+																//		echo '<div style ="height:30px;text-decoration:line-through; margin: 5px;color:red;">'.$DiscountedTotalAmountinMCAP.'</div>' ;
+																//		echo '<div style ="height:30px; margin: 5px;">'.$totalAmountinMCAP.' MCAP</div>' ;
+																		
+																			
+																		
+																	//	else{
+																		echo '<div style ="font-size:16px; height:30px; margin: 5px;">$'.$totalAmount.'</div>';
+																	//	}
+																	//			echo  $totalAmountinMCAP." MCAP" ;
+																	//			echo  $totalAmountinBTC." BTC" ;
+																			//	}
+
+																				?>
+																				
+																			</span>
+																			<span style ="display:block; height:20px;">
+																			<?php
+																		/*
+																				if ($getCotracts['max_limit'] > 0){
+																					if ($AvailableKits > 0 || $AvailableKits == 'max_limit') {
+
+																						if (!$available_kits) {
+																							echo "Available $AvailableKits Kits Only ";
+																						}
+																						if (($getCotracts['contract_id'] == 8) || ($getCotracts['contract_id'] == 9) || ($getCotracts['contract_id'] == 10) || ($getCotracts['contract_id'] == 11)) {
+																						   echo "(** Limited offer till ".date("jS M, Y", strtotime($amaze_q_max_date))." Only)";
+																						 }
+																					} else {
+																						echo "Out of stock";
+																					}
+																				} else if ($getCotracts['total_price'] > 1) {
+																				   echo "(** Limited offer till ".date("jS M, Y", strtotime($amaze_q_max_date))." Only)";
+																				}
+																				if($getCotracts['contract_id'] == 13){
+																					echo "(**Refund not allowed on this kit)";
+																				}
+																				
+																				*/
+																		
+																		if ($getCotracts['contract_type'] != "MS" && $getCotracts['contract_id'] != 23){
+																			echo "Out of stock";
+																		}
+																		
+																			?>
+																			</span>
+																			<div class="btn_container" style = "margin: 5px;">
+																				<!--<input type="button" value="BUY NOW" class="btn_"
+																											  onclick="purchase('mining<?php echo $i ?>');">-->
+																				
+																				<input type="hidden" name="price" id = "price<?php echo $getCotracts['contract_id'] ?>" value="<?php echo  ($getCotracts['total_price']) ?>" >
+																				<input <?php //echo ($getCotracts['contract_id'] == 1) ? "checked" : ""; ?>
+																						type="radio" name="kit_type"
+																						class="" <?php if (!empty($disabled) && $disabled == 1) { ?> disabled <?php } ?>
+																						value="<?php echo $getCotracts['contract_id'] ?>"
+																						id="<?php echo $getCotracts['contract_name']; ?><?php echo $getCotracts['contract_id'] ?>"
+																						onclick="$('#no_of_kits').val('');" style = "display:none;">
+																				
+																		
+
+																				<?php if (!empty($disabled) && $disabled == 1) { ?>
+																					<label  class="btn btn-md" style ="background: #ccc;cursor: initial;" >SELECT</label>
+																				<?php }else{ ?>
+																					<label for = "<?php echo $getCotracts['contract_name']; ?><?php echo $getCotracts['contract_id'] ?>" class="btn btn-inverse btn-md" >SELECT</label>
+																				<?php } 
+																					if($getCotracts['discount']){
+																				?>
+																				<div style ="height:20px;padding-top: 10px;font-style:italic;text-align:left;">**Available Discount <?php echo $getCotracts['discount']."%" ?></div>
+																				<?php 
+																		}else{
+																			echo '<div style ="height:20px;padding-top: 10px;font-style:italic;text-align:left;"></div>';
+																		}
+																		 ?>
+																			</div>
+																		</div>
+																		
+																	</div>
+
+
+																	<?php if ($i == 2 || $i == 5 || $i == 8 || $i == 11 || $i == 14 || $i == (sizeof($this->sha_contract) - 1)) { 
+																			 if ($i != 0) { ?>
+																			<div class="clearfix"></div>
+																			</div>
+																		<?php 
+																				} 
+																			} 
+																			 $i++;
+																		?>
+																
+																<?php 
+																		//}
+																	}
+																?>
+																
+
+														<?php } ?>
+														<?php if (!empty($flag) && $flag != 'sha') { 
+															if (!empty($this->hardware_contract) && sizeof($this->hardware_contract) > 0) { ?>
+																<div class="form-group">
+																	<label for="" class="lblTxt">
+																		<span style="font-family:robotoregular;font-size:20px;font-weight: bold;padding:7px;">Bitcoin Hardware Wallet</span><br/>
+																	</label>
+																</div>
+																<div class="con-container">
+																	<?php
+																	$j = 0;
+																	foreach ($this->hardware_contract as $getCotracts) {
+																		if ($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7) {
+																			$type = "ROI";
+																		} else if ($getCotracts['contract_id'] == 4) {
+																			$type = "Silver";
+																		} else {
+																			$type = "Referral";
+																		}
+																		if ($j % 3 == 0) { ?>
+																			<div class="con-content">
+																		<?php } ?>
+																				<form method="POST" action="" id="mining<?php echo $i ?>">
+																					<div class="col-lg-4">
+																						<div class="c-con">
+																							<h2><?php echo($getCotracts['contract_name']) ?></h2>
+																							<span><?php echo $getCotracts['contract_qty'] ?>
+																								THS <?php echo($getCotracts['total_price']) ?> BTC</span>
+
+																							<div class="btn_container">
+																								<input type="button" value="BUY NOW"
+																															  class="btn btn-inverse btn-md"
+																															  onclick="purchase('mining<?php echo $i ?>');">
+																							</div>
+																						</div>
+																					</div>
+																				</form>
+																		<?php if ($j == 2 || $j == 5 || $j == 8 || $j == 11 || $j == 14 || $j == (sizeof($this->hardware_contract) - 1)) { ?>
+																			<?php if ($i != 0) { ?>
+																				<div class="clearfix"></div>
+																			</div>
+																	
+																	<?php 
+																			} 
+																		} 
+																		$i++;
+																		$j++;
+																	}
+																	?>
+																</div>
+															<?php
+																	}
+																}
+															?>
+
+																 <div class="clearfix"></div>
+																<div class="con-content" >
+																	<div class="col-lg-12" style ="padding:5px;">						
+																		<div class="c-con" style = "padding-bottom:50px;">
+																			<div style="font-size:14px;font-family:robotoregular;color:red;" id="selectkits"></div>
+																			<div class="col-lg-4">
+																				<div class="input-type-select">
+																					<select name="no_of_kits" id="no_of_kits" class = "form-control" style = "margin-top: 25px;">
+																						<option value="">Select No of Kits</option>
+																						<?php
+																							/*
+																							for ($i = 1; $i <= 15; $i++) {
+																								echo "<option value='$i'>$i</option>";
+																							}
+																							*/
+																						?>
+																					</select>
+																				</div>
+																			</div>
+																			<div class="col-lg-8">
+																				<label for="">Total Amount (USD)</label>
+																				<input type="text" value="" id="total_amount" name="total_amount" readonly="readonly" class = "form-control" 
+																					   style = "background:#fff;">
+																				<input type="hidden" id="real_total_amount" name="real_total_amount">
+																				<input type="hidden" name="buy_now" value="sha">
+																			</div>
+																			 <div class="col-lg-12">
+																				<div class="btn_container purchase" style ="margin-top:20px;">
+																					<input type="button" value="PAY via MCAP" class="btn btn-inverse btn-md" id="purchase1" name="action">
+																					
+																					<label style ="margin:0 50px;"> OR</label>
+																						<input type="button" value="PAY via BTC" class="btn btn-inverse btn-md" id="purchase2" name="action">
+																			</div>		
+																		
+																			</div>
+																			<div class="col-lg-12">
+
+																				<div id="preloader" class=""
+																					 style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; display:none;">
+																					<img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+																				</div>
+
+																			</div>
+																			<div class="clearfix"></div>
+																			<div class="clearfix"></div>
+																		<?php 
+																			if($this->current_bal['bal_amt'] >= 0.1 && $this->user_cat['users_data'][0]['show_gb_wallet'] == 1){ 
+																		?>		
+																			 <div class="col-lg-12" style = "margin:50px 0;padding:0;">
+
+																				<div style = "height:50px;font-weight:bold;">OR</div>
+																				<label style = "padding:10px;"><?php echo "GBC Wallet Balance: ".$this->current_bal['bal_amt'];  ?></label>
+																				<div class="btn_container">
+																				<?php
+																					$CurrentDate = date('Y-m-d H:i:s');
+
+																					if($this->current_bal['requested_amount'] > 0 ){ 
+																						  echo '<span class="btn_" style = "text-align:center;margin:5px;display: block;background-color: #ccc;">PAY VIA WALLET</span>';
+																					  }else{
+																						//$value = $this->permissions_data['value'];
+
+																						if($pay_via_wallet_disable == 1  && $CurrentDate >= $pay_via_wallet_disable_start && $CurrentDate <= $pay_via_wallet_disable_end){
+																							echo '<span class="btn_" style = "text-align:center;margin:5px;display: block;background-color: #ccc;">PAY VIA WALLET</span>';
+																						 }else{
+																					?>
+																					<input type="button" value="PAY VIA WALLET" class="btn btn-inverse btn-md" id="pay_via_wallet" name="action" style = "margin:5px;">
+																				<?php
+																						} 
+																					}
+																				?> 
+																				</div>
+																				<?php
+																					if($pay_via_wallet_disable == 1  && $CurrentDate >= $pay_via_wallet_disable_start && $CurrentDate <= $pay_via_wallet_disable_end){
+																						echo '<div style = "margin:5px;">Please Note: Kit purchase through GB Wallet is disabled till '.date('d F, Y',strtotime($pay_via_wallet_disable_end)).'.</div>';
+																					 }
+
+																					if($this->current_bal['requested_amount'] > 0 ){ 
+																				?>
+																				<div style = "margin:5px;">Please Note: "Pay via Wallet" is disabled as manual withdrawal request of <?php echo $this->current_bal['requested_amount']; ?> BTC is in process.</div>
+																				<?php } ?>
+																			 </div> 
+																			 <div class="clearfix"></div>
+																		
+																<?php } ?>
+															</div>
+																	</div>
+																</div>
+															<?php
+																	}
+																?>	
+
+															</div>
+														</div>
+
+													</form>
+
+												</div>
+											</div>
+										</div> 
+
+									
+				
+                                        
+									
+                              
+                            <div class="panel  panel-primary"> 
+                                <div class="panel-heading"> 
+                                    <h4 class="panel-title"> 
+                                        <a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseTwo-2" class="collapsed" aria-expanded="false">
+                                            Make Payment
+                                        </a> 
+                                    </h4> 
+                                </div> 
+                            
+								 <div id="collapseTwo-2" > 
+                                   <div id="payment_details"  style="display:none;">					
+										<div class="pay-container" id="pay-container" style ="">
+											<div class="pay-note">
+												<div class="pay-n note" style = "margin:5px;">
+													**Please Note: Kits will get active after 3 confirmations on blockchain.
+												</div>
+
+											</div>
+											<div class="wait-info">
+												<div class="wait-msg">Waiting for your payment<span>04m 35s</span></div>
+												<div class="wait-btn"><input type="button" value="CANCEL" class="btn_ cancel-btn"></div>
+
+											</div>
+
+										</div>
+									</div>
+                                   
+                                </div> 
+                            </div> 
+                            <div class="panel  panel-primary"> 
+                                <div class="panel-heading"> 
+                                    <h4 class="panel-title"> 
+                                        <a data-toggle="collapse" onclick="show('list_of_contracts');" data-parent="#accordion-test-2" href="#collapseThree-2" class="collapsed" aria-expanded="false">
+                                            Buy Contract
+                                        </a> 
+                                    </h4> 
+                                </div> 
+                                <div id="collapseThree-2" class="panel-collapse collapse" aria-expanded="false"> 
+									<div id = "contractlist">
+										<div style="font-weight:bold; text-align: center;padding:10px 0;">SHA Mining Contracts</div>
+										<div class="panel-body">
+										  <?php if (!empty($flag) && $flag != 'hw') { ?>
+												<div class="con-container">
+													<?php
+														$i = 0;
+														foreach ($this->sha_contract as $getCotracts) {
+															if ($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7) {
+																$type = "ROI";
+															} else if ($getCotracts['contract_id'] == 4) {
+																$type = "Silver";
+															} else {
+																$type = "Referral";
+															}
+															
+														if ($i % 3 == 0) { 
+													?>
+													<div class="con-content">
+													<?php } ?>
+														<form method="POST" action="" id="mining<?php echo $i ?>">
+															<div class="col-lg-4" style ="padding:15px;">
+																<div class="c-con"  style = "background: #fff;text-align: center;padding:10px;">
+																	<h4><?php echo($getCotracts['contract_name']."($  ".$getCotracts['total_price'].")") ?></h4>
+																<!--
+																	<span style ="display:block;"><?php echo $getCotracts['contract_qty'] ?> <?php if ($getCotracts['total_price'] <= 0.5) { ?>GHS <?php } else { ?> THS <?php } ?></span>
+																	-->
+																	<span  style ="display:block;"><?php
+																	/*	if($getCotracts['total_price'] != $getCotracts['price_paid']){
+																			echo '<label style ="text-decoration:line-through; margin: 5px;">'.($getCotracts['total_price']).'</label>' ;
+																			echo '<label>'.($getCotracts['price_paid']).'</label>' ;
+																		}else{  
+																		//	echo  "$".($getCotracts['total_price']) ;
+															$totalAmount = round(( $getCotracts['total_price'] / $Price_in_usd), 4);
+																				$totalAmount += round((( $totalAmount * $btc_conversion_value) / 100), 4);
+																		if($getCotracts['discount']){
+													$netAmount = round(($totalAmount - (($totalAmount * $getCotracts['discount']) / 100)),4);
+																		echo '<div style ="height:30px;text-decoration:line-through; margin: 15px;color:red;">'.$totalAmount.' BTC</div>' ;
+																		$totalAmount = $netAmount;
+																		}else{
+																			echo '<div style ="height:30px;text-decoration:line-through; margin: 15px;color:red;"></div>' ;
+																		}
+																				echo  $totalAmount." BTC" ;
+																	*/
+																	//	}
+
+																		?>
+																		</span>
+																	<input type="hidden" name="sha_hashrate_qty" id="sha_hashrate_qty"
+																		   value="<?php echo $getCotracts['contract_id']; ?>"/>
+																	<input type="hidden" value="<?php echo($getCotracts['total_price']); ?>"
+																		   id="hid_btc_value" name="hid_btc_value"/>
+																	<input type="hidden" value="<?php echo($getCotracts['contract_type']); ?>"
+																		   id="k_type" name="k_type"/>
+																	<input type="hidden" value="<?php echo $authUserNamespace->token; ?>"
+																		   name="token">
+																	<input type="hidden" value="<?php echo $type ?>" id="contract_type"
+																		   name="contract_type"/>
+																	<div class="btn_container" style = "margin:25px;">
+																		<!--<input type="button" value="BUY NOW" class="btn_"
+																									  onclick="purchase('mining<?php echo $i ?>');">-->
+																			<a class="btn btn-inverse btn-md" onclick="purchase('mining<?php echo $i ?>');">BUY NOW</a>
+																		<?php
+																			/*
+																		if($getCotracts['discount']){
+																			
+																			echo "<div style ='height:30px;font-style:italic;text-align:left;'>**Available Discount $getCotracts['discount']%</div>"; 
+																		}else{
+																			echo '<div style ="height:30px;font-style:italic;text-align:left;"></div>';
+																		}
+																		*/
+																		
+																		?>
+																	</div>
+																</div>
+															</div>
+														</form>
+														<?php 
+															if ($i == 2 || $i == 5 || $i == 8 || $i == 11 || $i == 14 || $i == (sizeof($this->sha_contract) - 1)) { 
+																 if ($i != 0) { 
+														?>
+																<div class="clearfix"></div>
+														</div>
+														<?php
+																 } 
+																} 
+																$i++;
+															}
+														?>
+												</div>
+												<div class="err" style="text-align:center;color:red;display:none;"></div>
+
+											<?php } ?>
+											<?php if (!empty($flag) && $flag != 'sha') { ?>
+												<?php if (!empty($this->hardware_contract) && sizeof($this->hardware_contract) > 0) { ?>
+													<div id="contractlist1">
+														<div class="form-group"><label for="" class="lblTxt"><span
+																		style="font-family:robotoregular;font-size:20px;font-weight: bold;padding:7px;">Bitcoin Hardware Wallet</span><br/>
+															</label>
+														</div>
+														<div class="con-container">
+															<?php
+															$j = 0;
+															foreach ($this->hardware_contract as $getCotracts) {
+
+																if ($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7) {
+																	$type = "ROI";
+																} else if ($getCotracts['contract_id'] == 4) {
+																	$type = "Silver";
+																} else {
+																	$type = "Referral";
+																}
+																if ($j % 3 == 0) { 
+															?>
+
+															<div class="con-content">
+
+																<?php } ?>
+																<form method="POST" action="" id="mining<?php echo $i ?>">
+																	<div class="col-lg-4">
+																		<div class="c-con">
+																			<h2><?php echo($getCotracts['contract_name']) ?></h2>
+																			<span><?php echo $getCotracts['contract_qty'] ?>
+																				THS <?php echo($getCotracts['total_price']) ?> BTC</span>
+																			<input type="hidden" name="sha_hashrate_qty" id="sha_hashrate_qty"
+																				   value="<?php echo $getCotracts['contract_id']; ?>"/>
+																			<input type="hidden" value="<?php echo($getCotracts['total_price']); ?>"
+																				   id="hid_btc_value" name="hid_btc_value"/>
+																			<input type="hidden" value="<?php echo $authUserNamespace->token; ?>"
+																				   name="token">
+																			<input type="hidden"
+																				   value="<?php echo($getCotracts['contract_type']); ?>" id="k_type"
+																				   name="k_type"/>
+																			<input type="hidden" value="<?php echo $type ?>" id="contract_type"
+																				   name="contract_type"/>
+																			<div class="btn_container"><input type="button" value="BUY NOW"
+																											  class="btn_"
+																											  onclick="purchase('mining<?php echo $i ?>');">
+																			</div>
+																		</div>
+																	</div>
+																</form>
+																<?php if ($j == 2 || $j == 5 || $j == 8 || $j == 11 || $j == 14 || $j == (sizeof($this->hardware_contract) - 1)) { ?>
+																	<?php if ($i != 0) { ?>
+																		<div class="clearfix"></div>
+																		</div>
+																	<?php 
+																				}
+																			}
+																		$i++;
+																		$j++;
+																		}
+																	?>
+														</div>
+														<div class="err" style="text-align:center;color:red;display:none;"></div>
+													</div>
+												<?php 
+														}
+													}
+												?>
+										</div> 
+									</div> 	
+								</div> 
+							</div> 
+							<div class="panel  panel-primary"> 
+                                <div class="panel-heading"> 
+                                    <h4 class="panel-title"> 
+                                        <a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseFour-2" class="collapsed" aria-expanded="false">
+                                            Enter active Kit Number
+                                        </a> 
+                                    </h4> 
+                                </div> 
+                               
+										 
+               
+									<div id="buycontract" style = "display:none;">
+										 <div id="buycontractid" class = "c-con" >
+										<div class="con-content" style="text-align:center;">
+											<div class="clearfix"></div>
+											<form action="" method="post" id="purchase_kit">
+												<div class="form-group"
+													 style="color:red; display:none; padding-left:18px"
+													 id="err_purch"></div>
+
+												<div class="col-lg-11 col-lg-offset-1">
+													<div class="form-group sizecls">
+														<label for="" class="lblTxt" style="font-size:14px;font-weight: bold;">Total Amount</label>
+														<label for="" class="lblTxt"  style="display:block;">
+															<span id="contractamount"></span></label>
+													</div>
+													<div class="form-group sizecls">
+														<label for="" class="lblTxt"  style="font-size:14px;font-weight: bold;">Kit No.</label>
+														<input type="text" class="form-control CommonInputBox" name="kit_number" id="kit_number" value="">
+													</div>
+												</div>
+												<div class="col-lg-6" id="ship_addr">
+													<div class="form-group"><label for="" class="lblTxt"><span
+																	style="font-family:robotoregular;font-size:14px;font-weight: bold;">Shipping Address</span><br/>
+														</label>
+													</div>
+													<div class="form-group sizecls">
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">Full Name</label>
+															<input type="text" name="full_name" id="full_name"
+																   class="form-control CommonInputBox"
+																   value="<?php echo $this->user_cat['users_data'][0]['name']; ?>">
+														</div>
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">Email</label>
+															<?php if (!empty($this->user_cat['users_data'][0]['comm_email'])) { ?>
+																<input type="text" name="email" id="email"
+																	   class="form-control CommonInputBox"
+																	   value="<?php echo $this->user_cat['users_data'][0]['comm_email']; ?>">
+															<?php } else { ?>
+																<input type="text" name="email" id="email"
+																	   class="form-control CommonInputBox"
+																	   value="<?php echo $this->user_cat['users_data'][0]['email_address']; ?>">
+															<?php } ?>
+														</div>
+													</div>
+													<div class="form-group sizecls">
+														<div class="col-xs-3">
+															<label for="" class="lblTxt">Phone</label>
+															<select id="int_ph" name="int_ph" class="form-control CommonInputBox">
+																<?php if (!empty($this->user_cat['countries_data']) && sizeof($this->user_cat['countries_data']) > 0) {
+																	for ($i = 0; $i < sizeof($this->user_cat['countries_data']); $i++) {
+																		?>
+
+																		<option <?php if ($this->user_cat['countries_data'][$i]['ccode'] == $this->user_cat['users_data'][0]['country']) { ?> selected="true" <?php } ?>><?php echo $this->user_cat['countries_data'][$i]['ccode']; ?></option>
+
+																	<?php }
+																} ?>
+															</select>
+														</div>
+														<div class="col-xs-9">
+															<label for="" class="lblTxt" style="">&nbsp;</label>
+															<input type="phonr" name="mobile" id="mobile"
+																   class="form-control CommonInputBox"
+																   value="<?php echo $this->user_cat['users_data'][0]['phone']; ?>"/>
+														</div>
+													</div>
+
+													<div class="form-group sizecls" style="padding-left: 5px;">
+														<label for="" class="lblTxt">Address Line 1</label>
+														<textarea type="textarea" name="address1" style="width: 99%;" id="address1"
+																  class="form-control CommonInputBox" value=""></textarea>
+													</div>
+													<div class="form-group sizecls" style="padding-left: 5px;">
+														<label for="" class="lblTxt">Address Line 2</label>
+														<textarea type="textarea" name="address2" style="width: 99%;" id="address2"
+																  class="form-control CommonInputBox" value=""></textarea>
+													</div>
+													<div class="form-group sizecls">
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">Country</label>
+															<select id="country" name="country" class="form-control CommonInputBox">
+																<option value="" selected="selected">Select Country</option>
+
+																<?php if (!empty($this->user_cat['countries_data']) && sizeof($this->user_cat['countries_data']) > 0) {
+																	for ($i = 0; $i < sizeof($this->user_cat['countries_data']); $i++) {
+																		?>
+
+																		<option
+																				id="<?php echo $this->user_cat['countries_data'][$i]['id']; ?>"><?php echo $this->user_cat['countries_data'][$i]['country']; ?></option>
+
+																	<?php }
+																} ?>
+															</select>
+														</div>
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">State</label>
+															<select id="state" name="state" class="form-control CommonInputBox">
+																<option value="" selected="selected">Select State</option>
+															</select>
+														</div>
+													</div>
+
+													<div class="form-group sizecls">
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">City</label>
+															<select id="city" name="city" class="form-control CommonInputBox">
+																<option value="" selected="selected">Select City</option>
+
+
+															</select>
+														</div>
+
+														<div class="col-xs-6">
+															<label for="" class="lblTxt">Postal Code</label>
+															<input type="text" name="pincode" id="pincode"
+																   class="form-control CommonInputBox" value="" maxlength="20">
+
+														</div>
+													</div>
+												</div>
+                                                <div class="clearfix"></div>
+												<div class="col-lg-6 col-lg-offset-6">
+													<input type="hidden" value="" class="form-control" name="total_amount"
+														   id="total_amount1">
+													<input type="hidden" value="" class="form-control" name="type" id="type">
+													<input type="hidden" value="" class="form-control" name="kt_type" id="kt_type">
+													<input type="hidden" value="" id="contract_type1" name="contract_type"/>
+													<input type="hidden" value="" class="form-control" name="hiddencontractId"
+														   id="hiddencontractId">
+													<input type="hidden" value="sha" name="buy_now" style="height:30px; width:220px;"/>
+													<div class="clearfix" style = "padding-top:7px;margin-bottom:3px;">&nbsp;</div>
+													
+													<button type="button" onclick="ValidationEvent()" class="btn btn-inverse btn-md btn-float">
+														Purchase
+													</button>
+													<span id="preloader2" class=""
+														 style="width:100px;  margin: 0 auto; padding-top: 10px; display:none;">
+														<img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+													</span>
+												</div>
+											</form>
+
+											<div class="clearfix"></div>
+										</div>
+
+									</div>
+										
+                                </div> 
+                            </div> 
+			
+							<div class="panel  panel-primary"> 
+                                <div class="panel-heading"> 
+                                    <h4 class="panel-title"> 
+                                        <a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseFive-2" class="collapsed" aria-expanded="false">
+                                            Confirmation
+                                        </a> 
+                                    </h4> 
+                                </div> 
+                               
+                                    <div id="confirmid"  class="panel-body" style = "display:none;">
+                                        
+										<div class =  "col-lg-6 col-lg-offset-3 c-con">
+											<div id="confirmation">
+												<h4><strong>Congratulations!</strong></h4>
+												<div class="confirm-content" style = "text-align:center;" >
+													
+													<p>Your contract has been activated.</p>
+													<p class="n-content">You wil be able to see your contract details under the Order History
+														section of your user dashboard.</p>
+													<p>Contract Invoice is sent to your registered e-mail id.</p>
+													<!-- <div class="btn_container"><input type="button" value="VIEW INVOICE" class="btn_"></div>  -->
+												</div>
+											</div>
+											<div id="confirmationPartial" style = "text-align:justify;display:none;">
+												<div class="confirm-content">
+													<h2></h2>
+													<p>The amount paid (<span id="amntpaid"></span>) is not the same as the amount due (<span
+																id="amntdue"></span>). </p>
+													<p> This invoice is not activated automatically. Please manually activate this invoice from the
+														admin panel.</p>
+													<p>Please contact us for further assistance.</p>
+													<!-- <div class="btn_container"><input type="button" value="VIEW INVOICE" class="btn_"></div>  -->
+												</div>
+											</div>
+           							 </div>
+										
+										
+                                   
+                                </div> 
+                            </div> 
+			
+			
+                        </div> 
+                    </div>
+				</div>
+			
+		
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="myModal1" >
+
+</div>	
+<script data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+<script data-cfasync='false'>
+	
+	$("#info").click(function(){
+	 $("#myModal1").addClass('openpop');
+		 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 300px;overflow-y: auto;">'
+		+'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
+		+'</div>'
+		+'<div class="modal-body" id = "modal_body" style = "text-align:justify !important;padding: 10px 30px;">'
+		+'<h3 STYLE = "text-align:center;"> POWER OF ONE</h3><br>'
+		+'<ul style = "list-style-type: inherit;">'
+		+'	<li>The company is entering into new network marketing era with Power of One BTC kit</li>'
+		+'	<li>Use "POWER OF ONE" kit &amp; Get a chance to win all paid trip sponsored by GainBitcoin to  Hua Hin - Thailand for Universal Token Launch Party on 21st Apr 2017</li>'
+		+'	<li>The last date of participation and winners list declaration is 15th Apr 2017</li>'
+		+'	<li>For more details contact ur uplines!</li>'
+		+'</ul><br>'
+		+'<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start Today!!! All the best!</p>'
+		
+		+'</div></div></div>');
+	 });
+	  
+	  function closePop()
+		{
+			//$("#modal_body").append("hyes");
+			
+			$("#myModal1").removeClass('openpop');
+			$("#myModal1").html('');
+			// $("#myModal1").hide();
+		}
+	  
+	
+    $(document).ready(function () {
+        $('.stage-paid').on('show', function () {
+           // window.location.href = './order_status.php?invoice_id=<?php //echo $invoiceId; ?>';
+        });
+
+        $('input[type=radio][name=kit_type]').change(function () {
+            if (this.value == '1' || this.value == '13') {
+                // alert("Out of stock");
+                // this.checked = false;
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="15">15</option>');
+            } else if (this.value == '6') {
+                // alert("Out of stock");
+                // this.checked = false;
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="30">30</option>');
+            } else if (this.value == '7') {
+                // alert("Out of stock");
+                // this.checked = false;
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="75">75</option>');
+            } else if (this.value == '2') {
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="150">150</option>');
+            } else if (this.value == '12') {
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>');
+            } else {
+                // alert("Out of stock");
+                // this.checked = false;
+                $("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="15">15</option>');
+				
+            }
+			$("#total_amount").val('');
+			$("#real_total_amount").val('');
+        });
+
+        $('#kit_form').validate({
+            // Rules for form validation
+            rules: {
+                kit_type: {
+                    required: true
+                },
+                no_of_kits: {
+                    required: true,
+                },
+
+            },
+
+            // Messages for form validation
+            messages: {
+                kit_type: {
+                    required: 'Please Select Kit type',
+                },
+
+                no_of_kits: {
+                    required: "Please select  number of kits."
+                }
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                error.insertAfter(element.parent());
+            }
+        });
+		
+		$("#pay_via_wallet").click(function () {
+			  $('#preloader').show();
+			var kit_type = $('input[type=radio][name=kit_type]:checked').val();
+			if(kit_type == 13){
+				//alert(kit_type);
+				 $("#myModal1").addClass('openpop');
+				 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 200px;overflow-y: auto;">'
+				+'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
+				+'</div>'
+				+'<div class="modal-body" id = "modal_body" style = "text-align:justify !important;padding: 10px 30px;">'
+				
+				+'<p>Dear User,</p>'
+				+'	<p>Purchase of "Power of One" kit via GB wallet balance is not allowed.</p>'
+				
+				+'<p>Regards,<br>Team GB</p>'
+
+				+'</div></div></div>');
+				$('#preloader').hide();
+			return false;
+			}
+			
+            if ($('#no_of_kits').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;">Please select number of kits.</em>');
+                return false;
+            }
+            else if ($('#total_amount').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;>Amount should not be blank.</em>');
+                return false;
+            }  else {
+				var data = $("#kit_form").serialize();
+				data += "&type=kit_generation";
+				$.ajax({
+                    url: "<?php echo BASEPATH; ?>/Invoice",
+                    type: 'POST',
+                    data: data,
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success != '') {
+                           window.location = "<?php echo BASEPATH; ?>/Orderhistory";
+							  
+                        }
+                        else {
+                            $('#preloader').hide();
+                            $('#selectkits').empty();
+                            $('#selectkits').append('<em for="no_of_kits" class="invalid">' + data.failure + '</em>');
+                            return false;
+                        }
+                    }
+                });
+                return false;
+            }pay-container
+		});
+							 
+        $("#purchase2").click(function () {
+            $('#preloader').show();
+            if ($('#no_of_kits').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;">Please select number of kits.</em>');
+                return false;
+            }
+            else if ($('#total_amount').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;>Amount should not be blank.</em>');
+                return false;
+            }
+            else {
+
+                $.ajax({
+
+                    url: "<?php echo BASEPATH; ?>/Invoice",
+
+                    type: 'POST',
+
+                    data: $("#kit_form").serialize(),
+
+                    dataType: "json",
+
+                    success: function (data) {
+                        if (data.success != '') {
+                            $('#preloader').hide();
+                            var innerhtml = '<div class="pay-note"  style = "margin:5px;">' +
+                                '<div class="pay-n note">**Please Note: Kits will get active after 3 confirmations on blockchain.' +
+
+                                '</div>' +
+                                '<div class="pay-btn">' +
+                                //'<a href="<?php echo BASEPATH; ?>/Invoicestatus?invoice-id='+data.invoiceId+'"> <input type="button"  style="cursor:pointer;" value="CHECK KIT STATUS AFTER PAYMENT" class="btn_"></a>'+
+                                '<form method="post" action="<?php echo BASEPATH; ?>/Invoicestatus" name="form">' +
+                                '<input type="hidden" value="<?php echo $authUserNamespace->token;?>" name="token">' +
+                                '<input type="hidden" value="' + data.invoiceId + '" id="invoice_id" name="invoice_id">' +
+                                 '</form>' +
+                                '</div>' +
+                                '</div>';
+                            if (((data.payment_mode == "static") || (data.price_in_btc > 15)) && (data.payment_url == '')) {
+                                innerhtml += '<div  class = "message cyan">Please click on SUBMIT AFTER PAYMENT button or send transaction id regarding payment via contact form or send it through mail on mail id: thegainbitcoinhelp@gmail.com</div>' +
+                                    '<div class="row-fluid" style = "padding:20px;">' +
+
+                                    ' <div class="span12">' +
+                                    '<div class="row-fluid">' +
+                                    ' <div>' +
+                                    '<p>Please send ' + data.price_in_btc + ' BTC to</p> ' +
+                                    '<span>1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz</span>' +
+                                    '<img src = "https://blockchain.info/qr?data=1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz&size=200" />' +
+                                    '<div class="btn_container"><input  type="button" class="btn btn-inverse btn-md" id="submit_payment" value="SUBMIT AFTER PAYMENT" onclick="openReqAdmin();"></div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>';
+
+                                $('#td1').empty();
+                                $('#td1').append(data.invoiceId);
+                                $('#td2').empty();
+                                $('#td2').append(data.noOfKits);
+                                $('#td3').empty();
+                                $('#td3').append(data.price_in_btc);
+                                $('#pmode').val = data.payment_mode;
+
+
+                            }
+                            else if (data.payment_url && data.payment_url != null && data.payment_url != '') {
+
+                                if (data.payment_gateway == 1) {
+
+                                    var millis = data.remaining;
+
+                                    function displaytimer() {
+                                        var hours = Math.floor(millis / 36e2),
+                                            mins = Math.floor((millis % 36e2) / 60),
+                                            secs = Math.floor((millis % 6e1));
+                                        //Here, the DOM that the timer will appear using jQuery
+                                        hours = hours < 10 ? '0' + hours : hours;
+                                        mins = mins < 10 ? '0' + mins : mins;
+                                        secs = secs < 10 ? '0' + secs : secs;
+                                        if (millis > 0) {
+                                            $('.count').html('<span style ="display:inline;margin-left:10px;">Waiting for payment    </span>' + hours + ':' + mins + ':' + secs + ' <span style = "display:inline;margin-left:10px;">  hours remaining  </span><hr/>');
+                                        } else {
+                                            $('#payment_block').html('<div style = "padding:40px 20px;"><h4 class = "center">Timeout</h4><p>This invoice has expired. Do not pay to the address of this invoice. Please purchase new kit and make payment</p></div>');
+                                        }
+                                    }
+
+                                    setInterval(function () {
+                                        millis -= 1;
+                                        displaytimer();
+                                    }, 1000);
+
+                                    innerhtml += '<div id = "payment_block" style = "padding:10px;min-height:450px;">' +
+                                        '<div id ="result" class = "count center" style = "color:#ffa900;" > </div>' +
+                                        '<h4>Invoice #' + data.invoiceId + '</h4>' +
+                                        '<div style = "float:right;padding:20px;"><p>Please send ' + data.price_in_btc + ' bitcoin to this bitcoin address</p>' +
+                                        '<p style = "text-decoration:underline dashed grey">' + data.input_address + '</p>' +
+                                        '</div>' +
+                                        '<div style = "float:right;">' +
+                                        '<iframe id="if1" style="visibility:visible;border:0px;min-height:300px;" src="' + data.payment_url + '"></iframe>' +
+                                        '</div>' +
+                                        
+                                        '</div>';
+                                } else {
+                                    innerhtml += '<div id = "payment_block">' +
+
+                                        '<iframe id="if1" style="visibility:visible;border:0px;min-height:740px;width:100%;" src="' + data.payment_url + '"></iframe>' +
+                                        '</div>';
+                                }
+
+                            }
+                            else {
+                                innerhtml += '<div class = "center" style="text-align: center;">' +
+                                    '<img src = "<?php echo BASEPATH; ?>/images/oops.png">' +
+                                    '</div>';
+                            }
+
+                            $("#select_kit").css("display", "none");
+                          //  $("#contractlist").css("display", "none");
+                            $("#contractlist1").css("display", "none");
+                            $("#buycontract").css("display", "none");
+                            $("#confirmation").css("display", "none");
+                            $("#confirmid").css("display", "none");
+                            $("#payment_details").css("display", "block");
+
+                            $('#pay-container').empty();
+                            $('#pay-container').append(innerhtml);
+                            $('#kitselectid').removeClass('active');
+                            $('#detailpaymentid').addClass('active');
+
+                            //$('.btn-cancel').attr('href','<?php echo BASEPATH; ?>/Invoicestatus');
+                            //$('.arrow-right').attr('href','<?php echo BASEPATH; ?>/Invstatus?bitcoinpay-status=false&invoice-id='+data.invoiceId);
+
+                        }
+                        else {
+                            $('#preloader').hide();
+                            $('#selectkits').empty();
+                            $('#selectkits').append('<em for="no_of_kits" class="invalid">' + data.failure + '</em>');
+                            return false;
+                        }
+                    }
+
+
+                });
+                return false;
+            }
+        });
+		
+		
+		 $("#purchase1").click(function () {
+            $('#preloader').show();
+            if ($('#no_of_kits').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;">Please select number of kits.</em>');
+                return false;
+            }
+            else if ($('#total_amount').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').append('<em for="no_of_kits" class="invalid" style="font-style:normal;>Amount should not be blank.</em>');
+                return false;
+            }
+            else {
+
+                $.ajax({
+
+                    url: "<?php echo BASEPATH; ?>/Invoice/mcap",
+
+                    type: 'POST',
+
+                    data: $("#kit_form").serialize(),
+
+                    dataType: "json",
+
+                    success: function (data) {
+						//alert(data);
+                        if (data.success != '') {
+                            $('#preloader').hide();
+                            var innerhtml = '<div class="pay-note"  style = "margin:5px;">' +
+                                '<div class="pay-n note">**Please Note: ' +
+								'<span style = "display:block;">- After making payment wait for 10-15 seconds for page to reload</span>'+
+								'<span style = "display:block;">- Amount shown in invoice is excluding of transaction fee. Please include fee while making transaction to allow auto activation of kit</span>'+
+								'<span style = "display:block;">- Each address is unique for each invoice, please do not make another transaction on same address.</span>'+
+                                                                
+                                '</div>'+
+							'<div id ="result" class = "count center" style = "padding:10px;color:#ffa900;" > </div>';
+                         if (data.payment_url && data.payment_url != null && data.payment_url != '') {
+
+                                if (data.payment_gateway == 3) {
+
+                                    var millis = data.remaining;
+
+                                    function displaytimer() {
+                                        var hours = Math.floor(millis / 36e2),
+                                            mins = Math.floor((millis % 36e2) / 60),
+                                            secs = Math.floor((millis % 6e1));
+                                        //Here, the DOM that the timer will appear using jQuery
+                                        hours = hours < 10 ? '0' + hours : hours;
+                                        mins = mins < 10 ? '0' + mins : mins;
+                                        secs = secs < 10 ? '0' + secs : secs;
+                                        if (millis > 0) {
+                                            $('.count').html('<div style ="text-align:center;"><span style ="display:inline;margin-left:10px;font-size:16px;font-weight:bold;">Waiting for your payment    </span>  <span style = "display:inline;margin-left:50px;">  ' + hours + ':' + mins + ':' + secs + '  </span><hr/></div>');
+											
+											
+											
+                                        } else {
+                                            $('#payment_block').html('<div style = "padding:40px 20px;"><h4 class = "center">Timeout</h4><p>This invoice has expired. Do not pay to the address of this invoice. Please purchase new kit and make payment</p></div>');
+                                        }
+                                    }
+
+                                    setInterval(function () {
+                                        millis -= 1;
+                                        displaytimer();
+                                    }, 1000);
+
+                                    innerhtml += '</div><div class = "panel-body"><div id = "payment_block" style = "text-align:center;background-color:#fff;padding:10px;" >' +
+                                        
+                                        '<h4 style = "font-weight:bold;">Order #' + data.invoiceId + '</h4>' +
+										 '<div style = "text-align:center;">' +
+                                        '<img src="' + data.payment_url + '">' +
+                                        '</div>' +
+                                        '<div style = "padding:20px;"><p>Please send <span style = "font-size:18px;font-weight:bold;display:inline;" >' + data.price_in_btc + '</span> MCAP to below address</p>' +
+                                        '<p style = "font-size:18px;font-weight:bold;text-decoration:underline dashed grey">' + data.input_address + '</p>' +
+                                        '</div>' +
+                                        '</div>' +
+                                       '</div>';
+								
+									 setInterval(function () {
+									//	 millis -= 10;
+										 if (millis > 0) {
+										$.ajax({
+											url: "<?php echo BASEPATH; ?>/Invoicestatusapi",
+											type: 'POST',
+											data: {"address":data.input_address,"amount":data.price_in_btc, "type":"mcap"},
+											dataType: "json",
+											success: function (data) {
+												//data = "success";
+												//alert(data);
+												if(data.success == "success"){
+													millis  = 0;
+													$('#pay-container').empty();
+													$('#pay-container').append('<div class = "panel-body" style = "text-align:center;"><iframe height = "600px" width = "700px" src = "<?php echo BASEPATH; ?>/thankyou?status='+data.success+'"></iframe></div>');
+												}
+											}
+										});
+									 }
+                                    }, 2000);
+								
+									
+                                } else {
+                                    innerhtml += '<div id = "payment_block">' +
+
+                                        '<iframe id="if1" style="visibility:visible;border:0px;min-height:740px;width:100%;" src="' + data.payment_url + '"></iframe>' +
+                                        '</div>';
+                                }
+
+                            }
+                            else {
+                                innerhtml += '<div class = "center" style="text-align: center;">' +
+                                    '<img src = "<?php echo BASEPATH; ?>/images/oops.png">' +
+                                    '</div>';
+                            }
+
+                            $("#select_kit").css("display", "none");
+                          //  $("#contractlist").css("display", "none");
+                            $("#contractlist1").css("display", "none");
+                            $("#buycontract").css("display", "none");
+                            $("#confirmation").css("display", "none");
+                            $("#confirmid").css("display", "none");
+                            $("#payment_details").css("display", "block");
+
+                            $('#pay-container').empty();
+                            $('#pay-container').append(innerhtml);
+                            $('#kitselectid').removeClass('active');
+                            $('#detailpaymentid').addClass('active');
+
+                            //$('.btn-cancel').attr('href','<?php echo BASEPATH; ?>/Invoicestatus');
+                            //$('.arrow-right').attr('href','<?php echo BASEPATH; ?>/Invstatus?bitcoinpay-status=false&invoice-id='+data.invoiceId);
+
+                        }
+                        else {
+                            $('#preloader').hide();
+                            $('#selectkits').empty();
+                            $('#selectkits').append('<em for="no_of_kits" class="invalid">' + data.failure + '</em>');
+                            return false;
+                        }
+                    }
+
+
+                });
+                return false;
+            }
+        });
+		
+		
+		
+        $("#err_msg").hide();
+
+        $('#no_of_kits').on('change', function () {
+
+            var kitNo = $('#no_of_kits option:selected').val();
+            var cont_id = $('input:radio[name=kit_type]:checked').val();
+		//	var discount = "<?php echo  ($getCotracts['discount']); ?>";
+		//	var price = $('#price'+cont_id).val();
+            $("#err_msg").hide();
+
+            $("#tot_amnt").hide();
+
+            $(".purchase").hide();
+        //    $("#purchase1").hide();
+         //   $("#purchase2").hide();
+
+            var token = $('#token1').val();
+			if(cont_id){
+				$.ajax({
+
+					url: "<?php echo BASEPATH; ?>/Checkleg/checkkitvalue",
+
+					type: 'POST',
+
+					data: {'kitNo': kitNo, 'contract_id': cont_id, 'token': token},
+
+					success: function (data) {
+						var obj = JSON.parse(data);
+			//alert(data);
+						if (obj.success != '') {
+
+							$(".purchase").show();
+						//	$("#purchase1").show();
+						//	$("#purchase2").show();
+							$("#tot_amnt").show();
+
+							$("#total_amount").val(obj.data['netAmount']);
+
+							$("#real_total_amount").val(obj.data['contractPrice']);
+
+							$('#digit_show').hide();
+
+							$('#phy_show').hide();
+
+							$('#physical').prop('checked', false);
+
+							$('#digital').prop('checked', false);
+						} else {
+
+							alert(obj.failure);
+							location.reload();
+							//$(this).closest("li").attr('id','');
+
+							console.log(obj.failure);
+
+							$("#err_msg").show();
+							
+							$(".purchase").hide();
+					//		$("#purchase1").hide();
+					//		$("#purchase2").hide();
+
+							$("#display-err").html(obj.failure);
+
+						}
+
+
+					}
+
+				});
+			}else{
+				alert("Please select kit type");
+			}
+
+
+        });
+
+    });
+	
+	
+	
+    function checkValue(value) {
+
+        var kitValue = $('#total_amount').val();
+
+        if (value == 0) {
+
+            $.ajax({
+
+                url: "../controller/kits.php?m=checkShipValue&kitAmount=" + kitValue,
+
+                type: 'GET',
+
+                dataType: "json",
+
+                success: function (data) {
+
+                    console.log(data);
+
+                    console.log(data["errCode"]);
+
+                    //data["errCode"] =parseInt(data["errCode"]);submit_button
+
+                    if (data["errCode"] == -1) {
+
+                        $("#total_amount").val(data["errMsg"]);
+
+                    } else {
+
+                        alert(data["errMsg"]);
+
+                        //$(this).closest("li").attr('id','');
+
+                        console.log(data["errMsg"]);
+
+                        $("#err_msg").show();
+
+                        $("#submit_button").hide();
+
+                        $("#display-err").html(data["errMsg"]);
+
+                    }
+
+
+                }
+
+            });
+
+        } else {
+
+            var kitValue1 = $('#real_total_amount').val();
+
+            $("#total_amount").val(kitValue1);
+
+        }
+
+    }
+
+    $(window).load(function () {
+
+        $('#physical').click(function () {
+
+            $('#phy_show').show();
+
+            $('#digit_show').hide();
+
+        });
+
+        $('#digital').click(function () {
+
+            $('#digit_show').show();
+
+            $('#phy_show').hide();
+
+        });
+
+    });
+
+
+</script>
+
+<script data-cfasync='false'>
+    function purchase(formid) {
+        $('.err').hide();
+        $.ajax({
+
+            url: "<?php echo BASEPATH; ?>/Kitadd/buycontract",
+
+            type: 'POST',
+
+            data: $("#" + formid).serialize(),
+
+            dataType: "json",
+
+            success: function (data) {
+                if (data.failure && data.failure != '') {
+                    $('.err').show();
+                    $('.err').empty();
+                    $('.err').append(data.failure);
+                }
+                else {
+                    if (data && data.amount != null && data.amount != '') {
+                        $("#contractlist").css("display", "none");
+                        $("#contractlist1").css("display", "none");
+                        $("#select_kit").css("display", "none");
+                        $("#err_purch").css("display", "none");
+                        $('#kit_number').val('');
+                        $("#payment_details").css("display", "none");
+                        $("#confirmation").css("display", "none");
+                        $("#confirmid").css("display", "none");
+                        $("#buycontract").css("display", "block");
+
+                        $("#contractamount").text("$ "+data.amount);
+                        $("#total_amount1").val(data.value);
+                        $("#type").val(data.type);
+                        $("#kt_type").val(data.k_type);
+                        $("#contract_type1").val(data.contract_type);
+                        $("#hiddencontractId").val(data.contract_id);
+                        $('#kitselectid').removeClass('active');
+                        $('#contractid').removeClass('active');
+                        $('#buycontractid').addClass('active');
+                        var flag = '<?php echo $flag; ?>';
+                        if (data.k_type == 'hardware' || ((flag) && flag != '' && flag == 'hw')) {
+                            $('#ship_addr').addClass('openpop');
+                        }
+                        else {
+                            $('#ship_addr').removeClass('openpop');
+                        }
+
+                    }
+                }
+            }
+
+        });
+
+    }
+    function show(id) {
+
+        //	$("#contractlist").css("display","block");
+        //$("#contractlist1").css("display","block");
+	/*
+        if ($('#contractlist').css('display') == 'block') {
+            $('#contractlist').slideToggle('swing');
+            $('#contractid').removeClass('active');
+        }
+      */
+	  if ($('#contractlist').css('display') == 'none') {
+            $('#contractlist').slideToggle('swing');
+            $('#contractid').addClass('active');
+        }
+		 if ($('#select_kit').css('display') == 'none') {
+            $('#select_kit').slideToggle('swing');
+            $('#select_kit').addClass('active');
+        }
+        if ($('#contractlist1').css('display') == 'block') {
+            $('#contractlist1').slideToggle('swing');
+            $('#contractid').removeClass('active');
+        }
+        if ($('#contractlist1').css('display') == 'none') {
+            $('#contractlist1').slideToggle('swing');
+            $('#contractid').addClass('active');
+        }
+
+        //$("#select_kit").css("display", "none");
+        $("#payment_details").css("display", "none");
+        $("#confirmation").css("display", "none");
+        $("#confirmid").css("display", "none");
+        $("#buycontract").css("display", "none");
+        $('#kitselectid').removeClass('active');
+        $('#detailpaymentid').removeClass('active');
+        //$('#contractid').addClass('active');
+    }
+
+
+    function clickme(id) {
+        /*//var trigger = $(this);
+         //var target = trigger.next('dd');
+         alert($('#'+id).css('display'));
+         if ($('#'+id).css('display') == 'none')
+         {
+         alert("inside if");
+         ($('#'+id).removeClass('active'));
+         ($('#'+id).children('dd').slideUp());
+         target.slideDown(function(){
+         var elemPos = $(this).offset();
+         if($(window).width() < 768)
+         {
+         $('body,html').animate({ scrollTop: elemPos.top-60 }, 1000)
+         }
+         else
+         {
+         $('body,html').animate({ scrollTop: elemPos.top-60 }, 1000)
+         }
+         });
+
+         trigger.parent('dl').addClass('active');
+         }
+         else
+         {
+         alert("inside else");
+         trigger.parent('dl').parent('.accordion').children('dl').removeClass('active');
+         trigger.parent('dl').parent('.accordion').children('dl').children('dd').slideUp();
+         }*/
+
+    }
+
+    function openReqAdmin() {
+
+        $('#req-admin-payment').addClass('openpop');
+    }
+    function closeReqAdmin() {
+        $('#req-admin-payment').removeClass('openpop');
+    }
+    function requestPayment() {
+        var username = "<?php echo $authUserNamespace->user ?>";
+        var invoiceId = $('#td1').html();
+        var noOfKits = $('#td2').html();
+        var payment_mode = $('#pmode').val();
+        if (payment_mode == '') {
+            payment_mode = 'static';
+        }
+        //var payment_mode = "<?php echo !empty($payment_mode) ? $payment_mode : "static"; ?>";
+        var txid = $("#txid").val();
+        if ((txid).trim() == '') {
+            $(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Transaction ID.</label>');
+            return false;
+        }
+        $.ajax({
+            url: "<?php echo BASEPATH; ?>/Checkleg/requestpayment",
+            type: 'POST',
+            data: {
+                username: username,
+                invoiceId: invoiceId,
+                noOfKits: noOfKits,
+                payment_mode: payment_mode,
+                txid: txid
+            },
+            success: function (data) {
+                if (data = "success") {
+                    window.location = "<?php echo BASEPATH; ?>/Orderhistory";
+                }
+            }
+
+        });
+    }
+</script>

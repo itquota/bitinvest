@@ -1,0 +1,209 @@
+<?php
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+    .form-group {
+        display: inline-block;
+        margin-right: 25px;
+        width: 350px;
+    }
+
+    .clearfix {
+        margin-top:-12px;
+    }
+</style>
+
+
+
+<div id="innerpage-wrapper">
+    <div class="row lightgraybg">
+        <div class="col-lg-12 offset-1">
+            <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <!-- /.row -->
+    <div class="row">
+        <ol class="breadcrumb">
+            <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+            <li>Setting  > </li>
+            <li>Admin Settings</li>
+
+        </ol>
+
+
+        <div class="clearfix">&nbsp;</div>
+
+
+
+
+
+
+
+
+
+
+        <div class="clearfix">
+
+            <div class="col-lg-12">
+
+
+
+                <div class="clearfix">&nbsp;</div>
+
+
+
+
+
+
+            </div>
+
+
+
+
+            <div class="clearfix">&nbsp;</div>
+
+
+            <div class="panel panel-primary buynowbox col-lg-12">
+
+                <div class="panel-heading buynowbox Titleheading faqtitlebg">
+                    Admin Settings
+                </div>
+
+                <div class="panel-body revenuebg">
+                    <?php
+
+                    //foreach($this->result as $result){?>
+                    <form  method="post" action="<?php echo BASEPATH; ?>/Adminsetting" name="chng" id="chng" enctype="multipart/form-data">
+                        <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+                        <?php
+                        $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+                        if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+                        {
+                            ?>
+                            <div>
+                                <label for="" class="lblTxt" style="color:green;"><?php echo $authUserNamespace->msg ;?></label>
+                            </div>
+                            <?php $authUserNamespace->msg=""; }
+                        if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!="")
+                        {
+                            ?>
+                            <div>
+                                <label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->errmsg ;?></label>
+                            </div>
+                            <?php $authUserNamespace->errmsg=""; }?>
+
+                        <div class="form-group">
+                            <div class="form-group">Quick Check</div>
+                            <label for="" class="lblTxt">Current DB</label>
+                            <input type="text" class="form-control CommonInputBox" placeholder="" readonly value="<?php echo $this->result['bit_coin_address'];?>">
+
+
+
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="lblTxt">Org</label>
+
+                            <input type="text" class="form-control CommonInputBox" placeholder="" value="HQaBfRcDTZuJdtr8vDXlnfG9auMR%2FK89j7eg46kccJg15IDZwDm1umFrhqljjs%2BZ" readonly>
+
+
+
+                        </div>
+                        <!--<div class="form-group">
+		 <label for="" class="lblTxt">Static Address</label>
+		 <div>
+		  <input type="radio" name="static_status" id="static_status_yes" value="1" <?php if($this->result['static_flag']==1){echo 'checked';}?>/>
+				<label for="static_status_yes">Yes</label>
+		 	<input type="radio" name="static_status" id="static_status_no" value="0" <?php if($this->result['static_flag']==0){echo 'checked';}?>/>
+			 		<label for="static_status_no">No</label>
+			</div>
+  </div>
+  --><div class="form-group">
+                            <label for="" class="lblTxt">Payment Mode</label>
+
+                            <div>
+                                <input type="radio" name="payment_mode" id="payment_mode_auto" value="auto" <?php if($this->result['payment_mode']=="auto"){echo 'checked';}?>/>
+                                <label for="payment_mode_auto">Auto</label>
+                                <input type="radio" name="payment_mode" id="payment_mode_manual" value="static"<?php if($this->result['payment_mode']!="auto"){echo 'checked';}?>/>
+                                <label for="payment_mode_manual">Static</label>
+                            </div>
+
+
+
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="lblTxt">Payment Gateway</label>
+
+                            <div>
+                                <input type="radio" name="payment_gate" id="payment_gate_bitcoinpay" value="1" <?php if($this->result['payment_gateway']=="1"){echo 'checked';}?>/>
+                                <label for="payment_gate_bitcoinpay">Bitcoinpay</label>
+                                <input type="radio" name="payment_gate" id="payment_gate_paybitz" value="2"<?php
+                                if($this->result['payment_gateway']!="1"){echo 'checked';}?>/>
+                                <label for="payment_gate_paybitz">Paybitz</label>
+                            </div>
+
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-default Commonbtn" >CHANGE</button>
+                        </div>
+                        <?php // }?>
+                    </form>
+                </div>
+
+
+
+
+
+                <!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+                    <ul class="pagination pagination-sm">
+                       <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+                       <li class="active"><a href="#">1</a></li>
+                       <li><a href="#">2</a></li>
+                       <li><a href="#">3</a></li>
+                       <li><a href="#">4</a></li>
+                       <li><a href="#">5</a></li>
+                       <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li>
+               </ul>
+             </div>-->
+
+                <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+                //	echo "<div>&nbsp;</div>";?>
+
+
+                <!--  <div class='grid-row2'>
+         <div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+     </div>-->
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <!-- /.row -->
+
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+
+
+
+</div>

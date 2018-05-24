@@ -1,0 +1,256 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<link href="../css/star-rating.css" media="all" rel="stylesheet" type="text/css"/>
+<script src="../js/star-rating.js" type="text/javascript"></script>
+
+<style>
+	.form-block{
+		-webkit-border-radius: 5px; 
+		border-radius: 0px; 
+		background-color: #fff; 
+		-webkit-box-shadow: 1px 1px rgba(0,0,0,.05); 
+		box-shadow: 1px 1px rgba(0,0,0,.05); 
+		position: relative;
+		margin-top:40px;
+		padding-top:50px;
+		padding-bottom:20px;
+	}
+	.form-block .form-icon{
+		position: absolute; 
+		left: 50%; 
+		top: 0; 
+		margin: -55px 0 0 -55px; 
+		border: 10px #fff solid; 
+		width: 110px; height: 110px;
+	}
+	.dataTables_length{
+		display:none !important;
+	}
+	.dataTables_filter{
+		display:none !important;
+	}
+table.display tbody tr:nth-child(even) td{
+    background-color: #fff !important;
+	border: none !important;
+}
+
+table.display tbody tr:nth-child(odd) td {
+    background-color: #fff !important;
+	border: none !important;
+}
+table{
+	border: none !important;
+}
+
+.dataTables_info{
+	margin-left:25px;
+}	
+
+.dataTables_paginate{
+	margin-right:25px;
+}
+</style> 
+<?php 
+	$current_rating = $this->review_count['count']/$this->review_count['records'];
+?>
+<div class="modal req-admin bg-popup" id="ticket_done">
+	<div class="modal-dialog popup pop-center-cl">
+		<div class="modal-content no-padding">
+			<div class="bg-pop-header">
+				<span class="text-pop-header">CONFIRMATION</span>
+				<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closealt();">
+						<i class="fa fa-close" style="color:#fff;"></i>
+				</button>
+
+			</div>
+			<div style="padding:25px;" class="form-basic">
+			   <table class="req-table" cellspacing="0">
+				   <div id="cont_hold"></div>                                          
+				</table>
+
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
+<div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Rate Us</h4>
+		<h5 class="text-muted page-title-alt">Reviews and rating</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 card-box-content form-compoenent">
+					<div class="row">
+					<button type="button" class="btn btn-primary" id="write" style="margin-right:15px;float:right;border-radius:5px;">Write a Review</button>
+					<button type="button" class="btn btn-primary" id="back" style="margin-right:15px;float:right;border-radius:5px;display:none;">Back to Reviews</button>
+					</div>
+							<div class="col-md-6 col-md-offset-3 form-block"  style="text-align:center;border:1px solid #ccc;display:none;" id="reviewForm">
+								
+						<img class="img-circle form-icon" src="../img/icon-70.png" alt="" />
+							<div class="row">
+								<div class="block-header col-md-8 col-md-offset-2">
+									<h2>Rate Us</h2>
+									<div>Rate us anytime you wish!</div>
+								</div>
+							</div>
+							<div class="err1" style="text-align:-webkit-center;"></div>
+							<form role="form" method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" name="rew_frm" id="rew_frm">
+							<!--	<input id="input-21b" value="<?php echo round($current_rating,1);?>" type="text" class="rating" data-min=0 data-max=5 data-step=1 data-size="md" required title="" style="text-align:-webkit-center !important;"> -->
+								<input id="input-21b" value="0" type="text" class="rating" data-min=0 data-max=5 data-step=1 data-size="md" required title="" style="text-align:-webkit-center !important;">                                       
+								<!--<div class="overall-rating">(Average Rating <span id="avgrat"><?php echo round($current_rating,1);?></span>
+            						Based on <span id="totalrat"><?php echo $this->review_count['records'];?></span>  rating)</div>-->
+								<div class="field-entry">
+									<label for="comment">Comment *</label>
+									<textarea class="form-control" id="comment" name = "comment" required style = "border: 1px solid #ccc;"></textarea>
+								</div>
+								<input type="hidden" value="<?php echo $this->userinfo['username']; ?>" id="username" name="username">
+								<input type="hidden" value="<?php echo $this->userinfo['comm_email']; ?>" id="email" name="email">
+				            
+								<div class="row" style="padding:20px;">
+									<div class="col-md-6 col-md-offset-3 col-xs-6 col-xs-offset-3">
+									   <button type="button" class="btn btn-primary" id="send">Submit Review</button>
+									</div>
+								</div>
+							</form>
+                        </div>
+						<?php
+								if(!empty($this->reviews) && sizeof($this->reviews) > 0 ){ 
+
+						?>						
+						<div class="col-md-12 form-block"  style="border:1px solid #ccc;" id="reviews">
+							<img class="img-circle form-icon" src="../img/icon-72.png" alt="" />
+							<div class="row">
+							<div class="row" style="text-align:center;">
+								<div class="block-header col-md-8 col-md-offset-2">
+									<h2>Reviews</h2>
+									<div>Important for us!</div>
+								</div>
+							</div>
+	
+								
+						     <div class="bs-example table-responsive">
+								   <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+										 <thead style="display:none;">
+											<tr>
+											   <th class="sortdesc">S.No.   </th>
+
+											 </tr> 
+									 	</thead>
+									  	<tbody> 
+										<?php
+
+													foreach($this->reviews as $reviews){								
+										?>	
+									  		 <tr style="padding:10px;">
+										 		<td style="text-align:left;">
+												  <div class="comment-main-level" style="border:1px solid #ccc;border-radius:5px;padding:10px;margin:0px 20px;">
+														<!-- Avatar -->
+														<div class="comment-avatar"><img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image" width="50px"></div>
+														<!-- Contenedor del Comentario -->
+														<div class="comment-box">
+															<div class="comment-head">
+																<h6 class="comment-name by-author"><a href="#"><?php 
+																	if(!empty($reviews['name'])){
+																		echo $reviews['name'];
+																	}else{
+																		echo $reviews['email'];
+																	}
+																?></a></h6>
+
+																<span style="font-size:12px;">Published on : <?php echo $reviews['reviewed_on'];?></span>
+																<div class="row">
+																	<span style="float:left;padding:0px 10px;">
+																		<input id="input-21c" value="<?php echo $reviews['rating'];?>" type="text" class="rating" data-min=0 data-max=5 data-step=0.5 data-size="xs" required title="" disabled >
+																	</span>
+																</div>                                       
+
+															<!--	<i class="fa fa-reply"></i>
+																<i class="fa fa-heart"></i> -->
+															</div>
+															<div class="comment-content">
+																<?php echo $reviews['review'];?>
+															</div>
+														</div>
+													</div><br/>													 
+												</td> 
+									  		 </tr> 
+											<?php }?>
+									  	</tbody>
+									  </table> 
+              				</div>
+								
+							<?php  }?>
+							</div>	
+						</div>					
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+	
+<script data-cfasync="false" src="<?php echo BASEPATH; ?>/res/js/jquery.validate.min.js"></script>
+<script  data-cfasync='false' type="text/javascript">
+ $(document).ready(function(){
+  $("#write").click(function(){
+	$("#reviewForm").show();
+	$("#reviews").hide();
+	$("#write").hide();
+	$("#back").show();
+  });
+  $("#back").click(function(){
+	$("#reviewForm").hide ();
+	$("#reviews").show();  
+	$("#write").show();
+	$("#back").hide();  
+  });
+ });	
+	
+function closealt()
+{
+   $('#ticket_done').removeClass('openpop');
+   window.location.href=("<?php echo BASEPATH; ?>/Review");
+
+}	
+	
+			$('#send').click(function () {
+				var rating=$('#input-21b').val();
+				var email=$('#email').val();
+				var name=$('#username').val();
+				var comment=$('#comment').val();
+				//alert(rating);return false;
+				$.ajax({
+					type: 'POST',
+					url: "<?php echo BASEPATH;?>/Review",
+					data: 'email='+email+'&name='+name+'&comment='+comment+'&rating='+rating,
+
+					success:function(response)
+					{ 
+
+						 var data=JSON.parse(response);
+
+						 if(data['success']!='')
+						 {
+							$('#cont_hold').empty();
+							//$('#cont_hold').append('<b>'+data['success']+'</b>');	  
+							$('#cont_hold').append('<p><strong>Dear User,</strong></p><p>Your review has been submitted successfully. It will be published on website after admin approval.</p><br/><p><strong>Regards,</p><p>Gainbitcoin</p></strong>');	  
+							$('#ticket_done').addClass('openpop');
+							setTimeout(function () {
+							   window.location.href= '<?php echo BASEPATH;?>/Review'; // the redirect goes here
+
+							},5000);							 
+						 }
+						 else{
+							  $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+							 // $(".err1").html('<label for="" class="lblTxt alert alert-danger">'+data['failure']+'</label>');        
+
+						 }	
+					}
+				
+				});
+				
+			});	
+</script>

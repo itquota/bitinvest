@@ -1,0 +1,162 @@
+<?php 
+
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+	
+	//print_r($this->result['status']);exit;
+?>
+<style>
+	.clearfix {
+ 			 margin-top:-7px;
+}
+.form-group {
+	display: inline-block;
+	width: 300px;
+	padding:15px;
+	margin-top:-30px;
+	float:left;
+}
+</style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>CMS Settings > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/Trainingsetting">Training</a> > </li>                  
+                  <li>Edit Training</li>
+  
+            </ol>
+           
+
+          <div class="clearfix">&nbsp;</div>
+  
+<div class="clearfix">&nbsp;</div>
+
+
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             Edit Training
+              </div>
+
+              <div class="panel-body revenuebg">
+    <form>
+   
+		<div class="form-group err1" style="width:100%;margin-bottom: 0px;">
+		<label for="" class="lblTxt" style="color:red;"></label>
+		</div>
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+
+
+
+ 
+
+ <input type="hidden" name="content_id" value="<?php echo $this->result['id']?$this->result['id']['id']:'' ?>" />
+   <div class="form-group">
+    <label for="" class="lblTxt">Content Title</label>
+
+     <input type="text" id="informational_title" name="informational_title" class="form-control CommonInputBox" placeholder="Input 0 or 1" value="<?php echo isset($this->result['title'])?$this->result['title']:'' ?>" readonly>
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Description</label>
+
+     <textarea style="height:35px"  class="form-control CommonInputBox" id="informational_desc" name="address" rows="15" cols="80" placeholder="" value=""><?php echo strip_tags(isset($this->result['description'])? $this->result['description']:'') ;?></textarea>
+
+
+      
+  </div>
+   <div class="form-group">
+       <label for="" class="lblTxt">Status</label>
+        <div>
+         <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:292px;">
+                                                <option value="Active" <?php if($this->result['status']=='Active'){echo 'selected';} ?>>Active</option>
+                                                <option value="Inactive" <?php if($this->result['status']=='Inactive'){echo 'selected';}?>>Inactive</option>
+         </select>
+   		</div>
+   </div>
+  <div class="form-group" style="width:100%;">
+   <input type="hidden" name="user_id" value="<?php echo $this->result['id'];?>" id="user_id">
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+  <button type="button" name="add_event" id="add_event" class="btn btn-default Commonbtn" onclick="Editfun()">SUBMIT</button>
+ </div>
+
+  
+</form>
+  </div>
+    </div>
+     </div>
+       </div>
+   
+<script>
+function Editfun(){
+		
+		 var form_data = new FormData();
+ 		var informational_title = document.getElementById('informational_title').value;
+ 		var informational_desc = document.getElementById('informational_desc').value;
+ 		var user_id= document.getElementById('user_id').value;
+ 		var token_id=document.getElementById('token').value;
+ 		var status=document.getElementById('status').value;
+ 		form_data.append("informational_title", informational_title);
+		form_data.append("informational_desc", informational_desc);
+		form_data.append("user_id", user_id);
+		form_data.append("token_id", token_id);
+		form_data.append("status", status);
+		
+
+		if((informational_title).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Title.</label>');
+			return false;
+		}
+
+		if((informational_desc).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Description.</label>');
+			return false;
+		}
+
+ $.ajax({
+			url:"<?php echo BASEPATH;?>/Editraining/editdata",
+			type: "POST",    
+			 data: form_data,
+			 contentType: false,
+		      processData: false,
+	  	success: function(response)
+ 		{
+		var data=JSON.parse(response);
+					
+				if(data['success']!='')
+				   { 
+						//alert("User updated successfully");
+			           $(".err1").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+						window.location = "<?php echo BASEPATH;?>/Trainingsetting";
+				   }
+			       else{
+			           //alert(data);return false;
+
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						//window.location = "<?php echo BASEPATH;?>/Trainingsetting";
+			       }
+ 		}
+		});
+	  
+	  }
+</script>
+    	

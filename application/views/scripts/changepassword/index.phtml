@@ -1,0 +1,189 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+	 .form-group {
+	    width: 300px;
+	}
+	.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+		}
+	.clearfix {
+ 			 margin-top:35px;
+		}
+ </style>
+ 
+ 
+
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li >Change Password</li>
+  
+            </ol>
+           
+			<div class="clearfix"></div>
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               Change Password
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="<?php echo BASEPATH; ?>/Changepassword" method="post" id="chng" role="form">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div id="msg1">
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   
+    <?php echo $this->msg;?>
+ 	 
+ 
+ <?php } ?>
+  </div>
+   <div id="msg2">
+   <?php if(!empty($this->messag) && $this->messag!='')
+{
+?>
+    <label for="" class="Txt" style="color:red; font-family: robotoregular; font-weight: normal;"><?php echo $this->messag;?></label>
+ 	 
+ 	  <?php } ?>
+ 	   <label style="color:red" for="" class="lblTxt"> </label>
+  </div>
+ 
+ 
+ 
+ 
+<div class="err1" >
+	<label for="" class="lblTxt" style="color:red;"></label>
+</div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Old Password</label>
+
+     <input type="password"  id="old_password" name="old_password" class="form-control CommonInputBox" placeholder="Old Password">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">New Password</label>
+
+     <input type="password" class="form-control CommonInputBox" id="new_password" name="new_password" placeholder="New Password">
+
+
+      
+  </div>
+ <div class="form-group">
+    <label for="" class="lblTxt">Confirm Password</label>
+
+     <input type="password" class="form-control CommonInputBox" id="confirm" name="confirm" placeholder="Confirm Password">
+
+
+      
+  </div>
+	
+<?php
+	if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin") && $authUserNamespace->user_type=='admin'){			  
+?>
+			  
+  <div class="form-group">
+    <label for="" class="lblTxt">Kit Password</label>
+
+     <input type="password" class="form-control CommonInputBox"  id="static"  name="static" placeholder="Kit Password">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Common Password</label>
+
+     <input type="password" class="form-control CommonInputBox"  id="c1" name="c1" placeholder="Common Password">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Unlock Password</label>
+
+     <input type="password" class="form-control CommonInputBox"  id="u1"  name="u1" placeholder="Unlock Password">
+
+
+      
+  </div>
+	
+	<div class="form-group">
+	    <label for="" class="lblTxt">Kit Generation Password</label>
+    	 <input type="password" class="form-control CommonInputBox"  id="k2"  name="k2" placeholder="Kit Generation Password">
+  	</div>
+			  
+<?php } ?>			  
+	
+  <div>
+  <button type="submit" name="chng" id="chng" class="btn btn-default Commonbtn" onclick="return validateForm()">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+	</div>
+  
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+    function validateForm(){
+
+        $("#msg1").empty();
+        $("#msg2").empty();
+        
+   	 var old_password=$("#old_password").val();
+        var new_password=$("#new_password").val();
+		 var confirm=$("#confirm").val();
+		 var staticpwd=$("#static").val();
+	        var c1=$("#c1").val();
+			 var u1=$("#u1").val();
+			 var k2=$("#k2").val();
+
+				if((old_password).trim()==''){
+					$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Old Password.</label>');
+					return false;
+				}
+				else if(((k2).trim()=='') && ((new_password).trim()=='') && ((confirm).trim()=='') && ((staticpwd).trim()=='') && ((staticpwd).trim()=='') && ((c1).trim()=='') && ((u1).trim()=='')){
+					$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Password to change. </label>');
+					return false;
+				}		
+			else if(((new_password).trim()!='') && (new_password!=confirm)){
+					$(".err1").html('<label for="" class="lblTxt" style="color:red;">Confirm Password and New Password not matched</label>');
+					return false;
+		       }
+				
+		       else  {
+		           //document.form.submit();
+		           return true;
+		       }
+		    		 
+		
+ }
+    </script>

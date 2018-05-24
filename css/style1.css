@@ -1,0 +1,662 @@
+
+/*   For RSI Tree */
+
+.tree ul {
+  padding: 20px 0 0; 
+  position: relative;  
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+}
+.tree ul ul::after {
+  clear: both;
+  content: "";
+  display: block;
+}
+
+.tree li {
+  float: left; text-align: center;
+  list-style-type: none;
+  position: relative;
+  padding: 20px 5px 0 5px;
+  
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+}
+
+/*We will use ::before and ::after to draw the connectors*/
+
+.tree li::before, .tree li::after{
+  content: '';
+  position: absolute; top: 0; right: 50%;
+  border-top: 1px solid #ccc;
+  width: 50%; height: 20px;
+}
+.tree li::after{
+  right: auto; left: 50%;
+  border-left: 1px solid #ccc;
+}
+
+/*We need to remove left-right connectors from elements without 
+any siblings*/
+.tree li:only-child::after, .tree li:only-child::before {
+  display: none;
+}
+
+/*Remove space from the top of single children*/
+.tree li:only-child{ padding-top: 0;}
+
+/*Remove left connector from first child and 
+right connector from last child*/
+.tree li:first-child::before, .tree li:last-child::after{
+  border: 0 none;
+}
+/*Adding back the vertical connector to the last nodes*/
+.tree li:last-child::before{
+  border-right: 1px solid #ccc;
+  border-radius: 0 5px 0 0;
+  -webkit-border-radius: 0 5px 0 0;
+  -moz-border-radius: 0 5px 0 0;
+}
+.tree li:first-child::after{
+  border-radius: 5px 0 0 0;
+  -webkit-border-radius: 5px 0 0 0;
+  -moz-border-radius: 5px 0 0 0;
+}
+
+/*Time to add downward connectors from parents*/
+.tree ul ul::before{
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  border-left: 1px solid #ccc;
+  width: 0; height: 20px;
+}
+
+.tree li a{
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #666;
+  font-family: robotoregular;
+  font-size: 11px;
+  display: inline-block;
+  
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+}
+
+/*Time for some hover effects*/
+/*We will apply the hover effect the the lineage of the element also*/
+.tree li a:hover, .tree li a:hover+ul li a {
+  background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
+}
+/*Connector styles on hover*/
+.tree li a:hover+ul li::after, 
+.tree li a:hover+ul li::before, 
+.tree li a:hover+ul::before, 
+.tree li a:hover+ul ul::before{
+  border-color:  #94a0b4;
+}
+
+
+/*   For RSI Tree   */
+
+
+
+
+/*   For Tables */
+
+
+.responsive-table {
+    overflow-x: hidden !important;
+}
+
+
+#data-table-simple_filter{
+		float:left;
+		margin:0;
+	}
+
+
+#data-table-simple-1_filter{
+		float:left;
+		
+	}
+
+#data-table-simple-2_filter{
+		float:left;
+		
+	}
+input::placeholder {
+  color: #ccc;
+}
+
+	#data-table-simple_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 100%;
+		margin: 10px 0px 10px 0px;
+	}
+
+	#data-table-simple_filter input::placeholder{
+		color:#666;
+	}
+	
+	#data-table-simple_filter label{
+		color: #fff;
+		font-weight: normal;
+		
+	}
+	 
+#data-table-simple_length {
+		margin-right:20px;
+		float:left;
+	}
+
+	#data-table-simple_length label{
+		color: #fff;
+		font-weight: normal;
+	}
+	
+	#data-table-simple_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 125px;
+		margin: 10px 0px 10px 0px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple tr{
+	/*	height:70px; */
+	}
+	
+	#data-table-simple_paginate a{
+		border: 1px solid #ddd;
+	}
+	
+	
+
+	#data-table-simple_previous{
+		letter-spacing: -3px;
+	}
+	#data-table-simple_next{
+		letter-spacing: -3px;
+	}
+		
+
+
+
+
+#data-table-simple-1_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 100%;
+		margin: 10px 0px 10px 0px;
+	}
+
+	#data-table-simple-1_filter input::placeholder{
+		color:#666;
+	}
+	
+	#data-table-simple-1_filter label{
+		color: #fff;
+		font-weight: normal;
+		
+	}
+	
+#data-table-simple-1_length {
+		margin-right:20px;
+		float:left;
+	}
+
+	#data-table-simple-1_length label{
+		color: #fff;
+		font-weight: normal;
+	}
+	
+	#data-table-simple-1_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 125px;
+		margin: 10px 0px 10px 0px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-1 tr{
+	/*	height:70px; */
+	}
+	
+	#data-table-simple-1_paginate a{
+		border: 1px solid #ddd;
+	}
+	
+	
+
+	#data-table-simple-1_previous{
+		letter-spacing: -3px;
+	}
+	#data-table-simple-1_next{
+		letter-spacing: -3px;
+	}
+		
+
+
+
+
+
+
+
+#data-table-simple-2_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 100%;
+		margin: 10px 0px 10px 0px;
+	}
+
+	#data-table-simple-2_filter input::placeholder{
+		color:#666;
+	}
+	
+	#data-table-simple-2_filter label{
+		color: #fff;
+		font-weight: normal;
+		
+	}
+	
+#data-table-simple-2_length {
+		margin-right:20px;
+		float:left;
+	}
+
+	#data-table-simple-2_length label{
+		color: #fff;
+		font-weight: normal;
+	}
+	
+	#data-table-simple-2_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 125px;
+		margin: 10px 0px 10px 0px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-2 tr{
+	/*	height:70px; */
+	}
+	
+	#data-table-simple-2_paginate a{
+		border: 1px solid #ddd;
+	}
+	
+	
+
+	#data-table-simple-2_previous{
+		letter-spacing: -3px;
+	}
+	#data-table-simple-2_next{
+		letter-spacing: -3px;
+	}
+		
+
+
+
+
+
+/*   For Tables */
+
+
+.lightgraybg {
+    background: #f3f3f3;
+}
+.paddCommon {
+    padding: 15px 0px;
+}
+
+.lblTxt {
+   	font-weight: normal;
+    padding-top: 7px;
+}
+
+
+.sortdesc{
+	min-width:50px;
+}
+
+
+.sortboth{
+	min-width:150px;
+}
+tr th,td{
+	text-align:justify;	
+}
+
+
+.note{
+	font-style:italic;
+}
+
+@media only screen and (max-width: 992px) {
+  ul.side-nav.leftside-navigation {
+    top: 56px;
+  }
+}
+
+
+@media only screen and (max-width: 1024px) {
+  tfoot {
+    display: none;
+  }
+}
+
+
+#btree svg{
+	border:2px solid #000 !important;
+	cursor: url("../images/drag.png") 16 9, ew-resize !important;
+}
+
+
+@media (max-width:420px){
+	
+	#data-table-simple_length {
+		margin-right:10px;
+		float:left;
+	}
+	#data-table-simple_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 110px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 145px;
+	}
+	#data-table-simple_length .caret{
+	    margin: -78px -40px 0px 5px !important;
+		 z-index:1 !important;
+
+		
+	}
+	
+	#data-table-simple-1_length {
+		margin-right:10px;
+		float:left;
+	}
+	#data-table-simple-1_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 110px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-1_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 145px;
+	    margin: 3px 0px 0px 10px;
+
+	}
+	#data-table-simple-1_length .caret{
+	    margin: -78px -40px 0px 5px !important;
+		 z-index:1 !important;
+
+		
+	}
+	
+	#data-table-simple-2_length {
+		margin-right:10px;
+		float:left;
+	}
+	#data-table-simple-2_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 110px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-2_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		max-width: 145px;
+	    margin: 3px 0px 0px 10px;
+
+	}
+	#data-table-simple-2_length .caret{
+	    margin: -78px -40px 0px 5px !important;
+		 z-index:1 !important;
+
+		
+	}	
+	
+	
+}
+
+@media (max-width:380px){
+	
+	#data-table-simple_length {
+		display:block;
+	}
+	#data-table-simple_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 8px;
+		height: 38px;
+		color: #565656;
+		width: 110px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		width: 115px;
+	}
+	#data-table-simple_length .caret{
+   		 margin: -78px -45px 0px 5px;
+		 z-index:1 !important;
+		
+	}
+}
+
+@media (max-width:330px){
+	
+	#data-table-simple_length {
+		display:block;
+	}
+	#data-table-simple_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 10px;
+		height: 38px;
+		color: #565656;
+		width: 64px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		width: 130px;
+	}
+	#data-table-simple_length .caret{
+   		 margin: -77px 0px 1px 6px !important;
+		 z-index:1 !important;
+		
+	}
+	
+	#data-table-simple-1_length {
+		display:block;
+	}
+	#data-table-simple-1_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 64px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-1_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		width: 130px;
+	}
+	#data-table-simple-1_length .caret{
+   		 margin: -77px 0px 1px 6px !important;
+		 z-index:1 !important;
+		
+	}
+	
+	#data-table-simple-2_length {
+		display:block;
+	}
+	#data-table-simple-2_length select{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		padding: 7px 12px;
+		height: 38px;
+		color: #565656;
+		width: 64px;
+		-webkit-appearance: none;
+		-moz-appearance: none;
+		text-indent: 1px;
+		text-overflow: '';
+	}
+	
+	#data-table-simple-2_filter input{
+		display:block;
+		background-color: #FFFFFF;
+		border: 1px solid #E3E3E3;
+		border-radius: 4px;
+		color: #565656;
+		padding: 7px 12px;
+		height: 38px;
+		width: 130px;
+	}
+	#data-table-simple-2_length .caret{
+   		 margin: -77px 0px 1px 6px !important;
+		 z-index:1 !important;
+		
+	}	
+	
+}

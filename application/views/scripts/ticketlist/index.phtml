@@ -1,0 +1,958 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	try{
+?>
+
+<script src="/js/jquery-1.12.4.js"></script>
+<script src="/js/jquery.dataTables.min_v1_10_13.js"></script>
+<style>
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+
+.sortboth {
+	width: 18%;
+}
+
+.request {
+	text: bold;
+}
+
+.main_div {
+	width: 100%;
+	padding: 10px;
+}
+
+.sub_div {
+	font-weight: 600;
+	width: 30%;
+	display: inline-block;
+	text-align: left;
+}
+
+.sub_div2 {
+	width: 42%;
+	display: inline-block;
+	text-align: left;
+}
+
+.modal-header {
+	color: #fff;
+	font: 20px "robotobold";
+}
+.Commonbtn{
+
+
+    background: #34495e none repeat scroll 0 0;
+    border-color: #fff;
+    border-radius: 0;
+    color: #fff;
+    display: inline;
+    font-family: "Roboto",sans-serif;
+    font-size: 17px;
+    padding: 6px 47px;
+}
+.main_div{
+display:flex;
+margin-left: 50px;
+}
+.form-group-search {
+    display: inline-block;
+	width: 300px;
+	padding:15px;
+	margin-top:-30px;
+	
+}
+tfoot {
+    display: table-header-group;
+}
+tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+        font-size: 10px;
+    }
+    
+select{
+ background-color: #fff;
+border: 1px solid #ccc;
+ }
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12 offset-1">
+<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+<ol class="breadcrumb">
+	<li class="active"><a href="<?php echo BASEPATH;?>/Admindashboard">Home</a>
+	></li>
+	<li>Service Request</li>
+
+</ol>
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-lg-12 ">
+<form method = "POST">
+
+<?php 
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+{?>
+<label for="" class="lblTxt" style="color: red; width:100%;"><?php echo $authUserNamespace->msg; ?></label>
+
+<?php  $authUserNamespace->msg="";}?>
+
+
+ 
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="tokn" name="tokn">
+
+<div class="form-group-search">
+ <label for="" class="lblTxt">Ticket ID</label>
+      <input type="text" class="form-control CommonInputBox"  name="tick_id" id = "tick_id"   placeholder="Ticket ID">
+		 </div>
+		 <div class="form-group-search">
+    <label for="" class="lblTxt">Start Date:</label>
+
+    <input id="datetimepicker1" class="datepick form-control CommonInputBox input" type="text" placeholder="Start Date" value="" name="startdate">
+
+
+      
+  </div>
+  <div class="form-group-search">
+    <label for="" class="lblTxt">End Date:</label>
+
+    <input id="datetimepicker" placeholder="End Date" class="datepick form-control CommonInputBox input" name="enddate" >
+
+
+      
+  </div>
+	<div class="form-group-search">
+    <label for="" class="lblTxt">User</label>
+
+    <input placeholder="username" class="form-control CommonInputBox" name="username" >
+
+
+      
+  </div>
+	
+	<br><BR>
+  <div class="form-group-search" style="width:100%;">
+  <button type="submit" name = "search" value = "Search" class=" btn btn-default Commonbtn">SEARCH</button>			
+				</div>		
+					</form><br>
+<div class="clearfix lightgraybg">
+
+<div class="bs-example table-responsive"
+	data-example-id="bordered-table">
+
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+		{
+		?>
+    <label for="" class="lblTxt" style="color:green; padding:12px;"><?php echo $authUserNamespace->msg; ?></label>
+   
+     <?php $authUserNamespace->msg=""; }?> 
+ 
+ 
+<table id="data-table-simple"
+	class="table table-bordered innertbl display" cellspacing="0">
+	<thead>
+		<tr>
+			<th class="sortdesc">Sr.<br>
+			No</th>
+			<br>
+			<br>
+			<th class="sortdesc">Service request<br>
+			No</th>
+			<th class="sortboth">USERNAME</th>
+			<th class="sortboth">CREATED DATE</th>
+			<th class="sortboth">DESCRIPTION</th>
+			<th class="sortboth">CATEGORY</th>
+			<th class="sortboth">TYPE</th>
+			<th class="sortboth">STATUS</th>
+			<!--<th class="sortboth"></th>
+			-->
+			<th class="sortboth">ASSIGN TO</th>
+			<th class="sortboth">COMMENTS</th>
+
+
+		</tr>
+	</thead>
+	<tfoot>
+            <tr>
+                <th ></th>
+			
+			<th >Request No</th>
+			<th >Username</th>
+			<th ></th>
+			<th ></th>
+			<th >CATEGORY</th>
+			<th >TYPE</th>
+			<th >STATUS</th>
+			<!--<th ></th>
+			-->
+			<th >ASSIGN TO</th>
+			<th ></th>
+            </tr>
+        </tfoot>
+	<tbody>
+	<?php
+	$j=1;
+	for($i=0;$i<sizeof($this->result);$i++){ ?>
+
+		<tr>
+			<td scope="row"><?php echo $j;?></td>
+			<td><a id="<?php echo $this->result[$i]['ticket_id'];?>"
+				data-toggle="modal" href="#req-admin" name="myname"
+				onclick="getrequestdata('<?php echo $this->result[$i]['ticket_id'];?>','<?php echo $this->result[$i]['req_category'];?>','<?php echo $this->result[$i]['id'];?>');"
+				class="myclass"><?php echo $this->result[$i]['ticket_id'];?></a></td>
+			<td><?php echo $this->result[$i]['username'];?></td>
+			<td><?php 
+			echo date("d-m-Y H:i:s",strtotime($this->result[$i]['created_on']));
+			?></td>
+			<td><?php echo $this->result[$i]['query'];?></td>
+			<td><?php echo $this->result[$i]['req_category'];?></td>
+			<td><?php echo $this->result[$i]['req_type'];?></td>
+			<!--<td id="main
+			<?php echo $this->result[$i]['status']; ?>">
+			<?php  if($this->result[$i]['status']=='1')
+			{$st='Open';}
+			else if($this->result[$i]['status']=='2')
+			{$st='Assigned';}
+			else if($this->result[$i]['status']=='3')
+			{$st='Resolved';}
+			else if($this->result[$i]['status']=='4')
+			{$st='Reopen';}
+			else {$st='Closed';}
+			echo $st; ?></td>
+			-->
+			<td id="child<?php echo $this->result[$i]['status']; ?>"><?php if($this->result[$i]['status']==1) { ?>
+				Open&nbsp;&nbsp;
+				<?php }elseif($this->result[$i]['status']==2){?>
+				Assign
+				<?php }elseif($this->result[$i]['status']==3){?>
+				Resolved
+				<?php }
+				elseif($this->result[$i]['status']==4){?>
+				Reopen<?php 
+				}else if($this->result[$i]['status']==5){ ?>
+				Pending
+				<?php } else if($this->result[$i]['status']==6){ ?>
+				Response Sent
+				<?php } else if($this->result[$i]['status']==7) { ?>
+				Sent to Technical Team
+				<?php } else if($this->result[$i]['status']==8){ ?>
+				Input Required from User
+				<?php } else if($this->result[$i]['status']==9) { ?>
+				Sent to Senior Support
+				<?php }else if($this->result[$i]['status']==10) { ?>
+				Sent to Admin
+				<?php }else if($this->result[$i]['status']==11){ ?>
+				Pending Kit Activation
+				<?php } else if($this->result[$i]['status']==12) { ?>
+				Pending Refund Requests
+				<?php }else if($this->result[$i]['status']==13) { ?>
+				Pending Others
+				<?php }else{?>
+				Closed<?php }?></td>
+			<td><?php if(!empty($this->result[$i]['assigned_to']) && sizeof($this->result[$i]['assigned_to'])!=0){
+			 echo $this->result[$i]['assigned_to']; }else{?>
+			 <?php echo ""; }?>
+			 </td>
+			<td><?php echo $this->result[$i]['reply_comment'];?></td>
+
+		</tr>
+
+
+<?php $j++;}?>
+	</tbody>
+</table>
+
+         <ul class="pagination">
+		 <?php 
+		 if(!empty($_GET['page']) && $_GET['page']!='')
+		 {
+			 $StartPage=$_GET['page'];
+		 }
+		 else
+		 {
+			 $StartPage=1; 
+		 }
+		
+	
+		 if($this->pages <= 5){
+			  $StartPage = 1;
+		 }else if(!empty($_GET['page']) && $_GET['page'] < $this->pages-6){
+			 // $pageDiff = $pages - $_GET['page'];
+			// $StartPage = $pages - $pageDiff;
+			 $StartPage = $_GET['page'];
+		 }else if(!empty($_GET['page']) && $_GET['page'] >= $this->pages-6){
+			 $StartPage = $this->pages - 5;
+		 }
+			
+		 if($this->pages > 5){
+			 $limitPage = $StartPage + 4;
+		 }else{
+			 $limitPage = $this->pages;
+		 }
+		 
+			
+		 if(!empty($_GET['page']) && $_GET['page'] > 1){
+		 
+		 ?>
+			<li class="waves-effect"><a href="<?php echo BASEPATH;?>/Ticketlist?page=1"></a></li>
+			<li class="waves-effect"><a href="<?php echo BASEPATH;?>/Ticketlist?page=<?php echo $_GET['page']-1; ?>"><i class="mdi-navigation-chevron-left"></i></a></li>
+			 <?php 
+				}
+			 ?>
+			
+			<?php 
+			
+			for($j=$StartPage;$j<=$limitPage;$j++){
+                    ?>
+			<li class="active"><a href="<?php echo BASEPATH;?>/Ticketlist?page=<?php echo $j; ?>"><?php echo $j; ?></a></li>
+			<?php }
+			
+			 if( $_GET['page'] < $this->pages-1){
+				 
+                    ?>
+			
+			<li class="waves-effect"><a href="<?php echo BASEPATH;?>/Ticketlist?page=<?php echo $_GET['page']+1; ?>"><i class="mdi-navigation-chevron-right"></i></a></li>
+			<li class="waves-effect"><a href="<?php echo BASEPATH;?>/Ticketlist?page=<?php echo $this->pages-1; ?>"></a></li>
+			<?php }
+			
+                    ?>
+		 </ul>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- for lightbox in bootstrap -->
+<div class="modal req-admin" id="req-admin">
+
+<div class="modal-dialog" style="width: 600px;">
+<div class="modal-content">
+<div class="modal-header">Service Request Detail
+<button type="button" class="close" data-dismiss="modal"
+	aria-hidden="true"><i class="is close-btn"></i></button>
+</div>
+
+
+<div class="modal-body g-auth-body">
+<form method="post" action="" id="listticket" name="listticket" enctype="multipart/form-data">
+<div class="form-group err1" style="width:100%;margin-bottom: 0px;">
+		<label for="" class="lblTxt" style="color:red;"></label>
+</div>
+<div class="main_div">
+<div class="sub_div">Service Request No:</div>
+<div class="sub_div2" id="a"></div>
+</div>
+<div class="main_div">
+<div class="sub_div">Username:</div>
+<div class="sub_div2" id="username"></div>
+</div>
+<div class="main_div">
+<div class="sub_div">Date:</div>
+<div class="sub_div2" id="b"></div>
+</div>
+<div class="main_div">
+<div class="sub_div">Description:</div>
+<div class="sub_div2" id="c"></div>
+</div>
+<div class="main_div">
+<div class="sub_div"><label style="font-weight: 600;">Category:</label>
+
+</div>
+<div class="sub_div2" id="d"></div>
+</div>
+<!--<div class="main_div">
+<div class="sub_div"><label style="font-weight: 600;">Type:</label></div>
+<div class="sub_div2" id="e"></div>
+</div> -->
+<div class="main_div">
+<div class="sub_div">Status:</div>
+<div class="sub_div2" id="f"></div>
+</div>
+<div class="main_div">
+<div class="sub_div">Assign to:</div>
+<div class="sub_div2" id="g">
+<!--<select id="AssigUser" class="form-control CommonInputBox" style="border:1px solid;">
+				<option value="">Select<option>
+				<option value="virender">virender<option>
+				<option value="ops1">ops1<option>
+				<option value="amol">amol<option>
+<select>
+--></div>
+</div>
+<div class="main_div">
+<div class="sub_div">Comments:</div>
+<div class="sub_div2" id="h"></div>
+</div>
+
+<div class="main_div">
+<div class="sub_div"><label style="font-weight: 600;">Auto comment:</label></div>
+<div class="sub_div2" id="reply_data"></div>
+</div>
+
+<input type="hidden" id="tick" name="tick" value="<?php echo $this->result[$i]['ticket_id']?>">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<input type="button" class="btn btn-default Commonbtn" aria-hidden="true" class="close" id="submit" name="submit" onclick="updateStatus();" value="Submit">
+</form>
+</div>
+<div class="table" style="  padding-left: 11px;
+    padding-right: 11px;
+    padding-bottom: 11px;">
+<table style="width:100%;">
+<thead>
+  <tr>
+    <th style="width:4%;">Sr No.</th>
+    <th style="width:19%;">Date</th>
+    <th>Comments</th>
+    <th style="width:19%;">Comments By</th>
+  </tr>
+  
+</thead>
+  <tbody id="helpquerycommnt">
+	</tbody>
+  
+</table>
+<div>
+</div>
+<!-- /.modal-content --></div>
+<!-- /.modal-dialog --></div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<!-- /.row -->
+
+<!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
+
+
+
+</div>
+
+<script>
+    function getrequestdata(ticket_id,catgory,id)
+    {
+  //$('#helpquerycommnt').empty();
+    	var request_cat=catgory;
+    	
+    	var requestid=ticket_id;
+    	var id=id;
+		
+  
+
+    	$.ajax({
+				
+				url:"<?php echo BASEPATH; ?>/Ticketlist/request", 
+				type: "POST",    
+			    data:'request='+requestid+'&id='+id+'&request_cat='+request_cat,
+			  	success:function(response)
+		  		{	
+					var data=JSON.parse(response);
+		//	alert(JSON.stringify(data['data'].length));
+					
+					 data_append='';
+					
+				 for(var k=0;k<(data['data'].length);k++)
+					  {
+					 		if(data['data'][k]['status']=='Closed')
+					 		{
+					 		
+						  $('#a').empty();
+						  $('#a').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="tid" name="tid" value="'+data['data'][k]['ticket_id']+'" disabled>'+'</div>');
+						  $('#username').empty();
+						  $('#username').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="user" name="user" value="'+data['data'][k]['username']+'" disabled>'+'</div>');
+						  
+						  $('#b').empty();
+						  $('#b').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="cid" name="cid" value="'+data['data'][k]['created_on']+'" disabled>'+'</div>');
+						  $('#c').empty();
+						  $('#c').append('<div>'+'<textarea class="form-control CommonInputBox" id="query" name="query" disabled>'+data['data'][k]['query']+''+'</textarea>'+'</div>');
+						 
+						  $('#d').empty();
+						  $('#d').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="catory" name="catory" value="'+data['data'][k]['req_category']+'" readonly>'+'</div>');
+
+				/*
+						  	var temp='';
+							data_append='';
+						  data_append+='<div><select id="catory" class="form-control CommonInputBox" >';
+						
+						 
+								  for(var j=0;j<(data['data1'].length);j++)
+								  {
+									  if(data['data1'][j]['name']=='sr_category')
+									 {
+											
+											 temp+='<option';
+										if(data['data1'][j]['value']==data['data'][k]['req_category'])
+										{	
+											temp+=' selected="selected"';
+																					 
+									 										  
+										}
+										temp+=' name="catory" value="'+data['data1'][j]['value']+'">'+data['data1'][j]['value']+'</option>';	
+										
+									}
+								}
+								 	
+							data_append+=temp;
+								  data_append+='</select></div>';
+							 $('#d').empty();
+							$('#d').append(data_append);
+				*/	
+						  temp='';
+						  data_append='';
+						
+						  data_append+='<div><select id="tpe" class="form-control CommonInputBox" disabled>';
+						  
+						  for(var j=0;j<(data['data1'].length);j++)
+						  {
+							  if(data['data1'][j]['name']=='sr_type')
+							 {
+									
+								temp+='<option';
+								if(data['data1'][j]['value']==data['data'][k]['req_type'])
+								{	
+									temp+=' selected="selected"';
+																			 
+							 										  
+								}
+								temp+=' id="ste" name="ste" value="'+data['data1'][j]['value']+'">'+data['data1'][j]['value']+'</option>';	
+								
+							}
+						}
+						  data_append+=temp;
+						  $('#e').empty();
+						  $('#e').append(data_append);
+						 
+						  temp='';
+						  data_append='';
+						  data_append+='</select></div>';
+						  data_append+='<div><select id="sts" name="sts" class="form-control CommonInputBox" disabled>';
+						  for(var j=0;j<(data['data1'].length);j++)
+						  { 
+							  if(data['data1'][j]['name']=='ticket_status')
+							 {
+									
+								temp+='<option';
+								if(data['data1'][j]['value']==data['data'][k]['status'])
+								{	
+									temp+=' selected="selected"';
+																			 
+							 										  
+								}
+								temp+=' value="'+data['data1'][j]['value']+'">'+data['data1'][j]['value']+'</option>';	
+								
+							}
+						}
+						  
+						  data_append+=temp;
+						  data_append+='</select></div>';
+						 
+						  $('#f').empty();
+						  $('#f').append(data_append);
+						  
+						  temp='';
+						  data_append='';
+
+						  data_append+='<div><select id="assign" name="assign" class="form-control CommonInputBox" disabled><option value="0">Select Subadmin</option>';
+						
+						  for(var j=0;j<(data['data2'].length);j++)
+						  { 
+							  if(data['data2'][j]['name']!="")data['data'][k]['req_type']
+							 {
+									
+								temp+='<option';
+								if(data['data2'][j]['name']==data['data'][k]['assigned_to'])
+								{	
+									temp+=' selected="selected"';
+																			 
+							 										  
+								}
+							
+								temp+=' value="'+data['data2'][j]['name']+'">'+data['data2'][j]['name']+'</option>';	
+								
+							}
+						}
+						
+						  data_append+=temp;
+						  data_append+='</select></div>';
+						  
+						 $('#g').empty();
+					 	 $('#g').append(data_append);
+
+						  $('#h').empty();
+						  $('#h').append('<div>'+'<textarea  class="form-control CommonInputBox" id="cmt" name="cmt" disabled>'+data['data'][k]['reply_comment']+'</textarea>'+'</div>');
+
+
+						
+						 data_append='';
+						
+						   for(var k=0;k<(data['data3'].length);++k)
+							{
+							   
+							   data_append+='<tr>'+
+				        	 '<td>'+[k+1]+'</td>'+ 
+				        	 
+							 '<td>'+data['data3'][k]['Date']+'</td>'+ 
+							 '<td>'+ data['data3'][k]['Comments']+'</td>'+
+							 '<td>'+ data['data3'][k]['CommentsBy']+'</td>'+
+							'</tr>';	
+							}
+						  
+						   $('#helpquerycommnt').empty();
+						   $('#helpquerycommnt').append(data_append); 
+						   
+					// document.getElementById("submit").disabled = true; 
+							$("#submit").hide();
+					  }
+					 	else
+					 	{	$("#submit").show();
+					 		  $('#a').empty();
+							  $('#a').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="tid" name="tid" value="'+data['data'][k]['ticket_id']+'" readonly>'+'</div>');
+							  $('#username').empty();
+							  $('#username').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="user" name="user" value="'+data['data'][k]['username']+'" readonly>'+'</div>');
+							  
+							  $('#b').empty();
+							  $('#b').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="cid" name="cid" value="'+data['data'][k]['created_on']+'" readonly>'+'</div>');
+							  $('#c').empty();
+							  $('#c').append('<div>'+'<textarea class="form-control CommonInputBox" id="query" name="query" readonly>'+data['data'][k]['query']+''+'</textarea>'+'</div>');
+	  						  
+						 	  $('#d').empty();
+							  $('#d').append('<div>'+'<input class="form-control CommonInputBox" type="text" id="catory" name="catory" value="'+data['data'][k]['req_category']+'" readonly>'+'</div>');
+							 
+							
+							  temp='';
+							  data_append='';
+							//  data_append+='</select></div>';
+							  data_append+='<div><select id="tpe" class="form-control CommonInputBox">';
+							  
+							  for(var j=0;j<(data['data1'].length);j++)
+							  {
+								  if(data['data1'][j]['name']=='sr_type')
+								 {
+										
+									temp+='<option';
+									if(data['data1'][j]['value']==data['data'][k]['req_type'])
+									{	
+										temp+=' selected="selected"';
+																				 
+								 										  
+									}
+									temp+=' id="ste" name="ste" value="'+data['data1'][j]['value']+'">'+data['data1'][j]['value']+'</option>';	
+									
+								}
+							}
+							  data_append+=temp;
+							  $('#e').empty();
+							  $('#e').append(data_append);
+							 
+							  temp='';
+							  data_append='';
+							  data_append+='</select></div>';
+							  data_append+='<div><select id="sts" name="sts" class="form-control CommonInputBox">';
+							  for(var j=0;j<(data['data1'].length);j++)
+							  { 
+								  if(data['data1'][j]['name']=='ticket_status')
+								 {
+										
+									temp+='<option';
+									if(data['data1'][j]['value']==data['data'][k]['status'])
+									{	
+										temp+=' selected="selected"';
+																				 
+								 										  
+									}
+									temp+=' value="'+data['data1'][j]['value']+'">'+data['data1'][j]['value']+'</option>';	
+									
+								}
+							}
+							  
+							  data_append+=temp;
+							  data_append+='</select></div>';
+							 
+							  $('#f').empty();
+							  $('#f').append(data_append);
+							  
+							  temp='';
+							  data_append='';
+
+							  data_append+='<div><select id="assign" name="assign" class="form-control CommonInputBox"><option value="0">Select Subadmin</option>';
+							
+							  for(var j=0;j<(data['data2'].length);j++)
+							  { 
+								  if(data['data2'][j]['name']!="")data['data'][k]['req_type']
+								 {
+										
+									temp+='<option';
+									if(data['data2'][j]['name']==data['data'][k]['assigned_to'])
+									{	
+										temp+=' selected="selected"';
+																				 
+								 										  
+									}
+								
+									temp+=' value="'+data['data2'][j]['name']+'">'+data['data2'][j]['name']+'</option>';	
+									
+								}
+							}
+							
+							  data_append+=temp;
+							  data_append+='</select></div>';
+							  
+							 $('#g').empty();
+						 	 $('#g').append(data_append);
+
+							  $('#h').empty();
+							  $('#h').append('<div>'+'<textarea  class="form-control CommonInputBox" id="cmt" name="cmt">'+data['data'][k]['reply_comment']+'</textarea>'+'</div>');
+						
+//added by Amol for auto select reply						
+						 temp='';
+						  data_append='';
+						  data_append+='';
+						  data_append+='<select id="reply" name="reply" class="form-control CommonInputBox">';
+						  data_append+='<option value="">Select Query Type</option>';
+						  for(var j=0;j<(data['data4'].length);j++)
+						  { 
+							
+									
+								data_append+='<option onclick="getAnswer('+data["data4"][j]["id"]+')"';
+		
+								data_append+=' value="'+data['data4'][j]['id']+'">'+data['data4'][j]['query_type']+'</option>';	
+								
+							
+						}
+						  
+						
+						  data_append+='</select>';
+						 
+						  $('#reply_data').empty();
+						  $('#reply_data').append(data_append);
+//auto reply end
+							
+							 data_append='';
+							
+							   for(var k=0;k<(data['data3'].length);++k)
+								{
+								   
+								   data_append+='<tr>'+
+					        	 '<td>'+[k+1]+'</td>'+ 
+					        	 
+								 '<td>'+data['data3'][k]['Date']+'</td>'+ 
+								 '<td>'+ data['data3'][k]['Comments']+'</td>'+
+								 '<td>'+ data['data3'][k]['CommentsBy']+'</td>'+
+								'</tr>';	
+								}
+							  
+							   $('#helpquerycommnt').empty();
+							   $('#helpquerycommnt').append(data_append); 
+							   //document.getElementById("submit").disabled = false; 
+							 	
+					 	} 
+					 }
+					  
+					 
+  				}
+					
+				
+			 });
+    	
+    }
+	
+function getAnswer(id)
+{
+		$.ajax({
+				
+				url:"<?php echo BASEPATH; ?>/Ticketlist/getanswer", 
+				type: "POST",    
+			    data:'id='+id,
+			  	success:function(response)
+		  		{	
+					var data=JSON.parse(response);
+					if(data['answer'] && data['answer']!='')
+					{
+						var comment = $('#cmt').val();
+												
+						cmnt = comment + " " + data['answer']; 
+						
+						$('#cmt').empty();
+						$('#cmt').val(cmnt);
+						
+						
+					}
+				}
+		});
+}
+
+
+function updateStatus()
+{
+	
+	var tid=$("#tid").val();
+	var dte=$("#cid").val();
+	var qry=$("#query").val();
+	
+	
+	var cID = document.getElementById("catory"); 
+//	var cVal = cID.options[cID.selectedIndex].value; 
+	var cVal = cID.value; 
+if($("#tpe").length > 0){
+	var tID = document.getElementById("tpe"); 
+	 tID.options[tID .selectedIndex].value; 
+}else{
+	var tVal = '';
+}
+	var sts=$("#sts").val();
+	
+
+	var comnt=$("#cmt").val();
+
+    var tkn=$("#token").val();
+
+   // var assign=$('#assign').val(); 
+   var assign = document.getElementById("assign"); 
+   var tassign = assign.options[assign .selectedIndex].value; 
+  
+	
+   if(sts == "" || sts == null)
+   {	 
+			  $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please select status</label>');
+	 			return false;
+
+	}
+  if(comnt=="")
+   {
+	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter comment</label>');
+		return false;
+   }
+
+
+		  
+   
+	/*if(sts="selected"){
+		
+	  $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please select status</label>');
+	
+	return false;
+	}*/
+	
+	else{
+	 $.ajax({
+			
+			url:"<?php echo BASEPATH;?>/Ticketlist/updateticketstatus", 
+			type: "POST",    
+		    data: 'tid='+tid+'&dte='+dte+'&qry='+qry+'&cVal='+cVal+'&tVal='+tVal+'&sts='+sts+'&comnt='+comnt+'&tkn='+tkn+'&tassign='+tassign,
+		    async:false,
+	  		success:function(response)
+	  		{
+			
+				var data=JSON.parse(response);
+				
+			//alert(JSON.stringify(data['data']['Help_comments']));return;
+				 if(data['success']!="")
+				   { 
+				   
+			         $(".err1").html('<label class="lblTxt" for="" style="color:green;">Data updated successfully</label>');
+			    	 window.location = "<?php echo BASEPATH;?>/Ticketlist";
+						
+				   }
+				 else{
+			         $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+
+
+					 }
+				
+				}
+		
+	
+			});
+	 return true;
+	}
+}
+
+    
+</script>
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/res/js/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+		  
+			jQuery('.datepick').datetimepicker({			
+			 format:'d-m-Y',
+			});
+		</script>
+
+<?php }
+catch(Exception $e)
+{
+	echo $e->getMessage();exit;
+}
+?>
+<script>
+ $(document).ready(function() {
+	    // Setup - add a text input to each footer cell
+	    $('#data-table-simple tfoot th').each( function () {
+	        var title = $(this).text();
+	        if(title!=""){
+	        $(this).html( '<input type="text" placeholder="'+title+'" />' );
+	        }
+	    } );
+	 
+	    // DataTable
+	    var table = $('#data-table-simple').DataTable();
+	 
+	    // Apply the search
+	    table.columns().every( function () {
+	        var that = this;
+	 
+	        $( 'input', this.footer() ).on( 'keyup change', function () {
+	            if ( that.search() !== this.value ) {
+	                that
+	                    .search( this.value )
+	                    .draw();
+	            }
+	        } );
+	    } );	    
+	    
+	} );
+	
+ </script>

@@ -1,0 +1,264 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$user_id=$authUserNamespace->user_id;
+	$data1=$misc_obj->GetAccessRightByUserId('37',$user_id);
+
+	?>
+<style>
+.calculatebtn {
+    width: 42%;
+}
+#reports
+{
+width:11%;
+float:left;
+
+}
+ .form-group {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:300px;
+		}
+	.btn-group {
+    display: inline-block;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:100%;
+		}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+ <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            
+             <div class="row">
+             
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Claimed Requests</li>
+  
+            	</ol>
+            	
+            	<?php 
+			$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+		
+			if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+		
+		    <label for="" class="lblTxt" style="color:red;width:100%;"><?php echo $authUserNamespace->msg;?></label>
+		
+			<?php $authUserNamespace->msg="";}?>
+            	
+            <form method="POST" action="<?php echo BASEPATH; ?>/Claimlist" id="report_form"/>
+					  <div class="form-group">
+					  <label for="" class="lblTxt">Choose Date Type</label>
+					  <select name = "filter_by" class="form-control CommonInputBox" id = "filter_by" style="	border: 1px solid !important;border-radius: 5px !important;">
+								<option value = "">Choose Date Type</option>
+								<option value = "1">Created Date</option>
+								<option value = "2">Updated Date</option>
+					</select>
+						</div>
+	
+		<div class="form-group">
+  		<label for="" id="datetimepicker"  name="startdate" class="lblTxt">Start Date</label>
+        	<input id="datetimepicker" class="form-control CommonInputBox datepick"  type="text" name="start_date" name="start_date"  value="" class="form-control calculateSearchbox datepick"  placeholder="Start Date" />   
+
+		</div>
+		
+		
+		<div class="form-group">
+ 		 <label for="" id="datetimepicker" name="enddate" class="lblTxt">End Date</label>
+        <input id="datetimepicker1" class="form-control CommonInputBox datepick"  type="text" id = "end_date" name = "end_date"  value="" class="form-control calculateSearchbox datepick" placeholder="End Date" />     
+		</div>
+		
+		<div class="form-group">
+		<label for="" class="lblTxt">Username</label>
+		<input type="text" id= "user" class="form-control CommonInputBox" name = "user" placeholder = "Search User"/>
+		</div>
+		<div class="btn-group">
+		<button class="btn btn-default Commonbtn" name="search_filter" id="search_filter" type="submit">Filter</button>
+		<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+		
+		</div>
+
+      </form>      
+            
+            
+            
+            
+                    <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table" id="parentTable">
+					             
+                                       <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+        
+					<tr>
+							<th class="sortboth">Sr.</th>
+							<th class="sortboth">Username</th>
+							<th class="sortboth">Offer</th>
+							<th class="sortboth">Choosen Option</th>
+							<th class="sortboth">Status</th>
+							<th class="sortboth">Comment</th>
+							<th class="sortboth">Created</th>
+							<th class="sortboth">Updated</th>
+							
+							<th style="text-align:center;width: auto;"></th>
+							
+					</tr>
+
+                 </thead>
+                  <tbody id="parentdata"> 
+
+							<?php
+							try{
+// printArr($AllClaimedRequests);
+// exit;
+								if(!empty($this->AllClaimedRequests) && sizeof($this->AllClaimedRequests) > 0 ){ 
+
+									$sn = 1;
+//printArr($kitDetails);
+									if(!empty($get_parameters['page']) && $get_parameters['page'] >1){
+										$sn = ($get_parameters['page']-1)*$PaginateLimit +1;
+									}
+									foreach($this->AllClaimedRequests as $AllClaimedRequest){
+
+									if($AllClaimedRequest['status']!=='Deleted'){
+
+										$id = isset($AllClaimedRequest['id']) ? $AllClaimedRequest['id'] : '';
+										if($id){
+											$rand = rand(100000, 999999);
+											$id = $rand.$id;
+											$rand = rand(100000, 999999);
+											$id = $id.$rand;
+										}
+										$username = isset($AllClaimedRequest['username']) ? $AllClaimedRequest['username'] : '';
+										$offer_id = isset($valueArray['offer_id']) ? $valueArray['offer_id'] : '';
+
+										$preferred_option = isset($AllClaimedRequest['preferred_option']) ? $AllClaimedRequest['preferred_option'] : '';
+										$CreatedDate = isset($AllClaimedRequest['created_on']) ? $AllClaimedRequest['created_on'] : '';
+										$UpdatedDate = isset($AllClaimedRequest['updated_on']) ? $AllClaimedRequest['updated_on'] : '';
+										// $status = isset($AllClaimedRequest['status']) ? $AllClaimedRequest['status'] : '';
+										
+										if($AllClaimedRequest['status'] == 1){
+											$status = "Accepted";
+										}else if($AllClaimedRequest['status'] == 2){
+											$status = "Rejected";
+										}else{
+											$status = "";
+										}
+										$comment=isset($AllClaimedRequest['comment']) ? $AllClaimedRequest['comment'] : '';
+										
+										// $inv_sts=isset($valueArray['invoice_status']) ? $valueArray['invoice_status'] : '';
+
+									?>
+									
+							<tr>
+
+								<td style="text-align:center;"><?php echo $sn; ?></td>
+
+								<td><?php echo $username; ?></td>
+								
+								<td>
+								<?php echo $offer_id;	?>
+								</td>
+								<td><?php echo $preferred_option; ?></td>
+								<td><?php echo $status; ?></td>
+								<td><?php echo $comment; ?></td>
+								<td><?php  if(!empty($CreatedDate)){ echo   date("jS M, Y H:m", strtotime($CreatedDate)); } else { echo ''; } ?></td>
+								<td><?php  if(!empty($UpdatedDate)) { echo date("jS M, Y H:m", strtotime($UpdatedDate)); } else { echo ''; } ?></td>
+								
+								<td>
+								<?php 
+									if(((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin') && $AllClaimedRequest['status']!=1 && $AllClaimedRequest['status']!=2){
+								?>
+									<a class = "btn" onclick="confirmRequest(<?php echo $id; ?>,1)" >Accept</a><br/><br/>
+									<a class = "btn" onclick="confirmRequest(<?php echo $id; ?>,2)" >Reject</a><br/><br/>
+								<?php 
+									}
+								?>
+									
+								</td>
+							</tr>
+								<?php
+
+									$sn++;
+
+									}
+								}
+							}
+							}
+							catch(Exception $e)
+							{
+								echo $e->getMessage();
+							}
+								?>
+             
+                 </tbody>
+                  </table> 
+  
+              </div>
+
+        </div>
+		
+    </div>
+	<?php echo $this->SearchResult['Pagination']; ?>
+    
+    <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    
+             
+             </div>
+</div>
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+
+ 
+     
+     <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>
+		<script>
+		function confirmRequest(id,status)
+		{
+			 $.ajax({
+					
+					url:"<?php echo BASEPATH; ?>/Refrequest/confirmrequest", 
+					type: "POST",    
+					data: 'claimed_request='+id+'&status='+status,			
+					success:function(response)
+					{	//alert(response);	
+						window.location = "<?php echo BASEPATH; ?>/Claimlist";	
+										
+					}
+			 });
+		}
+		</script>
+		

@@ -1,0 +1,178 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+    <div class="loginPadd loreg-page" style="position:fixed";>
+
+      <div class="logincontainer paddAll">
+
+        <div class="form-group">
+            <a href = "https://gainbitcoin.com/"><img src="<?php echo BASEPATH; ?>/images/login-logo.png" alt="" class="img-responsive" style="margin:0 auto;"></a>
+        </div>
+  <form class="paddAll"	id="resetPwdForm" name="resetPwdForm" autocomplete="off" action="<?php echo BASEPATH; ?>/Login/changepwd">
+	  
+	 
+	<div class="form-group" style="width:80%;margin:0 auto;">
+	  <p class="text-center white_text"> Please Enter Your Information</p>      
+	</div> 
+
+<?php if(isset($authUserNamespace->msg) && $authUserNamespace->msg!='') { ?>
+<div><?php echo $authUserNamespace->msg; ?></div>
+<?php  $authUserNamespace->msg ='';
+}
+?>
+     <div class="form-group text-center err-div-text" style="color:red;display:block;"; id="err_div"></div>
+  	<div class="form-group">
+       <div class="input-group" style="display:block;">
+  		 <input type="text" readonly name="username" id="username" value="<?php echo $this->username; ?>"  class="input-box" placeholder="Username"> 
+	   </div><!-- /input-group -->  
+    </div>
+	  
+	<div class="form-group">
+		<div class="input-group" style="display:block;">
+			 <input type="password" name="password" id="password" class="input-box" placeholder="Enter New Password">	
+		</div><!-- /input-group -->
+	</div>
+	  
+	 <div class="form-group">
+		 <div class="input-group" style="display:block;">
+			<input type="password" name="password_rpt" id="password_rpt" class="input-box" placeholder="Re-Enter New Password">
+		 </div><!-- /input-group -->
+	 </div>
+
+
+
+<div class="form-group"><button type="submit" onClick="document.resetPwdForm.submit()" class="button">Login</button></div>
+
+
+
+</form>
+
+</div>
+ <p class="copy" style="position:relative;">© <?php echo date("Y"); ?> &nbsp;GainBitcoin.com.All rights reserved.</p>		
+ <script data-cfasync="false" src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script> 
+
+
+
+    </div>
+    
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">   
+    
+    <script>
+
+	  function chnagePassword()
+	  {
+		var password_rpt=$('#password_rpt').val();
+		var password=$('#password').val();
+		var username=$('#username').val();
+		$('#err_div').empty();
+		$("#err_div").css("display", "none");
+
+
+	 if(!password || password=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Password";
+			return false;
+			
+		}
+		else if(!password_rpt || password_rpt=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter repeat Password";
+			return false;
+			
+		}
+		else if(password!='' && password_rpt!='' && password!=password_rpt)	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="The passwords you entered are not identical";
+			return false;
+			
+		}
+		else
+		{
+			var dataString = 'password='+ password+'&password_rpt='+password_rpt+'&username'+username;
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Login/chkresetpass",
+					type: "POST",    
+				    data: dataString,
+			  		success: function(response)
+		      		{
+					
+					 var data=	JSON.parse(response);
+				
+					 if(data['success']!='' && data['success']=='success')
+					 {
+						 //alert(data['data']);
+							window.location.href=("<?php echo BASEPATH; ?>/Login");
+				
+						
+					 }
+					 else
+					 {
+							$("#err_div").css("display", "block");
+							document.getElementById("err_div").innerHTML=data['failure'];
+					 }		
+		      			
+		      		}
+				});
+		}
+	  }
+
+
+	  $(document).ready(function(e){
+			
+			$.validator.addMethod("checkPassword", function(value, element){
+		        return this.optional(element) || /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}/.test(value);
+		    }, "Password must contain Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character between #@$!%*?&");
+			
+
+		  $('#resetPwdForm').validate({
+				// Rules for form validation
+					rules : {
+					username:{
+					required : true,
+						},
+						password : {
+							required : true,
+							minlength: 8,
+							checkPassword:true,
+						},	
+						password_rpt : {
+							required : true,
+							minlength: 8,
+							equalTo : "#password",
+						},
+			
+					 },
+
+					// Messages for form validation
+					messages : {
+						 username : {
+	                       required: "Please enter a Username.",
+	                        
+					},
+						password : {
+		                       required: "Please enter a password.",
+		                        minlength: "At least {8} characters required.",
+		                        checkPassword:"Password must contain Minimum 8 characters at least 1 Uppercase Alphabet, 1 Lowercase Alphabet, 1 Number and 1 Special Character between #@$!%*?&"              
+						},
+						password_rpt: {
+		                        required: "Please enter a re-enter password.",
+		                        minlength: "At least {8} characters required.",
+		                        equalTo:"Password not match"
+		                },
+						
+					},
+				
+					// Do not change code below
+					errorPlacement : function(error, element) {
+						error.insertAfter(element);
+					}
+				});
+		});
+    </script>

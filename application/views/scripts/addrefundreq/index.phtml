@@ -1,0 +1,262 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	//$misc_obj->generateToken();
+?>
+
+<style>
+.lblTxt
+{
+	float:left;
+	font-weight: bold;
+}
+.form-group {
+    float: left;
+   /* margin-top: -83px;*/
+     margin-right: 20px;
+   
+}
+.col-lg-12.typecls.form-group {
+    height: 100px;
+}
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 280px;
+    padding-bottom: 20px;
+}
+.error{
+    color:red;
+}
+.form-control
+{
+display: inline-block;
+}
+.typecls{
+	padding-left: 0px;
+    padding-right: 0px;   
+}
+@-moz-document url-prefix() {
+ 	.typecls{
+	 	margin-bottom:16px;   
+	}
+ }
+ @media (max-width:1280px){
+ 	@-moz-document url-prefix() {
+ 	.typecls{
+	 	margin-bottom:0px;   
+	}
+ }
+ } 
+ @media (max-width:480px){
+	 .form-group {
+	    width: 100% !important;
+	}	
+ }
+ @media (max-width:1280px){
+	 .form-group {
+	    width: 44%;
+	}	
+ }
+</style>
+<div id="page-wrapper">
+ <div class="modal req-admin" id="ticket_done">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold"></div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt">Create Request</h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+	<li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+	<li>Refund Request ></li>
+	<li>Create Request</li>
+
+</ol>
+
+
+
+
+<div class="col-lg-12">
+<?php if(isset($authUserNamespace->msg) && $authUserNamespace->msg!='') { ?>
+<p id="error" style="color: red; font-weight: bolder"><?php echo $authUserNamespace->msg; ?></p>
+<?php $authUserNamespace->msg='';
+ } ?>
+<p id="sucess"></p>
+<div class="row-fluid " id="form_sh">
+<form action="<?php echo BASEPATH; ?>/Addrefundreq" method="post" id="refund_form">
+		
+		<div class="col-lg-12 typecls form-group" >
+			<label for="full_name" class="lblTxt">Username</label>  
+			<input type = "text" name = "username" id = "username" class="form-control CommonInputBox" />												
+		</div>
+		<div class="col-lg-12 typecls form-group" >
+			<label for="full_name" class="lblTxt">Full name</label>  
+			<input type = "text" name = "full_name" id = "full_name" class="form-control CommonInputBox" />												
+		</div>	
+		<div class="col-lg-12 typecls form-group" >
+			<label for="email" class="lblTxt">Email</label>  
+			<input type = "text" name = "email" id = "email" class="form-control CommonInputBox" />												
+		</div>
+		<div class="col-lg-12 typecls form-group" >
+			<label for="Phone" class="lblTxt">Phone</label>  
+			<input type ="text" name ="phone" id="phone" maxlength="10" class="form-control CommonInputBox isnumber" />												
+		</div>
+		<div class="col-lg-12 typecls form-group" >
+			<label for="kit_number" class="lblTxt">Kit Number</label>
+			<input type="text" class="form-control CommonInputBox" name = "kit_number" id = "kit_number" />
+			
+		</div>
+		<div class="col-lg-12 typecls form-group" >
+			<label for="reason" class="lblTxt">Reason for Cancellation</label>
+			<input type="text" class="form-control CommonInputBox" name = "reason" id = "reason" />
+			
+		</div>
+		
+
+	
+<div class="clearfix">&nbsp;</div>
+<div class="form-group" style="width:100%;margin-top:10px;">
+<button type="submit" class="btn btn-default Commonbtn" id = "refund" name="refund">Request Refund</button>
+
+<button type="reset" class="btn btn-default Commonbtn">Reset</button>
+</div>
+</form>
+</div>
+<div class="clearfix">&nbsp;</div>
+
+</div>
+
+
+
+</div>
+</div>
+
+
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+		<script data-cfasync='false'>
+		$(document).ready(function () {
+					$.validator.addMethod("checknumber",function(value,element){
+						var Phone = $("#Phone").val();
+						
+						check=false;
+						 var numbers = /^[-+]?[0-9]+$/;  
+					      if(Phone.match(numbers))  
+					      {  
+					    	  check=true; 
+					      }  
+					      else  
+					      {  
+					    	  check=false;
+					      }  
+						return check;
+					});
+					
+					$.validator.addMethod("kit_number_id",function(value,element){
+						var kit_number = $("#kit_number").val();
+						
+						check=false;
+						$.ajax({
+							type: "GET",
+							url: '<?php echo BASEPATH; ?>/Addrefundreq/checkkit?kit_number='+kit_number,
+							async:false,
+							success: function(res)
+							{
+							
+								if((res.trim()=="true") && res!=""){ 
+									check=true;
+								}else{ 
+									
+									check=false;
+								}
+							}
+						});
+						return check;
+					});
+							
+				
+                    $('#refund_form').validate({
+					// Rules for form validation
+						rules : {
+							
+							kit_number : {
+								required : true,
+								kit_number_id : true,
+							},
+							username : {
+								required : true,
+							},
+							full_name : {
+								required : true,
+							},							
+							email : {
+								required : true,
+								email : true,
+							},
+							Phone : {
+								required : true,
+								checknumber:true,
+							},
+							reason : {
+								required : true,
+							},
+							
+						},
+			
+						// Messages for form validation
+						messages : {
+							
+							kit_number : {
+								   required: "Please enter kit number",
+								   kit_number_id:"Please enter valid kit number"
+							},	
+	
+							username : {
+								   required: "Please enter username"
+							},	
+							full_name : {
+								   required: "Please enter full name"
+							},								
+							email : {
+								required : 'Please enter Email',
+								email : 'Please enter a VALID email address',
+							},
+							
+							Phone : {
+								   required: "Please enter Phone.",
+								   checknumber:'Please enter a VALID phone number.'
+							},	
+							reason : {
+								   required: "Please enter reason to refund."
+							},	
+							
+						},
+			
+						// Do not change code below
+						//errorPlacement : function(error, element) {
+						//	error.insertAfter(element.parent());
+					//	}
+					});
+			
+		});
+
+		
+		</script>

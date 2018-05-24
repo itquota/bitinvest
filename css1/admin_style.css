@@ -1,0 +1,50 @@
+/**** left menu *****/
+
+.navbar-default.sidebar {
+    height: 600px !important;
+    min-height: 600px !important;
+    overflow-y: scroll;
+}
+
+#side-menu span {
+    padding-left: 8px !important;
+}
+
+.has-sub-menu > a::after {
+    right: 7px !important;
+
+}
+.sidebar {
+
+    width: 255px !important;
+
+}
+#innerpage-wrapper {
+    margin: 0 0 0 255px !important;
+}
+/**** left menu ends*****/
+
+/**** common css*****/
+
+	.innertbl tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+	    vertical-align: middle;
+	}
+	table.dataTable.dtr-inline.collapsed > tbody > tr > td:first-child::before, table.dataTable.dtr-inline.collapsed > tbody > tr > th:first-child::before {
+	    top: auto !important;
+
+	}
+
+	 .form-group {
+	    width: 300px;
+	}
+
+
+/**** common ends*****/
+/**** admin Settings ****/
+
+.bordercls {
+    border: 1px solid #ddd;
+    width: 100px;
+}
+
+/**** admin Settings ends****/

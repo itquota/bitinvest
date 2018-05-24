@@ -1,0 +1,1111 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+<script type="text/javascript">
+	function Sortbydate(sortby,status1)
+	{
+		
+	 	 if(status1==1)
+	 	 {
+			var projectstatus = 'n'; 
+			var statusid = 22;
+	 	 }
+	 	if(status1==2)
+	 	 {
+			var projectstatus = 'o'; 
+			var statusid = 47;
+	 	 }
+	 	if(status1==3)
+	 	 {
+			var projectstatus = 'c'; 
+			var statusid = 23;
+	 	 }
+			
+		 document.getElementById('Sort').value = sortby;
+		 var type=document.getElementById('projecttype2').value;
+			if(type=="54")
+			{
+				
+				viewalladhocproject(statusid,'1',projectstatus);
+
+
+
+			}
+			else if(type=="55")
+			{
+				viewallannualproject(statusid,'1',projectstatus);
+
+			}	
+			 
+		
+
+	}
+
+
+	function del(cmd)
+	{
+		//alert(cmd);
+		var pm = 1;
+		var type=document.getElementById('projecttype2').value;
+		if(type == "55")
+		{
+		type = "annual";
+		}
+
+       if(type == "54")
+       {
+		type = "adhoc";
+       }
+
+		jConfirm('Are you sure you want to delete?', 'Delete Box', function(r) {
+		   if(r){
+		    	window.location.href = "<?php echo BASEPATH;?>/project/deleteact/pm/"+pm+"/projecttype/"+type+"/projectid/"+cmd;
+		     return true;
+		    }
+		    else
+		    
+		      return false;
+		  }
+		 );
+		
+	}
+
+	
+</script>
+
+<script type="text/javascript">
+window.onload=function()
+	{
+		viewalladhocproject('','1','n');
+	}
+$(document).ready(function(){viewalladhocproject('','1','n')});
+	var counter="0";
+	var count="0";
+	var glogal=1;  
+	var type="";
+ function viewalladhocproject(statusid,page,type)
+ 	{
+	 glogal=page;
+	 type=type;
+	 var projecttitle=document.getElementById('projecttitle').value;
+	 var keywords=document.getElementById('keywords').value;
+	 var projectid=document.getElementById('projectid').value;
+	 var practice=document.getElementById('practice').value;
+	 //var startdate=document.getElementById('startdate').value;
+	 //var enddate=document.getElementById('enddate').value;
+	 var clientname=document.getElementById('clientname').value;
+	 var projecttype=document.getElementById('projecttype').value;
+	 var studysector=document.getElementById('studysector').value;
+	 var teammember=document.getElementById('teammember').value;
+	 var date= document.getElementById('Sort').value ;
+	 if(date == "")
+	 {
+		date = 3;
+	 }
+	
+	 <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>
+	 var projectname=document.getElementById('projectname').value;
+	
+	 <?php } ?>
+	 var allRadio =document.getElementsByName("geography");
+	 var radioflag="";
+	 var geography="";
+        for(var i = 0;i<allRadio.length; i++)
+	    {
+            if(allRadio[i].checked == true)
+	        {
+            	geography=allRadio[i].value;
+            	radioflag="1";
+           	}
+         } 
+		//alert(geography);
+	 var foo = []; 
+     $('#geography_list :selected').each(function(i, selected){ 
+       foo[i] = $(selected).val(); 
+     });
+     var geography_id="";
+     for(var i = 0;i<foo.length; i++)
+     {
+     	geography_id+=foo[i]+",";
+     }  
+     geography_id=geography_id.substring(0, geography_id.length - 1);
+
+     var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+	 //alert(geography_id);
+	 $.ajax({
+			url: "<?php echo BASEPATH; ?>/projectmanager/viewadhocresult",
+			type: "POST",    
+			data: "statusid="+statusid+"&projecttitle="+projecttitle+"&keywords="+keywords+"&projectid="+projectid+"&practice="+practice+"&startdate="+startdate+"&enddate="+enddate+"&clientname="+clientname+"&projecttype="+projecttype+"&studysector="+studysector+"&teammember="+teammember+"&geography="+geography+"&geography_id="+geography_id+"&projectname="+projectname+"&page="+page+"&date="+date,
+		    success: function(response)
+		    { 
+			   
+				j=0;
+				
+				if((response!="") && (response!=null))
+					 { 
+					 var jsonObject = JSON.parse(response);
+					
+
+					 if(jsonObject.length>0)
+				  	 {
+					  	document.getElementById('norecord').innerHTML="";
+					 }
+					 else
+					 {
+					  	document.getElementById('norecord').innerHTML='<div  style="width:95%;font-weight:bold;">No Records Found</div>';
+					 }
+					 var numberofpages=jsonObject[0]["numberofpages"];
+						document.getElementById('pagin').innerHTML="";
+						var innerHTML="";
+						
+						var next=parseInt(glogal)+1;
+						var previous=glogal-1;
+
+						if(numberofpages==0)
+						{
+							document.getElementById('norecord').innerHTML='<div  style="width:95%;font-weight:bold;">No Records Found</div>';
+						}
+						
+						if(numberofpages!=0){
+						if(numberofpages==1 || glogal==1 )
+						{
+							innerHTML+="";
+						}
+						else
+						{
+							if(type=="n")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->openstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+							else if(type=="o")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->ongoingstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+							else if(type=="c")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->completedstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+						}
+						}
+						for(var k=1;k<=numberofpages;k++)
+						{
+							
+							if(glogal==k)
+							{	
+								if(type=="n")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->openstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+								}
+								else if(type=="o")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->ongoingstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+								}
+								else if(type=="c")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->completedstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+								}
+							}
+							else
+							{
+								if(type=="n")
+								{
+									var ptype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->openstatusid;?>+","+k+","+ptype+")' >"+k+"</a>";
+								}
+								else if(type=="o")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->ongoingstatusid;?>+","+k+","+ttype+")' >"+k+"</a>";
+								}
+								else if(type=="c")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewalladhocproject("+<?php echo $this->completedstatusid;?>+","+k+","+ttype+")' >"+k+"</a>";
+								}
+							}
+							
+						}
+						if(numberofpages!=0){
+						if(numberofpages==1 || numberofpages==glogal)
+						{
+							innerHTML+="";
+						}
+						else 
+						{
+							if(type=="n")
+							{	
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->openstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+							else if(type=="o")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->ongoingstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+							else if(type=="c")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewalladhocproject("+<?php echo $this->completedstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+						}
+						}
+					 document.getElementById('pagin').innerHTML=innerHTML;
+					 document.getElementById('np').setAttribute('onclick', 'viewalladhocproject(<?php echo $this->openstatusid;?>,1,"n");');
+					 document.getElementById('op').setAttribute('onclick', 'viewalladhocproject(<?php echo $this->ongoingstatusid;?>,1,"o");');
+					 document.getElementById('cp').setAttribute('onclick', 'viewalladhocproject(<?php echo $this->completedstatusid;?>,1,"c");');		 
+
+					 if(type=="n")
+					 {
+						 document.getElementById('op').removeAttribute('class');
+						 document.getElementById('cp').removeAttribute('class');
+						 document.getElementById('np').setAttribute('class','active');
+						 document.getElementById('tablebg').innerHTML="";
+						 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+						 											  '<div class="col">&nbsp;</div>'+
+																	  '<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,1);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,1);" title="Sort" /></div></div></div>'+
+            														  '<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,1);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,1);" title="Sort" /></div></div></div> '+
+				            								     	  '<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+					 }
+					 else if(type=="o")
+					 {
+						 document.getElementById('np').removeAttribute('class');
+						 document.getElementById('cp').removeAttribute('class');
+						 document.getElementById('op').setAttribute('class','active');
+						 document.getElementById('tablebg').innerHTML="";
+						 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+				            											'<div class="col">&nbsp;</div>'+
+																		'<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,2);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,2);" title="Sort" /></div></div></div>'+
+	            														'<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,2);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,2);" title="Sort" /></div></div></div> '+
+				            								     	 	'<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+					 }	
+					 else if(type=="c")
+					 {
+						 document.getElementById('np').removeAttribute('class');
+						 document.getElementById('op').removeAttribute('class');
+						 document.getElementById('cp').setAttribute('class','active');
+						 document.getElementById('tablebg').innerHTML="";
+						 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+																	 '<div class="col">&nbsp;</div>'+
+																	 '<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,3);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,3);" title="Sort" /></div></div></div>'+
+            														 '<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,3);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,3);" title="Sort" /></div></div></div> '+
+			            								     	 	 '<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+					 }	
+					document.getElementById('datarow').innerHTML="";
+					for(m=1;m<jsonObject.length;m++)
+						{
+						
+							counter++;
+							<?php if(isset($authUserNamespace->designation_id) && ($authUserNamespace->designation_id=="58" )) { ?>
+							var scorelink="<?php echo BASEPATH;?>/project/score/id/"+jsonObject[m]["eid"]+"/type/adhoc"; 
+							<?php }else if(isset($authUserNamespace->designation_id) && ($authUserNamespace->designation_id=="14")) {?>
+							var scorelink="<?php echo BASEPATH;?>/project/plscoreinsert/id/"+jsonObject[m]["eid"]+"/type/adhoc";
+							<?php }?>
+							var ptype = "adhoc";
+							var downloadlink="<?php echo BASEPATH;?>"+jsonObject[m]["filepath"];
+							
+							var closurelink="<?php echo BASEPATH;?>/project/plpmclosure/id/"+jsonObject[m]["eid"]+"/type/adhoc";
+							var viewlink="<?php echo BASEPATH ;?>/project/projectview/adid/"+jsonObject[m]["eid"];
+							var namelink="<?php echo BASEPATH;?>/project/addadhoc/id/"+jsonObject[m]["eid"]+"/view/<?php echo "view";?>";
+							var editlink="<?php echo BASEPATH;?>/project/addadhoc/id/"+jsonObject[m]["eid"];
+							var addhoclink="<?php echo BASEPATH;?>/taskpl/allocatetask/pid/"+jsonObject[m]["eid"]+"/type/adhoc";
+							var newDiv =document.createElement('div');
+							newDiv.id="childDiv"+counter;
+							var close_flag=0;
+							var parent=document.getElementById('datarow');
+							var pid = jsonObject[m]["eid"];
+							
+							if(jsonObject[m]["enable_closure"]=="true")
+							{
+								if(jsonObject[m]["statusvalue"] != 'Completed')
+								{	
+
+									
+									var manager = jsonObject[m]["pr_manager"];
+									var addString ="";
+									<?php if(isset($authUserNamespace->id) && $authUserNamespace->id !=""){ ?>
+									var tempId = '<?php echo $authUserNamespace->id;?>';
+									
+									if(tempId == manager)
+									 addString = "block";
+									else
+									addString = "none";
+									<?php }?>
+									
+								newDiv.innerHTML += '<div id="rowbg">'+
+								   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+editlink+'">'+jsonObject[m]["title"]+' (A) | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+								   '<div class="col" style="width:63px"><a href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a><img style="margin-left:5px;cursor:pointer;"  src="<?php echo BASEPATH;?>/images/cross.png" border="0" onclick="del('+pid+')"; /></div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+	            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+	            				   '<div style="float:right;text-align: left;padding-left:0px;width:151px;">'+
+	            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+	            				   '<a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>'+
+	            				   '<a href="'+scorelink+'" class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>'+
+	            				   '<a href="'+closurelink+'" class="viewbg icons"><img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a>'+
+	            				   //'<a href="'+closurelink+'" class="viewbg icons"><img title="Download" src="<?php echo BASEPATH; ?>/images/common/down.gif"/></a>';
+	            				   '<a style="display:'+addString+'" href="'+addhoclink+'" class="viewbg icons"><img title="Allocate Task" src="<?php echo BASEPATH; ?>/images/common/allocatetask25.gif"/></a>'+
+
+	           					   '</div></div>'+
+	            				   '</div>';
+								}
+								else
+								{ 
+									if(downloadlink != ""){
+										newDiv.innerHTML += '<div id="rowbg">'+
+										   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+namelink+'">'+jsonObject[m]["title"]+' (A) | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+										   //'<div class="col" style="width:63px"><a href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a></div>'+
+										   '<div class="col" style="width:63px"> <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a></div>'+
+			           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+			           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+			            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+			            				   '<div style="float:right;text-align: left;padding-left:0px;width:151px;">'+
+			            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH;?>/images/common/report25.gif"/></a>'+
+			            				   '<a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>'+
+			            				   '<a href="'+scorelink+'" class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>'+
+			            				   //'<a href="'+closurelink+'" class="viewbg icons"><img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a>'+
+			            					'<a href="'+downloadlink+'" target="_blank" class=""><img title="Final Download Deliverable" src="<?php echo BASEPATH; ?>/images/common/down.gif" style="height:21px; border:0px;" /></a>'+
+			            				   
+			           					   '</div></div>'+
+			            				   '</div>';
+									}else
+									{
+										newDiv.innerHTML += '<div id="rowbg">'+
+										   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+namelink+'">'+jsonObject[m]["title"]+' (A) | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+										   //'<div class="col" style="width:63px"><a href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a></div>'+
+										   '<div class="col" style="width:63px"> <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a></div>'+
+			           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+			           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+			            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+			            				   '<div style="float:right;text-align: left;padding-left:0px;width:151px;">'+
+			            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+			            				   '<a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>'+
+			            				   '<a href="'+scorelink+'" class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>'+
+			            				  // '<a href="'+closurelink+'" class="viewbg icons"><img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a>'+
+			            				   
+			           					   '</div></div>'+
+			            				   '</div>';
+	
+									}
+								}
+							}
+							else
+							{
+								if(jsonObject[m]["statusvalue"] != 'Completed')
+								{
+
+									var manager = jsonObject[m]["pr_manager"];
+									var addString ="";
+									<?php if(isset($authUserNamespace->id) && $authUserNamespace->id !=""){ ?>
+									var tempId = '<?php echo $authUserNamespace->id;?>';
+									
+									if(tempId == manager)
+									 addString = "block";
+									else
+									addString = "none";
+									<?php }?>
+								newDiv.innerHTML += '<div id="rowbg">'+
+								   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+editlink+'">'+jsonObject[m]["title"]+' (A) | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+								   '<div class="col" style="width:63px"><a href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a><img style="margin-left:5px;cursor:pointer;"  src="<?php echo BASEPATH;?>/images/cross.png" border="0" onclick="del('+pid+')"; /></div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+	            				   '<div class="col _m" style="width:190px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+	            				   '<div style="float:right;text-align: left;padding-left:0px;width:151px;">'+
+	            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+	            				   '<a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>'+
+	            				   '<a href="'+scorelink+'" class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>'+
+	            				   '<a style="display:'+addString+'" href="'+addhoclink+'" class="viewbg icons"><img title="Allocate Task" src="<?php echo BASEPATH; ?>/images/common/allocatetask25.gif"/></a>'+
+	           					   '</div></div>'+
+	            				   '</div>';
+								}
+								else
+								{
+									newDiv.innerHTML += '<div id="rowbg">'+
+									   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+editlink+'">'+jsonObject[m]["title"]+' (A) | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+									   '<div class="col" style="width:63px"><a href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a><img style="margin-left:5px;cursor:pointer;"  src="<?php echo BASEPATH;?>/images/cross.png" border="0" onclick="del('+pid+')"; /></div>'+
+		           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+		           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+		            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+		            				   '<div style="float:right;text-align: left;padding-left:0px;width:151px;">'+
+		            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+		            				   '<a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>'+
+		            				   '<a href="'+scorelink+'" class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>'+
+		           					   '</div></div>'+
+		            				   '</div>';
+								}
+							}
+							
+							parent.appendChild(newDiv);
+							 if(type=="o"){
+						           $(newDiv).find('._m').append('<span style="float:left;width:42px;text-align:center;">'+jsonObject[m]["open"]+'/'+jsonObject[m]["completed"]+'</span>'); 
+						         } 	
+						}
+					}
+			}
+		});
+	}
+
+
+	function formreset()
+	{
+		$('#clientname').val('');
+		$('#projecttype2').val('');
+		$('#projectname').val('');
+		$('#teammember').val('');
+
+		window.location = '<?php echo BASEPATH; ?>/projectmanager/index';
+		
+	} 
+	
+	function openlightbox(url)
+	{
+		//alert("hello"+url);
+		//Mediabox.open();
+		Mediabox.open(url,'',"604 304");
+	}
+	
+	function viewallannualproject(statusid,page,type)
+	{ 	 
+		 glogal=page;
+		 type=type;
+		
+		 var projecttitle=document.getElementById('projecttitle').value;
+		 var projectid=document.getElementById('projectid').value;
+		 var practice=document.getElementById('practice').value;
+		 var clientname=document.getElementById('clientname').value;
+		 var teammember=document.getElementById('teammember').value;
+		 var startdate=document.getElementById('startdate').value;
+		 <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>
+		 var projectname=document.getElementById('projectname').value;
+		 var date= document.getElementById('Sort').value ;
+		 if(date == "")
+		 {
+			date = 3;
+		 }
+		 <?php } ?>
+			if (startdate != "")
+			  {
+				var positionval  = startdate.split('/');
+				startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+				
+			  }
+			else
+			{
+				var startdate= "";
+			}
+			
+			var enddate=document.getElementById('enddate').value;
+			if (enddate != "")
+			  {
+				var positionval1  = enddate.split('/');
+				enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+			  }
+			else
+			{
+				enddate= "";
+			}
+
+			$.ajax({
+				url: "<?php echo BASEPATH; ?>/projectmanager/viewannualresult",
+				type: "POST",    
+				data: "statusid="+statusid+"&projecttitle="+projecttitle+"&projectid="+projectid+"&practice="+practice+"&startdate="+startdate+"&enddate="+enddate+"&clientname="+clientname+"&teammember="+teammember+"&projectname="+projectname+"&page="+page+"&date="+date,
+			    success: function(response)
+			    { 
+					j=0;
+					
+					if((response!="") && (response!=null))
+						 { 
+							
+						 var jsonObject = JSON.parse(response);
+						 if(jsonObject.length>0)
+					  	 {
+						  	document.getElementById('norecord').innerHTML="";
+						 }
+						 else
+						 {
+						  	document.getElementById('norecord').innerHTML='<div  style="width:95%;font-weight:bold;">No Records Found</div>';
+						 }
+						 
+
+						var numberofpages=jsonObject[0]["numberofpages"];
+						document.getElementById('pagin').innerHTML="";
+						var innerHTML="";
+						
+						var next=parseInt(glogal)+1;
+						var previous=glogal-1;
+						
+						if(numberofpages==0)
+						{
+							document.getElementById('norecord').innerHTML='<div  style="width:95%;font-weight:bold;">No Records Found</div>';
+						}
+						
+						if(numberofpages!=0){
+						if(numberofpages==1 || glogal==1)
+						{
+							innerHTML+="";
+						}
+						else
+						{
+							if(type=="n")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->openstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+							else if(type=="o")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->ongoingstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+							else if(type=="c")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->completedstatusid;?>+","+previous+","+ttype+")'>Previous</a>";
+							}
+						}
+						 }
+						
+						for(var k=1;k<=numberofpages;k++)
+						{
+							
+							if(glogal==k)
+							{	
+								if(type=="n")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->openstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+
+								}
+								else if(type=="o")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->ongoingstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+
+								}
+								else if(type=="c")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->completedstatusid;?>+","+k+","+ttype+")' class='active'>"+k+"</a>";
+
+								}
+							}
+							else
+							{
+								if(type=="n")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->openstatusid;?>+","+k+","+ttype+")' >"+k+"</a>";
+
+								}
+								else if(type=="o")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->ongoingstatusid;?>+","+k+","+ttype+")' >"+k+"</a>";
+
+								}
+								else if(type=="c")
+								{
+									var ttype = '"'+type+'"';
+									innerHTML += "<a href='#' onclick='viewallannualproject("+<?php echo $this->completedstatusid;?>+","+k+","+ttype+")' >"+k+"</a>";
+								}
+							}
+						}
+						if(numberofpages!=0){
+						if(numberofpages==1 || numberofpages==glogal)
+						{
+							innerHTML+="";
+						}
+						else 
+						{
+							if(type=="n")
+							{	
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->openstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+							else if(type=="o")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->ongoingstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+							else if(type=="c")
+							{
+								var ttype = '"'+type+'"';
+								innerHTML+="<a href='#' onclick='viewallannualproject("+<?php echo $this->completedstatusid;?>+","+next+","+ttype+")'>Next</a>";
+							}
+							
+						}
+						}
+						 document.getElementById('pagin').innerHTML=innerHTML;
+						
+						 document.getElementById('np').setAttribute('onclick', 'viewallannualproject(<?php echo $this->openstatusid;?>,1,"n");');
+						 document.getElementById('op').setAttribute('onclick', 'viewallannualproject(<?php echo $this->ongoingstatusid;?>,1,"o");');
+						 document.getElementById('cp').setAttribute('onclick', 'viewallannualproject(<?php echo $this->completedstatusid;?>,1,"c");');
+						 if(type=="n")
+						 {
+							 document.getElementById('op').removeAttribute('class');
+							 document.getElementById('cp').removeAttribute('class');
+							 document.getElementById('np').setAttribute('class','active');
+							 document.getElementById('tablebg').innerHTML="";
+							 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+							 											 '<div class="col">&nbsp;</div>'+
+																		  '<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,1);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,1);" title="Sort" /></div></div></div>'+
+	            														  '<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,1);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,1);" title="Sort" /></div></div></div> '+
+				            								     	 	'<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+						 }
+
+						 else if(type=="o")
+						 {
+							 document.getElementById('np').removeAttribute('class');
+							 document.getElementById('cp').removeAttribute('class');
+							 document.getElementById('op').setAttribute('class','active');
+							 document.getElementById('tablebg').innerHTML="";
+							 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+					            											'<div class="col">&nbsp;</div>'+
+																			'<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,2);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,2);" title="Sort" /></div></div></div>'+
+		            														'<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,2);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,2);" title="Sort" /></div></div></div> '+
+					            								     	 	'<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+						 }	
+						 else if(type=="c")
+						 {
+							 document.getElementById('np').removeAttribute('class');
+							 document.getElementById('op').removeAttribute('class');
+							 document.getElementById('cp').setAttribute('class','active');
+							 document.getElementById('tablebg').innerHTML="";
+							 document.getElementById('tablebg').innerHTML='<div class="col-first" style="width:472px;">Project Title</div>'+
+							 											 '<div class="col">&nbsp;</div>'+
+																		 '<div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2,3);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1,3);" title="Sort" /></div></div></div>'+
+	            														 '<div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3,3);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0,3);" title="Sort" /></div></div></div> '+
+				            								     	 	'<div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>';
+						 }	
+						 
+						document.getElementById('datarow').innerHTML="";
+						for(m=1;m<jsonObject.length;m++)
+						{
+							counter++;
+							var ptype = "annual";
+							var supprojectlink="<?php echo BASEPATH;?>/subproject/index/id/"+jsonObject[m]["eid"];
+							var namelink="<?php echo BASEPATH;?>/project/addannualcontract/id/"+jsonObject[m]["eid"]+"/view/<?php echo "view";?>";
+							var editlink="<?php echo BASEPATH;?>/project/addannualcontract/id/"+jsonObject[m]["eid"];
+							var viewlink="<?php echo BASEPATH ;?>/project/projectview/aid/"+jsonObject[m]["eid"];
+							var newDiv =document.createElement('div');
+							var pid = jsonObject[m]["eid"];
+							newDiv.id="childDiv"+counter;
+							var parent=document.getElementById('datarow');
+
+							if(type != "c")
+							{
+							newDiv.innerHTML+= '<div id="rowbg">'+
+											   '<div class="col-first" style="width:478px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+editlink+'">'+jsonObject[m]["title"]+' | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+											   '<div class="col" style="width:460px;margin-left:-50px;"><div class="col" style="width:100px"><a style="float:left;margin-left:10px;" href="'+editlink+'"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" /></a> &nbsp; <a style="float:left;margin-left:10px;" href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a><img style="float:left;margin-left:10px;" src="<?php echo BASEPATH;?>/images/cross.png" border="0" onclick="del('+pid+')"; /></div>'+
+				           					   '<div class="col" style="width:63px;">'+jsonObject[m]["st_date"]+'</div>'+
+				           					   '<div class="col" style="width:100px;">'+jsonObject[m]["end_date"]+'</div>'+
+				            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;">'+
+				            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+				            				   ' <a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img src="<?php echo BASEPATH;?>/images/common/view25.gif" title="View Project"></a><a href="'+supprojectlink+'" class="viewbg icons"><img title="View Sub Project" src="<?php echo BASEPATH; ?>/images/common/viewSubproject25.gif"/></a>'+
+												'</div></div>'+
+					         				   '</div>';
+
+							}
+							else
+							{
+
+								newDiv.innerHTML+= '<div id="rowbg">'+
+								   '<div class="col-first" style="width:456px;"><a style="color:black;font-weight:normal;text-decoration:none;" href="'+namelink+'">'+jsonObject[m]["title"]+' | </a><div style="color:black;font-weight:normal;text-decoration:none;display:inline;">'+jsonObject[m]["name"]+' </div><br>Budgeted Hrs: '+jsonObject[m]["budgeted_hrs"]+'  |   Status: '+jsonObject[m]["statusvalue"]+'</div>'+
+								   '<div class="col" style="width:63px"></a> &nbsp; <a href="'+namelink+'"><img src="<?php echo BASEPATH;?>/images/common/view.gif" border="0" /></a></div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["st_date"]+'</div>'+
+	           					   '<div class="col" style="width:64px;">'+jsonObject[m]["end_date"]+'</div>'+
+	            				   '<div class="col _m" style="width:133px;float:right;"><div style="float:right;text-align: left;padding-left:0px;width:141px;">'+
+	            				   //'<a href="#" class="viewbg icons"><img title="Project Report" src="<?php echo BASEPATH; ?>/images/common/report25.gif"/></a>'+
+	            				   ' <a href="javascript:void(0);" rel="\''+viewlink+'\'" class="viewbg openskillbox icons"><img src="<?php echo BASEPATH;?>/images/common/view25.gif" title="View Project"></a><a href="'+supprojectlink+'" class="viewbg icons"><img title="View Sub Project" src="<?php echo BASEPATH; ?>/images/common/viewSubproject25.gif"/></a>'+
+									'</div></div>'+
+		         				   '</div>';
+
+
+								
+							}
+					         				   
+								parent.appendChild(newDiv);
+								 if(type=="o"){
+							           $(newDiv).find('._m').append('<span style="float:left;width:42px;text-align:center;">'+jsonObject[m]["open"]+'/'+jsonObject[m]["completed"]+'</span>'); 
+							         } 	
+
+						}
+						}
+					
+				}
+			});
+	}
+
+	function populate_dropdown1(tasktype,check)
+	{
+		var task=tasktype;
+		
+		var counter="0";
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/projectmanager/projectnamevalue",
+			type: "POST",    
+		    data: "tasktype="+tasktype,
+		    success: function(response)
+		    { 
+			   
+			  
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('projectname');
+						
+						for(k=option_ele.length;k>0;k--)
+						{
+							
+							option_ele.remove(k);
+						}
+					
+						for(m=0;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('projectname').options[++j]=option_element;
+
+								if(check=="1"){
+								<?php if(isset($taskresult->projecttype_list2) && $taskresult->projecttype_list2!="")
+								{?>
+								var pro_ID = '<?php echo $taskresult->projecttype_list2;?>';
+								if(jsonObject[m]['id']==pro_ID)
+								{
+									document.getElementById('projectname').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+								 
+							}
+						
+				}
+				
+					
+			}
+		});
+		
+	}
+	
+	
+	function populate_dropdown(geocode)
+	{
+		var counter="0";
+		$.ajax({
+			url: "<?php echo BASEPATH; ?>/projectmanager/index",
+			type: "POST",    
+		    data: "geocode="+geocode,
+		    success: function(response)
+		    { 
+				j=0;
+				
+					if((response!="") && (response!=null))
+					 { 
+						
+						 var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('geography_list');
+						for(k=option_ele.length;k>0;k--)
+						{
+							option_ele.remove(k);
+						}
+						for(m=0;m<jsonObject.length;m++)
+						{
+							var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+							document.getElementById('geography_list').options[j++]=option_element;
+						}
+					}
+				
+			}
+		});
+		
+	}
+	function search()
+	{
+	 var type=document.getElementById('projecttype2').value;
+		if(type=="54")
+		{
+			viewalladhocproject('','1','n');
+		}
+		else if(type=="55")
+		{
+			viewallannualproject('','1','n');
+		}	
+	 
+	}
+
+
+</script>
+<style>
+._m
+{
+	width:154px;
+	margin:0;
+}
+._m .viewbg
+{
+	text-align: center;
+	width:30px;
+}
+.viewbg
+{
+	padding: 1px 3px;
+}
+.col div a
+{
+	float:left;
+}
+</style>
+</head>
+<body>
+<div id="subheader">
+	<div class="wrapper">
+		 <input type="hidden" name="Sort" id="Sort" >
+			<div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project Title</label>
+            <input name="projecttitle" id="projecttitle" type="text" class="field" style="width:366px;"/>
+        </div>
+  		<div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Keywords</label>
+            <input name="keywords" id="keywords" type="text" class="field" style="width:367px;"/>
+        </div>
+        <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project ID</label>
+            <input name="projectid" id="projectid" type="text" class="field"/>
+        </div>
+  		<div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Practice</label>
+            <select name="practice" id="practice" class="field">
+              <option value="">Please Select</option>
+              	<?php	foreach ($this->practice_list as $practice_list){?>
+			<option value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid){echo "selected";}else{echo "selected";}?>><?php echo $practice_list->value;?></option>
+			<?php } ?> 	
+            </select>
+        </div>
+        
+        <div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Date</label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+      </div>
+      <br class="clear">
+        <div id="holder">
+        	<label>Client Name</label>
+            <select name="clientname" id="clientname" class="field">
+              <option value="">Please Select</option>
+            <?php	foreach ($this->clientname_list as $clientname_list){?>
+			<option value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>" <?php if($this->clientid==$clientname_list->id) echo "selected";?>><?php echo $clientname_list->name;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>
+         <div id="holder">
+        	<label>Project Type</label>
+            <select name="projecttype2" id="projecttype2" class="field" onchange="populate_dropdown1(this.value,'0');" >
+              <?php	foreach ($this->projecttype_list2 as $projecttype_list2){?>
+			<option value="<?php  if(isset($projecttype_list2->id) && $projecttype_list2->id !=""){ echo $projecttype_list2->id;}?>"<?php if($this->projecttype==$projecttype_list2->id) echo "selected";?>><?php echo $projecttype_list2->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        
+          <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:block";<?php }else{?>style="display:none;"<?php }?>>
+        	<label>Project Name</label>
+            <select name="projectname" id="projectname" class="field">
+               <option value="">Please Select</option>
+            </select>
+        </div>
+       <?php } ?> 
+  		<div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Type</label>
+            <select name="projecttype" id="projecttype" class="field">
+              <option value="">Please Select</option>
+              <?php	foreach ($this->projecttype_list as $projecttype_list){?>
+			<option value="<?php  if(isset($projecttype_list->id) && $projecttype_list->id !=""){ echo $projecttype_list->id;}?>"<?php if($this->projecttype==$projecttype_list->id) echo "selected";?>><?php echo $projecttype_list->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Study Sector</label>
+            <input name="studysector" id="studysector" type="text" class="field"/>
+        </div>
+        
+        <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?> style="display:block";<?php }else{?> style="display:none"; <?php }?>>
+        <div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>float:left; margin-left: -10px;<?php }else{?>float:right;<?php }?>">
+        	<label>Team Member</label>
+            <select name="teammember" id="teammember" class="field">
+              <option value="">Please Select</option>
+              <?php	foreach ($this->teammember_list as $teammember_list){?>
+			<option value="<?php  if(isset($teammember_list->e_id) && $teammember_list->e_id !=""){ echo $teammember_list->e_id;}?>"<?php if($this->teammember==$teammember_list->e_id) echo "selected";?>><?php echo $teammember_list->teammembername;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?> style="display:none";<?php }?>>
+        <!--<div id="holder" style="margin:0 8px 0 -21px;">
+        	<label>Project Manager</label>
+            <select name="practice" class="field">
+              <option selected="selected">Please Select</option>
+              <option>Option1</option>
+              <option>Option2</option>
+            </select>
+        </div> -->
+        <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project Type</label>
+            <select name="projecttype2" id="projecttype2" class="field" onchange="populate_dropdown1(this.value,'0');" >
+              <?php	foreach ($this->projecttype_list2 as $projecttype_list2){?>
+			<option value="<?php  if(isset($projecttype_list2->id) && $projecttype_list2->id !=""){ echo $projecttype_list2->id;}?>"<?php if($this->projecttype==$projecttype_list2->id) echo "selected";?>><?php echo $projecttype_list2->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        
+          <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project Name</label>
+            <select name="projectname" id="projectname" class="field">
+               <option value="">Please Select</option>
+            </select>
+        </div>
+        
+       <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Study Geography</label>
+            <div class="dual">
+            	<label><input id="country" name="geography" type="radio" value="country" style="vertical-align:middle" onclick="populate_dropdown(this.value);"/>Country</label>
+            	<label><input id="region" name="geography" type="radio" value="region" style="vertical-align:middle" onclick="populate_dropdown(this.value);"/>Region</label>
+            <select name="geography_list[]" id="geography_list" class="field med"  multiple="multiple">
+              
+            </select>
+            </div>
+        </div>
+        <br class="clear">
+        <!--<div class="flow_right" style="margin:0 10px 0 0" onclick="viewallannualproject('','1','n');"><a href="javascript:void(0);" class="searchbg">Search Annual Contract</a></div>
+  		<input type="hidden" id="searchannual" name="searchannual" value="" />
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="viewalladhocproject('','1','n');"><a href="javascript:void(0);" class="searchbg">Search Adhoc Project</a></div>
+  		<input type="hidden" id="searchadhock" name="searchadhock" value="" />
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="viewallannualproject('','1','n');"><a href="javascript:void(0);" class="searchbg">View All Annual Project</a></div>
+  		<input type="hidden" id="viewallannual" name="viewallannual" value="" />
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="viewalladhocproject('','1','n');"><a href="javascript:void(0);" class="searchbg">View All Adhoc Project</a></div>
+  		<input type="hidden" id="viewalladhoc" name="viewalladhoc"  value="" />-->
+  		
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="search();"><a href="javascript:void(0);" class="searchbg">Search</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="formreset();"><a href="javascript:void(0);" class="searchbg">Reset</a></div>
+  		
+  	</div>
+    <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame" style="padding-top:10px;">
+	<!--<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php //echo BASEPATH;?>/project/addannualcontract" class="createbg">Create Annual Contract</a></div>-->
+		<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH;?>/subproject/addsubproject" class="createbg">Create Sub Project</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH;?>/project/addadhoc" class="createbg">Create Adhoc Project</a></div>
+    	<br class="clear">
+    	<!--Starts Here -->
+    	
+   	  <div class="wrapper">
+         <!-- Tabs Will Come Here -->
+         
+         <div class="tabs">
+         	<ul>
+            	<li><a id="np" href="javascript:void(0);"  class="active">New Projects</a></li>
+                <li><a id="op" href="javascript:void(0);" >Ongoing Projects</a></li>
+                <li><a id="cp" href="javascript:void(0);" >Completed Projects</a></li>
+           </ul>
+           
+         </div>
+      
+      <br class="clear">
+        <div id="tablebg">
+        	<div class="col-first" style="width:590px;">Project Title</div>
+			<div class="col" style="width:64px;">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="SortStart();" title="Sort" /></div></div>
+            <div class="col" style="width:64px;">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="SortEnd();" title="Sort"  /></div></div>
+            <div class="col _m" style="float:right;text-align: center;padding-left:15px;width:167px;">Tasks</div>
+        </div>
+        <div id="datarow">
+        <!--<div id="rowbg">
+       	  	<div class="col-first" style="width:590px;"><a href="#">Design and Development Pronto Infotech</a> (4596320018)<br>Budgeted Hrs: 30   |   Priority: High   |   Status: Open</div>
+            <div class="col">20/12/2013</div>
+            <div class="col">25/12/2013</div>
+            <div class="col _m"><a href="#" class="viewbg">Report</a> <a href="#" class="viewbg">View</a></div>
+        </div>-->
+       </div>
+       <div id="norecord" class='grid-row2'>
+			<div  style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+       <div  id="pagin" class="pagination"></div>
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+
+</body>
+<script>
+$( document ).ready(function() {
+	var type=document.getElementById('projecttype2').value;
+	if(type=="54")
+	{
+		populate_dropdown1(54,'1');
+	}
+	else if(type=="55")
+	{
+		populate_dropdown1(55,'1');
+	}	
+	
+});
+<?php 
+
+	      if(isset($authUserNamespace->status_message)){
+	      	
+	?>
+	   jAlert("<?php echo $authUserNamespace->status_message; ?>");
+	 
+	      
+	<?php
+	  unset($authUserNamespace->status_message);
+	}
+	?>
+
+</script>
+</html>

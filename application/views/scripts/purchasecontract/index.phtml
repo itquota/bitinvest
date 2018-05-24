@@ -1,0 +1,97 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+        <script data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+        <script data-cfasync='false'>
+            $(document).ready(function () {
+                $.validator.addMethod("check_kit",function(value,element)
+                {
+                    var kit_no=$('#kit_number').val();
+                    var con_type=$('#contract_type').val();
+                    var total_amount=$('#total_amount').val();
+                    check=false;
+                    $.ajax({
+                            type: "POST",
+                            url: '../Checkleg/checkkitstatus',
+                            data: {'kit_number':kit_no,'kit_type':con_type,total_amount:total_amount},
+                            async:false,
+                            success: function(res)
+                            {   //alert(res);return false;
+                                if(res ==='false'){ check=false;}
+                                else{ 
+                                      check=true;
+                                   }
+                            }
+                        });
+                    return check;
+                });
+                $('#purchase_kit').validate({
+                    // Rules for form validation
+                    rules: {
+                        kit_number: {
+                            required: true,
+                            check_kit:true,
+                        },
+                        total_amount:{
+                            required: true,
+                        }
+                    },
+                    // Messages for form validation
+                    messages: {
+                        kit_number:"This kit is not available or already used, pls try with another kit!!",
+                        total_amount:"You have not selected hash rate"
+                    },
+                    // Do not change code below
+                    errorPlacement: function (error, element) {
+                        error.insertAfter(element);
+                    }
+                });
+            });
+        </script>
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt">Buy New Contract</h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+	<li class="active"><a href="#">Dashboard</a></li>
+	<li>Buy New Contract</li>
+
+</ol>
+
+
+
+<form action="<?php echo htmlspecialchars("cont_hw_invoice.php"); ?>" method="post" id="purchase_kit">
+<div class="col-lg-12">
+<div class="form-group"><label for="" class="lblTxt">Total Amount <br />
+<?php echo $this->result['amount']. ' BTC'; ?></label> 
+<input type="hidden" value="<?php echo $this->result['value']; ?>" class="form-control" name="total_amount" id="total_amount"> 
+<input type="hidden" value="" class="form-control" name="type" id="type"> 
+<input type="hidden" value="<?php echo $this->result['contract_type']; ?>" id="contract_type" name="contract_type" /> 
+<input type="hidden" value="<?php echo $this->result['contract_id']; ?>" class="form-control" name="hiddencontractId" id="hiddencontractId">
+<input type="hidden" value="sha" name="buy_now"  style="height:30px; width:220px;"/>
+	</div>
+
+<div class="form-group"><label for="" class="lblTxt">Kit No.</label> <input
+	type="text" class="form-control CommonInputBox" name="kit_number" id="kit_number" value=""></div>
+<button type="submit" class="btn btn-default Commonbtn">Purchase</button>
+
+<div class="clearfix">&nbsp;</div>
+</div>
+
+</form>
+
+
+
+
+
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper --></div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

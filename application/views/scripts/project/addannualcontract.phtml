@@ -1,0 +1,495 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<?php $annualcontract_row = $this->annualcontract_row;
+	
+	?>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/memberswap.js" type="text/javascript"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+
+<script type="text/javascript">
+window.onload=function()
+{	
+	var pmid=document.getElementById('projectmanager').value;
+	countworking(pmid);
+}
+function isNumber(evt) 
+{
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
+function countworking(id)
+{
+	//alert(id);
+
+	var counter="0";
+	var annual="contract";
+	$.ajax({
+		url: "<?php echo BASEPATH; ?>/project/workingproject",
+		type: "POST",    
+		data: "empid="+id+"&type="+annual,
+	    success: function(response)
+	    { 
+			j=0;
+			
+			if((response!="") && (response!=null))
+				 { 
+					
+				 var jsonObject = JSON.parse(response);
+				 for(m=0;m<jsonObject.length;m++)
+					{
+						
+							var occupacycount= jsonObject[m]['count'];
+							//alert(option_element);	
+							document.getElementById('occ').innerHTML="";	
+							if(occupacycount==1)
+							document.getElementById('occ').innerHTML=":working on " +occupacycount+" project";	
+							else
+								document.getElementById('occ').innerHTML=":working on " +occupacycount+" projects";			
+							
+							
+						}					
+				}
+			
+				
+		}
+	});
+}
+
+ var multiselectflag = 0;
+
+	<?php  if(isset($this->view1) && $this->view1!= "" )
+	 {?>
+		 multiselectflag = 1;
+		
+	<?php } ?> 
+
+		<?php
+			global $rand;
+			 function RandNumber($e)
+			 {
+				 $rand="";
+				 for($i=0;$i<$e;$i++)
+				 {
+				 	$rand =  $rand .  rand(0, 9); 
+				 }
+				 return $rand;
+			 }
+		 ?>
+
+		 function savedata()
+		 {
+			 //alert("save");
+			 saveForm('<?php echo BASEPATH;?>/project/addannualcontract','addannualcontract_form','addannualcontract_form');
+		 }
+		 function backpage()
+		 {
+			<?php if($authUserNamespace->designation_id=="14"){?>
+			 window.location.href = "<?php echo BASEPATH;?>/projectmanager/index";
+			 <?php } else if($authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="56" ) {?>
+			 window.location.href = "<?php echo BASEPATH;?>/project/index";
+			 <?php }else if($authUserNamespace->designation_id=="58"){?>
+			 window.location.href = "<?php echo BASEPATH;?>/analyst/projectindex";
+			 <?php } ?>
+		 }
+		 function populate_sub_value(practice_type,check,id)
+		 {
+			 if(practice_type=="")
+				{
+					document.getElementById('teammember').value="Empty";
+				}
+		 	//document.getElementById('cat_loader1').style.display = 'block';
+		 	$.ajax({
+		 		url:"<?php echo BASEPATH; ?>/project/practicesubvalue",
+		 		type: "POST",    
+		 		 data: "practice_type="+practice_type+"&check="+check+"&uid="+id+"&project_type=1",
+		 	    success: function(response)
+		 	    { 		  
+		 			j=0;k=0;l=0;
+		 			if((response!="") && (response!=null))
+		 			 { 
+		 			 	var jsonObject = JSON.parse(response);
+		 			 	
+		 			 		var option_ele=document.getElementById('projectmanager');
+		 					for(k=option_ele.length;k>0;k--)
+		 					{						
+		 						option_ele.remove(k);
+		 					}				
+		 					for(m=0;m<jsonObject[0].length;m++)
+		 					{						
+		 						var option_element= new Option(jsonObject[0][m]['name'],jsonObject[0][m]['id']);
+		 						document.getElementById('projectmanager').options[++j]=option_element;	
+		 					
+		 						if(check=="1")
+		 						{
+		 							
+		 							<?php if(isset($annualcontract_row->pr_manager) && $annualcontract_row->pr_manager!=""){?>
+		 							
+		 								var pro_ID = '<?php echo $annualcontract_row->pr_manager?>';
+		 								
+		 									if(jsonObject[0][m]['id']==pro_ID)
+		 									{
+		 										document.getElementById('projectmanager').options[j].selected = "selected";
+		 									}
+		 							<?php }?>
+		 						}												
+		 					}
+		 					
+		 					var option_ele1=document.getElementById('practiceleader');
+		 					for(k=option_ele1.length;k>0;k--)
+		 					{						
+		 						option_ele1.remove(k);
+		 					}				
+		 					for(m=0;m<jsonObject[1].length;m++)
+		 					{						
+		 						var option_element1= new Option(jsonObject[1][m]['name'],jsonObject[1][m]['id']);
+		 						document.getElementById('practiceleader').options[++k]=option_element1;		
+		 						if(check=="1")
+		 						{
+		 							var practiceval=jsonObject[1][m]['id'];	
+		 							<?php if(isset($annualcontract_row->practice_leader) && $annualcontract_row->practice_leader!=""){?>
+		 							
+		 								var pro_ID1 = '<?php echo $annualcontract_row->practice_leader?>';		 									 								
+		 									if(practiceval==pro_ID1)
+		 									{																
+		 										document.getElementById('practiceleader').options[k].selected = "selected";
+		 									}
+		 							<?php }?>
+		 						}													
+		 					}
+
+		 					
+		 					var option_ele2=document.getElementById('group1');					
+							for(k=option_ele2.length;k>=0;k--)
+							{						
+								option_ele2.remove(k);
+							}	
+							
+							if(check=="0")
+							{							
+								var option_ele3=document.getElementById('group2');
+								for(p=option_ele3.length;p>=0;p--)
+								{											
+									option_ele3.remove(p);
+								}		
+							}								
+							for(m=0;m<jsonObject[2].length;m++)
+							{	
+								if(check==0)
+								{
+									//alert(jsonObject[2][m]['name']);									
+									var option_element2= new Option(jsonObject[2][m]['name'],jsonObject[2][m]['id']);
+									document.getElementById('group1').options[l++]=option_element2;		
+								}
+								else if(check=="1")
+								{		
+									//alert(jsonObject[2][m]['name']);							
+									var option_element2= new Option(jsonObject[2][m]['name'],jsonObject[2][m]['id']);
+									document.getElementById('group1').options[l++]=option_element2;	
+								}																			
+							}
+							if(jsonObject[2].length>0)
+							{	
+								 checkEmpty();						
+								if(check=="0")
+								{								
+									$('#group1 .empty').remove();
+								}
+							}				
+		 			 }			
+		 			//document.getElementById('cat_loader1').style.display = 'none';				
+		 		}
+		 	});
+		 }
+ $(document).ready(function(){
+		var uid = '<?php echo $this->uid; ?>';
+		if(uid !="")
+		{
+			<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id=="56") {} else {?>
+			$('#practice,#clientname,#practiceleader,#contracttype,#startdate,#enddate,#invoicingterms,#annualbudgetedhours,#annualcontractvalue').prop("disabled", true);
+			<?php }?>
+		}
+		
+	});
+ </script>
+ 
+ <style>
+#holder
+{
+	margin-bottom:0px;
+}
+ </style>
+	
+</head>
+<body>
+<form  action="" id="addannualcontract_form" name="addannualcontract_form" method="post" enctype="multipart/form-data">
+<div id="subheader">
+	<div class="wrapper">
+   	  <h5>Create New Project – Annual Contract</h5>
+        <hr>
+		<br class="clear">
+	
+        <div id="holder" style="width:599px;">
+       	  <label style="margin-left:-22px;">Assignment Title<em>*</em></label>
+          <input name="assignmenttitle" id="assignmenttitle" type="text" class="field" style="width:498px;" errortag="Assignment Title" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> value="<?php if(isset($annualcontract_row->ass_title)) echo $this->annualcontract_row->ass_title; ?>"/>
+          <div class="clearBoth">&nbsp;</div>
+      	  <span class="message" id="assignmenttitle_error">&nbsp;</span>
+        </div>
+        
+  		<div id="holder" style="margin:0;"><strong>Project ID:</strong><input class="disabledInput" style="width:78px;float:right;" type="text" value='<?php if(isset($annualcontract_row->project_id)) echo $annualcontract_row->project_id; else {echo RandNumber(10);}?>' name="projectid" id="projectid" readonly/></div>
+        <br class="clear">
+ 		<div id="holder" style="width:281px;">
+        	<label style="margin-left:6px;">Practice<em>*</em></label>
+        	<select name="practice" id="practice" class="field med" <?php if($authUserNamespace->designation_id=="56"){ ?>onchange="populate_sub_value(this.value,'0','');" <?php }?> errortag="Practice" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> >
+            <option value="">Please Select</option>
+             	<?php	foreach ($this->practice_list as $practice_list){?>
+				<option value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if(isset($annualcontract_row->practice_id)){if($annualcontract_row->practice_id==$practice_list->practiceid) echo "selected";}elseif($authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="0 "){echo "selected";}?>><?php echo $practice_list->value;?></option>
+				<?php } ?> 
+            </select>
+            
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="practice_error">&nbsp;</span>
+      		
+        </div>
+      
+  		<?php if($authUserNamespace->designation_id=="14" && isset($annualcontract_row->pr_manager) && $annualcontract_row->pr_manager!="" && $annualcontract_row->pr_manager==$authUserNamespace->id){?>
+  		<div id="holder" style="margin:0;width:301px;display:none;">
+        	<label>Project Manager<em>*</em></label>
+            <select name="projectmanager" id="projectmanager" class="field med" errortag="Project Manager" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> onchange="countworking(this.value);">
+             
+              <option value="">Please Select</option>
+              <?php	if(isset($this->projectmanager_list) && $this->projectmanager_list!=""){
+              	foreach ($this->projectmanager_list as $projectmanager_list){?>
+			  <option value="<?php  if(isset($projectmanager_list->m_id) && $projectmanager_list->m_id !=""){ echo $projectmanager_list->m_id;}?>"<?php if(isset($annualcontract_row->pr_manager)){ if($annualcontract_row->pr_manager==$projectmanager_list->m_id) echo "selected";}?>><?php echo $projectmanager_list->managername;?></option>
+			  <?php }
+              } ?>
+             
+            </select>
+            <br>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmanager_error">&nbsp;</span>
+        </div>
+  		
+  		<?php }else{?>
+        <div <?php if($authUserNamespace->designation_id=="14"){ ?><?php }?> id="holder" style="margin:0;width:301px;">
+        	<label>Project Manager<em>*</em></label>
+            <select name="projectmanager" id="projectmanager" class="field med" errortag="Project Manager" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> onchange="countworking(this.value);">
+             
+              <option value="">Please Select</option>
+              <?php	if(isset($this->projectmanager_list) && $this->projectmanager_list!=""){
+              	foreach ($this->projectmanager_list as $projectmanager_list){?>
+			  <option value="<?php  if(isset($projectmanager_list->m_id) && $projectmanager_list->m_id !=""){ echo $projectmanager_list->m_id;}?>"<?php if(isset($annualcontract_row->pr_manager)){ if($annualcontract_row->pr_manager==$projectmanager_list->m_id) echo "selected";}?>><?php echo $projectmanager_list->managername;?></option>
+			  <?php }
+              } ?>
+             
+            </select>
+            <br>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmanager_error">&nbsp;</span>
+        </div>
+        <?php }?>
+        <div <?php if($authUserNamespace->designation_id=="14"){ ?> style="display:none;" <?php }?> id="holder" style="margin:0;">
+        	<div class="small" style="margin:0 0 8px 6px;"><strong>Occupancy</strong><span id="occ">: Working on projects</span></div>
+        </div>
+        <br class="clear">
+        
+        <div id="holder" style="margin-left:-14px;width:295px;">
+        	<label style="width:93px;">Client Name<em>*</em></label>
+            <select name="clientname" id="clientname" type="text" class="field med" errortag="Client Name" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> >
+            <option value="">Please Select</option>
+            <?php	foreach ($this->clientname_list as $clientname_list){?>
+			<option value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>" <?php if (isset($annualcontract_row->client_id)){if($annualcontract_row->client_id==$clientname_list->id) echo "selected";}?>><?php echo $clientname_list->name;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientname_error">&nbsp;</span>
+        </div>
+        
+        <div id="holder" style="width:304px;">
+        <span class="option">Practice Leader<em>*</em></span>
+              <select name="practiceleader" id="practiceleader" class="field med" errortag="Practice Leader" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> >
+              <option value="">Please Select</option>
+              <?php	if(isset($this->practiceleader_list) && $this->practiceleader_list!=""){
+              	foreach ($this->practiceleader_list as $practiceleader_list){?>
+			  <option value="<?php  if(isset($practiceleader_list->m_id) && $practiceleader_list->m_id !=""){ echo $practiceleader_list->m_id;}?>"<?php if(isset($annualcontract_row->practice_leader)) {if($annualcontract_row->practice_leader==$practiceleader_list->m_id) echo "selected";}elseif($authUserNamespace->designation_id=="57"){echo "selected";}?>><?php echo $practiceleader_list->practiceleader;?></option>
+			  <?php } } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="practiceleader_error">&nbsp;</span>
+      	</div>
+      
+     	 <div id="holder" style="width:286px;">
+        	<label>Contract Type<em>*</em></label>
+            <select name="contracttype" id="contracttype" class="field med" errortag="Contract Type" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+              <option value="">Please Select</option>
+              <?php	foreach ($this->contracttype_list as $contracttype_list){?>
+			  <option value="<?php  if(isset($contracttype_list->id) && $contracttype_list->id !=""){ echo $contracttype_list->id;}?>"<?php if(isset($annualcontract_row->contract_type)){ if($annualcontract_row->contract_type==$contracttype_list->id) echo "selected";}?>><?php echo $contracttype_list->value;?></option>
+			  <?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="contracttype_error">&nbsp;</span>
+        </div>
+        
+      <br class="clear">
+      <div id="holder" style="margin:0 51px 0 7px;width:270px;">
+        	<label>Start Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($annualcontract_row->st_date)) echo $annualcontract_row->st_date;?>" id="startdate"  errortag="Start Date" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly="readonly" <?php }else {?> onClick="GetDate(this);" <?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> />
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="startdate_error">&nbsp;</span>
+      </div>
+      
+      <div id="holder" style="width:267px;">
+        	<label>End Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($annualcontract_row->end_date)) echo $annualcontract_row->end_date;?>" id="enddate"  errortag="End Date" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly="readonly" <?php } else { ?> onClick="GetDate(this);" <?php } ?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> />
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="enddate_error">&nbsp;</span>
+      </div>
+  
+  </div>
+	<br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+   	  	
+   	  	  <div class="block">
+        	<div id="holder"><span class="option">Team Member<em>*</em></span><br>
+              <select id="group1" name="group1[]" class="field"  style="min-height:100px;" multiple="multiple">
+              <?php if(isset($this->uid) && $this->uid !=""){?>
+              <?php	foreach ($this->teamleadervaluess as $teamleadervaluess){
+              ?>
+				<option   value="<?php  if(isset($teamleadervaluess->id1) && $teamleadervaluess->id1!=""){ echo $teamleadervaluess->id1;}?>"><?php echo $teamleadervaluess->name1;?></option>
+				<?php }} else{?>
+              
+              <?php	if(isset($this->teamleader) && $this->teamleader !=""){
+              	foreach ($this->teamleader as $teamleader){
+              ?>
+				<option  value="<?php  if(isset($teamleader->id1) && $teamleader->id1!=""){ echo $teamleader->id1;}?>"><?php echo $teamleader->name1;?></option>
+				<?php } } }?>
+             </select>
+              </div>
+              <div id="holder" class="arrows" style="margin-top:55px;">
+              <input type="image" id="leftToright" onclick="javascript:return dontsubmit(this.form);"  src="<?php echo BASEPATH;?>/images/common/arrow-r.gif"  <?php if(isset($this->view1) && $this->view1!= "" ){ $flag = 0 ;}?>/>
+  			  <input type="image"  onclick="javascript:return dontsubmit(this.form);" id="righttoleft" src="<?php echo BASEPATH;?>/images/common/arrow-l.gif"  <?php if(isset($this->view1) && $this->view1=="view"){$flag = 0 ;}?>/>
+              </div>
+              
+             
+              <div id="holder" style="width: 286px;">
+         <span class="option">&nbsp;</span><br>
+              <select id="group2" name="group2[]" class="field"  style="min-height:100px;" errortag="Team Leader" multiple="multiple">
+              <?php if(isset($this->uid) && $this->uid !=""){?>  
+           	  <?php	foreach ($this->variableteam as $variableteam){
+              ?>
+              <?php  if(isset($variableteam['id']) && $variableteam['id']!=""){ 
+              	$flag = 0;
+              ?>
+				<option   value="<?php  if(isset($variableteam['id']) && $variableteam['id']!="" && $variableteam['id']!=0){ echo $variableteam['id'];}?>"><?php  if(isset($variableteam['name']) && $variableteam['name']!=""){ echo $variableteam['name'];}?></option>
+				<?php }?>
+				<?php }} else{?>
+
+				<?php } ?>
+            </select>
+              <input type="hidden" value="" id="teammember" name="teammember"/>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="group2_error">&nbsp;</span>
+        	</div>
+
+          </div>
+          <div class="block">
+          <div id="holder" style="width:288px;"><span class="option">Annual Contract Value<em>*</em></span><br>
+              <input name="annualcontractvalue" id="annualcontractvalue" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($annualcontract_row->ann_value)) echo $annualcontract_row->ann_value;?>" errortag="Annual Contract Value" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> />
+              <div class="clearBoth">&nbsp;</div>
+      		  <span class="message" id="annualcontractvalue_error">&nbsp;</span>
+            </div>
+            <div id="holder" style="width:288px;"><span class="option">Annual Budgeted Hours<em>*</em></span><br>
+              <input name="annualbudgetedhours" id="annualbudgetedhours" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($annualcontract_row->ann_budgeted)) echo $annualcontract_row->ann_budgeted;?>" errortag="Annual Budgeted Hours" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?> />
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="annualbudgetedhours_error">&nbsp;</span>
+            </div>
+            
+            <div id="holder" style="margin:0;width:288px;"><span class="option">Invoicing Terms<em>*</em></span><br>
+              <select name="invoicingterms" id="invoicingterms" class="field" errortag="Invoicing Terms" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> <?php if (isset($this->uid) && $this->uid !=""){if($authUserNamespace->designation_id=="57"){ ?> disabled <?php }}?>>
+              <option value="">Please Select</option>
+              <?php	foreach ($this->invoicingterm_list as $invoicingterm_list){?>
+			  <option value="<?php  if(isset($invoicingterm_list->id) && $invoicingterm_list->id !=""){ echo $invoicingterm_list->id;}?>"<?php if(isset($annualcontract_row->invoice_terms_id)){ if($annualcontract_row->invoice_terms_id==$invoicingterm_list->id) echo "selected";}?>><?php echo $invoicingterm_list->value;?></option>
+			  <?php } ?>
+              </select>
+              <div class="clearBoth">&nbsp;</div>
+      		  <span class="message" id="invoicingterms_error">&nbsp;</span>
+            </div>
+            <br class="clear">
+          </div>
+          
+          <!--<div class="block">
+            <div id="holder"><span class="option">Payment Milestone<em>*</em></span><br>
+              <input name="project" type="text" class="field" value="Milestone1"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field" value="Milestone2"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field" value="Milestone3"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field" value="Milestone4"/>
+            </div>
+            <div id="holder"><span class="option">Target Invoicing Date<em>*</em></span><br>
+              <input name="project" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+              <br class="clear"><br />
+              <input name="project" type="text" class="field calendar" value="" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            </div>
+            <div id="holder" style="margin:0;"><span class="option">Invoice Value<em>*</em></span><br>
+           	  <input name="project" type="text" class="field" value=""/>
+                <br class="clear"><br />
+              <input name="project" type="text" class="field" value=""/>
+                <br class="clear"><br />
+              <input name="project" type="text" class="field" value=""/>
+                <br class="clear"><br />
+              <input name="project" type="text" class="field" value=""/>
+            </div>
+            
+          <br class="clear">
+          <p class="small">(<em>*</em>) First field of all columns are mandatory</p>
+          </div> -->
+          <div class="flow_right"><input name="Submit" id="Submit" type="button" <?php if(isset($this->view1) && $this->view1!= "" ){ ?>value="Back" <?php }else{?>value="Submit"<?php }?>  <?php if(isset($this->view1) && $this->view1!= "" ){ ?>onclick="backpage();"<?php } else {?> onclick="savedata();" <?php }?> class="searchbg"/></div>
+<!--          <div class="flow_right"><input name="Submit" type="button" value="<?php if(isset($this->uid)){?>Update<?php }else{ ?>Submit<?php }?>" class="searchbg" onclick="savedata();"/></div>-->
+          <br class="clear">
+        </div>
+        <!--Ends Here -->    
+    </div>    
+</div>
+</form>
+<script>
+var practice_type ='';
+var uid='';
+var checkflag=0;
+<?php if(isset($annualcontract_row->practice_id) && $annualcontract_row->practice_id!=""){?>
+practice_type='<?php echo $annualcontract_row->practice_id;?>';
+uid='<?php echo $annualcontract_row->id ?>';
+checkflag=1;
+<?php  } ?>
+<?php if($authUserNamespace->designation_id=="56"){?>
+	populate_sub_value(practice_type,checkflag,uid);
+<?php }?>
+</script>
+</body>
+</html>

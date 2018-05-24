@@ -1,0 +1,160 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+
+</style>
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                 
+                  <li class="active"><a href="<?php echo BASEPATH?>/Binaryuser"> Users</a> > </li>
+                  <li >Rename User</li>
+  
+            </ol>
+           
+
+         
+
+         <div class="col-lg-12">
+         
+         
+
+<div class="clearfix">&nbsp;</div>
+
+           <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             Rename User
+              </div>
+	
+              <div class="panel-body revenuebg">
+              <div class="err1">
+	</div>
+          <form action="<?php echo BASEPATH;?>/Renameuser" method="post"  role="form">
+
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div>
+    <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+ 
+ 
+
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Old Username</label>
+
+     <input type="text" class="form-control CommonInputBox" name="username"  id="username" value="<?php echo $this->result['username'];?>" placeholder="Old User Name" readonly>
+
+
+      
+  </div>
+
+<div class="form-group">
+    <label for="inputCName" class="lblTxt">New Username</label>
+
+     <input type="text" class="form-control CommonInputBox" name="new_username" id="new_username" value="<?php isset($this->result["sponsor_id"]);?>" placeholder="New Username">
+
+
+      
+  </div>
+
+  <div>
+   <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">  
+  <button type="button" class="btn btn-default Commonbtn" id="send_message" name="submit" onclick="getadddata();">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn" id="send_message" name="send_message">RESET</button>
+</div>
+  
+</form>
+  </div>
+          </div>
+
+
+
+         </div>
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+    function getadddata()
+    {
+    	var username=$('#username').val();
+    	var new_username=$('#new_username').val();
+    	
+    	var token = $('#token').val();
+    	
+
+    	if((username).trim()==''){
+    		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Old Username</label>');
+    		return false;
+    	}	
+
+  		if((new_username).trim()=='')
+         {
+             $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter New Username.</label>');
+         	return false;
+         }
+
+
+    		var dataString ='username='+username+'&new_username='+new_username+'&token='+token;
+    	
+    		
+    	 $.ajax({
+    			
+    			url:"<?php echo BASEPATH;?>/Renameuser/rename", 
+    			type: "POST",    
+    		    data: dataString,
+    	  		success:function(response)
+    	  		{
+    				 var data=JSON.parse(response);
+    				
+    				 if(data['success']!='')
+    				 {
+    					
+    				         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+    						window.location = "<?php echo BASEPATH;?>/Binaryuser";
+    				 }
+    				 else
+    				 {
+    					  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+    				 }
+    				
+    				
+    			}
+    				
+    			
+    		 });
+    
+    }
+        
+    </script>
+   
+    
+    
+ 

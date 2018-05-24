@@ -1,0 +1,78 @@
+      <?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	  ?>
+	  <div id="innerpage-wrapper">
+        <div class="row lightgraybg">
+          <div class="col-lg-12 offset-1">
+            <h1 class="page-header gain-bit-Titletxt innpercontentPad">Invoice</h1>
+          </div>
+          <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+          <ol class="breadcrumb">
+            <li class="active"> <a href="#">Dashboard</a></li>
+            <li><a href="#">Add New Kit</a></li>
+            <li class="active">Pay Invoice</li>
+          </ol>
+        </div>
+        <div class="row">
+          <div class="col-lg-12" align="right">
+            <a class="btn btn-default Commonbtn text-uppercase" href="#" role="button">CHECK KIT STATUS AFTER PAYMENT</a>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+          <div class="col-lg-12 ">
+            <h3 class="text-center">Kit activation may take upto 1 hour to 24 hours </h3>
+          </div>
+        </div>
+        <div class="clearfix">&nbsp;</div>
+        <div class="row">
+          <div class="invoicecontainer">
+        <div class="panel-heading buynowbox Titleheading faqtitlebg clearfix "><h3 class="pull-left" style="margin:0px">Waiting for your payment</h3>
+         <div class="pull-right"> <button type="button" class="btn btn-primary Commonbtn">Close</button>
+         </div>
+         </div>
+          <div class="lightgraybg clearfix paddAll" >
+              
+             
+                <div class="invoice-title">
+                  <h2>Invoice</h2>
+                  <h3 class="pull-right"><?php echo $this->result['data']['price_in_btc'] ?></h3>
+                </div>
+                <small><?php echo $this->result['data']['invoiceId'] ?></small>
+                <hr>
+    
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+              <div class="col-lg-3" >
+                    <img src="https://blockchain.info/qr?data=1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz&size=200" alt="" class="img-resposive">
+                  </div>
+                  <div class="col-lg-9 text-right">
+                    <address>
+                      <strong>Send <a href="#"><?php echo $this->result['data']['price_in_btc'] ?></a> bitcoin</strong><br>
+                      to this bitcoin address<br>
+                      <br>
+                      <a href="#">1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz</a>
+                      <br/>
+                      <br/> 
+                      <button type="button" class="btn btn-primary needhelpbtn">Need Help <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></button> 
+                      <button type="button" class="btn btn-primary Commonbtn">Pay from wallet</button> 
+                    </address>
+                  </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="clearfix">&nbsp;</div>
+
+ 
+        
+            
+       
+           
+             
+            
+         
+        </div>

@@ -1,0 +1,279 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+ 
+ <style>
+
+</style>
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad">Service Request List</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active">Dashboard ></a></li>
+                  <li><a href="#">Service Request List</a></li>
+  
+            </ol>
+         
+        <div class="col-lg-12 bus_con">
+
+
+</div>
+</div>
+<div class="clearfix">&nbsp;</div> 
+   
+              
+        </div>   
+<?php if(isset($authUserNamespace->msg) && $authUserNamespace->msg!='') { ?>
+ <div style="text-align:center;color:greenl" class="col-lg-12 "><?php echo $authUserNamespace->msg; ?></div>	
+<?php $authUserNamespace->msg='';
+ } ?>
+        <div class="col-lg-12 ">
+      
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+               <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">SR.<br>No </th>
+                       <th class="sortboth">Service Request No</th>
+                       <th class="sortboth">SR Type</th> 
+                       <th class="sortboth">SR Category</th>
+                       <th class="sortboth">Description</th> 
+                       <th class="sortboth">Date</th> 
+                       <th class="sortboth">Status</th>   
+                        <th class="sortboth"></th>                    
+                     </tr> 
+                 </thead>
+                  <tbody id="memberdetails"> 
+                   <?php 
+                   if(!empty($this->result) && sizeof($this->result)>0)
+                   {
+                   $j=1;
+                   
+                   for($i=0;$i<sizeof($this->result);$i++){                  	
+                   $requeststatus = $this->result[$i]['status'];
+                   $descri=$this->result[$i]['query'];
+                   $limit=20;
+                  ?>
+                   <tr>
+                     <td scope="row"><?php echo $j; ?></td> 
+                     <td><a	id="<?php echo $this->result[$i]['ticket_id'];?>"
+				data-toggle="modal"
+				href="#req-admin"
+				name="myname"
+				onclick="getrequestdata('<?php echo $this->result[$i]['ticket_id']; ?>');"
+				class="myclass"
+			><?php echo $this->result[$i]['ticket_id'];?></a></td>
+                     <td><?php echo $this->result[$i]['req_type']; ?></td> 
+                     <td><?php echo $this->result[$i]['req_category']; ?></td>             
+					 <td>
+					  <?php if (strlen($descri) > $limit)
+					      $descri = substr($descri, 0, strrpos(substr($descri, 0, $limit), ' ')) . '...';
+					      echo $descri; ?> 
+               		</td>
+					 <td><?php echo $this->result[$i]['created_on']; ?></td>
+					 <td id="main<?php echo $this->result[$i]['ticket_id']; ?>"><?php  if($requeststatus=='1'){$st='Open';}else if($requeststatus=='2'){$st='Assigned';}else if($requeststatus=='3'){$st='Resolved';}else if($requeststatus=='4'){$st='Reopen';} else {$st='Closed';}echo $st; ?></td>
+					<td id="child<?php echo $this->result[$i]['ticket_id']; ?>"><?php if($requeststatus==3) { ?><a 	data-toggle="modal"
+				href="#"
+				onclick="changeStatus('<?php echo $this->result[$i]['ticket_id']; ?>','Reopen');"
+				
+				class="myclass" id="reopen<?php echo $this->result[$i]['ticket_id']; ?>">Reopen</a>&nbsp;&nbsp;
+				
+				<a href="#" id="close<?php echo $this->result[$i]['ticket_id']; ?>" onclick="changeStatus('<?php echo $this->result[$i]['ticket_id']; ?>','Close');">Close</a><?php } ?></td>
+ 
+                  </tr> 
+           
+             <?php $j++;
+                   }
+                   } ?>  
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+
+    </div>
+    
+    <!-- for lightbox in bootstrap -->
+<div
+	class="modal req-admin"
+	id="req-admin"
+>
+
+<div class="modal-dialog" style="width:800px;">
+<div class="modal-content">
+<div class="modal-header">Service Request Detail
+<button
+	type="button"
+	class="close"
+	data-dismiss="modal"
+	aria-hidden="true"
+><i class="is close-btn"></i></button>
+</div>
+<div class="modal-body g-auth-body">
+<table
+	class="req-table"
+	cellspacing="0"
+>
+	<thead>
+		<tr>
+             <th class="sortboth">Service Request No</th>
+             <th class="sortboth">SR Type</th> 
+             <th class="sortboth">SR Category</th>
+             <th class="sortboth">Description</th> 
+             <th class="sortboth">Date</th> 
+             <th class="sortboth">Status</th> 
+		</tr>
+	</thead>
+	<tbody id="Requestdata">
+	</tbody>
+</table>
+</div>
+</div>
+<!-- /.modal-content --></div>
+<!-- /.modal-dialog --></div>
+
+
+
+
+
+	<div
+			class="modal changestatus"
+			id="changestatus"
+		>	
+		<div class="modal-dialog popup" >
+		<div class="modal-content">
+		<div class="modal-header">
+		Change Status
+		<button
+			type="button"
+			class="close"
+			data-dismiss="modal"
+			aria-hidden="true" onclick="closeStatusPop();"
+		><i class="is close-btn"></i></button>
+		</div>
+		<div class="modal-body g-auth-body">
+			<form name="formkit" id=""formkit"" action='' method="post">
+				<div class="inputhodler" id="kit_err" style="display:none;">
+	               
+	            </div>	          
+	            <div class="inputhodler">
+	                <p> Status:</p> <input readonly type="text" name="status" id="status" placeholder=""  Value="">
+	            </div>
+	        	<input type="hidden" id="ticket" name="ticket" value="">
+	            <div class="inputhodler">
+	                <p> Comment:</p> <textarea type="textarea" name="comment" id="comment" placeholder="" value="" ></textarea>
+	            </div>	
+	            <div class="inputhodler btncls" >
+	                <input style="width:30%;" type="button" value="Submit" name="sharekt" onclick="submitStatus()" class="formsubmit inputcls">
+	            </div>	
+            </form>	
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+
+
+
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+    </div>
+              
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+            
+ <script>        
+ function getrequestdata(id)
+ {
+	
+ 	var reqId=id;
+ 	//alert("hi"+reqId);
+ 			 $.ajax({
+ 				
+ 				url:"<?php echo BASEPATH; ?>/Servicerequestlist/requset", 
+ 				type: "POST",    
+ 			    data: 'request='+reqId,
+ 				
+ 		  		success:function(response)
+ 		  		{
+ 		  
+ 				var data=JSON.parse(response);
+ 				//alert(response);
+ 				var innerhtml='';		
+ 				for(var k=0;k<(data['data'].length);k++)
+ 				{															
+ 					innerhtml+='<tr>'+
+ 					 '<td>'+ data['data'][k]['ticket_id']+'</td>'+
+ 					 '<td>'+data['data'][k]['req_type']+'</td>'+ 	
+ 					 '<td>'+ data['data'][k]['req_category']+'</td>'+
+ 					 '<td>'+data['data'][k]['query']+'</td>'+ 	
+ 					 '<td>'+ data['data'][k]['created_on']+'</td>'+
+ 					 '<td>'+data['data'][k]['status']+'</td>'+ 						   
+ 				  '</tr>';
+ 				  $('#Requestdata').empty();
+ 				  $('#Requestdata').append(innerhtml);
+   
+      			}
+ 					
+ 				}
+ 			 });
+ }
+ function changeStatus(ticket,status)
+ {
+	 
+	$('#status').val(status);
+	$('#ticket').val(ticket);
+	$('#changestatus').addClass('openpop');
+ }
+ function closeStatusPop()
+ {
+	 $('#changestatus').removeClass('openpop');
+ }
+ function submitStatus()
+ {
+	var ticket = $('#ticket').val();
+	var status = $('#status').val();
+	var comment = $('#comment').val();
+
+	 $.ajax({			
+			url:"<?php echo BASEPATH; ?>/Servicerequestlist/changestatus", 
+			type: "POST",    
+		    data: 'ticket='+ticket+'&status='+status+'&comment='+comment,	
+		    async:false,		
+	  		success:function(response)
+	  		{
+				if(response!='failed')
+				{
+					$("#main"+ticket).text(status);
+					$("#child"+ticket).text('');
+					
+				}
+	  		}
+	 });
+ }
+          
+ </script>
+<link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'Y-m-d',
+			});
+		</script>   

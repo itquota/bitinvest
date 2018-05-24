@@ -1,0 +1,127 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+    <div id="wrapper" class="loginPadd">
+
+      <div class="logincontanier lightgraybg ">
+
+      <div class="panel-heading faqtitlebg text-center  text-uppercase loginTitleTxt brdright">
+                        <a href="#">  Home </a>
+                           
+                        </div>
+  <form class="paddAll"
+	onsubmit="event.preventDefault(); validateLoginForm();" role="form"
+	autocomplete="off">
+ <div class="form-group">
+       <img src="<?php echo BASEPATH; ?>/images/login-logonew.png" alt="" class="img-responsive">
+  </div>
+<div class="form-group">
+ <h3 class="text-center loginTitleTxt"> Please Enter Your Information</h3>
+</div>
+<h5 style="color: red; display: none; text-align: center;" id="err_div"></h5>
+  <div class="form-group">
+    <label for="username" class="lblTxt"  />Username:</label>
+
+    <div class="input-group">
+       <span class="input-group-btn ">
+        <img src="<?php echo BASEPATH; ?>/images/loginusername.png" alt="">
+     </span>
+  <input type="text" name="sign_in_email" id="inputEmail1" class="form-control CommonInputBox usericons" placeholder="Username">
+ 
+</div><!-- /input-group -->
+   
+  </div>
+<div class="form-group">
+    <label for="username" class="lblTxt">Password:</label>
+
+    <div class="input-group">
+       <span class="input-group-btn ">
+        <img src="<?php echo BASEPATH; ?>/images/passwordicon.png" alt="">
+     </span>
+  <input type="password" name="sign_in_pass" id="sign_in_pass" class="form-control CommonInputBox usericons" placeholder="Password">
+ 
+</div><!-- /input-group -->
+   
+  </div>
+  <div class="checkbox ">
+    <label><input type="checkbox" id="remember-me"> Remember me</label>
+  </div>
+  <br/>
+  <div class="form-group"><button type="submit" class="btn btn-default calculatebtn">Login</button></div>
+  <p class="text-center ">
+
+    <a href="#" class="forgotTxt">Forgot password</a>
+
+  </p>
+
+</form>
+
+      <div class="panel-heading faqtitlebg text-center  text-uppercase loginTitleTxt brdright">
+                         <a href="#"> Register now! </a//>
+                           
+                        </div>
+</div>
+  
+
+
+
+    </div>
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+    <script>
+
+	  function validateLoginForm()
+	  {
+		var username=$('#inputEmail1').val();
+		var password=$('#sign_in_pass').val();
+		$('#err_div').empty();
+		$("#err_div").css("display", "none");
+		username = username.trim();
+		password = password.trim();
+		if ($('#remember-me').is(":checked"))
+		{
+			
+		}
+		if(!username || username=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Username";
+			//$('#err_div').text='Please enter valid Username';
+		
+			return false;
+		}
+		else if(!password || password=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Password";
+			return false;
+			
+		}
+		else
+		{
+			var dataString = 'username='+ username+'&password='+password;
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Login/checklogin",
+					type: "POST",    
+				    data: dataString,
+			  		success: function(response)
+		      		{
+					 var data=	JSON.parse(response);
+					
+					 if(data['success']!='' && data['success']=='success')
+					 {
+						window.location.href=("<?php echo BASEPATH; ?>/Withdrawals");
+					 }
+					 else
+					 {
+							$("#err_div").css("display", "block");
+							document.getElementById("err_div").innerHTML=data['failure'];
+					 }		
+		      			
+		      		}
+				});
+		}
+	  }
+    </script>

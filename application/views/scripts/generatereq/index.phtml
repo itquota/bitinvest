@@ -1,0 +1,395 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.error{
+    color:red;
+}
+.form-group{
+	display: inline-block;
+    margin-right: 25px;
+    width: 280px;
+    padding-bottom: 20px;	
+}
+	@media (max-width: 768px){
+	.form-group{
+    width: 100%;
+	text-transform:none!important;	
+}
+	
+	
+	}</style>
+<div class="content">
+			<div class="page-title-group">
+				<h4 class="page-title">Refunds</h4>
+				<h5 class="text-muted page-title-alt">Request Refund</h5>
+			</div>	
+ <div class="modal req-admin" id="ticket_done">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold"></div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+			<div class="cb-page-content">
+				<div class="container">
+
+			<div class="alert alert-danger">
+		                       <p style="color:#000;">Please Note: You can request for a kit refund from here if you have purchased the kit directly from system, otherwise please request the user who have shared the kit with you to raise a refund request from their account for the specific kit number.
+				</p></div>
+
+<?php if(isset($authUserNamespace->msg) && $authUserNamespace->msg!='') { ?>
+<p id="error" style="color: red; font-weight: bolder"><?php echo $authUserNamespace->msg; ?></p>
+<?php $authUserNamespace->msg='';
+ } ?>
+<p id="sucess"></p>
+<div class="card-box">					
+	<div class="card-box-content form-compoenent " id="form_sh">
+		<form action="<?php echo BASEPATH; ?>/Generatereq" method="post" id="refund_form" class="form-basic">
+   <input type="hidden" value="<?php echo $authUserNamespace->token; ?>" id="token" name="token">
+		<div class="form-group" >
+			<label for="full_name" class="lblTxt">Full Name</label>  
+			<input type = "text" name = "full_name" id = "full_name" class="form-control " />												
+		</div>
+		<div class="form-group">
+			<label for="email" class="lblTxt">Email</label>  
+			<input type = "text" name = "email" id = "email" class="form-control " />												
+		</div>
+		<div class="form-group">
+			<label for="Phone" class="lblTxt">Phone</label>  
+			<input type ="text" name ="phone" id="phone" maxlength="12" class="form-control  nokey" />												
+		</div>
+		<div class="form-group">
+			<label for="kit_number" class="lblTxt">Kit Number</label>
+			<input type="text" class="form-control " name = "kit_number" id = "kit_number" />
+			
+		</div>
+		<div class="form-group">
+			<label for="txid" class="lblTxt">Transaction Id</label>
+			<input type="text" class="form-control " name = "txid" id = "txid" />
+			
+		</div>
+		<div class="form-group">
+			<label for="" class="lblTxt">Bitcoin Wallet Address</label>
+			<input type="text" class="form-control " name = "wallet_address" id = "wallet_address" />
+			
+		</div>
+		<div class="form-group">
+			<label for="reason" class="lblTxt">Reason for Cancellation</label>
+		
+			<select id="reason" name="reason" class="form-control ">	
+			<option value="">Select</option>	
+			<option value="Not Interested">Not Interested</option>	
+			<option value="Wrong Placement">Wrong Placement</option>	
+			</select>
+		</div>
+		
+
+	
+<div class="clearfix">&nbsp;</div>
+<div class="">
+	<?php
+	$CurrentDate = date('Y-m-d H:i:s');
+	if(!empty($this->permissions_data) && ($CurrentDate >= $this->permissions_data['start']) && ($CurrentDate <= $this->permissions_data['end'])){
+		echo '<span class="btn_" style = "text-align:center;margin:5px;display: inline-block;background-color: #ccc;width:220px;padding: 10px 0;font-weight: normal;" name="refund">Request Refund</span>';
+	}else{
+	
+	?>
+<button type="submit" class="btn btn-primary btn-md" id = "refund" name="refund">SUBMIT</button>
+	<?php }  ?>
+
+<button type="reset" class="btn btn-inverse btn-md ">RESET</button>
+
+	<div class="row">		
+		<div class="col-lg-12">
+			<?php
+
+			if(!empty($this->permissions_data) && ($CurrentDate >= $this->permissions_data['start']) && ($CurrentDate <= $this->permissions_data['end'])){
+				echo '<p style = "font-size:11px;padding-top:10px;" class="note">**Please Note: Refund requests are disabled till '.date('d F, Y',strtotime($this->permissions_data['end'])).'</p>';
+			}
+			?>
+		</div>	
+	</div>
+</div>	
+</form>
+	<div class="modal bg-popup" id="myModal1" ></div>	
+</div>
+</div>
+<div class="clearfix">&nbsp;</div>
+
+
+
+</div>					
+				</div>
+			</div>	
+
+
+
+
+
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+		<script data-cfasync='false'>
+		
+	  function closePop()
+		{
+			//$("#modal_body").append("hyes");
+			
+			$("#myModal1").removeClass('openpop');
+			$("#myModal1").html('');
+			// $("#myModal1").hide();
+		}
+			
+		$(document).ready(function () {
+			   $.validator.addMethod("checkaddress",function(value,element){
+					var addr = $("#wallet_address").val();
+					check=false;
+					$.ajax({
+						type: "GET",
+						url: 'https://blockchain.info/q/addressbalance/'+addr+'?confirmations=0',
+						async:false,
+						success: function(res)
+						{   
+							if(isNaN(res) && res!=""){ check=false;}
+							else{ check=true;}
+						}
+					});
+					return check;
+				});
+				   
+					$.validator.addMethod("checktxid",function(value,element){
+					var txid = $("#txid").val();
+					// alert(txid);
+						check=true;
+						if(txid){
+					check=false;
+					$.ajax({
+						type: "GET",
+						url: 'https://blockchain.info/q/txtotalbtcoutput/'+txid,
+						async:false,
+						success: function(res)
+						{   
+						// alert(res);
+							if(isNaN(res) && res!=""){ check=false;}
+							else{ check=true;}
+						}
+					});
+					}
+					return check;
+				});
+
+					$.validator.addMethod("checknumber",function(value,element){
+						var Phone = $("#Phone").val();
+						
+						check=false;
+						 var numbers = /^[-+]?[0-9]+$/;  
+					      if(Phone.match(numbers))  
+					      {  
+					    	  check=true; 
+					      }  
+					      else  
+					      {  
+					    	  check=false;
+					      }  
+						return check;
+					});
+					
+					$.validator.addMethod("checkkitstatus",function(value,element){
+						var kit_number = $("#kit_number").val();
+						
+						check=false;
+						$.ajax({
+							type: "GET",
+							url: '<?php echo BASEPATH; ?>/Generatereq/checkkitstatus?kit_number='+kit_number,
+							async:false,
+							success: function(res)
+							{   
+								
+								if((res ==  "true") && isNaN(res) && res!=""){ check=true;}
+							      else{ check=false;}
+							}
+						});
+						return check;
+					});
+			
+			$.validator.addMethod("checkkitPurchased",function(value,element){
+						var kit_number = $("#kit_number").val();
+						
+						check=false;
+						$.ajax({
+							type: "GET",
+							url: '<?php echo BASEPATH; ?>/Generatereq/checkkitpurchased?kit_number='+kit_number,
+							async:false,
+							success: function(res)
+							{   
+								
+								if((res ==  "true") && isNaN(res) && res!=""){ check=true;}
+							      else{ check=false;}
+							}
+						});
+						return check;
+					});
+			
+			
+			$.validator.addMethod("checkkitRefundPeriod",function(value,element){
+						var kit_number = $("#kit_number").val();
+						
+						check=false;
+						$.ajax({
+							type: "GET",
+							url: '<?php echo BASEPATH; ?>/Generatereq/checkkitrefundperiod?kit_number='+kit_number,
+							async:false,
+							success: function(res)
+							{   
+								
+								if((res ==  "true") && isNaN(res) && res!=""){ check=true;}
+							      else{ check=false;}
+							}
+						});
+						return check;
+					});
+			
+								
+      	  $('#refund_form').validate({
+						
+					// Rules for form validation
+						rules : {
+							
+							kit_number : {
+								required : true,
+								checkkitstatus : true,
+								checkkitPurchased : true,
+								checkkitRefundPeriod : true
+							},
+							txid : {
+								//required : true,
+								checktxid:true
+							},
+							full_name : {
+								required : true,
+							},
+							email : {
+								required : true,
+								email : true,
+							},
+							Phone : {
+								required : true,
+								checknumber:true,
+							},
+							reason : {
+								required : true,
+							},
+							wallet_address : {
+								required : true,
+								 checkaddress:true,
+							},
+							
+						},
+			
+						// Messages for form validation
+						messages : {
+							
+							kit_number : {
+								   required: "Please Enter kit number",
+								   checkkitstatus:"Kit is not active or used",
+								   checkkitPurchased:"Kit is not purchased by you",
+								   checkkitRefundPeriod:"30 days refund period is lapsed for this kit"
+							},	
+							txid : {
+								//   required: "Please Enter Transaction id",
+								   checktxid:'Please Enter a valid transaction id only'
+							},	
+							full_name : {
+								   required: "Please Enter Full Name"
+							},	
+							email : {
+								required : 'Please Enter Email',
+								email : 'Please Enter a VALID email address',
+							},
+							
+							Phone : {
+								   required: "Please Enter Phone.",
+								   checknumber:'Please Enter a VALID phone number.'
+							},	
+							reason : {
+								   required: "Please select reason to refund."
+							},	
+							wallet_address : {
+								   required: "Please Enter your wallet address",
+								  checkaddress:'Please Enter a valid bitcoin address only'
+							},								
+						},
+			
+						// Do not change code below
+						//errorPlacement : function(error, element) {
+							//error.insertAfter(element.parent());
+							//errorFlag = true;	
+					//	}
+			
+				
+					
+					});
+			
+		
+			
+						
+			});
+			
+				
+			//$("#refund_form").submit(function(){
+			$("#refund").click(function(){
+		//	function refundRequest(){
+			
+				
+				var reason = $("#reason").val();
+
+				 if(reason == "Not Interested"){
+					 var msg = "Please Note: This action is not revertible. Are you sure you want to take refund for your kit ?";
+				 }else{
+					  var msg = "Please Note: The generated Mining Output for this kit will be canceled. Are you sure you want to refund this kit & get a replacement kit? ";
+				 }
+				 $("#myModal1").addClass('openpop');
+				 $("#myModal1").html('<div class="modal-dialog height-popup big-pop-center2"><div class="modal-content no-padding">'
+					+'<div class="bg-pop-header"><span class="text-pop-header">CONFIRM</span><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="fa fa-close" style="color:#fff;"></i></button>'
+					+'</div>'
+					+'<div style="padding:25px;height:250px;overflow-y:auto;" >'
+					 +'<p style = "text-align:justify;padding:20px;">'+msg+'  </p>'
+					  +'<p style = "text-align:center;padding:10px;"> <a href ="#" class = "btn btn-primary btn-md" onclick = "confirmAction(1)" style = "margin:10px;">Yes</a><a href = "#"  class = "btn btn-inverse btn-md" onclick = "confirmAction(0)"  style = "margin:10px;">No</a> </p>'
+					+'</div></div></div>');
+				 return false;
+		//	}
+			});
+	
+			
+//var errorFlag = '';
+		function confirmAction(status){
+				if(status == 1){
+					$("#myModal1").removeClass('openpop');
+					$("#myModal1").html('');
+					//alert(errorFlag);
+					$("#refund_form").submit();
+			
+				//return true;
+				}else{
+					$("#myModal1").removeClass('openpop');
+					$("#myModal1").html('');
+				//	$("#refund_form").submit()
+					return false;
+				}
+			
+			
+		}
+		
+		</script>

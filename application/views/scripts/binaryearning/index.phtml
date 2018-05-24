@@ -1,0 +1,293 @@
+<style>
+.tree li a
+{
+	cursor:default;
+}
+</style>
+<?php
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$common_obj = new Gbc_Model_Custom_CommonFunc();
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+
+/*$Binaryuserwelcomeobj = new Gbc_Model_DbTable_Binaryuserwelcome();
+$common_obj = new Gbc_Model_Custom_CommonFunc();
+$child=array();
+foreach($this->result['all_user'] as $user){
+	$refArray = $Binaryuserwelcomeobj->fetchAll($Binaryuserwelcomeobj->select()
+	->where("parent_username = 'ops' AND `username` = '".$user['username']."' AND status=1"));
+	for($i=0;$i<sizeof($refArray);$i++)
+	{
+		$child[] = $refArray[$i];
+		$i++;
+	}
+}*/
+
+?>
+
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Output</h4>
+		<h5 class="text-muted page-title-alt">Referral Sales Incentive</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Referral Sales Incentive</b></h4>
+						</div>
+						<div class="card-box-content form-compoenent">
+							
+							<div class="clearfix"></div>
+							<br>
+							
+
+<?php if(!empty($this->result['child']) && sizeof($this->result['child'])>0) { ?>
+
+
+<div class="clearfix">
+<div class="span12 center tree">
+<ul>
+	<li style="width: 100%"><a href="#"
+		style="background-color: #F5BA53; color: #FFFFFF"><?php echo $authUserNamespace->user; ?></a> <p
+		style="font-weight: bold; font-size: 20px;"><?php if(!empty($this->result['totalOwn_contract'])){echo number_format($this->result['totalOwn_contract'],2).' BTC'; }else{ echo '0.00 BTC';}?></p>
+	<ul>
+     <?php  
+     			$contact = $common_obj->array_column($this->result['childArray'], 'current_toal');
+                         $lower_user = $this->result['childArray'][array_search(min($contact), $contact)];
+                       	 $i=0;
+						// var_dump($all_user[$i]);
+                    
+                       for($ch=0;$ch<sizeof($this->result['child']);$ch++)
+                        { 
+							$today_conttract=0;
+                            if($this->result['child'][$ch]['username']==$this->result['all_user'][$i]['username'])
+                            {
+                                if($this->result['all_user'][$i]['contact']==0 || $this->result['all_user'][$i]['contact']=='')
+                                {
+                                    $today_conttract=0;
+                                }else{
+                                $today_conttract=$this->result['all_user'][$i]['contact']-$this->result['child'][$ch]['old_total'];}
+                            }
+							// echo $all_user[$i]['contact'];
+							// echo $data['old_total'];
+                            ?>
+
+		<li style="width: 50%;"><a href="#"
+			style="background-color: green; color: #FFF;"><?php if(!empty($this->result['child'])){echo $this->result['child'][$ch]['username']; }else{ echo 'N/A';} ?></a><br>
+		<p style="font-weight: bold; font-size: 20px;"><?php if(!empty($this->result['child'])){echo number_format($this->result['child'][$ch]['current_toal']+$today_conttract,2,'.','').' BTC'; }else{ echo $this->result['all_user'][$i]['contact']; } ?>
+		</p>
+
+		</li>
+
+		<?php $i++;} ?>
+
+
+	</ul>
+
+	</li>
+</ul>
+</div>
+</div>
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-lg-12">
+<div class="panel-color panel-purple" style ="border: 1px solid #ddd;border-radius: 4px;">
+<div class="panel-heading">
+<h3 class="panel-title">LAST OUTPUT DETAILS</h3>
+</div>
+<!-- /.panel-heading -->
+<div class="panel-body revenubydaybg ">
+<div class="row">
+	<ul style="list-style: none">
+		<div class="col-md-2 col-md-offset-3 col-sm-3 col-sm-offset-2 col-xs-6 col-xs-offset-3">
+			<li><a href="#"
+				style="color: #F5BA53"><?php echo $authUserNamespace->user; ?></a>
+			<p><?php if(!empty($this->result['totalOwn_contract'])){echo number_format($this->result['totalOwn_contract'],2,'.','').' BTC'; }else{ echo '0.00 BTC';}?></p>
+
+			</li>
+		</div>	
+		  <?php  $contact = $common_obj-> array_column($this->result['childArray'], 'last_total');
+							// if(!empty($contact)){
+							// $lower_user = $this->result['childArray'][array_search(min($contact), $contact)];
+							// }
+
+		  for($ch=0;$ch<sizeof($this->result['child']);$ch++)
+		   { ?>
+		<div class="col-md-2 col-md-offset-0 col-sm-3 col-sm-offset-0 col-xs-6 col-xs-offset-3">
+
+			<li><a href="#"
+				style="color: green;"><?php if(!empty($this->result['child'])){echo $this->result['child'][$ch]['username']; }else{ echo 'N/A';}?></a><br>
+			<p><?php if(!empty($this->result['child'])){ echo number_format($this->result['child'][$ch]['last_total'],2,'.','').' BTC'; }else{ echo 'N/A'; } ?></p>
+
+			</li>
+		</div>	
+		<?php } ?>
+
+	</ul>
+</div>
+</div>
+<!-- /.panel-body --></div>
+<!-- /.panel --></div>
+
+
+
+
+
+
+
+<div class="clearfix">
+
+<div class="col-lg-12">
+
+
+
+<div class="clearfix">&nbsp;</div>
+
+<!--<div class="clearfix lightgraybg paddCommon">
+<div class="form-group list-inline col-lg-4 offset-margin-0"><label
+	for="inputEmail3" class="col-sm-2 control-label lblTxt offset-1">Show</label>
+<div class="col-sm-4 offset-sm-0 styled-select slate"><select
+	class="form-control ">
+	<option>10</option>
+</select></div>
+
+<label for="inputEmail3" class="col-sm-2 control-label lblTxt offset-1">Entries</label>
+</div>
+
+<div class="col-lg-8 offset-10">
+<form class="" role="search">
+<div class="input-group add-on"><input
+	class="form-control calculateSearchbox"
+	placeholder="Eg. Invoice ID: 1438776266 " name="srch-term"
+	id="srch-term" type="text">
+<div class="input-group-btn">
+<button class="btn btn-default magnifyingbox" type="submit"><i
+	class="glyphicon glyphicon-search"></i></button>
+</div>
+</div>
+</form>
+</div>
+
+</div> -->
+
+
+
+
+</div>
+
+
+
+
+<div class="clearfix">&nbsp;</div>
+
+
+
+        <div class="col-lg-12 ">
+          <div class="clearfix ">
+            <div class="bs-example table-responsive" data-example-id="bordered-table">
+           <table id="data-table-simple"  class="table table-bordered table-responsive display" cellspacing="0">
+                <thead>
+                  <tr>
+                 	<th class="sortdesc">S.No.</th>
+					<th class="sortboth">Output(BTC)</th>
+					<th class="sortboth">Settlement Date</th>
+                    
+                  </tr>
+                </thead>
+	<tbody>
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+	<?php  
+	if(!empty($this->result['details']) && sizeof($this->result['details'])>0)
+	{
+	$sn=1;
+		
+		for($c=0;$c<sizeof($this->result['details']);$c++)
+		{
+			$date = isset($this->result['details'][$c]['created_on']) ? ($this->result['details'][$c]['created_on']) : '';
+	?>
+	
+		<tr>
+			<td scope="row"><?php echo $sn;  ?></td>
+			<td><?php echo number_format(($this->result['details'][$c]['total_earning']+0),6,'.',''); ?></td>
+			<td><?php echo date("jS F, Y",strtotime($date)); ?></td>
+		</tr>
+
+	<?php $sn++; }
+	}
+	?>
+
+	</tbody>
+              </table>
+			   <div class="clearfix">&nbsp;</div>
+            </div>
+          </div>
+        </div>  
+
+
+
+
+
+
+
+
+</div>
+
+
+		<?php }else{ ?>
+
+
+
+
+<div class="clearfix">
+<div class="span12 center tree">
+<ul>
+	<li style="width: 100%"><a href="#"
+		style="background-color: #F5BA53; color: #FFFFFF"><?php echo $authUserNamespace->user; ?></a> <span
+		style="font-weight: bold; font-size: 20px;"><?php if(!empty($this->result['totalOwn_contract'])){echo number_format($this->result['totalOwn_contract'],2).' BTC'; }else{ echo '0.00 BTC';}?></span>
+	<ul>
+	<?php $contact = $common_obj->array_column($this->result['all_user'], 'contact');
+	$lower_user = $this->result['all_user'][array_search(min($contact), $contact)];
+	$i=0;
+	foreach($this->result['all_user'] as $data)
+	{
+		?>
+
+		<li style="width: 50%;"><a href="#"
+			style="background-color: green; color: #FFF;"><?php if(!empty($data['username'])){echo $data['username']; }else{ echo $this->result['all_user'][$i]['username'];}?></a><br>
+		<p style="font-weight: bold; font-size: 20px;"><?php if($data['contact']!=''){echo number_format(($data['contact']),2).' BTC'; }else{ echo 'N/A';}?>
+		</p>
+
+		</li>
+
+		<?php $i++;} ?>
+
+
+	</ul>
+
+	</li>
+</ul>
+</div>
+</div>
+
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="col-lg-12">
+<div class="panel panel-default buynowbox">
+<div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+You Dont have any binary incomes.</div>
+
+
+</div>
+<!-- /.panel --></div>
+		<?php } ?></div>
+
+<!-- /.row --> <!-- /.row --></div>

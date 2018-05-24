@@ -1,0 +1,920 @@
+   <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+
+
+ ?>
+  <div class="content">
+	  
+	  
+ <input type="hidden" id="unm" value="<?php echo $this->userInfo['username']; ?>">
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+ 					<div class="modal req-admin bg-popup" id="google-auth-verify">
+						<div class="modal-dialog popup  height-popup big-pop-center" >
+						<div class="modal-content no-padding">
+						<div class="bg-pop-header">
+							<span class="text-pop-header">2 FACTOR AUTHENTICATION</span>
+							<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+									<i class="fa fa-close" style="color:#fff;"></i>
+							</button>
+
+						</div>
+                                <div style="padding:25px;height:450px;overflow-y:auto;" class="form-basic">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/login-logo.png" class="img-responsive center-block"></a>
+                                    <div style="padding:20px;">
+                                    <div class="alert alert-danger" id="err_div" style="display:none;padding:5px;"></div>
+										
+										<h5>Enter google authentication code</h5>										
+                                        <input type="text" id="vcode" name="vcode" class="form-control">
+                                    </div>
+                                    <div style="text-align:center;">
+                                    	<button type="button" value="SUBMIT" class="btn btn-primary btn-lg" onclick="verify();">SUBMIT</button>
+									</div>                                
+                                    <div class="row m-t-20">
+                                        <div class="col-md-12"><p class="">We recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. <br/>Take screenshot or save QR Code image by right click on it for backup and restore option.</p></div>
+                                        <div class="col-md-12">
+										<div class="row">
+                                          <div class="col-md-6 col-xs-12"><a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png" class="img-responsive center-block" width="200" height="62"></a></div>
+                                          <div class="col-md-6 col-xs-12"><a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png" class="img-responsive center-block"  width="200" height="62"></a></div>
+                                        </div>
+										</div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+ 
+			<div class="page-title-group">
+				<h4 class="page-title">Withdrawals</h4>
+				<h5 class="text-muted page-title-alt">Request</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+									<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">Outputs</h4>
+											
+										</div>
+										<div class="card-box-content">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+
+													<div class="table-responsive data-table">
+														<table class="table table-bordred table-striped">
+															<thead>
+																<div class="m-t-0"></div>
+																
+																<tr>
+																	<th class="thalign"></th>
+																	<th class="thalign"><b>Mining Output</b></th>
+																	<th class="thalign"><b>Direct Sales Incentive</b></th>
+																	<th class="thalign"><b>Referral Sales Incentive</b></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Ledger Balance</b>
+																	</td>
+																	<td class="thalign">
+																		<?php 
+																		   echo number_format(($this->result['ledgerDetails']['daily_earning_amt'] + $this->result['ledgerDetails']['daily_earning_amt_new'] + $this->result['ledgerDetails']['daily_earning_amt_new1']), 8);
+																		//0.00479822
+																		?> 
+																	</td>
+																	<td class="thalign">
+												           			    <?php echo number_format($this->result['ledgerDetails']['ref_amt'], 8); 
+																	   //0.00479822
+																	   ?>  
+																	</td>
+																	<td class="thalign">
+																	  <?php echo number_format($this->result['ledgerDetails']['binary_amt'], 8);
+																						//0.00479822 
+																				   ?> 													
+																	</td>
+
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Total Balance</b>
+																	</td>
+																	<td class="thalign">
+																		<?php echo number_format($this->result['totalDailyBalance'], 8);
+																							//0.00479822 
+																						?> 	
+																	</td>
+																	<td class="thalign">
+																		<?php echo number_format($this->result['totalDirectBalance'], 8); 
+																				//0.00479822 
+																		?> 													
+																	</td>
+																	<td class="thalign">
+																	<?php echo number_format($this->result['totalBinaryBalance'], 8); 
+																			//0.00479822
+																	?>													
+																	</td>
+
+																</tr>
+
+															</tbody>
+														</table>
+													</div>			
+										
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>	
+					</div>	
+					<div class="row">
+						<!-- Activity app -->
+						<div class="col-lg-6">
+								<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">Total Output</h4>
+											
+										</div>
+										<div class="card-box-content" style = "min-height:250px;padding-top:30px;margin-bottom:15px;">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+													<div class="table-responsive data-table">
+														<table class="table table-bordred table-striped"  style="overflow:hidden;">
+															<tbody>
+																<tr>
+																	<td >
+																		<b>Total</b>
+																	</td>
+																	<td >
+																	         	<?php echo number_format($this->result['totalAmount'], 8);
+																					//0.00479822 
+       																		  	?>  
+																	</td>
+
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td >
+																		<b>Withdrawn</b>
+																	</td>
+																	<td >
+																		<?php echo number_format($this->result['total_withdrawal'], 8);
+																							//0.00479822 
+																						?> 	
+																	</td>
+
+
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td >
+																		<b>Balance</b>
+																	</td>
+																	<td >
+																		<b><?php echo number_format($this->result['bal_amt'], 8);
+																							//0.00479822 
+																			?> 	</b>
+																	</td>
+
+
+																</tr>
+															</tbody>
+														</table>
+													</div>			
+													
+												</div>
+
+											</div>
+										</div>
+									</div>
+						</div>
+						
+						<div class="col-lg-6">
+						   <?php if(isset($this->userInfo) && $this->userInfo['withdraw_enabled']=="1" ){?>
+							
+								<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">WITHDRAWALS DETAILS</h4>
+											
+										</div>
+
+									  <!-- /.panel-heading -->
+
+							<div class="card-box-content" style="min-height:250px; padding: 10px 20px; margin:0;">
+									<div id="err_div1" name="err_div" style="display:none;"></div>
+									<?php if(!empty($this->msg) && $this->msg!='')
+										{
+										?>
+									<div>
+										<label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+
+									 </div>
+									 <?php } ?>
+
+
+									<?php 
+										$wallet_addr =  "";
+										if(!empty($this->userInfo['wallet_addr']) && $this->userInfo['wallet_addr']!='' && $this->userInfo['payout_option'] == 1) {
+											$wallet_addr =  $this->userInfo['wallet_addr']; 
+											$payout_option1 = "checked";
+										} else { 
+											$wallet_addr =  $this->userInfo['mcap_wallet_addr']; 
+											$payout_option2 = "checked";
+										}
+									?>	
+									
+
+									<div class="form-group" style = "margin:10px;" >
+									    <h5>Enter Coinbank Wallet Address</h5>
+
+									<!--	<input type = "radio" name = "mode" id = "btc_mode" value = "1" onchange = "changeInput(this)" <?php echo $payout_option1; ?> />
+										<label for = "btc_mode" style = "margin-right:50px;margin-left:10px;vertical-align:super;">100% BTC</label>
+										<input type = "radio" name = "mode" value = "2" onchange = "changeInput(this)" id = "mcap_mode"  <?php echo $payout_option2; ?>/>
+										<label for = "mcap_mode" style = "margin-right:50px;margin-left:10px;vertical-align:super;">100% MCAP</label>
+									-->	
+								  </div>
+								<div class="form-group" id = "wallet_div" >
+								
+										<input type="text" id="withdrawal_address" class="form-control CommonInputBox" placeholder="Enter BTC Address" value="<?php echo $wallet_addr; ?>">
+								  </div>
+
+
+								 <?php 
+									  $CurrentDate = date('Y-m-d H:i:s');
+									// echo $CurrentDate;
+									$permissions_data = $this->permissions_data;
+									if(!empty($permissions_data)){
+										foreach($permissions_data as $data){
+											//var_dump($data);
+											if(($data['name'] == "wallet_disable") && ($data['value'] == "1")){
+												$walletdisable_startDate = $data['start'];
+												$walletdisable_endDate = $data['end'];
+											}else if(($data['name'] == "manual_withdrawal_disable") && ($data['value'] == "1")){
+												$withdrawaldisable_startDate = $data['start'];
+												$withdrawaldisable_endDate = $data['end'];
+											}
+										}
+									}
+
+									if(($CurrentDate <= $walletdisable_startDate) || ($CurrentDate >= $walletdisable_endDate)){
+								  ?>			  
+								  <div class="form-group" id="save_button">
+									  <button type="button" onclick="saveWallet();" class="btn btn-primary Commonbtn">Save</button>
+								</div>
+								<?php 
+									}else{ 
+										echo '<div class="alert1 alert-info" id="displayMsg"><strong>Wallet address Add/Update disabled upto '.date('d F, Y',strtotime($walletdisable_endDate)).'.</strong></div>';			
+
+									} 
+								?>					  
+
+
+								
+
+							</div>
+						</div> 
+						
+						<?php  } ?>
+
+										
+						 </div>
+						
+						<!--
+						<div class="col-lg-4">
+							<div class="panel panel-color panel-primary">
+								<div class="panel-heading">
+									<h4 class="panel-title"><b>Possible BTC Amount</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll" style="margin-bottom:7px;">
+										<ul class="list-group act-list">
+											<li class="list-group-item">
+												<h2 class="text-center">
+													<?php echo !empty($this->result['bal_amt'])?number_format($this->result['bal_amt']/2, 8):0; 
+                									?>
+													<br/></h2><h4 class="text-center">BTC</h4>												
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>	
+						<div class="col-lg-4">
+							<div class="panel panel-color panel-primary">
+								<div class="panel-heading">
+									<h4 class="panel-title"><b>Possible Token Amount</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll"  style="margin-bottom:7px;">
+										<ul class="list-group act-list">
+											<li class="list-group-item">
+												<h2 class="text-center">
+													 <?php echo !empty($this->result['bal_amt'])?number_format($this->result['bal_amt']/2, 8):0; 
+              										  ?> 
+												</h2><h4 class="text-center">TOKEN</h4>	
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>	
+						-->
+					</div>
+	<!--				<div class="row">
+						<div class="col-lg-12">
+									<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">New Token Withdrawal </h4>
+											
+										</div>
+										<div class="card-box-content" style="min-height:200px;">
+											<div class="row">
+												<div class="col-md-12 col-sm-12 " style="position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%);">
+													<p style="text-align:center;font-size: 20px;"><strong>NEW TOKEN AMOUNT : <?php  echo !empty($this->result['new_token_amt'])?number_format($this->result['new_token_amt'], 8):0; 
+																?> </strong> </p><br><br>
+														 <p STYLE = "text-align:center;">
+															WITHDRAWAL COMING SOON...
+														 </p>
+													
+												</div>
+
+											</div>
+										</div>
+									</div>
+						</div>							
+					</div> -->	
+	<div class="row">
+           		  	 <div class="col-lg-12">
+						  <?php
+								$LATEST_WITHDRAWAL_REQUESTS = 0;
+								if(!empty($LATEST_WITHDRAWAL_REQUESTS)){
+
+							?>
+		  
+							 <div class="col-lg-12">
+									<div class="panel panel-default buynowbox">
+									  	<div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+									   		LATEST WITHDRAWAL REQUESTS
+									  	</div>
+									</div>   
+
+									  <!-- /.panel-heading -->
+										 <div class="panel-body revenubydaybg ">         
+										  <?php if(!empty($this->withdrawal_requests)){ ?>
+										  	<div class="bs-example table-responsive" data-example-id="bordered-table">
+												<table id="data-table-simple" class="table table-bordered innertbl display">
+													<thead>
+														<tr>
+
+															<th class="sortboth">USERNAME</th>
+															<th class="sortboth">WALLET ADDRESS</th>
+															<th class="sortboth">AMOUNT</th>
+															<th class="sortboth">Requested on</th>
+
+
+														</tr>
+													</thead>
+													<tbody>
+														<?php
+
+													//print_r($this->withdrawal_requests);
+															foreach($this->withdrawal_requests as $data)
+														{
+
+																$username = isset($data['username']) ? $data['username'] : '';
+
+																$amount = isset($data['amount']) ? $data['amount'] : '';
+
+																$wallet_address = isset($data['wallet_address']) ? substr($data['wallet_address'],0,10) : '';
+
+															$request_date = isset($data['request_date']) ? date('d-m-Y h:i A',strtotime($data['request_date'])) : '';
+
+
+															?>
+															<tr>
+
+																<td><?php echo $username; ?></td>
+																<td><?php echo $wallet_address; ?></td>
+																<td><?php echo $amount; ?></td>
+																<td><?php echo $request_date; ?></td>
+															</tr>
+															<?php
+
+
+
+														}
+
+														?>
+													</tbody>
+												</table>
+											</div>
+											  <?php } ?>
+										</div>			 
+									</div>
+    	  						<?php } ?>
+				          </div> 
+     		          </div>	
+					</div>
+				</div>
+	</div> 
+  
+            <!-- /.row -->
+            <!-- /.row -->
+            
+            <!-- /.row -->
+  <script>
+  var isebable='<?php echo $this->userInfo['authentication_type']; ?>';
+	
+	 $("#info").click(function(){
+		// $("#myModal1").show();
+		 $("#myModal1").addClass('openpop');
+		 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 300px;overflow-y: auto;">'
++'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
++'</div>'
++'<div class="modal-body" id = "modal_body" >'
+	+'<h3 style = "text-align:center;">Payout Load ???</h3>'
+ +'<p style = "text-align:justify;padding:30px;">  It means number of users request and Blockchain current transactions load ... More red means more load and more time for payout and vice versa. So please check the payout load before raising the request so streamline the payout speed!!!</p>'
++'</div></div></div>');
+	 });
+	  
+	  function closePop()
+		{
+			//$("#modal_body").append("hyes");
+			
+			$("#myModal1").removeClass('openpop');
+			$("#myModal1").html('');
+			// $("#myModal1").hide();
+		}
+	  
+   function generateOtp(){
+		var username = '';
+		$('#generate_otp').hide();
+		$.ajax({
+			type: 'POST',
+			url: '<?php echo BASEPATH; ?>/Profile/sendotp',
+		data: {"username":$('#unm').val()},
+			beforeSend:function(){
+				// this is where we append a loading image
+				/* if(withdrawal_type == 2){
+					$('#ajax-panel2').html("Loading...").show();
+				}else if(withdrawal_type == 3){ */
+					$('#ajax-panel').html("Loading...").show();
+				//}
+				
+			},
+			success:function(data){
+				var json_obj = JSON.parse(data);
+				if(json_obj['success']=='success')
+				{
+				$("#message").html("(Please enter the OTP sent to your registered mail id. OTP generation button will be renabled after 20 minutes)").show();
+					
+					setTimeout(function() {
+							$("#generate_otp").show()
+						}, 1200000);
+					
+					$('#ajax-panel').empty();
+					$('#ajax-panel').append('<h5>OTP Sent!</h5>').hide(5000);
+				}
+				else
+				{
+					$('#ajax-panel').append('<h5>Error sending OTP. Please try again later or contact us if the problem persists.</h5>').hide(15000);
+				}
+				
+				
+			}
+
+		});
+		return false;
+	}
+	  
+function changeInput(res){
+	//alert(res.value);	
+	if(res.value == 2){
+		$("#wallet_div").html('<input id="withdrawal_address" class="form-control CommonInputBox" placeholder="Enter MCAP Address" value="" type="text">');
+	}else{
+		$("#wallet_div").html('<input id="withdrawal_address" class="form-control CommonInputBox" placeholder="Enter BTC Address" value="" type="text">');
+	}
+}
+	  
+function saveWallet()
+	{
+		$('#save_button').hide();
+		var otp = $('#otp').val();
+	//	var withdrawal_address = $('#withdrawal_address').val();
+		var withdrawal_address =document.getElementById("withdrawal_address").value;
+	//	var withdrawal_mode = $('input[name="mode"]:checked').val();
+		var withdrawal_mode = 1;
+		
+		var username = $('#unm').val();
+		var token = $('#token').val();
+		$('#vcode').val('');
+		//var authcode=$('#authcode').val();
+		
+		if(!withdrawal_address || withdrawal_address=='')
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Please provide withdrawal Address.";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			$('#save_button').show();
+			
+			return false;
+		}
+	/*	else if((!otp || otp==''))
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="";
+			document.getElementById("err_div").innerHTML="Please provide OTP.";
+			$('#err_div').css('display','block');
+			$('#err_div').css('color','red');
+			return false;
+		}*/
+		else
+		{
+		
+			if(isebable==2)
+			{
+				$('#google-auth-verify').addClass('openpop');
+				$('.modal ').css('display','block');
+			}
+			else
+			{
+					
+				 document.getElementById("err_div1").innerHTML="";
+
+						var dataStr = 'wallet_addr='+withdrawal_address;
+							$.ajax({
+									url:"<?php echo BASEPATH; ?>/Withdrawals/checkcoinbankwallet",
+									type: "POST",    
+									data: dataStr,							
+									success: function(response)
+									{
+								
+									 var data=	JSON.parse(response);
+									//	alert(data);
+									 if(data['success']!='')
+									 {
+										var dataString = 'otp='+ otp+'&withdrawal_address='+withdrawal_address+'&username='+username+'&mode='+withdrawal_mode+'&token='+token;
+											$.ajax({
+												url:"<?php echo BASEPATH; ?>/Withdrawals/savewallet",
+												type: "POST",    
+												data: dataString,
+												success: function(response)
+												{
+
+												  var data=	JSON.parse(response);
+
+												 if(data['success']!='')
+												 {
+													$("#err_div1").css("display", "block");
+													document.getElementById("err_div1").innerHTML="";
+													document.getElementById("err_div1").innerHTML=data['success'];
+													$('#err_div1').css('display','block');
+													$('#err_div1').css('color','green');
+													$('#save_button').show();
+													 
+													//		$('#err_div1').addClass('alert');
+													//		$('#err_div1').addClass('alert-success');													 
+												 }
+												 else
+												 {
+														 if(data['failure'] && data['failure']!='')
+														 {
+															$("#err_div1").css("display", "block");
+															document.getElementById("err_div1").innerHTML="";
+															document.getElementById("err_div1").innerHTML=data['failure'];
+															//$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');
+															$('#save_button').show();
+															 
+														 }
+														 else
+														 {
+																$("#err_div1").css("display", "block");
+																document.getElementById("err_div1").innerHTML="";
+																document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+															//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');
+															$('#save_button').show();
+															 
+															 
+														 }
+												 }		
+
+												}
+											});
+									 
+									 
+									 
+									 }else{
+														 if(data['failure'] && data['failure']!='')
+														 {
+															$("#err_div1").css("display", "block");
+															document.getElementById("err_div1").innerHTML="";
+															document.getElementById("err_div1").innerHTML=data['failure'];
+														//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');
+															//$('#err_div1').css('color','red');
+															$('#save_button').show();
+															 
+														 }
+														 else
+														 {
+																$("#err_div1").css("display", "block");
+																document.getElementById("err_div1").innerHTML="";
+																document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+															//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');	
+															$('#save_button').show();
+															 
+														 }									 
+									 
+									 
+									 }									
+									}							
+							
+							
+							});
+				//	}
+		}
+			
+		}
+	}
+	  
+	  
+	
+	function verify()
+	{
+		$('#save_button').hide();
+		
+		var otp=$('#otp').val();
+		var withdrawal_address=$('#withdrawal_address').val();
+	//	var withdrawal_mode = $('input[name="mode"]:checked').val();
+		var withdrawal_mode = 1;
+		var username=$('#unm').val();
+		var authcode=$('#vcode').val();
+		var token = $('#token').val();
+	//	$('#vcode').val('');
+	//	$('.modal ').css('display','block');
+			 document.getElementById("err_div").innerHTML="";
+			var addr = $("#withdrawal_address").val();
+
+						
+						var dataStr = 'wallet_addr='+withdrawal_address;
+							$.ajax({
+									url:"<?php echo BASEPATH; ?>/Withdrawals/checkcoinbankwallet",
+									type: "POST",    
+									data: dataStr,							
+									success: function(response)
+									{
+									 var data=	JSON.parse(response);
+									 if(data['success']!='')
+									 {
+										var dataString = 'authcode='+authcode+'&isenable='+isebable+'&otp='+ otp+'&mode='+withdrawal_mode+'&withdrawal_address='+withdrawal_address+"&username="+username+'&token='+token;
+										$.ajax({
+											url:"<?php echo BASEPATH; ?>/Withdrawals/savewallet",
+											type: "POST",    
+											data: dataString,
+											success: function(response)
+											{
+
+											  var data=	JSON.parse(response);
+
+											 if(data['success']!='')
+											 {
+												$("#err_div1").css("display", "block");
+												document.getElementById("err_div1").innerHTML="";
+												document.getElementById("err_div1").innerHTML=data['success'];
+												$('#err_div1').css('display','block');
+												$('#err_div1').css('color','green');
+												//$('#err_div1').addClass('alert');
+												//$('#err_div1').addClass('alert-success');		
+												$('#save_button').show();
+												 
+												 closePopup();
+											 }
+											 else
+											 {
+													 if(data['failure'] && data['failure']!='')
+													 {
+														$("#err_div1").css("display", "block");
+														document.getElementById("err_div1").innerHTML="";
+														document.getElementById("err_div1").innerHTML=data['failure'];
+														//$('#err_div1').css('color','red');
+														$('#err_div1').addClass('alert');
+														$('#err_div1').addClass('alert-danger');
+														$('#save_button').show();
+														 
+													 }
+													 else
+													 {
+															$("#err_div1").css("display", "block");
+															document.getElementById("err_div1").innerHTML="";
+															document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+														//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');
+															$('#save_button').show();
+														 
+
+													 }
+													 closePopup();
+											 }		
+
+											}
+										});									 
+									 }else{
+														 if(data['failure'] && data['failure']!='')
+														 {
+															$("#err_div1").css("display", "block");
+															document.getElementById("err_div1").innerHTML="";
+															document.getElementById("err_div1").innerHTML=data['failure'];
+														//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');
+															//$('#err_div1').css('color','red');
+															$('#save_button').show();
+															 
+														 }
+														 else
+														 {
+																$("#err_div1").css("display", "block");
+																document.getElementById("err_div1").innerHTML="";
+																document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+															//	$('#err_div1').css('color','red');
+															$('#err_div1').addClass('alert');
+															$('#err_div1').addClass('alert-danger');	
+															$('#save_button').show();
+															 
+														 }									 									 
+									 				closePopup();
+
+									 
+									 }					
+									}
+				});
+//	}
+	}
+	function closePopup()
+	{
+
+		$('.modal ').css('display','none');
+	}
+	function validbtcvalue(){
+		$("#amount_err_div").html("");
+		var withdraw_amt = $('#withdrawal_amount').val();
+		if(withdraw_amt>25){
+			$("#amount_err_div").css("display", "block");
+			$("#amount_err_div").html("Withdrawal amount should be less than or equal to 25.0 BTC");
+		}
+		if(withdraw_amt<0.025){
+			$("#amount_err_div").css("display", "block");
+			$("#amount_err_div").html("Withdrawal amount should be more than or equal to 0.025 BTC");
+		}		
+		
+	}
+	  
+	  function submit_withdrawal_request(){
+		 var countLoad = "<?php echo $CountPercentage; ?>";
+		 
+	  	if(countLoad >= 100){
+			 $("#myModal1").addClass('openpop');
+		 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 300px;overflow-y: auto;">'
+			+'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
+			+'</div>'
+			+'<div class="modal-body" id = "modal_body" >'
+			
+			 +'<p style = "text-align:justify;padding:10px;margin-top:20px;">Dear User,</p><p style = "text-align:justify;padding:10px;">Currently payout requests load is very high, Please try to raise a withdrawal request after sometime for faster processing.</p>'
+			+'</div></div></div>');
+			return false;
+		}else if (countLoad >=50){
+			 $("#myModal1").addClass('openpop');
+		 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 300px;overflow-y: auto;">'
+			+'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
+			+'</div>'
+			+'<div class="modal-body" id = "modal_body" >'
+			
+			 +'<p style = "text-align:justify;padding:10px;"> Dear User, </p><p style = "text-align:justify;padding:10px;">Currently payout requests load is very high, your withdrawal request may take time to get processed. Do you want to make withdrawal request now ?</p>'
+			+'<button class = "btn btn-default Commonbtn" onclick="closePop();submit_withdrawal();">YES</button><button  class = "btn btn-default Commonbtn" onclick="closePop();">NO</button>'
+							
+			+'</div></div></div>');	
+		}else{
+			submit_withdrawal();
+		}
+		
+	  }
+	  
+	function submit_withdrawal(){
+		
+		$("#ajax-panel").html('<img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">');
+		$("#amount_err_div").html("");
+		var withdrawal_address = $('#withdrawal_address').val();
+		var withdraw_amt = $('#withdrawal_amount').val();
+		var total_bal = <?php echo number_format($this->result['bal_amt'], 8); ?> ;
+//		var withdrawal_button = $("#withdrawal_button").html("");
+		var countLoad = "<?php echo $CountPercentage; ?>";
+	
+		if(withdrawal_address==""){
+			$("#amount_err_div").css("display", "block");
+			$("#amount_err_div").html("Please update your wallet address");
+		}else
+			if(withdraw_amt==""){
+				$("#amount_err_div").css("display", "block");
+				$("#amount_err_div").html("Amount cannot be blank");
+			}else 
+				if(withdraw_amt>25){
+					$("#amount_err_div").css("display", "block");
+					$("#amount_err_div").html("Withdrawal amount should be less than or equal to 25.0 BTC");
+				}
+				else if(withdraw_amt<0.025){
+					$("#amount_err_div").css("display", "block");
+					$("#amount_err_div").html("Withdrawal amount should be more than or equal to 0.025 BTC");
+				}	
+				else if(withdraw_amt>total_bal){
+					$("#amount_err_div").css("display", "block");
+					$("#amount_err_div").html("You do not have sufficient balance");
+				}
+				else{
+					
+		//			if(withdrawal_button!="Processing"){				
+		//				$("#withdrawal_button").html("Processing");
+						var dataString = 'withdraw_amt='+ withdraw_amt+'&withdrawal_address='+withdrawal_address;
+					if(countLoad < 100){
+						$.ajax({
+							url:"<?php echo BASEPATH; ?>/Withdrawals/manualwithdrawal",
+							type: "POST",    
+							async:false,
+						    data: dataString,
+					  		success: function(response)
+				      		{
+							
+								//alert(response);
+								 var data=	JSON.parse(response);			
+								 if(data['success']!='')
+								 {
+									 $("#withdrawal_button").html("Processing"); 
+									 $("#withdrawal_button").attr("disabled","disabled"); 
+									 $("#cancel_request").css("visibility", "");
+									 $("#processing_msg").html("Payout will be processed within 24 hours. Status will change back to 'Withdraw' once this payout request is processed."); 
+									 $("#amount_err_div").css("display", "block");
+									 $("#amount_err_div").css("color", "green");
+									 $("#amount_err_div").html("Request Sent");
+									 
+								 }else if(data['failure'] == 'insufficient_balance'){
+									 $("#amount_err_div").css("display", "block");
+									 $("#amount_err_div").html("You do not have sufficient balance");
+								 }
+								 else if(data['failure'] == 'exceed'){
+									 $("#amount_err_div").css("display", "block");
+									 $("#amount_err_div").html("You cannot withdraw more than 25 BTC in a day");
+								 }else if(data['failure'] == 'load_exceed'){
+									 $("#amount_err_div").css("display", "block");
+									 $("#amount_err_div").html("Currently payout requests load is very high, Please try to raise a withdrawal request after sometime for faster processing.");
+								 }
+					      	}
+						});
+					}
+					
+				}
+			$("#ajax-panel").html('');
+	}	
+	function cancel_request(){
+		
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/Withdrawals/cancelwithdrawal",
+			type: "POST",    
+			async:false,
+		    data: "",
+	  		success: function(response)
+      		{
+				 var data=	JSON.parse(response);							
+				 if(data['success']!='')
+				 {
+					 $("#amount_err_div").css("display", "block");
+					 $("#amount_err_div").html("Request Canceled");
+					 $("#cancel_request").css("visibility", "hidden");
+					 $("#withdrawal_button").html("Withdraw"); 
+					 $("#withdrawal_button").removeAttr("disabled");
+//					 $("").attr("disabled","false"); 
+					 
+				 }
+				 else if(data['failure'] != ''){
+				 }
+      		}
+		});
+	}
+  </script>

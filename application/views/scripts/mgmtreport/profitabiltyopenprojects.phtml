@@ -1,0 +1,287 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	var totalQty = 0;
+	var price = 0;
+	
+	$('#rowbg .col1').each(function(){
+		if($(this).text()!="" && $(this).text()!= "-")
+		totalQty = totalQty+parseFloat($(this).text());
+		var total1 = parseFloat(totalQty).toFixed(2);
+		$('#total').html(total1);
+		//$('#total').html(totalQty);
+		//price = price+(parseInt($(this).text())*parseInt($(this).next().find('.price').text()));
+		$('#Tqty').html(totalQty);
+		
+		//$('#finPrice').html(price);
+	});
+	$('#rowbg .col1').each(function(){
+		if($(this).text()!="" && $(this).text()!= 0  && $(this).text()!= "-")
+		{
+			var t = parseFloat(parseFloat($(this).text())/totalQty).toFixed(2);
+			var t1 = parseFloat(t * 100).toFixed();
+			//var t1 = parseFloat(t * 100).toFixed(2);
+			$(this).next().text(t1+'%');
+		}
+		else
+		{
+			$(this).next().text("-");
+		}
+	});
+});
+
+	function search()
+	{	
+		
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		//alert(startdate);
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+
+		var type=document.getElementById('projecttype2').value;
+		
+		if (type != "")
+		{
+		}
+		else
+		{
+			type= "";
+		}
+		var practice=document.getElementById('practice').value;
+		
+		window.location="<?php echo BASEPATH; ?>/mgmtreport/profitabiltyopenprojects/type/"+type+"/startdate/"+startdate+"/enddate/"+enddate+"/practice/"+practice;
+	}
+
+
+	function export1()
+	{	
+		
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		//alert(startdate);
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+
+		var type=document.getElementById('projecttype2').value;
+		
+		if (type != "")
+		{
+		}
+		else
+		{
+			type= "";
+		}
+
+		var practice=document.getElementById('practice').value;
+		window.location="<?php echo BASEPATH; ?>/mgmtreport/exportprofitabiltyopenprojects/type/"+type+"/startdate/"+startdate+"/enddate/"+enddate+"/practice/"+practice;
+	}
+</script>
+
+
+<script>
+
+	
+</script>
+<style>
+.col-first {
+    width: 315px;
+}
+.greenClass
+{
+	background-repeat:repeat-x;
+	background-color:#8EC555;
+    height: 32px;
+    margin: -8px 0 0;
+    padding: 8px 0 0;
+    background-image:url("<?php echo BASEPATH ;?>/images/common/menubg-grn.gif");
+}
+</style>
+
+</head>
+<body>
+
+<?php
+
+	    function minutetohr($minute)
+		{
+		$hr=$minute/60;
+		$minute =intval($minute);
+		$hr= intval($minute/60);
+		$hr=round($minute/60,2);
+		$hr1 = explode('.', $hr);
+		$min=$minute%60;
+		if($min < 10)
+		{
+			$hrs=$hr1[0].".0".$min;
+		}
+		else 
+		{
+			$hrs=$hr1[0].".".$min;
+		}
+		
+		return $hrs;
+	}
+?>
+<div id="subheader">
+	<form id="searchprojectform" name="searchprojectform" action="" method="post">
+	<div class="wrapper">
+	<div id="holder" style="margin:0;">
+        	<label>From Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($this->startdate) && $this->startdate!=""){echo $this->startdate; } ?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            <label>To Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($this->enddate) && $this->enddate!=""){echo $this->enddate; }?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+      </div>
+      <br class="clear">
+       <br class="clear" />
+	 <div id="holder">
+        	<label>Project Type</label>
+            <select name="projecttype2" id="projecttype2" class="field" onchange="populate_dropdown1(this.value,'0');">
+            <?php	foreach ($this->projecttype_list2 as $projecttype_list2){?>
+			<option value="<?php  if(isset($projecttype_list2->id) && $projecttype_list2->id !=""){ echo $projecttype_list2->id;}?>"<?php if($this->project_type==$projecttype_list2->id) echo "selected";?>><?php echo $projecttype_list2->value;?></option>
+			<?php } ?>
+
+            </select>
+        </div>
+        
+         <div id="holder" >
+        	<label>Practice</label>
+            <select name="practice" id="practice" class="field">
+              <option value="">Please Select</option>
+              	<?php	foreach ($this->practice_list as $practice_list){?>
+			<option <?php if(isset($this->practiceid)) {if($this->practiceid == $practice_list->practiceid) {?> selected="selected" <?php }} ?> value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid){echo "selected";}?>><?php echo $practice_list->value;?></option>
+			<?php } ?> 	
+
+            </select>
+        </div>
+      <br class="clear">
+        <br class="clear">
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="export1();"><a href="javascript:void(0);" class="searchbg">Export</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="search();"><a href="javascript:void(0);" class="searchbg">Submit</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH?>/mgmtreport/index" style="margin-right:532px;" class="searchbg">Report-homepage</a></div>
+  	</div>
+    <br class="clear" />
+    </form>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+
+        <br class="clear">
+        <br class="clear">
+      
+     
+   
+    <br class="clear">
+       <div id="tablebg" style=" height: 40px;">
+        	<div class="col-first" style="width:108px;">Client Name</div>
+        	<div class="col" style="width:150px;">Project Name</div>
+            <div class="col" style="width:64px;">Start Date</div>
+            <div class="col" style="width:64px;">End Date</div>
+            <div class="col" style="width:80px;">Target Delivery Date</div>
+            <div class="col" style="width:60px;">Budgeted Hours</div>
+            <div class="col" style="width:60px;">Actual Hours</div>
+            <div class="col" style="width:70px;"> Project value in USD</div>
+            <div class="col" style="width:90px;">Budgeted revenue per hr</div>
+            
+        </div>
+        
+        <?php  if(isset($this->common_list) && sizeof($this->common_list)>0){
+      	
+        	foreach($this->common_list as $view_list){
+        		
+       ?>
+        <div id="rowbg">
+        <div class="col-first" style="width:108px;"><?php if(isset($view_list['clientName']) && $view_list['clientName']!="") {echo $view_list['clientName'];} else { echo "-";}  ?></div>
+        	<div class="col" style="width:150px;"><?php if(isset($view_list['title']) && $view_list['title']!="") {echo $view_list['title'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:64px;"><?php if(isset($view_list['startDate']) && $view_list['startDate']!="") {echo $view_list['startDate'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:64px;"><?php if(isset($view_list['endDate']) && $view_list['endDate']!="") {echo $view_list['endDate'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:80px;"><?php if(isset($view_list['targetEndDate']) && $view_list['targetEndDate']!="") {echo $view_list['targetEndDate'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:60px;"><?php if(isset($view_list['budgetedHrs']) && $view_list['budgetedHrs']!="") {echo $view_list['budgetedHrs'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:60px;"><?php if(isset($view_list['actualHrs']) && $view_list['actualHrs']!="") {echo minutetohr($view_list['actualHrs']);} else { echo "-";}  ?></div>
+            <div class="col" style="width:70px;"><?php if(isset($view_list['projectValue']) && $view_list['projectValue']!="") {echo $view_list['projectValue'];} else { echo "-";}  ?></div>
+            <div class="col" style="width:90px;"><?php if(isset($view_list['budgetedRevenue']) && $view_list['budgetedRevenue']!="") {echo $view_list['budgetedRevenue'];} else { echo "-";}  ?></div>
+            
+        </div>
+        
+        <?php }
+        
+        echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+        
+         }
+        else{
+		?>
+		<div class='grid-row2'>
+			<div align='' style="width:58%;font-weight:bold;">No Records Found</div>
+		</div>
+		<?php } ?>
+       
+<!--        <div class="pagination"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>-->
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+<script>
+
+</script>
+</html>

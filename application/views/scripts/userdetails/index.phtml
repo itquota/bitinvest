@@ -1,0 +1,250 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	
+?>
+ 
+<style>
+.form-group label{
+	width:100px;
+}
+.form-group {
+    width: 350px;
+}
+.form-group input{
+	width:200px;
+}
+.clearfix {
+		 margin-top:35px;
+}
+
+</style>
+ 
+ 
+ 
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li >User Details</li>
+  
+            </ol>
+           
+		<div class="clearfix"></div>
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              User Details
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="<?php echo BASEPATH; ?>/Userdetails" method="post" id="chng" role="form">
+
+<?php //$j=1;
+//foreach($this->result as $result){
+?>
+
+		<div class="err1">
+		<label style="color:red" for="" class="lblTxt"> </label>
+         <?php if(!empty($this->msg) && $this->msg!='')
+		{
+		?>
+  	  <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+ 	
+ 		<?php } ?>
+ 	 </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Username</label>
+
+     <input type="text"  name = "username" placeholder = "Enter username" id="username">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Start Date:</label>
+
+    <input id="datetimepicker1" class="datepick input" type="text" placeholder="Start Date" value="" name="startdate">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">End Date:</label>
+
+    <input id="datetimepicker" placeholder="End Date" class="datepick input" name="enddate" >
+
+
+      
+  </div>
+ 
+  
+  <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+  <button type="submit" name = "search" value = "Search" class=" btn btn-default Commonbtn" onclick="return validateFn()">SEARCH</button>
+ <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+
+        	<?php 
+		if(!empty($this->result['userDetails'])){
+	?>
+	<div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+               <table id="data-table-simple2" class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">username </th>
+                        <th class="sortboth">Total <br> user</th> 
+                        <th class="sortboth">left  <br>active <br/> user</th>
+                         <th class="sortboth">right  <br>active <br/> user</th> 
+                         <th class="sortboth">left business</th> 
+                          <th class="sortboth">right business</th>
+                         
+                     </tr> 
+                 </thead>
+                  <tbody> 
+	
+                    <tr>
+					  <?php if(!empty($this->result['userDetails'])&& sizeof($this->result['userDetails'])>0){?>
+						<td scope="row"><?php echo $this->result['userDetails']['username']; ?></td>
+						<td><?php echo $this->result['userDetails']['totalUsers'];	?></td>
+						<td><?php echo $this->result['userDetails']['LeftActive']; ?></td>
+						<td><?php echo $this->result['userDetails']['RightActive']; ?></td>
+						<td><?php echo $this->result['userDetails']['LeftBusiness']; ?></td>
+						<td><?php echo $this->result['userDetails']['RightBusiness']; ?></td>
+                      <?php }?>
+                    
+                  </tr> 
+
+
+                 </tbody>
+                  </table> 
+				  <div class="clearfix">&nbsp;</div>
+              </div>
+
+        </div>
+
+    </div>
+	
+	<div class="clearfix">&nbsp;</div>
+	<?php 
+		}
+	?>
+	<?php  if(!empty($this->result['pairDetails'])){
+	?>
+		<div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                     <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr. No </th>
+                        <th class="sortboth">Username</th> 
+                        <th class="sortboth">Contract</th>
+                         <th class="sortboth">Parent</th> 
+                         <th class="sortboth">Status</th> 
+                          <th class="sortboth">Position</th>
+						   <th class="sortboth">Created</th>
+                         
+                     </tr> 
+                 </thead>
+                  <tbody> 
+	
+                  	<?php 
+								$i = 1;
+								foreach($this->result['pairDetails'] as $pairPositions){
+								// var_dump($pairPositions);
+							?>
+								<tr>
+									<td><?php echo $i; ?></td>
+									<td><?php echo $pairPositions['name']; ?></td>
+									<td><?php echo $pairPositions['ContractPrice'];	?></td>
+									<td><?php echo $pairPositions['parent']; ?></td>
+									<td><?php echo $pairPositions['IsActive']; ?></td>
+									<td><?php echo strtoupper($pairPositions['child_position']); ?></td>
+									<td><?php echo $pairPositions['created_on']; ?></td>
+								</tr>	
+							<?php 
+								$i++;
+							} 
+							?> 
+
+
+                 </tbody>
+                  </table> 
+				  <div class="clearfix">&nbsp;</div>
+              </div>
+
+        </div>
+
+    </div>
+	<?php }
+	 if($this->result['userDetails']=="" && $this->result['pairDetails']==""){?>
+	<div>
+	</div>
+	<?php }?>
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+	
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+	
+	
+	<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+		  
+			jQuery('.datepick').datetimepicker({			
+			 format:'d-m-Y',
+			});
+		</script>
+<script><!--
+		function validateFn(){
+			var contact_name=$("#username").val();
+	         var address=$("#datetimepicker1").val();
+	 		 var mobile=$("#datetimepicker").val();
+
+	 		if((contact_name).trim()=='' && (address).trim()=='' && (mobile).trim()==''){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter either Username/Date.</label>');
+	 			return false;
+	 		}	
+	 		//else if((address).trim()==''){
+	 		//	$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Enter Start Date. </label>');
+	 		//	return false;
+	 		//}
+	 		//else if((mobile).trim()==''){
+	 		//	$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Enter End Date.</label>');
+	 		//	return false;
+	       // }
+	 		else{
+	 			return true;
+	 		}
+		}
+
+--></script>
+		

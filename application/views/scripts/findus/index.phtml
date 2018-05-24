@@ -1,0 +1,236 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	
+?>
+<style>
+.clearfix {
+  margin-top:-7px;
+}
+</style>
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>CMS Settings > </li>
+                  <li>Find Us</li>
+  
+            </ol>
+         
+
+          <div class="clearfix errmsg">&nbsp;</div>
+<?php 
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+
+    <label for="" class="lblTxt" style="color:green;"><?php echo $authUserNamespace->msg;?></label>
+
+<?php $authUserNamespace->msg="";}?>
+   <a href="<?php echo BASEPATH; ?>/Addnew"  style="float:right;margin-right:35px;"><button type="button"  class="btn btn-default Commonbtn" name="submit" id="submit" value="">ADD NEW</button></a>
+<div class="clearfix">&nbsp;</div>      
+     
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                    <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">Contact Name</th> 
+                        <th class="sortboth">Address</th>
+                         <th class="sortboth">Mobile</th> 
+                           <th class="sortboth">City Name</th> 
+                             <th class="sortboth">Created On</th> 
+                              <th class="sortboth">Status</th> 
+                              <th id="rmvsrt">Action</th>
+                         
+                          
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                   <?php 
+        		$j=1;
+        foreach($this->result as $result){
+        	
+       	 $contact_name= isset($result['contact_name']) ? $result['contact_name'] : '';
+                        $contact_address = isset($result['contact_address']) ? $result['contact_address'] : '';
+                        $mobile = isset($result['mobile']) ? $result['mobile'] : '';
+                        $city= isset($result['city_name']) ? $result['city_name'] : '';
+                       $created_date= isset($result['created_on']) ? $result['created_on'] : '';
+                        $status = isset($result['status']) ? $result['status'] : '';?>
+                   <!--   <tr>
+                     <td scope="row">1</td> 
+                     <td>&nbsp;</td>
+                      <td>No data available in table</td> 
+                      <td>&nbsp;</td>-->
+                  <tr>  
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php  echo $contact_name;?></td>
+                      <td><?php //echo $result['contact_address'];
+     							  echo $contact_address;?></td> 
+                      <td><?php echo $mobile;?></td>
+                      <td><?php echo $city;?></td>
+                      <td><?php echo date("d-m-Y H:m:s",strtotime($created_date));?></td>
+                        <td  style="text-align:center;"><?php 
+                         if($result["status"] =="0"){?>
+                        <a href='#' onclick="return changeFindStatus(<?php echo $result["id"];?>,<?php echo $result["status"];?>)">Inactive</a>
+                        <?php }else { ?>
+                         <a href='#' onclick="return changeFindStatus(<?php echo $result["id"];?>,<?php echo $result["status"];?>)">Active</a>
+                         <?php }?>
+                       </td>
+                       <td>
+                       <form method="post" action="<?php echo BASEPATH; ?>/Editfindus" name="form" id="form<?php echo $result['id'];?>">
+			
+			
+							<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+			
+							<input type="hidden" value="<?php echo $result['id'];?>" id="<?php echo $result['id'];?>" name="findid">
+			
+							<a href="#" onclick="document.getElementById('form<?php echo $result['id'];?>').submit()">Edit</a>&nbsp;
+							<a href='#' onclick="return delete_fn('<?php echo $result['id']; ?>')" >Delete</a>
+			
+					</form>
+					</td>
+                       
+                       
+                       
+                       
+                       
+                    <!--   <td style="text-align:center;"><?php // if($data1['errMsg']['edit']==1 || $_SESSION["user"]=="admin"){ ?><a href='<?php echo BASEPATH; ?>/Editfindus?id=<?php echo $result['id'];?>' >Edit</a><?php //} ?> &nbsp;
+   					<?php //if($data1['errMsg']['edit']==1 || $_SESSION["user"]=="admin"){ ?><a href='#' onclick="return delete_fn('<?php echo $result['id']; ?>')" >Delete</a><?php //} ?>-->
+  					 </td>
+
+                     
+                  </tr> 
+
+               
+
+                
+
+                  
+
+               
+             
+             	<?php $j++;} ?>
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+	
+    </div>
+
+       
+
+    
+       <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+			//	echo "<div>&nbsp;</div>";?>
+				
+
+        
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+		<script  data-cfasync='false' type="text/javascript">
+		
+			
+			function changeFindStatus(id,status)
+			{
+				var tokn=$("#token").val();
+				
+				var id=id;
+				var status=status;
+				
+				$.ajax({
+                type: 'POST',
+               url: "<?php echo BASEPATH; ?>/Findus/updateus",
+				data:{'id':id,'status':status,'tokn':tokn},
+                success: function (data) {
+                   //alert(data);return false;
+				  
+                   location.reload(); 
+                   
+                }
+
+               
+               
+            	});
+			}
+                function delete_fn(id)
+                {
+                	$('.lblTxt').hide();
+                    var x=confirm('Are you sure delete!');
+                    if(x)
+                    {
+                        $.ajax({
+                        type: 'POST',
+                        url: "<?php echo BASEPATH; ?>/Findus/deleteus",
+                        data:{'id':id},
+                        success: function (data) {
+                           alert(data);
+                             location.reload();   
+                         }
+                        });
+                    }
+                }
+
+                function func1() {
+                	document.getElementById("rmvsrt").removeAttribute("class");
+                	//document.getElementById("rmvsrt").className = "";
+                	}
+                	window.onload=func1;
+		</script>

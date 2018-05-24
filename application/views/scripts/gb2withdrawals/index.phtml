@@ -1,0 +1,560 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+    $DB = Zend_Db_Table_Abstract::getDefaultAdapter();
+
+?>
+<style>
+.card-box-content {
+    padding:0px 20px;
+}	
+	
+</style>
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">ETH Mining</h4>
+		<h5 class="text-muted page-title-alt">Withdrawals</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="alert alert-warning" style="color:#000;">
+						<p><strong>Please Note:</strong></p>
+						<p>- ETH payout requests will be processed & released every week-day (Monday-Friday) after 7:00 pm IST.</p>
+						<p>- Any request comes after 7:00 PM IST will be processed on next working day.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<!-- Activity app -->
+				<div class="col-lg-6">
+					<div class="panel panel-color panel-primary">
+							<div class="panel-heading">
+								<h4 class="panel-title">Total Output</h4>
+
+							</div>
+							<div class="card-box-content" style = "min-height:383px;padding-top:30px;margin-bottom:15px;">
+								<div class="row">
+									<div class="col-md-12 col-sm-12">
+										<div class="table-responsive data-table">
+											<table class="table table-bordred table-striped"  style="overflow:hidden;">
+												<tbody>
+													<tr>
+														<td >
+															<b>Total</b>
+														</td>
+														<td >
+																	<?php echo number_format($this->result['total_amt'], 8);
+																		//0.00479822 
+																	?>  
+														</td>
+
+													</tr>
+													<tr></tr>
+													<tr>
+														<td >
+															<b>Withdrawn</b>
+														</td>
+														<td >
+															<?php echo number_format($this->result['total_withdrawal'], 8);
+																				//0.00479822 
+																			?> 	
+														</td>
+
+
+													</tr>
+													<tr></tr>
+													<tr>
+														<td >
+															<b>Balance</b>
+														</td>
+														<td>
+															<b><?php echo number_format($this->result['bal_amt'], 8);
+																				//0.00479822 
+																?> 	</b>
+														</td>
+
+
+													</tr>
+												</tbody>
+											</table>
+										</div>			
+
+									</div>
+
+								</div>
+							</div>
+						</div>
+				</div>
+				<div class="col-lg-6">
+				   <?php
+					if(isset($this->userInfo) && $this->userInfo['withdraw_enabled']=="1" ){
+				//	echo "Here"; exit;?>
+						<div class="panel panel-color panel-primary">
+								<div class="panel-heading">
+									<h4 class="panel-title">WITHDRAWAL REQUEST</h4>
+
+								</div>
+
+							  <!-- /.panel-heading -->
+
+					<div class="card-box-content" style="min-height:383px; padding: 10px 20px; margin:0;">
+							<div id="err_div1" name="err_div" style="display:none;"></div>
+							<?php if(!empty($this->msg) && $this->msg!='')
+								{
+								?>
+							<div>
+								<label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+
+							 </div>
+							 <?php } ?>
+
+
+							<?php 
+							$authentication_type = $this->userInfo['authentication_type'];
+							if($authentication_type == 2){	
+						?>
+						<?php
+							$username = $this->userInfo['username'];
+							$query = "select * from gb2_withdrawal_requests where status='1' AND username='$username'";	
+							$resultQuery=$DB->query($query);
+							$resultQueryData = $resultQuery->fetchAll();
+							//var_dump($resultQueryData);	
+							if(count($resultQueryData) == 1){	
+						?>
+							<div class="alert alert-warning" style="margin-top:20px;"><p style="color:#000;font-size:18px;">Your last request of <?php echo $resultQueryData[0]['amount'];?> ETH is pending and ETH will be credited on below address <?php echo $resultQueryData[0]['mcap_address'];?> for the same.</p></div>
+
+						<?php }else{
+									$date=date("Y-m-d h:i:s");
+									$currentDay = date('w');
+									$currentTime = date('H');
+								
+									$query="select * from ticket_settings where type='3' and status='1'";
+									$result=$DB->query($query);
+									$ticketDetails = $result->fetchAll();
+
+
+									$days = $ticketDetails[0]['days'];	
+							//		echo $days; exit;
+									if($days == 5 && $currentDay !=6 && $currentDay !=7)	{			
+							?>
+							<div class="form-group" style = "margin:10px;" >
+									<h5>Enter Your ETH Address</h5>
+							  </div>
+							<div class="form-group" id = "wallet_div" >
+
+									<input type="text" id="mcap_address" class="form-control CommonInputBox" placeholder="" value="">
+							  </div>
+								<div class="form-group" style = "margin:10px;" >
+									<h5>Enter Amount To Withdraw</h5>
+							  </div>
+							<div class="form-group" id = "amount_div" >
+
+									<input type="text" id="amount" class="form-control CommonInputBox" placeholder="" value="">
+							 <?php 
+								$special_permissions_data = $this->max_eth_limit;
+								$limit = $special_permissions_data['max_eth_withdraw_limit'];
+						//		echo $limit; exit;
+
+							  ?>
+								<p style="color:#000000;font-size:12px;"><strong>** Max Limit <?php echo $limit; ?> ETH</strong></p>
+							  </div>
+							<div class="form-group" style = "margin:10px;" >
+									<h5>2FA</h5>
+							  </div>
+							<div class="form-group" id = "2fa_div" >
+
+									<input type="text" id="code" class="form-control CommonInputBox" placeholder="" value="">
+							  </div>			
+ 							<input type="hidden" id="unm" value="<?php echo $this->userInfo['username']; ?>">
+							<input type="hidden" id="balance" class="form-control CommonInputBox" placeholder="" value="<?php echo number_format($this->result['bal_amt'], 8);?>">
+							<input type="hidden" id="limit" class="form-control CommonInputBox" placeholder="" value="<?php echo $limit;?> ">
+
+							 <?php 
+								  $CurrentDate = date('Y-m-d H:i:s');
+								// echo $CurrentDate;
+
+								$permissions_data = $this->permissions_data;
+								if(!empty($permissions_data)){
+									foreach($permissions_data as $data){
+										//var_dump($data);
+										if(($data['name'] == "wallet_disable") && ($data['value'] == "1")){
+											$walletdisable_startDate = $data['start'];
+											$walletdisable_endDate = $data['end'];
+										}else if(($data['name'] == "manual_withdrawal_disable") && ($data['value'] == "1")){
+											$withdrawaldisable_startDate = $data['start'];
+											$withdrawaldisable_endDate = $data['end'];
+										}
+									}
+								}
+
+								if(($CurrentDate <= $walletdisable_startDate) || ($CurrentDate >= $walletdisable_endDate)){
+							  ?>			  
+							  <div class="form-group" id="save_button">
+								<!--  <button type="button" onclick="saveWallet();" class="btn btn-primary Commonbtn">Save</button> -->
+								  <button type="button" onclick="confirm();" class="btn btn-primary Commonbtn">SUBMIT</button>
+							</div>
+							<?php 
+								}else{ 
+									echo '<div class="alert1 alert-info" id="displayMsg"><strong>Wallet address Add/Update disabled upto '.date('d F, Y',strtotime($walletdisable_endDate)).'.</strong></div>';			
+
+								} 
+							?>
+
+
+						<?php }else if($days == 6 && $currentDay !=7)	{			
+							?>
+							<div class="form-group" style = "margin:10px;" >
+									<h5>Enter Your ETH Address</h5>
+							  </div>
+							<div class="form-group" id = "wallet_div" >
+
+									<input type="text" id="mcap_address" class="form-control CommonInputBox" placeholder="" value="">
+							  </div>
+								<div class="form-group" style = "margin:10px;" >
+									<h5>Enter Amount To Withdraw</h5>
+							  </div>
+							<div class="form-group" id = "amount_div" >
+
+									<input type="text" id="amount" class="form-control CommonInputBox" placeholder="" value="">
+							 <?php 
+								$special_permissions_data = $this->max_eth_limit;
+								$limit = $special_permissions_data['max_eth_withdraw_limit'];
+						//		echo $limit; exit;
+
+							  ?>
+								<p style="color:#000000;font-size:12px;"><strong>** Max Limit <?php echo $limit; ?> ETH</strong></p>
+							  </div>
+							<div class="form-group" style = "margin:10px;" >
+									<h5>2FA</h5>
+							  </div>
+							<div class="form-group" id = "2fa_div" >
+
+									<input type="text" id="code" class="form-control CommonInputBox" placeholder="" value="">
+							  </div>			
+ 							<input type="hidden" id="unm" value="<?php echo $this->userInfo['username']; ?>">
+							<input type="hidden" id="balance" class="form-control CommonInputBox" placeholder="" value="<?php echo number_format($this->result['bal_amt'], 8);?>">
+							<input type="hidden" id="limit" class="form-control CommonInputBox" placeholder="" value="<?php echo $limit;?> ">
+
+							 <?php 
+								  $CurrentDate = date('Y-m-d H:i:s');
+								// echo $CurrentDate;
+
+								$permissions_data = $this->permissions_data;
+								if(!empty($permissions_data)){
+									foreach($permissions_data as $data){
+										//var_dump($data);
+										if(($data['name'] == "wallet_disable") && ($data['value'] == "1")){
+											$walletdisable_startDate = $data['start'];
+											$walletdisable_endDate = $data['end'];
+										}else if(($data['name'] == "manual_withdrawal_disable") && ($data['value'] == "1")){
+											$withdrawaldisable_startDate = $data['start'];
+											$withdrawaldisable_endDate = $data['end'];
+										}
+									}
+								}
+
+								if(($CurrentDate <= $walletdisable_startDate) || ($CurrentDate >= $walletdisable_endDate)){
+							  ?>			  
+							  <div class="form-group" id="save_button">
+								<!--  <button type="button" onclick="saveWallet();" class="btn btn-primary Commonbtn">Save</button> -->
+								  <button type="button" onclick="confirm();" class="btn btn-primary Commonbtn">SUBMIT</button>
+							</div>
+							<?php 
+								}else{ 
+									echo '<div class="alert1 alert-info" id="displayMsg"><strong>Wallet address Add/Update disabled upto '.date('d F, Y',strtotime($walletdisable_endDate)).'.</strong></div>';			
+
+								} 
+							 }else{?>
+						
+									<?php if($days == 5){?>
+										<div class="alert alert-danger" style="margin-top:20px;"><p style="color:#000000;font-size:18px;">Payouts can be requested from Monday to Friday only.</p></div>
+									<?php }else if($days == 6){?>
+										<div class="alert alert-danger" style="margin-top:20px;"><p style="color:#000000;font-size:18px;">Payouts can be requested from Monday to Saturday only.</p></div>
+						
+							<?php	
+									}	
+								  }
+								} 
+							}else{
+						?>
+
+							<div class="alert alert-danger" style="margin-top:20px;"><p style="color:#000000;font-size:18px;">Please enable 2FA security in your account for security purpose & to enable your withdrawal section.</p></div>
+							 <a href="<?php echo BASEPATH; ?>/Profile"> 
+								 <div class="form-group" id="profile_button">
+								 <center> <button type="button" onclick="" class="btn btn-lg btn-primary Commonbtn">Go To Profile</button></center>
+								 </div>	
+							</a>		
+
+						<?php }?>
+					</div>
+				</div> 
+				<?php  } ?>
+				 </div>
+			</div>	
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Withdrawals History</b></h4>
+						</div>
+						<div class="card-box-content">
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple-1"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>
+										<th  class="sortdesc">S.No. </th>
+										<th class="sortboth">Requested Amount </th>
+										<th class="sortboth">Address </th>
+										<th class="sortboth">Transaction Fees </th>
+										<th class="sortboth">Net Paid Amount </th>
+										<th class="sortboth">Transaction Id</th>
+										<th class="sortboth">Requested On</th>
+										<th class="sortboth">Status</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+ 
+									   <?php
+
+															$i=1;
+														foreach($this->allWithdrawals as $result1) 
+
+														{
+														if($result1['status']!=1)	{
+												?>				
+															<tr>
+																<td style="min-width:40px;"><?php echo $i; ?></td>
+																<td style="text-align:right;"><?php echo $result1['amount']."". $result1['chosen_coin']; ?></td>
+																<td style="text-align:left;"><?php echo $result1['mcap_address']; ?></td>
+																<td style="text-align:right;"><?php echo $result1['tx_fees']; ?></td>
+																<td style="text-align:right;"><?php echo $result1['received_amount']; ?></td>
+																<td style="text-align:left;"><?php echo $result1['txid']; ?></td>
+
+																<td style="min-width:150px;"><?php echo date("jS F, Y ", strtotime($result1['request_date'])); ?></td>
+																<td>
+																	<?php 
+																		if($result1['status']==1)
+																			echo '<span class="badge badge_inpage" style="background-color:#ffc700;"> Pending </span>';
+																		else if($result1['status']==2)
+																			echo '<span class="badge badge_inpage"  style="background-color:#39b54a;"> Closed </span>';
+																		else 
+																			echo '<span class="badge badge_inpage" style="background-color:#ed7161;"> Cancelled</span>'; 
+																	?>
+																</td>
+															</tr>
+												<?php
+														$i++;}	}
+
+
+
+												?>
+
+									</tbody>
+								  </table>
+								 <br/>
+							</div>
+			   <div class="clearfix">&nbsp;</div>
+            </div>
+          </div>
+        </div>  
+          
+          </div>			
+        </div>
+    </div>
+</div>
+
+ <div class="modal bg-popup" id="myModal1" ></div>	
+
+
+
+<script data-cfasync="false"  type="text/javascript">
+
+/* New withdrawal request process starts */	
+
+function validMcapAddr(address) {
+    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+        return false;
+    } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+        // If it's all small caps or all all caps, return true
+        return true;
+    } else {
+        return false;
+    }
+}	
+function confirm(){
+	
+		var withdrawal_address =document.getElementById("mcap_address").value;
+		var amount =document.getElementById("amount").value;
+		var code =document.getElementById("code").value;
+		var limit =document.getElementById("limit").value;
+		var balance =document.getElementById("balance").value;
+	
+	//	alert(amount);
+	//	alert(balance);
+	//	alert(limit);
+
+		var username = $('#unm').val();
+		
+		if(!withdrawal_address || withdrawal_address=='')
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="MCAP address required";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;
+		}else if (!validMcapAddr(withdrawal_address.toLowerCase())){
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Invalid MCAP address";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;	
+        }else if(!amount || amount=='' || amount=='0' )
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Amount required";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;
+		}else if(amount <= 0)
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Invalid amount";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;
+		}else if(Number(amount) > Number(limit))
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Limit of "+limit+" ETH Exceeds";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;
+		}else if(Number(amount) > Number(balance))
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Insufficient Balance";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;
+		}else if(!code || code==''){
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="2FA required";
+			$('#err_div1').css('display','block');
+			$('#err_div1').css('color','red');
+			return false;		
+		}
+				
+			$.ajax({
+			url:"<?php echo BASEPATH; ?>/Profile/verifyauth",
+			type: "POST",    
+			data: 'code='+code,
+			dataType: "json",
+			success: function(response)
+			{
+
+				if(response.success=="success")
+				{
+
+					var msg = "Are you sure?<br/> You want to withdraw "+amount+" ETH.<p style='text-align:center;text-size:11px;'>Please Note : After confirmation request can not be cancelled.</p>" ;
+					 $("#myModal1").addClass('openpop');
+					 $("#myModal1").html('<div class="modal-dialog height-popup big-pop-center2"><div class="modal-content no-padding">'
+						+'<div class="bg-pop-header"><span class="text-pop-header">CONFIRM</span><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop1();" ><i class="fa fa-close" style="color:#fff;"></i></button>'
+						+'</div>'
+						+'<div style="padding:25px;height:250px;overflow-y:auto;" >'
+						 +'<p style = "text-align:center;font-size:20px;">'+msg+'  </p>'
+						  +'<p style = "text-align:center;padding:10px;"> <a href ="#" class = "btn btn-primary btn-md" onclick = "generateRequest(\''+withdrawal_address+'\',\''+amount+'\')" style = "margin:10px;">Yes</a><a href = "#"  class = "btn btn-inverse btn-md" onclick = "closePop1()"  style = "margin:10px;">No</a> </p>'
+						+'</div></div></div>');
+					 return false;	
+
+				}
+				else
+				{
+					$("#err_div1").css("display", "block");
+					document.getElementById("err_div1").innerHTML="";
+					document.getElementById("err_div1").innerHTML="Invalid 2FA Code";
+					$('#err_div1').css('display','block');
+					$('#err_div1').css('color','red');
+					return false;		
+				}
+
+
+			}
+		});
+}  
+  function closePop1()
+	{
+
+		$("#myModal1").removeClass('openpop');
+		$("#myModal1").html('');
+
+	}		
+	
+function generateRequest(addr,amount){
+	var username = $('#unm').val();
+
+	var dataString = 'amount='+amount+'&withdrawal_address='+addr+'&username='+username;
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/Gb2withdrawals/generaterequest",
+			type: "POST",    
+			data: dataString,
+			success: function(response)
+			{
+
+			  var data=	JSON.parse(response);
+
+			 if(data['success']!='')
+			 {
+				$("#err_div1").css("display", "block");
+				document.getElementById("err_div1").innerHTML="";
+				document.getElementById("err_div1").innerHTML=data['success'];
+				$('#err_div1').css('display','block');
+				$('#err_div1').css('color','green');
+				setTimeout(function(){
+					 window.location.href=("<?php echo BASEPATH; ?>/Gb2withdrawals");
+				},2000);
+			 }
+			 else
+			 {
+					 if(data['failure'] && data['failure']!='')
+					 {
+						$("#err_div1").css("display", "block");
+						document.getElementById("err_div1").innerHTML="";
+						document.getElementById("err_div1").innerHTML=data['failure'];
+						$('#err_div1').css('display','block');
+						$('#err_div1').css('color','red');
+						$('#save_button').show();
+
+					 }
+					 else
+					 {
+						$("#err_div1").css("display", "block");
+						document.getElementById("err_div1").innerHTML="";
+						document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+						$('#err_div1').addClass('alert');
+						$('#err_div1').addClass('alert-danger');
+						$('#save_button').show();
+
+
+					 }
+			 }		
+			closePop1();
+
+			}
+		});	
+	
+}	
+</script>	

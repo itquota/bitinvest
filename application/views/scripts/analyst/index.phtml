@@ -1,0 +1,673 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+<script src="<?php echo BASEPATH;?>/shared/ga.js" async="" type="text/javascript"></script>
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>-->
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet">
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+<style>
+.disabled
+{cursor:default;}
+</style>
+<script type="text/javascript">
+
+window.onbeforeunload = function(e) {
+	var isFirefox = typeof InstallTrigger !== 'undefined';
+	if(isFirefox)
+	{
+		return  givealert();
+	}
+	else
+	{
+		return  "Please close open task before closing the browser";
+	}
+};
+
+	
+
+			/*$(window).bind('beforeunload',function(){  
+				  givealert();
+			});*/
+			function givealert()
+			{
+				if(confirm('Please close open task before closing the browser'))
+				{
+					close_window();
+				}
+				else
+				{
+					return false;
+				}
+			}
+			function close_window() {
+				window.open('', '_self', '');
+				window.close();
+			}
+	
+window.onload=function()
+	{
+	var ptype=document.getElementById("projecttype").value;
+	populate_dropdown(ptype,'1');
+	}
+
+function view(cmd,view)
+{
+	    	window.location.href = '<?php echo BASEPATH;?>/task/addselftask/id/'+cmd+'/view/'+view;
+}
+function isNumber(evt) 
+{
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+
+function isNumber1(evt)
+{
+   var charCode = (evt.which) ? evt.which : event.keyCode;
+   if (charCode != 46 && charCode > 31 
+     && (charCode < 48 || charCode > 57))
+      return false;
+
+   return true;
+}
+$(document).ready(function(){
+	$('.taskstart').click(function(){
+		if($(this).hasClass('unable'))
+		{
+			startime($(this).attr('rel'),$(this));	
+		}	
+	});
+
+	$('.taskend').click(function(){
+		if($(this).hasClass('unable'))
+		{
+			endtime($(this).attr('rel'),$(this));	
+		}	
+	});
+});
+function startime(id)
+{       
+	$(this).attr('disabled','disabled'); 
+		$.ajax({
+				url: "<?php echo BASEPATH; ?>/analyst/emptask",
+				type: "POST",    
+			    data: "id="+id,
+			    success: function(response)
+			    {
+					
+				    response = response.replace(/"/g,'');
+				    if(response != "fail")
+				    {   
+				    var jsonObject = JSON.parse(response);
+				    var taskid = jsonObject[1]['task_id'];
+				    
+				    $('body').find('.Drow').each(function(){
+				    	 $('.status_id').attr('disabled','disabled');
+				    });
+				
+				    $('#status_'+taskid).removeAttr('disabled','disabled');
+
+				    $('#status_'+taskid).find('option').each(function(){
+					    if($(this).val() == '22')
+					    {
+						    $(this).attr('disabled','disabled'); 
+					    }
+					});
+				    $('#checksession').val('1');
+				    
+				    }
+				    if(response=="fail")
+				    {
+				    	$(this).removeAttr('disabled','disabled'); 
+				    	jAlert('Please change the status to WIP before starting the task');
+				    }
+				    else
+				    {
+					    jAlert('Your Time has Started');
+					    $('body').find('.Drow').each(function(){
+						    $(this).find('.taskstart').attr('title','Play').attr('src','<?php echo BASEPATH; ?>/images/common/play-disable.gif');
+						    $(this).find('.taskend').attr('title','Stop').attr('src','<?php echo BASEPATH; ?>/images/common/stop-disable.gif');
+						});
+					    $('.taskstart,.taskend').each(function(){
+					    	$(this).removeClass('unable').addClass('disabled');
+						});
+						$('#endBtn_'+id).addClass('unable').removeClass('disabled').attr('title','Stop').attr('src','<?php echo BASEPATH;?>/images/common/stop.gif');
+				    }
+				   
+			    }
+			});
+}
+
+function endtime(id)
+{
+			$.ajax({
+				url: "<?php echo BASEPATH; ?>/taskpl/emptaskupdate",
+				type: "POST",    
+			    data: "id="+id,
+			    success: function(response)
+			    {
+					//response = response.replace(/"/g,'');
+					var jsonObject = JSON.parse(response);
+				   // alert(response);
+				     	$('#checksession').val('0');
+					    $('body').find('.Drow').each(function(){
+					    	 $('.status_id').removeAttr('disabled','disabled');
+					    });
+					
+					    $('#status_'+id).removeAttr('disabled','disabled');
+
+					    $('#status_'+id).find('option').each(function(){
+						    if($(this).val() == '22')
+						    {
+							    $(this).attr('disabled','disabled'); 
+						    }
+						});
+						var i=0;
+						 
+						for(;i<jsonObject.length;i++)
+						{
+							//alert(jsonObject[i]['id']);
+							$('#status_'+jsonObject[i]['id']).attr('disabled','disabled');
+						}
+					
+					  
+
+						 
+					if(response='success')
+				    {
+						 
+					    jAlert('Your Time is Ended.Please change the Progress %.');
+					    $('body').find('.Drow').each(function(){
+						    $(this).find('.taskstart').attr('title','Play').attr('src','<?php echo BASEPATH; ?>/images/common/play.gif');
+						    $(this).find('.taskend').attr('title','Stop').attr('src','<?php echo BASEPATH; ?>/images/common/stop-disable.gif');
+						});
+					    $('.taskstart').each(function(){
+					    	$(this).removeClass('disabled').addClass('unable');
+						});
+						$('.taskend').each(function(){
+					    	$(this).removeClass('unable').addClass('disabled');
+						});
+
+						var i=0;
+						 
+						for(;i<jsonObject.length;i++)
+						{
+							 $('body').find('.Drow').each(function(){
+							  $(this).find('#startBtn_'+jsonObject[i]['id']).attr('title','Play').attr('src','<?php echo BASEPATH;?>/images/common/play-disable.gif');
+							  $(this).find('#startBtn_'+jsonObject[i]['id']).removeClass('unable').addClass('disabled');
+								 });
+						}
+						
+				    }
+					else
+					{
+						jAlert('An error occurred');
+					}
+			    }
+			});
+}
+
+function inputfile(file)
+{
+	jAlert("File Uploaded Successfully");
+	var upload = $('#upload').val(file);
+}
+
+function download123()
+{
+	link = $('#upload').val();
+	if(link !="")
+	{
+	var url = "<?php echo BASEPATH;?>"+link;
+	window.open(url,'_blank');
+	}
+	else
+	{
+		jAlert('Please Upload a file for download');
+	}	
+}
+
+function submitForm(){
+	var getValue = '6';
+	//jAlert(getValue);
+	//var getText = document.getElementById("tasktitle").value;
+	var getText1 = document.getElementById("projecttype").value;
+	var getText2 = document.getElementById("projectname").value;
+	var getText3 = document.getElementById("clientname").value;
+
+	window.location="<?php echo BASEPATH; ?>/analyst/index/searchtext1/"+getText1+"/searchtext2/"+getText2+"/searchtext3/"+getText3+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+	
+}
+
+function resetform()
+{
+	$('#clientname').val('');
+	$('#projecttype').val('');
+	$('#projectname').val('');
+
+	window.location = '<?php echo BASEPATH;?>/analyst/index';
+	
+}
+
+function populate_dropdown(tasktype,check)
+{
+	
+	var counter="0";
+	document.getElementById('cat_loader1').style.display = 'block';
+	$('#projectname').width(125);
+	$.ajax({
+		url:"<?php echo BASEPATH; ?>/analyst/projectname",
+		type: "POST",    
+	    data: "tasktype="+tasktype,
+	    success: function(response)
+	    { 
+			j=0;
+			if((response!="") && (response!=null))
+				 { 
+				 var jsonObject = JSON.parse(response);
+					
+						var option_ele=document.getElementById('projectname');
+						 
+						for(k=option_ele.length;k>0;k--)
+						{
+							option_ele.remove(k);
+						}
+
+						for(m=0;m<jsonObject.length;m++)
+						{
+						
+							var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+							document.getElementById('projectname').options[++j]=option_element;
+							if(check=="1"){
+							<?php if(isset($this->searchText2) && $this->searchText2!="")
+							{?>
+							var pro_ID = '<?php echo $this->searchText2;?>';
+							
+							if(jsonObject[m]['id']==pro_ID)
+							{
+								document.getElementById('projectname').options[j].selected = "selected";
+							}
+							<?php
+							 }?>
+							}
+						}
+					
+//						for(key in jsonObject)
+//							{
+//								var option_element= new Option(jsonObject[key]['name'],jsonObject[key]['id']);
+//								document.getElementById('projectname').options[j++]=option_element;
+//								
+//							}
+						
+				}
+			
+			document.getElementById('cat_loader1').style.display = 'none';
+			$('#projectname').width(141);
+		}
+	});
+	
+	
+}
+
+function update_status(editid,status){
+//jAlert(status);
+	var counter="0";
+	$.ajax({
+		url:"<?php echo BASEPATH; ?>/analyst/updatestatus",
+		type: "POST",    
+	    data: "status="+status+"&editid="+editid,
+	    success: function(response)
+	    { 
+		
+			if((response!="") && (response!=null))
+				 { 
+				 var jsonObject = JSON.parse(response);
+					
+					jAlert('updated successfully');
+			
+				}
+			
+				
+		}
+	});
+}
+
+function update_progress(editid,progress){
+	var counter="0";
+	$.ajax({
+		url:"<?php echo BASEPATH; ?>/analyst/updateprogress",
+		type: "POST",    
+	    data: "progress="+progress+"&editid="+editid,
+	    success: function(response)
+	    { 
+			response = response.replace(/"/g,'');
+			jAlert('updated successfully');
+			if((response!="") && (response!=null) && response == '46')	
+			{
+				endtime(editid);		
+				$('#status_'+editid).find('option').each(function(){
+				    if($(this).val() == '23')
+				    {
+					    $(this).removeAttr('disabled','disabled'); 
+				    }
+				});
+				$('#status_'+editid).attr('disabled','disabled'); 
+				$('#status_'+editid).val('23');
+				$('#progress_'+editid).attr('disabled','disabled');
+				$('body').find('.Drow').each(function(){
+					  $(this).find('#startBtn_'+editid).attr('title','Play').attr('src','<?php echo BASEPATH;?>/images/common/play-disable.gif');
+					  $(this).find('#startBtn_'+editid).removeClass('unable').addClass('disabled');
+						 });
+				
+			}
+			
+				
+		}
+	});
+}
+function Sortbydate(sortby)
+{
+		document.getElementById('Sort').value = sortby;
+		var getValue = '6';
+		var date =  document.getElementById('Sort').value ;
+		var getText1 = document.getElementById("projecttype").value;
+		var getText2 = document.getElementById("projectname").value;
+		var getText3 = document.getElementById("clientname").value;
+
+		window.location="<?php echo BASEPATH; ?>/analyst/index/searchtext1/"+getText1+"/searchtext2/"+getText2+"/searchtext3/"+getText3+"/date/"+date+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+}
+	
+
+
+
+
+function norecord()
+{
+	
+	jAlert('No File To Download');
+}
+</script>
+<style>
+.col-first
+{
+	width: 490px;
+}
+</style>
+</head>
+<body>
+
+<div id="subheader">
+	<div class="wrapper">
+	<?php if(isset($authUserNamespace->taskid1) && $authUserNamespace->taskid1!=""){?>
+	<input type="hidden" name="checksession" id="checksession" value="1" />
+	<?php } else {?>
+	<input type="hidden" name="checksession" id="checksession" value="0" />
+	<?php }?>
+<!--	    <div id="holder">-->
+<!--        	<label>Task Title</label>-->
+<!--            <input type="text" style="width:366px;" class="field" name="tasktitle" id="tasktitle" value="<?php if(isset($this->searchText)) echo $this->searchText;?>">-->
+<!--        </div>-->
+ <div id="holder">
+        	<label>Client Name</label>
+            <select class="field"  name="clientname"  id="clientname" >
+              <option selected="selected" value="">Please Select</option>
+                <?php	foreach ($this->clientname_list as $clientname_list){?>
+				<option value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>" <?php if($this->searchText3==$clientname_list->id) echo "selected";?>><?php echo $clientname_list->name;?></option>
+				<?php } ?>
+            </select>
+        </div>
+  		<div style="" id="holder">
+        	<label>Project Type</label>
+               <select  name="projecttype" value="<?php if(isset($this->searchText1)) echo $this->searchText1;?>" id="projecttype" class="field" errortag="Project Type" onchange="populate_dropdown(this.value,'0');" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+              <option value="adhoc" <?php if($this->searchText1=='adhoc') echo "selected";?>> Adhoc Project</option>
+              <option value="contract" <?php if($this->searchText1=='contract') echo "selected";?>>Sub Project</option>
+            </select>
+        </div>
+        <div id="holder" style="margin-right:0px;">
+        	<label style="margin-left:0px;">Project Name</label>
+            <select style="width:125px;" name="projectname" id="projectname" class="field" errortag="Project Name" value="<?php if(isset($this->searchText2)) echo $this->searchText2;?>">
+			<option value="">Please select</option>
+			 </select>
+        </div>
+        <div id="cat_loader1" style="display: none; float:left; margin-top:7px;margin-left:1px;">
+			<img src="<?php echo BASEPATH;?>/images/loading19.gif">
+		</div>
+        <br class="clear">
+<!--<div id="holder">-->
+<!--        	<label>Date</label>-->
+<!--            <input type="text" onclick="GetDate(this);" readonly="" id="startdate" value="<?php if(isset($this->searchText6)) echo $this->searchText6;?>" class="field calendar" name="project" onClick="GetDate(this);">-->
+<!--            <input type="text" onclick="GetDate(this);" readonly="" id="enddate" value="<?php if(isset($this->searchText7)) echo $this->searchText7;?>" class="field calendar" name="project">-->
+<!--   	  </div>-->
+      <!-- 
+<!--        <div style="margin:0" id="holder">-->
+<!--        	<label>Status</label>-->
+<!--            <select class="field" name="status" id="status">-->
+<!--               <option selected="selected" value="">Please Select</option>-->
+<!--               <?php	foreach ($this->status_list as $status_list){?>-->
+<!--			  <option value="<?php  if(isset($status_list->id) && $status_list->id !=""){ echo $status_list->id;}?>"<?php if($this->searchText8==$status_list->id) echo "selected";?>><?php echo $status_list->value;?></option>-->
+<!--			  <?php } ?>-->
+<!--            </select>-->
+<!--        </div>-->
+	<br class="clear">
+<!--        <div id="holder">-->
+<!--        	<label>Actual Hours</label>-->
+<!--            <input type="text" class="field" name="actualhrs" id="actualhrs" onkeypress="return isNumber1(event)" value="<?php if(isset($this->searchText4)) echo $this->searchText4;?>">-->
+<!--        </div>-->
+<!--  		<div id="holder">-->
+<!--        	<label>Budgeted Hours</label>-->
+<!--            <input type="text" class="field" name="budgetedhrs" id="budgetedhrs" onkeypress="return isNumber(event)" value="<?php if(isset($this->searchText5)) echo $this->searchText5;?>">-->
+<!--        </div>-->
+        
+        <br class="clear">
+  		<div class="flow_right"><a class="searchbg" href="#" onclick="javascript:submitForm();">Search</a></div>
+  		<div class="flow_right"><a style="margin-right:17px;" class="searchbg" href="#" onclick="javascript:resetform();">Reset</a></div>
+  	</div>
+    <br class="clear">
+</div>
+
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+   	    <div class="flow_right"><a class="createbg" href="<?php echo BASEPATH;?>/task/addselftask">Create Self Task</a></div>
+        <br class="clear">
+        <br class="clear">
+        
+        <div id="tablebg">
+        	<div style="width:590px;" class="col-first">Task Title</div>
+            <div style="width:130px;" class="col _m">&nbsp;</div>
+            <input type="hidden" name="Sort" id="Sort">
+           <div class="col" style="width:64px;margin-left:-18px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1);" title="Sort" /></div></div></div>
+            <div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0);" title="Sort" /></div></div></div> 
+  
+        </div>
+              <?php  if(isset($this->listing) && sizeof($this->listing)>0){
+					
+        		foreach($this->listing as $view_list){
+       		 ?>
+       		 <?php 
+       		 		$taskObj = new Aranca_Model_DbTable_Task();
+					$clientObj= new Aranca_Model_DbTable_Client();
+					$emp_taskObj = new Aranca_Model_DbTable_Emptask();
+					
+						$where = "  et.task_id = ' $view_list->editid ' ";
+					
+	
+					$listing = $emp_taskObj->fetchAll($emp_taskObj->select()
+											->setIntegrityCheck(false)
+											->from(array('et'=>DATABASE_PREFIX."emp_task"),array('et.id as editid','et.task_id as task_id','et.st_time as st_time','et.end_time as end_time'))
+											->where($where)
+										);
+					$hours=0;
+					$totalhours=0;	
+					$totalminits=0;
+					$result="0.0";							
+					foreach ($listing as $list)
+					{	if(isset($list->st_time) && $list->st_time!="" && $list->st_time!="0000-00-00 00:00:00" && isset($list->end_time) && $list->end_time!="" && $list->end_time!="0000-00-00 00:00:00")
+					{								
+						$date_a = new DateTime($list['st_time']);
+						$date_b = new DateTime($list['end_time']);						
+						$diff=$date_b->diff($date_a);
+						$hours=$diff->h;
+						$minits=$diff->i;
+						$totalminits+=$minits;
+						$totalhours+=$hours+($diff->d*24);	
+					}				
+					} 
+        			if($totalminits>60)
+					 {
+					 	$hrs=$totalminits/60;
+					 	$hrs = floor($hrs); 
+					 	$minit=$totalminits%60;
+					 	$minit = floor($minit);
+					 	$totalhours+=$hrs;
+					 	$min1 = 0;
+						if($totalminits >9)
+						{
+						 
+				           $result=$totalhours.".".$minit;
+						}
+						else 
+						{
+						$result=$totalhours.".".$min1.$minit;	
+						}
+					 	
+					
+					 }
+					else
+					{
+						
+						
+						$min = 0;
+						if($totalminits >9)
+						{
+						 
+				           $result=$totalhours.".".$totalminits;
+						}
+						else 
+						{
+						$result=$totalhours.".".$min.$totalminits;	
+						}
+					  
+					}
+					
+					$actual_hour =$result;
+       		 ?>
+        <div id="rowbg" class="Drow">
+   	  	  <div style="width:500px;" class="col-first">
+          <a  onclick="view(<?php echo $view_list->editid;?>,'view')" href="javascript:void(0)"><?php echo $view_list->title ;?></a><br><span style="color:black;"><?php if($view_list->project_type == "contract"){ if(isset($view_list->title2)&& $view_list->title2!=""){echo $view_list->title2;}}else{if(isset($view_list->title1)&& $view_list->title1!=""){echo $view_list->title1;}}?></a> | <?php if($view_list->project_type == "contract"){ if(isset($view_list->name2)&& $view_list->name2!=""){echo $view_list->name2;}}else{if(isset($view_list->name1)&& $view_list->name1!=""){echo $view_list->name1;}}?></span><br>Budgeted Hrs:<?php echo $view_list->budgeted_hrs ;?>   |   Actual Hrs: <?php echo $actual_hour;?>   |  
+           Status: <select class="status_id" <?php if(isset($authUserNamespace->taskid1) && $authUserNamespace->taskid1!=""){
+	             if($view_list->editid != $authUserNamespace->taskid1 ){
+	             	
+	             	 ?>disabled<?php }}?> id="status_<?php echo $view_list->editid ; ?>" name="practice" onchange="update_status(<?php echo $view_list->editid ;?>,this.value);" <?php if(isset($view_list->status_id) && $view_list->status_id!="" && $view_list->status_id ==23){?>disabled="disabled"<?php }?>>
+               <option  selected="selected"  value=""> Select</option>
+                <?php	foreach ($this->status_list as $status_list){?>
+			  <option <?php if(isset($authUserNamespace->taskid1) && $authUserNamespace->taskid1!=""){
+	             if($view_list->editid == $authUserNamespace->taskid1 ){
+	             	if(isset($status_list->id) && $status_list->id !="" && isset($status_list->id) && $status_list->id =='22') {
+	             	 ?>disabled<?php }}}?> 
+	             	  <?php if($view_list->status_id == '47'){ ?>
+	             	  <?php if(isset($status_list->id) && $status_list->id !="" && $status_list->id == '22'){?>disabled<?php }?>
+	             	 <?php }?>
+	             	 <?php if($view_list->progress_id != '46'){?>
+	             	 	<?php if(isset($status_list->id) && $status_list->id !="" && $status_list->id =='23') { ?>
+	             	 	disabled
+	             	 <?php } }?>
+	             	 value="<?php  if(isset($status_list->id) && $status_list->id !=""){ echo $status_list->id;}?>"<?php if($view_list->status_id==$status_list->id) echo "selected";?> ><?php echo $status_list->value;?></option>
+			  <?php } ?>
+<!--              <option>Open</option>-->
+<!--              <option>Completed</option>-->
+            </select>   Progress %: <select class="progress_<?php echo $view_list->editid ;?>" id="progress_<?php echo $view_list->editid ;?>" name="practice" onchange="update_progress(<?php echo $view_list->editid ;?>,this.value);" <?php if(isset($view_list->progress_id) && $view_list->progress_id!="" && $view_list->progress_id ==46){?>disabled="disabled"<?php }?>>
+            	<option selected="selected" value=""> Select</option>
+              <?php	foreach ($this->progress_list as $progress_list){?>
+			  <option value="<?php  if(isset($progress_list->id) && $progress_list->id !=""){ echo $progress_list->id;}?>"<?php if($view_list->progress_id==$progress_list->id) echo "selected";?>><?php echo $progress_list->value;?></option>
+			  <?php } ?>
+            </select>
+            </div>
+            <div style="width:220px;text-align:left;" class="col _m">
+            <!--<a href="#"  onclick="download123();"><img border="0" src="<?php echo BASEPATH;?>/images/common/down.gif"></a>-->
+          	<a rel="<?php echo BASEPATH ;?>/task/uploadfile/id/<?php echo $view_list->editid;?>" href="javascript:void(0);" id="upload" class="openskillbox"><img border="0" title="Upload" src="<?php echo BASEPATH;?>/images/common/up.gif"></a>
+            <a  <?php if(isset($view_list->file_path) && $view_list->file_path !="") {?> target="_blank" href="<?php echo BASEPATH;?><?php echo $view_list->file_path;?>" <?php }else {?>href="javascript:norecord();"<?php }?> >
+            <?php if(isset($view_list->file_path) && $view_list->file_path !="") {?><img title="Download" title="Download" src="<?php echo BASEPATH;?>/images/common/down.gif" border="0" /><?php }else {?><img title="Download" title="Download" class="disabled" src="<?php echo BASEPATH;?>/images/common/down-disable.gif" border="0" /><?php }?></a>
+            
+            <?php if(isset($view_list->status_id) && $view_list->status_id!="" && $view_list->status_id==23) {
+            ?>
+            <a href="javascript:void(0)"><img id="startBtn_<?php echo $view_list->editid;?>" class="taskstart disabled" title="Play" src="<?php echo BASEPATH;?>/images/common/play-disable.gif" border="0"   /></a> 
+			<a href="javascript:void(0)"><img id="endBtn_<?php echo $view_list->editid;?>" class="taskend disabled" title="Stop" src="<?php echo BASEPATH;?>/images/common/stop-disable.gif"   border="0" /></a>
+             <?php }else {
+	             if(isset($authUserNamespace->taskid1) && $authUserNamespace->taskid1!=""){
+	             if($view_list->editid == $authUserNamespace->taskid1 ){
+	         ?>
+		            <a href="#"><img id="startBtn_<?php echo $view_list->editid;?>" class="taskstart disabled" border="0" title="Play" src="<?php echo BASEPATH;?>/images/common/play-disable.gif"  rel="<?php echo $view_list->editid ;?>" ></a>
+		            <a href="#"><img id="endBtn_<?php echo $view_list->editid;?>" class="taskend unable" border="0" title="Stop" src="<?php echo BASEPATH;?>/images/common/stop.gif"  rel="<?php echo $view_list->editid ;?>"></a>
+          <?php }else{?>
+		          <a href="#"><img id="startBtn_<?php echo $view_list->editid;?>" class="taskstart disabled" title="Play" src="<?php echo BASEPATH;?>/images/common/play-disable.gif" border="0"  rel="<?php echo $view_list->editid ;?>" /></a> 
+			      <a href="#"><img id="endBtn_<?php echo $view_list->editid;?>" class="taskend disabled" title="Stop" src="<?php echo BASEPATH;?>/images/common/stop-disable.gif"  rel="<?php echo $view_list->editid ;?>" border="0" /></a>
+	           <?php  }} else{ ?> 
+		          <a href="#"><img id="startBtn_<?php echo $view_list->editid;?>" class="taskstart unable" title="Play" src="<?php echo BASEPATH;?>/images/common/play.gif" border="0"  rel="<?php echo $view_list->editid ;?>" /></a> 
+		          <a href="#"><img id="endBtn_<?php echo $view_list->editid;?>" class="taskend disabled" title="Stop" src="<?php echo BASEPATH;?>/images/common/stop-disable.gif"  rel="<?php echo $view_list->editid ;?>" border="0" /></a> 
+	           <?php }
+	           } ?>
+	           </div>
+          <div class="col" style="width:64px;"><?php echo $view_list->st_date;?></div>
+            <div class="col" style="width:64px;"><?php echo $view_list->end_date;?></div>
+            <br class="clear">
+          </div>
+
+   <?php }
+        
+      	
+        echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+        }
+        else{
+		?>
+		
+		<div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+		
+		<?php } ?>
+        <!--Ends Here -->
+    </div>
+</div>
+<script>
+var project_type ='';
+<?php if(isset($this->searchText1) && $this->searchText1!=""){?>
+project_type='<?php echo $this->searchText1?>';
+<?php } ?>
+
+
+</script>
+</body>
+<script>
+<?php 
+
+	      if(isset($authUserNamespace->status_message)){
+	      	
+	?>
+	   jAlert("<?php echo $authUserNamespace->status_message; ?>");
+	 
+	      
+	<?php
+	  unset($authUserNamespace->status_message);
+	}
+	?>
+</script>
+</html>

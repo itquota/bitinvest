@@ -1,0 +1,122 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group{
+	Width:260px !important;	
+}
+.Businesslabel{
+	padding-left:0px !important;
+}
+</style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt">Business Details</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+           
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+                   <li>Output ></li>
+                  <li>Business Details</li>
+  
+            </ol>
+         
+<div class="clearfix">
+       
+        <div class="col-lg-12 bus_con">
+
+<form method="POST"
+	action="<?php echo BASEPATH; ?>/Businessdetails" />
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div class="clearfix lightgraybg paddCommon">
+<div class="form-group list-inline col-sm-5 offset-margin-0">
+  <label for="inputEmail3" id="datetimepicker"  name="startdate" class="col-sm-4 control-label lblTxt offset-1">Start Date</label>
+   <div class="col-sm-8 offset-sm-0 Businesslabel"> 
+     
+
+        <input id="datetimepicker" class="datepick input"  type="text" name="startdate"  value="" class="form-control calculateSearchbox" placeholder="Start Date" />   
+    </div> 
+</div>
+
+<div class="form-group list-inline col-sm-5">
+  <label for="inputEmail3" id="datetimepicker" name="enddate" class="col-sm-4 control-label lblTxt offset-1">End Date</label>
+   <div class="col-sm-8 offset-sm-0 Businesslabel"> 
+        <input id="datetimepicker" class="datepick input"  type="text" name="enddate"  value="" class="form-control calculateSearchbox" placeholder="End Date" />     
+    </div> 
+</div>
+
+<div class="form-group list-inline col-sm-5">       
+     <label for="" id="" name="usernew" class="col-sm-4 control-label lblTxt offset-1">User</label>
+   <div class="col-sm-8 offset-sm-0 Businesslabel"> 
+        <input id="" class="input"  type="text" name="User"  value="" class="form-control calculateSearchbox" placeholder="User" />     
+    </div>
+  </div>
+<div class="form-group list-inline col-sm-2 offset-1 offset-sm-padd">
+<button class="btn btn-default calculatebtn text-uppercase" name="search" type="submit">Search</button>
+</form>
+
+</div>
+</div>
+<div class="clearfix">&nbsp;</div>    
+              
+        </div>
+     
+<div class="clearfix">&nbsp;</div>
+
+
+        <div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                     <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">username </th>
+                        <th class="sortboth">Total <br> user</th> 
+                        <th class="sortboth">left  <br>active <br/> user</th>
+                         <th class="sortboth">right  <br>active <br/> user</th> 
+                         <th class="sortboth">left business</th> 
+                          <th class="sortboth">right business</th>
+                         
+                     </tr> 
+                 </thead>
+                  <tbody> 
+	
+ 
+
+
+                 </tbody>
+                  </table> 
+				  <div class="clearfix">&nbsp;</div>
+              </div>
+
+        </div>
+
+    </div>
+
+  
+    </div>         
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>

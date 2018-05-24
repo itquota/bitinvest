@@ -1,0 +1,204 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+    <div class="loginPadd loreg-page" style="position:fixed";>
+		
+      <div class="logincontainer">
+		  
+		  <form class="paddAll"	onsubmit="event.preventDefault(); validateLoginForm();" role="form"	autocomplete="off">
+			  
+				<div class="form-group">
+				   <a href = "https://gainbitcoin.com/"><img src="<?php echo BASEPATH; ?>/images/login-logonew.png" alt="" class="img-responsive" style="margin:0 auto;"></a>
+				</div>
+			  <div class="clearfix"></div>
+				<div class="form-group">
+					 <p class="text-center white_text"> Please login to your account</p>
+				</div>
+			
+			    <h5 style="color: #dc3b40; display: none; text-align: center;" id="err_div"></h5>
+			  
+				<div class="form-group">
+					<div class="input-group" style="display:block;">
+						<input type="text" name="sign_in_email" id="inputEmail1" class="input-box" placeholder="Enter Username" value="<?php if(!empty($_COOKIE['remember']) && $_COOKIE['remember']!='') { echo $_COOKIE['remember']; } ?>">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="input-group" style="display:block;">
+							<input type="password" name="sign_in_pass" id="sign_in_pass" class="input-box" placeholder="Enter Password">
+					</div><!-- /input-group -->
+
+				</div>
+
+			   <div class="" style="">
+					<label  style="color:#fff;" style=""><input type="checkbox" id="remember-me" style="vertical-align: middle;margin-top:-3px!important;"> Remember me</label>
+					  <a href="<?php echo BASEPATH; ?>/Login/forgot" style="color:#fff;float:right;">Forgot password ?</a>
+
+			   </div>
+
+				<br/>
+
+			   <div class="form-group">
+				  
+				   <button type="submit" class="button">Login
+				  	 
+				   	<div id="preloader" class="">
+						<img src="<?php echo BASEPATH; ?>/images/ajax_loader_2.gif" width="24" height="24">
+					</div>
+				   </button>
+
+			   </div>
+  
+			  
+		  </form>
+
+      		   <div class="white_text" style="text-align:center;">
+				   <a href="<?php echo BASEPATH; ?>/Login/register"> <span style="color:#fff;">Register now!</span> </a>                      
+       		   </div>
+		  
+		</div>
+   					 <p class="copy">© <?php echo date("Y"); ?> &nbsp;GainBitcoin.com.All rights reserved.</p>
+		
+    </div>
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">   
+    <script>
+
+	  function validateLoginForm()
+	  {
+		//alert('Here'); 
+		//die();    
+		var username=$('#inputEmail1').val();
+		var password=$('#sign_in_pass').val();
+		var token=$('#token').val();
+		$('#err_div').empty();
+		$("#err_div").css("display", "none");
+		username = username.trim();
+		password = password.trim();
+		if ($('#remember-me').is(":checked"))
+		{
+			var remember=1;
+		}
+		else
+		{
+			var remember=0;
+		}
+		if(!username || username=='')	
+		{
+		$('#preloader').css('display','none');
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Username";
+			//$('#err_div').text='Please enter valid Username';
+		
+			return false;
+		}
+		else if(!password || password=='')	
+		{
+		$('#preloader').css('display','none');
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Password";
+			return false;
+			
+		}
+		else
+		{
+	    $('#preloader').css("display","block");
+
+			//var newpass	=$('#sign_in_pass').val());
+		var pass = encryptPass();		
+			
+			pass = escape(pass);
+			
+			var dataString = 'username='+ username+'&password='+pass+'&remember='+remember+'&token='+token;
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Login/checklogin",
+					type: "POST",    
+					async:false,
+				    data: dataString,
+			  		success: function(response)
+		      		{
+					 var data=	JSON.parse(response);
+					 
+					 if(data['success']!='' && data['success']=='success')
+					 {
+						if(data['user_type']!='' && data['user_type']=='binary')
+						{
+							
+							if(data['authentication_type']==2)
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Deviceconfirmation");
+							}
+							else
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Dashboard");
+							}
+							
+						}
+						if(data['user_type']!='' && data['user_type']=='special') 
+						{
+						
+							window.location.href=("<?php echo BASEPATH; ?>/List");
+						}
+						if(data['user_type']!='' && data['user_type']=='admin')
+						{
+							if(data['authentication_type'] && data['authentication_type']==2)
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Deviceconfirmation");
+							}
+							else
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Admindashboard");
+							}
+							//window.location.href=("<?php echo BASEPATH; ?>/Admindashboard");
+						}
+						if(data['user_type']!='' && data['user_type']=='subadmin')
+						{
+							if(data['authentication_type'] && data['authentication_type']==2)
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Deviceconfirmation");
+							}
+							else
+							{
+								window.location.href=("<?php echo BASEPATH; ?>/Admindashboard");
+							}
+							
+							//window.location.href=("<?php echo BASEPATH; ?>/Admindashboard");
+						}
+						
+					 }
+					 else
+					 {
+					 $('#preloader').css('display','none');
+							$("#err_div").css("display", "block");
+							document.getElementById("err_div").innerHTML=data['failure'];
+					 }		
+		      			
+		      		}
+				});
+		}
+	  }
+
+	function encryptPass()
+    {
+        var flag=1;
+        var newpass    = enc($('#sign_in_pass').val());
+
+
+        /*if (newpass.indexOf(" ") >= 0 || newpass.indexOf("+") >=0) {
+
+            return encryptPass();
+        }
+        else
+        {
+            flag=1;
+        }*/
+		
+        if(flag==1)
+        {
+            return newpass;
+        }
+
+    }
+    </script>

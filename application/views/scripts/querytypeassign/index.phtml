@@ -1,0 +1,329 @@
+ <?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+ ?>
+<style> 
+	.form-group {
+  /* display: inline-block; */
+    margin-right: 25px;
+    width: 500px;
+}
+
+	.white-bg{
+	display:none !important;
+	} 
+ </style>
+ <div id="innerpage-wrapper">
+	  <div class="modal req-admin" id="ticket_done">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold"></div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+	
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Querytypeassign">Home</a> > </li>
+                  <li>Assign Queries</li>
+  
+            </ol>          
+          <div class="clearfix">&nbsp;</div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             	 Reset Counters
+              </div>
+
+              <div class="panel-body revenuebg">
+      		    <form method="post" action="#" id="submitReset" role="form">
+			<div class="err1">
+				  <label style="color:red" for="" class="lblTxt"> </label>
+			</div>
+			<div class="row new_row">  
+					<div class="col-lg-12 typecls form-group">		
+					<label for="" class="lblTxt">Query Type</label>  
+					<select id="category1" name="category" class="form-control CommonInputBox">	
+					<option value="">Select</option>																					
+						<?php  
+						 if(!empty($this->user_cat['lovcategory_data']) && sizeof($this->user_cat['lovcategory_data'])>0)
+								{
+								for($i=0;$i<sizeof($this->user_cat['lovcategory_data']);$i++)
+									{?>
+
+								<option value="<?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?>"><?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?></option>
+
+								<?php }
+								}
+						?>					
+					</select>
+				</div>
+			  </div>  
+    <div>
+		<br/>
+		
+		
+  <button type="button" name="submitReset" id="submitReset" class="btn btn-default Commonbtn" onclick="resetcounter()">SUBMIT</button>
+
+	</div>
+  
+</form>
+  			  </div>
+          </div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             	 Assign Queries Subadmin
+              </div>
+
+              <div class="panel-body revenuebg">
+      		    <form method="post" action="#" id="submit" role="form">
+			<div class="err1">
+				  <label style="color:red" for="" class="lblTxt"> </label>
+			</div>
+			<div class="row new_row">  
+					<div class="col-lg-12 typecls form-group">		
+					<label for="" class="lblTxt">Subadmin</label>  
+					<select id="subadmin" name="subadmin" class="form-control CommonInputBox">	
+					<option value="">Select</option>																					
+						<?php  
+						 if(!empty($this->subadmin_type['subadmin_data']) && sizeof($this->subadmin_type['subadmin_data'])>0)
+								{
+								for($i=0;$i<sizeof($this->subadmin_type['subadmin_data']);$i++)
+									{?>
+
+								<option value="<?php echo $this->subadmin_type['subadmin_data'][$i]['email']; ?>"><?php echo $this->subadmin_type['subadmin_data'][$i]['email']; ?></option>
+
+								<?php }
+						}
+						?>					
+					</select>
+				</div>
+			  </div>
+			<div class="row new_row">  
+				<div class="col-lg-12 typecls form-group">		
+					<label for="" class="lblTxt">Query Type</label>  
+					<select id="category" name="category[]" size="<?php echo sizeof($this->user_cat['lovcategory_data']);?>" class="form-control CommonInputBox" multiple>	
+						<?php  
+						 if(!empty($this->user_cat['lovcategory_data']) && sizeof($this->user_cat['lovcategory_data'])>0)
+								{
+								for($i=0;$i<sizeof($this->user_cat['lovcategory_data']);$i++)
+									{?>
+
+								<option value="<?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?>"><?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?></option>
+
+								<?php }
+						}
+						?>					
+					</select>
+				</div>
+			</div>
+  
+    <div>
+		<br/>
+		
+		
+  <button type="button" name="submit" id="submit" class="btn btn-default Commonbtn" onclick="changepermission()">SUBMIT</button>
+   <input type="hidden" value="<?php echo $this->result['id'];?>" id="userid" name="userid">
+  
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+	</div>
+  
+</form>
+  			  </div>
+          </div>
+
+
+		 <div class="panel panel-primary buynowbox col-lg-12">
+			  <div class="panel-heading buynowbox Titleheading faqtitlebg">
+				 Assigned Query Types Subadmin
+			  </div>
+					  
+              <div class="panel-body revenuebg">
+                  <table id="data-table-simple" class="responsive-table display" cellspacing="0">
+                    <thead>
+                        <tr>
+                        <tr>
+							<th style="text-align:center;">Sr.</th>
+							<th>Email</th>
+							<th style="text-align:center;">Query Type</th>
+						<!--	<th style="text-align:center;">Assigned Counts</th> -->
+							<th style="text-align:center;">Action</th>
+										
+                        </tr>
+                    </thead>
+                 
+                    <tfoot>
+                        <tr>
+							<th style="text-align:center;">Sr.</th>
+							<th>Email</th>
+							<th style="text-align:center;">Query Type</th>
+						<!--	<th style="text-align:center;">Assigned Counts</th> -->
+							<th style="text-align:center;">Action</th>
+
+						</tr>
+                    </tfoot>
+               
+                    <tbody>
+						
+						<?php 
+							$j=1;
+							
+						if(!empty($this->assigned_type['assigned_data']) && sizeof($this->assigned_type['assigned_data'])>0){
+							   for($i=0;$i<sizeof($this->assigned_type['assigned_data']);$i++){ 
+								   					if($this->assigned_type['assigned_data'][$i]['query_type'] == '1')
+													{
+														$category_code = 'Kit Activation';
+													}else if($this->assigned_type['assigned_data'][$i]['query_type'] == '2')
+													{
+														$category_code = 'Payout Calculations';
+													}else if($this->assigned_type['assigned_data'][$i]['query_type'] == '3')
+													{
+														$category_code = 'Profile Changes';
+													}else if($this->assigned_type['assigned_data'][$i]['query_type'] == '4')
+													{
+														$category_code = 'Others';
+													}
+					?>
+                            			<tr>
+                                        	<td style="text-align:center;"><?php echo $j;?></td>
+                                        	<td style=""><?php echo $this->assigned_type['assigned_data'][$i]['username'];?></td>
+                                            <td style="text-align:center;"><?php echo $category_code;?></td>
+                                     <!--       <td style="text-align:center;"><?php echo $this->assigned_type['assigned_data'][$i]['total_queries'];?></td> -->
+                                            <td style="text-align:center;">
+												<a class = "btn" onclick="confirmRequest('<?php echo $this->assigned_type['assigned_data'][$i]['username']; ?>','<?php echo $this->assigned_type['assigned_data'][$i]['query_type']; ?>')" ><span class="glyphicon glyphicon-trash"></span></a>											
+											</td>
+										</tr>
+                        <?php
+								   $j++;
+							   }	   
+							}
+						?>   
+						</tbody>
+						
+                  </table>
+                </div>							  						  
+					  
+			  </div>  
+
+		  </div>					  
+				  
+	 
+	 
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    
+<script  data-cfasync='false' type="text/javascript">
+	
+    function resetcounter(){
+		 var category=$("#category1").val(); 		
+		 var dataString ='&category='+category;
+ 			 $.ajax({
+  				url:"<?php echo BASEPATH;?>/Querytypeassign/resetcounter", 
+  				type: "POST",          
+  			    data: dataString,
+  		  		success:function(response)
+  		  		{
+  					 var data=JSON.parse(response);
+  					 if(data['success']!='')
+  					 {
+						$('#cont_hold').empty();
+						$('#cont_hold').append('<b>'+data['success']+'</b>');
+						$('#ticket_done').addClass('openpop');
+						setTimeout(function(){
+						 $('#ticket_done').removeClass('openpop');
+						 window.location.href=("<?php echo BASEPATH; ?>/Querytypeassign");
+						},3000);
+						return false;
+				 	}
+  					 else
+  					 {
+  						  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+  					 }
+  				}
+  			 });
+    }
+	
+	
+	function confirmRequest(username,query_type)
+	{
+		 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Querytypeassign/changestatus", 
+				type: "POST",    
+				data: 'username='+username+'&query_type='+query_type,			
+				success:function(response)
+				{	
+					var data=JSON.parse(response);
+					$('#cont_hold').empty();
+					$('#cont_hold').append('<b>'+data['success']+'</b>');
+					$('#ticket_done').addClass('openpop');
+					setTimeout(function(){
+					 $('#ticket_done').removeClass('openpop');
+					 window.location.href=("<?php echo BASEPATH; ?>/Querytypeassign");
+					},3000);
+					return false;
+				}
+		 });
+	}
+	
+	
+  function changepermission(){
+	 var subadmin=$("#subadmin").val();
+	 var category=$("#category").val(); 		
+ 	 var dataString ='subadmin='+subadmin+'&category='+category;
+ 			 $.ajax({
+  				url:"<?php echo BASEPATH;?>/Querytypeassign/updatepermission", 
+  				type: "POST",          
+  			    data: dataString,
+  		  		success:function(response)
+  		  		{
+  					 var data=JSON.parse(response);
+  					 if(data['success']!='')
+  					 {
+  					 		$('#cont_hold').empty();
+							$('#cont_hold').append('<b>'+data['success']+'</b>');
+							$('#ticket_done').addClass('openpop');
+							setTimeout(function(){
+							 $('#ticket_done').removeClass('openpop');
+							 window.location.href=("<?php echo BASEPATH; ?>/Querytypeassign");
+							},3000);
+							return false;
+					 }
+  					 else
+  					 {
+  						  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+  					 }
+   				}
+  			 });
+    }
+		
+   function closealt()
+   {
+	   $('#ticket_done').removeClass('openpop');
+	   window.location.href=("<?php echo BASEPATH; ?>/Querytypeassign");
+	   
+   }	
+    </script>
+    
+    

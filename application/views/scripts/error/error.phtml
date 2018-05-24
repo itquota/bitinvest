@@ -1,0 +1,43 @@
+<?php if('development' == APPLICATION_ENV){ ?>
+	
+	<h1>An error occurred</h1>
+	<h2><?php echo $this->message ?></h2>
+	
+	<h3>Exception information:</h3>
+	<p>
+		<b>Message:</b>
+		<?php if (isset($this->exception)) echo $this->exception->getMessage(); ?>
+	</p>
+	
+	<h3>Stack trace:</h3>
+	<pre><?php if (isset($this->exception)) echo $this->exception->getTraceAsString(); ?></pre>
+	
+	<h3>Request Parameters:</h3>
+	<pre><?php if(isset($this->request)) echo var_export($this->request->getParams(),1); ?></pre>
+	
+<?php }else{ ?>
+
+<h1>Error:</h1>
+<h2>
+	Your have performed an Illegal Operation or the page you are trying to access does not exsist.
+</h2>
+
+<?php
+		
+		$misc = new Bankoffercms_Model_Custom_Miscellaneous();
+		$mailObject = new Bankoffercms_Model_Custom_EmailFunctions();
+		
+		// send email with exception stack trace
+		$mail_content = "<h1>An error occurred</h1><h2>$this->message</h2>
+		<h3>Exception information:</h3><p><b>Message:</b>"
+		. $this->exception->getMessage().
+		"</p><h3>Stack trace:</h3><pre>".$this->exception->getTraceAsString().
+		"</pre><h3>Request Parameters:</h3><pre>".
+		var_export($this->request->getParams(),1)."</pre>".
+		"<br/><br/><b>URL : </b>".$misc->getCurrentUrl();
+		
+		$mailObject->sendMail("BankOfferCMS Error Details",$mail_content,array("name"=>"Parth Arora","email"=>"parth.arora@prontoinfotech.com"));
+	}
+?>
+
+<div style="clear:both">&nbsp;</div>

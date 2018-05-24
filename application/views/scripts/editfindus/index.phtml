@@ -1,0 +1,228 @@
+ <?php 
+ 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+	
+	//print_r($this->result[status']);exit;'
+ ?>
+ <style>
+ .form-group {
+	display: inline-block;
+	width: 300px;
+	padding:15px;
+	margin-top:-30px;
+	float:left;
+	margin-right:52px;
+}
+.clearfix {
+ 	 margin-top:35px;
+}
+select {
+    border:1px solid #ddd !important;
+  
+} 
+
+ </style>
+ 
+ 
+ 
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>CMS Settings > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/Findus">Find Us</a> > </li>
+                  <li>Edit Find Us</li>
+  
+            </ol>
+           
+			<div class="clearfix"></div>
+          <div class="panel panel-primary buynowbox col-lg-12">
+		
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             Edit Find Us
+              </div>
+              <div class="panel-body revenuebg">
+          <form method="POST" action="<?php echo BASEPATH; ?>/Editfindus"  id="submit_FORM">
+   <div>
+
+<?php 
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+
+if(!empty($authUserNamespace->errormsg) && $authUserNamespace->errormsg!='')
+{
+?>
+    <label for="" class="lblTxt" style="color:red;"><?php echo 	$authUserNamespace->errormsg; ?></label>
+ <?php //header('Location:'.BASEPATH.'/Findus');?>
+ <?php 	$authUserNamespace->errormsg="";} ?>
+   </div>
+ 
+	<div class="err1">
+          <label style="color:red" for="" class="lblTxt"> </label>
+         </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Contact Name</label>
+
+     <input type="text"  name="contact_name" id = "contact_name"  class="form-control CommonInputBox" placeholder="" value="<?php echo $this->result['contact_name'];?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Address</label>
+
+     <textarea style="height:35px;" id="address" name="address"  class="form-control CommonInputBox" placeholder="" rows="15" cols="80" ><?php echo $this->result['contact_address'];?></textarea>
+
+
+      
+  </div>
+ <div class="form-group">
+    <label for="" class="lblTxt">Mobile</label>
+
+     <input type="text" class="form-control CommonInputBox" name="mobile" id="mobile"   placeholder="" value="<?php echo $this->result['mobile'];?>">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">City Name</label>
+
+    <select name="city" id = "city" class="form-control CommonInputBox">
+    
+    <option value="">Select City</option>
+     <?php //foreach($city as $cu)
+     foreach($this->cityresult as $city){
+	 ?>
+	  <option value="<?php echo $city['city_id']; ?>" <?php if($city['city_id']==$this->result['city']){ ?> selected="selected" <?php  } ?>><?php echo $city['city_name']; ?></option>
+	<?php } ?>
+	</select>
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Status</label>
+
+        <div>
+	            <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:275px;">
+	                          <option value="1" <?php if($this->result['status']==1){echo 'selected';}?>>Active</option>
+	                           <option value="0" <?php if($this->result['status']==0){echo 'selected';}?>>Inactive</option>
+	             </select>
+	    </div>
+
+
+      
+  </div>
+  
+  
+  <div class="form-group" style="width:100%;">
+  <!--  <input type="hidden" name="content_id" value="<?php// echo isset($this->result['id'])?$this->result['id']:'' ?>" />-->
+ <input type="hidden" name="uid"  id="uid" value="<?php echo isset($this->result['id'])?$this->result['id']:''?>" />
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+  <button type="button"  name="submit" class="btn btn-default Commonbtn" onclick="return validateForm()">SUBMIT</button>
+ <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+</div>
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+     <script>
+    function validateForm(){
+        
+    	 var contact_name=$("#contact_name").val();
+         var address=$("#address").val();
+ 		 var mobile=$("#mobile").val();
+ 		 var city = document.getElementById("city");
+ 		 var city1 = city.options[city.selectedIndex].value;
+ 		 var status=$("#status").val();
+ 		 var id=$("#uid").val();
+ 		 var token=$("#token").val();
+
+ 		
+ 		if((contact_name).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Contact Name.</label>');
+ 			return false;
+ 		}	
+ 		else if((address).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Address. </label>');
+ 			return false;
+ 		}
+ 		else if((mobile).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Mobile Number.</label>');
+ 			return false;
+        }
+ 		else if(!mobilefunc(mobile)){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter 10 digit Mobile No.</label>');
+			return false;
+		}
+ 		/*else if(city1 == "")
+ 		{
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please select City.</label>');
+			return false;
+ 		}*/
+
+ 		else{
+ 			var dataString ='contact_name='+contact_name+'&address='+address+'&mobile='+mobile+'&city1='+city1+'&status='+status+'&id='+id+'&token='+token;
+			
+ 			 $.ajax({
+ 				
+ 				url:"<?php echo BASEPATH;?>/Editfindus/editdata", 
+ 				type: "POST",    
+ 			    data: dataString,
+ 			
+ 		  		success:function(response)
+ 		  		{
+ 					 var data=JSON.parse(response);
+ 					
+ 					 if(data['success']!='')
+ 					 {
+ 						/*$(".err1").css("display","block");
+ 							document.getElementById("err1").innerHTML="Data inserted successfully.";
+ 							$('.err1').css('color','green');*/
+ 					         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+ 							window.location = "<?php echo BASEPATH;?>/Findus";
+ 					 }
+ 					 else
+ 					 {
+ 						  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+ 					 }
+ 					
+ 					
+ 				}
+ 					
+ 				
+ 			 });
+ 	 		
+ 		}
+
+ 		
+ 		//$(".err1").hide();
+     }
+    function mobilefunc(contact_no){
+        
+    	var mob = /^[1-9]{1}[0-9]{9}$/;
+    	return mob.test(contact_no);
+    	
+    }	
+    
+    </script>
+    

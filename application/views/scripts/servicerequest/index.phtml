@@ -1,0 +1,2640 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.form-group{
+	display: inline-block;
+    margin-right: 20px;
+    width: 273px;
+    padding-bottom: 20px;	
+}
+.form-group1{
+    margin-right: 25px;
+}
+	.openpop{
+	display:block;
+}
+.closepop{
+	display:none;
+}
+	@media (max-width: 768px){
+	.form-group{
+    width: 100%;
+	text-transform:none!important;	
+		}
+.form-group1{
+	display: inline-block;
+    margin-right: 25px;
+    width: 100%;
+}	
+	}
+	
+.shadow {
+   -moz-box-shadow:    inset 0 0 6px #c9c9c9;
+   -webkit-box-shadow: inset 0 0 6px #c9c9c9;
+    box-shadow:        inset 0 0 6px #c9c9c9;
+}	
+	.padding-panel{
+		padding:6px 26px !important;
+	}	
+	.text-small{
+		text-transform:none !important;
+	}
+	
+.shadow:hover,
+.shadow:active {
+    background: #e1dede;
+ 
+}
+
+.active1 {
+	background: #e1dede;
+}
+.actives {
+	background: #e1dede;
+}
+		
+</style>
+<div class="content">
+			<div class="page-title-group">
+				<h4 class="page-title">Help & Support</h4>
+				<h5 class="text-muted page-title-alt">Log Request</h5>
+			</div>	 
+	<div class="modal req-admin bg-popup" id="ticket_done">
+                <div class="modal-dialog popup pop-center-cl">
+					<div class="modal-content no-padding">
+						<div class="bg-pop-header">
+							<span class="text-pop-header">CONFIRMATION</span>
+							<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closealt();">
+									<i class="fa fa-close" style="color:#fff;"></i>
+							</button>
+
+						</div>
+                                <div style="padding:25px;" class="form-basic">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold" class="alert alert-success">Service request generated successfully.</div>                                          
+                                    </table>
+            
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+	
+	
+	
+ <div class="modal req-admin" id="txn_done">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+								Input Transaction No.
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closetxn();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold">
+										<form name="formtxn" id="formtxn" action='' method="post">
+											<div class="inputhodler" id="kit_err" style="display:none;">
+
+											</div>
+											<div class="err1"></div>	          
+											<div class="inputhodler">
+												<p> Transaction Number:</p> <input type="text" name="txnid" id="txnid" class="form-control CommonInputBox" placeholder="Enter valid transaction number"  Value="">
+											</div>
+											<br/>
+											<div class="inputhodler btncls" >
+												<input style="width:30%;" type="button" value="Submit" name="sharekt" onclick="appendTxn()" class="btn btn-default Commonbtn">
+											</div>	
+										</form>	
+									   
+									   </div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>		
+			<div class="cb-page-content">
+				<div class="container">
+						<?php if(!empty($this->msg) && $this->msg!='')
+					{
+					?>
+					   <div class="form-group">
+						<label for="" class="lblTxt" style="color:red;"><?php echo $this->msg; ?></label>
+
+					  </div>
+					 <?php } ?>				
+						<div class="col-lg-12">
+						
+						<div class="card-box">	
+							<div class="card-box-content form-compoenent">
+								<br/ >
+								<div class="row" id="content"> 
+										<div class="col-lg-12"> 
+											<div class="panel-group" id="accordion-test-2"> 
+												<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseOne-2" aria-expanded="false" class="collapsed">
+																About & General
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseOne-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+														<div class="panel-body">
+															<div class="row">
+																<div class="col-lg-12"> 
+																	<div class="panel-group" id="accordion-test-3"> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseOne-3" aria-expanded="false" class="collapsed">
+																						What is GainBitcoin?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseOne-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>We are a Bitcoin mining company with a customer base in over 25 countries. Online accessibility combined with ease of usage and detailed features of the website are the reasons why we are pioneers in the cloud mining space and have a rapidly growing list of users. We have been researching and have been associated with crypto currencies since their inception. Take a look at our bitcoin mining farm here <a href = "https://www.youtube.com/watch?v=ASSIq4ZDpos" target= "_blank">https://www.youtube.com/watch?v=ASSIq4ZDpos</a></p>
+																					<p>The strength of our team is their expertise in each of their domain. A robust and experienced technology team combined with a prompt and helpful customer service team has enabled to put our combined efforts in the development, establishment and acceptance of Bitcoin as a currency as well as an indispensable part of the changing economy.</p>
+																					<p>Gainbitcoin is owned and operated by VARIABLETECH PTE LTD, a company incorporated in Singapore in 2013. Our Registered Address is :</p>
+																					<address><strong>VARIABLETECH PTE LTD.</strong><br>
+																						THE FRANKLIN,<br>
+																						3 SCIENCE PARK DRIVE, <br>
+																						SINGAPORE-118223 <br>
+																					</address>	
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseTwo-3" class="collapsed" aria-expanded="false">
+																						Why should I join GainBitcoin?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseTwo-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					With our extensive experience in mining digital currency, we have realized the need for safe, effective and prompt mining servers for best outputs. Consequently, we came up with advanced technology to make mining accessible to all regardless of their age, location, budget or technical knowledge.  <br />
+																					<br />
+
+																					We offer an easy and safe way to purchase hashpower without having to deal with complex hardware and software requirements. All pool, electricity and maintenance fees are included in the price. We offer you an opportunity to start mining Bitcoin and avoid all the usual problems you can face when buying mining equipment, like the usual delays in delivery, breakage losses, the need for a sufficient power supply or cooling devices. We are a team of mining experts with thorough knowledge of crypto currency space. We specialize in building the most efficient and reliable mining rigs that you can rent. The cloud mining contracts we offer are transparent, convenient and cost-effective.<br />
+																					<br />
+
+																					Become a part of the billion dollar industry of cloud mining now and collect Bitcoins as your reward!
+																				</div> 
+																			</div> 
+																		</div> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-3" class="collapsed" aria-expanded="false">
+																						How can I join GainBitcoin?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-3" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					GainBitcoin adds members only through referrals from existing members. You can register on the website using your sponsor's user ID (member who has referred you). Just enter your email id and contact number and your registration is completed within minutes.
+																				</div>
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-4" class="collapsed" aria-expanded="false">
+																						What are the cloud mining plans available?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-4" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																				<h4 class="panel-title">1. MCAP Growth Linked Smart Contract Series</h4><br/>
+																					<div class="bs-example table-responsive">
+																						<table class="table table-bordered innertbl display">
+																							<thead>
+																						<tr>
+																							<th>Contract Name</th>
+																							<th>Contract Amount (USD)</th>
+																							<th>Payable Amount (USD)</th>
+																							<th>Discount</th>
+																							<th>Contract Duration</th>
+																							<th>Monthly Output(USD equivalent MCAP)</th>
+																							<th>Direct Sales Incentive</th>
+																							<th>Referral Sales Incentive</th>
+																						</tr>
+																						</thead>
+																						<tbody> 
+																						<tr>
+																							<td>MS1</td>
+																							<td>100$</td>
+																							<td>100$</td>
+																							<td>-</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS2</td>
+																							<td>1000$</td>
+																							<td>1000$</td>
+																							<td>-</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS3</td>
+																							<td>10000$</td>
+																							<td>9800$</td>
+																							<td>2%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS4</td>
+																							<td>25000$</td>
+																							<td>24125$</td>
+																							<td>3.5%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS5</td>
+																							<td>50000$</td>
+																							<td>47500$</td>
+																							<td>5%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS6</td>
+																							<td>100000$</td>
+																							<td>93500$</td>
+																							<td>6.5%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																							<tr>
+																							<td>MS7</td>
+																							<td>200000$</td>
+																							<td>185000$</td>
+																							<td>7.5%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																						<tr>
+																							<td>MS8</td>
+																							<td>300000$</td>
+																							<td>273000$</td>
+																							<td>9%</td>
+																							<td>21 Months</td>
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																														
+																						<tr>
+																							<td>MS9</td>
+																							<td>500000$</td>
+																							<td>450000$</td>
+																							<td>10%</td>
+																							<td>21 Months</td>																							
+																							<td>5-12%</td>
+																							<td>5%</td>
+																							<td>7%</td>
+																						</tr>
+																																													
+																						</tbody>
+
+																					</table>
+																					</div>	
+																					<br/>
+																				<h4 class="panel-title">2. Eduskill Series</h4><br/>
+																					<div class="bs-example table-responsive">
+																						<table class="table table-bordered innertbl display">
+																							<thead>
+																						<tr>
+																							<th>Contract Name</th>
+																							<th>Contract Amount (USD)</th>
+																							<th>Features</th>
+																							<th>Direct Sales Incentive</th>
+																							<th>Referral Sales Incentive</th>
+																						</tr>
+																						</thead>
+																						<tbody> 
+																						<tr>
+																							<td>Eduskill Silver </td>
+																							<td>350$</td>
+																							<td style="text-align:left;">
+																								<ul style="list-style:none;">
+																									<li>- Learn Cryptocurrency, Trading & Mining</li>
+																									<li>- 3 Days Online Course</li>
+																									<li>- 100$ worth Mining Software</li>
+																									<li>- 100$ worth Cryptocurrency Free</li>
+																									<li>- Course Completion Certificate</li>
+																								
+																								</ul>
+																							</td>
+																							<td>5%</td>
+																							<td>5%</td>
+																						</tr>
+																						<tr>
+																							<td>Eduskill Gold </td>
+																							<td>700$</td>
+																							<td style="text-align:left;">
+																								<ul style="list-style:none;">
+																									<li>- Learn Cryptocurrency, Trading & Mining</li>
+																									<li>- 3 Days Classroom Course</li>
+																									<li>- 100$ worth Mining Software</li>
+																									<li>- 100$ worth Cryptocurrency Free</li>
+																									<li>- Course Completion Certificate</li>
+																								
+																								</ul>
+																							</td>
+																							<td>5%</td>
+																							<td>5%</td>
+																						</tr>	
+																						<tr>
+																							<td>Eduskill Professional </td>
+																							<td>3500$</td>
+																							<td style="text-align:left;">
+																								<ul style="list-style:none;">
+																									<li>- 5 Days "Train the Trainer" course</li>
+																									<li>- 2 Days Practical Hands On training</li>
+																									<li>- ES-Global Lead Management System User Account</li>
+																									<li>- Complete professional guidance to establish EduSkill Academy</li>
+																								
+																								</ul>
+																							</td>
+																							<td>5%</td>
+																							<td>NA</td>
+																						</tr>																																																																				
+																						</tbody>
+
+																					</table>
+																					</div>																						
+																				<!--	<div class="panel-body revenuebg">To explain the above table, let's understand the mining output of the table highlighted in blue color above. In the Amaze Solo plan:
+																						<br/>
+																						<ol>
+																							<li>You buy an 18 month contract of 15 bitcoins by investing 15 bitcoins.</li>
+																							<li>You are allocated a mining power of 25 THS (Tera hash rate) against your account.</li>
+																							<li>There will be a variable based daily mining output disbursed on your registered wallet every day, collectively when added up at the end of the contract these will as per the contract i.e. 80% to 90% returns on the principal investment.</li>
+																							<li>This contract is valid for 18 months from the date of purchase. Once the contract is expired, there are no more payouts. You can buy new contracts as well before your contract expires.</li>
+																						</ol><br>
+																						<div class="panel-body revenuebg">
+																							Below table depicts the assured return on investments in cloud mining contract:
+																						</div>
+																						<div class="panel-body revenuebg">
+																						<div class="bs-example table-responsive">
+																							<table class="table table-bordered innertbl display">
+																								<thead>
+																								<tr>
+																									<th>Contract Plan</th>
+																									<th>Your Investment @ discounted price (BTC)</th>
+																									<th>Monthly Return @ 10% (BTC)</th>
+																									<td>18 months return (BTC)</td>
+																									<th>Return on mining in 18 months (BTC)</th>
+																								</tr>
+																								</thead>
+																								<tbody>
+																								<tr>
+																									<td>Amaze A4</td>
+																									<td>15 </td>
+																									<td>15  </td>
+																									<td>27</td>
+																									<td>80% plus</td>
+																								</tr>
+																								</tbody>
+																							</table>
+																							</div>	
+																					</div>
+																				</div> -->
+																			</div>
+																			</div> 
+																		</div> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-5" class="collapsed" aria-expanded="false">
+																						How can I make network placement selection Left or Right for a new user?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-5" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																						<ol style="list-style:disc;">
+																							<li>In order to make network placement follow these steps:</li>
+																						</ol>
+																						<ol style="list-style:none;">
+																							<li>1.1.1.  Once you are logged in to your account, Click profile from the top right corner of your dashboard</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq1.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1.1.2. Once you are on profile page, scroll down and make network selection</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq2.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1.1.3. This now becomes your default new id’s placement selection.Please make a note that first user you add under your ID is bound to be added in Power leg.</li>
+																						</ol>
+																						<p></p>		
+																				</div> 																				
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-6" class="collapsed" aria-expanded="false">
+																						I am unable to make network placement selection?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-6" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Please note that the first user you add under your ID is bound to get placed in your power leg by default. Once this condition is complied to you would be able to make a default network placement selection by visiting your profile page.
+																				</div> 
+																			</div> 
+																		</div> 		
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-7" class="collapsed" aria-expanded="false">
+																						Can I send a referral link with network place pre selected to new members?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-7" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Yes, you can share a reference link with users to add new ID under your network with pre selected placement i.e. LEFT or RIGHT leg.<br/><br/>
+																				<p>Follow these steps to generate a referral link with pre selected placement:</p>
+																				
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1. Choose Marketing material from left side menu on your dashboard</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq3.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>2. Here you can choose network placement i.e. Left or Right leg placement and share the link with new members.</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq4.png" class="img-responsive center-block">
+																						</div>
+																						<br/>
+																				</div>	
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>PLEASE make a note that first user you add under your ID is bound to be added in Power leg.</li>
+																						</ol>																				
+																				</div>																				
+																			</div> 
+																		</div> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-8" class="collapsed" aria-expanded="false">
+																						My referral link is not working?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-8" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Please note that the first user you add under your ID is bound to get placed in your power leg by default.
+																					<br/>If you have first ID active in your power leg and still facing this issue kindly raise a support ticket and Technical team will assist you in getting it resolved. 
+																				</div> 
+																			</div> 
+																		</div> 		
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-9" class="collapsed" aria-expanded="false">
+																						How do I update my Bitcoin wallet address?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-9" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																				<p>To update your wallet address, follow these steps:</p>
+																				
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1. Click on 'Withdrawals' > 'Request' from left side menu on your dashboard</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq5.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>2. Scroll down to 'MY Withdrawal Details'. Enter your wallet address here.</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq6.jpg" class="img-responsive center-block">
+																						</div>
+																						<br/>
+																				</div>
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>3. Check for verification email on your updated communication E-Mail id.</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq7.jpg" class="img-responsive center-block">
+																						</div>
+																						<br/>
+																				</div>																					
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>4. Click on verification link and you are all set </li>
+																						</ol>																				
+																				</div>	
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li><strong>Please note wallet updation feature is disabled 3 days prior to the payout date to avoid hacking/security issues.  For example, for the payout due on 16th of the month, wallet updation feature will be disabled on 13th of the same month. The feature will be reactivated on 17th once the payout is released.</strong></li>
+																						</ol>																				
+																				</div>																				
+																			</div> 
+																		</div>		
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-10" class="collapsed" aria-expanded="false">
+																						Can I change my wallet address?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-10" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Yes, you can change your wallet address in the same manner how you had updated it, just follow that process and confirm it by clicking the verification link sent on your listed communication email Id.
+																				</div> 
+																				<div class="panel-body">
+																							<span><strong>Please note wallet updation feature is disabled 3 days prior to the payout date to avoid hacking/security issues.  For example, for the payout due on 16th of the month, wallet updation feature will be disabled on 13th of the same month. The feature will be reactivated on 17th once the payout is released.</strong></span>
+
+																				</div>																				
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-11" class="collapsed" aria-expanded="false">
+																						I lost my 12 word back up phrase to recover my wallet, what should I do?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-11" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					If you have lost your wallet recovery phrase then firstly to avoid payout disbursement on your lost wallet address you can submit a request to put your payout on hold, get a new wallet address and update it in your account immediately.
+																				</div> 
+																			
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-12" class="collapsed" aria-expanded="false">
+																						I did not update my bitcoin wallet address, what happens to my pay-out?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-12" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Need not worry, your payout stays in the system in that case and is mapped against your username. Please ensure to update your wallet address asap. The pending payout will be processed in the next payout cycle and you will receive it in the wallet address provided by you.
+																				</div> 
+																			
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-13" class="collapsed" aria-expanded="false">
+																						I did not receive verification email with wallet change confirmation link?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-13" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					<p>If you are not receiving a verification email from Gainbitcoin please perform following checks before raising a support ticket:</p>
+																						<ol style="list-style:disc;">
+																							<li>Check your spam folder and mark it as safe to receive emails from Gainbitcoin.</li>
+																							<li>Check you’re my profile section to inspect if you have listed an updated Email Id. </li>
+																							<li>Perform a spelling check on your updated communication Email Id.</li>
+																						</ol>
+
+																					If all of the above mentioned checks do not resolve your issue, Kindly login to your Gainbitcoin account and raise a support ticket  
+																				</div>																					
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-14" class="collapsed" aria-expanded="false">
+																						How can I update my profile information?
+																					</a>
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-14" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																				<p>To change your basic profile details login to your account and follow these steps:</p>
+																				
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1. Click on the Profile Icon placed on top right side of your dashboard.</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq8.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>2. From your profile page you can edit your basic contact details.</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq9.jpg" class="img-responsive center-block">
+																						</div>
+																						<br/>
+																				</div>																		
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>3. Once you have submitted the profile change request, check for a verification email from Gainbitcoin and Click on the confirmation link to update changes.</li>
+																						</ol>																				
+																				</div>																		
+																			</div> 
+																		</div>		
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-15" class="collapsed" aria-expanded="false">
+																						Unable to receive a verification email, how can I change my profile details? 
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-15" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					<p>If you are not receiving a verification email from Gainbitcoin please perform following checks before raising a support ticket:</p>
+																						<ol style="list-style:disc;">
+																							<li>Check your spam folder and mark it as safe to receive emails from Gainbitcoin.</li>
+																							<li>Check you’re my profile section to inspect if you have listed an updated Email Id. </li>
+																							<li>Perform a spelling check on your updated communication Email Id.</li>
+																						</ol>
+
+																					If all of the above mentioned checks do not resolve your issue, Kindly login to your Gainbitcoin account and raise a support ticket  
+																				</div>																					
+																			</div> 
+																		</div>		
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-16" class="collapsed" aria-expanded="false">
+																						Can I change my username?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-16" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Sorry, user name once registered cannot be changed.
+																				</div> 
+																			
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-17" class="collapsed" aria-expanded="false">
+																						Can I change my e-mail address?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-17" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					You can change the communication e-mail address through 'My Profile' section of the website. Updating new E-Mail address is subject to E-Mail verification from the old address. However, the primary e-mail address used at the time of registration cannot be changed.
+																				</div> 
+																			
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-18" class="collapsed" aria-expanded="false">
+																						Can I change my mobile number?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-18" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Yes, you can change your mobile number through 'My Profile' section of the website. Changing Mobile number is subject to E-Mail verification.
+																				</div> 
+																			
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-19" class="collapsed" aria-expanded="false">
+																						I forgot my password?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-19" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					<p>You can reset your password by following these steps:</p>
+																					<br/>
+																						<ol style="list-style:none;">
+																							<li>1. Click on Forgot password link placed on the Login form.</li>
+																							<li>2. You will receive an email from Gainbitcoin on your listed Email Id with a temporary Login Password. </li>
+																							<li>3. Login using temporary password and reset it to a new password from MY PROFILE section of your dashboard.</li>
+																						</ol>
+																			
+																							<span><strong>If you are not receiving emails from Gainbitcoin kindly raise a ticket from your sponsor’s user Id or alternately write in a email from your Registered Email Id to <a href="#">help@gainbitcoin.com</a> and our technical support team will help you to set up a new password.</strong></span>
+
+																				</div>																																								
+																			</div> 
+																		</div>			
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-20" class="collapsed" aria-expanded="false">
+																						How can I enable/disable 2 factor authentication on my account?
+																					</a>
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-20" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																				<p>To enable/disable 2 factor authentication on your account kindly follow these steps:</p>
+																				
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1. Download Google authenticator app from Google playstore or App store.</li>
+																						</ol>																					
+																						<ol style="list-style:none;">
+																							<li>2. Login to your account and Go to 'My Profile' page on gainbitcoin.com</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq10.jpg" class="img-responsive center-block">
+																						</div>
+																						<br/>
+																				</div>																		
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>3. Open google authenticator app on your phone and scan that QR code.</li>
+																						</ol>																				
+																				</div>																		
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-21" class="collapsed" aria-expanded="false">
+																						I lost my 2FA device/access how can I regain access to my account?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-21" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					<p>In case you have lost your 2fa device or it’s access, you can send in a request to disable 2FA on your account by sending in an email at <a href="#">help@gainbitcoin.com</a> from your registered Email ID, 
+																					   Alternately you can raise a ticket from your Sponsor ID’s account requesting to disable your accounts 2FA,
+																					   When raising a ticket from your Sponsor Id’s account please send in following information along the request for verification purpose.</p>
+																					<br/>
+																						<ol style="list-style:disc;">
+																							<li>Click on Forgot password link placed on the Login form.</li>
+																							<li>You will receive an email from Gainbitcoin on your listed Email Id with a temporary Login Password. </li>
+																							<li>Login using temporary password and reset it to a new password from MY PROFILE section of your dashboard.</li>
+																						</ol>
+																				</div>
+																			
+																			</div> 
+																		</div>
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-22" class="collapsed" aria-expanded="false">
+																						What is MVP, where can I find complete list of active MVP’s?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-22" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+																				</div> 
+																			
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-23" class="collapsed" aria-expanded="false">
+																						How can I identify who is my MVP?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-23" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+																				</div> 
+																			
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-3" href="#collapseThree-24" class="collapsed" aria-expanded="false">
+																						How can I contact CoinBank support?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseThree-24" class="panel-collapse collapse" aria-expanded="false"> 
+																				<div class="panel-body">
+																					<p>For all your CoinBank related queries and concerns you can reach CoinBank support team by writing in an email to
+																						<a href="#">support@coinbank.info</a> , In your email query please attach following information so that support team can identify 
+																					   your account and speed up the resolution process:</p>
+																					<br/>
+																						<ol style="list-style:disc;">
+																							<li>Your registered contact number, (which was used to register on CoinBank)</li>
+																							<li>Your registered email id, (which was used to register with CoinBank)</li>
+																						</ol>
+																					<p><strong>Please note while writing in an email to <a href="#">support@coinbank.info</a> never share any vulnerable information like your 12 word recovery pass phrase.</strong></p>
+																				</div>
+																				<div class="panel-body">
+																					<p>For all your recovery phrase and backup related queries you can contact <a href="#">recovery@coinbank.info</a>, 
+																					   In your email query please attach following information so that support team can identify your 
+																					   account and speed up the resolution process:</p>
+																					<br/>
+																						<ol style="list-style:disc;">
+																							<li>Your registered contact number, (which was used to register on CoinBank)</li>
+																							<li>Your registered email id, (which was used to register with CoinBank)</li>
+																						</ol>
+																					<p><strong>Please note while writing in an email to <a href="#">recovery@coinbank.info</a>, recovery team may ask for your recovery pass phrase in order to assist you.</strong></p>
+																				</div>																			
+																			</div> 
+																		</div>
+
+																		<!-- Panel Demo-->
+																	</div> 
+																</div>															
+															</div>
+														</div> 
+													</div> 
+												</div>
+												<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseTwo-2" class="collapsed" aria-expanded="false">
+																Kits & Payments
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseTwo-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+														<div class="panel-body">
+															<div class="row">
+																<div class="col-lg-12"> 
+																	<div class="panel-group" id="accordion-test-4"> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-1" aria-expanded="false" class="collapsed">
+																						How can I buy a cloud mining contract?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-1" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body"><p><strong>Steps to buy a contract: </strong></p>
+																					<ol>
+																						<li>Click on Contract > Buy Contract</li>
+																						<li>Select the Kit you want to purchase > Enter the number of kits you want to purchase</li>
+																						<li>Complete the kit purchase by making the payment from your bitcoin wallet</li>
+																						<li>Wait for the kit to get activated. It normally takes 30 minutes however in some cases it may take upto 24 hours depending on the payment gateway response. You can check the status of your kit in order history section. You will also get an email confirmation from our side once the kit is 'Active'. Thereafter, follow the below steps.</li>
+																						<li>Click on 'List of Contracts' and choose the contract you wish to purchase</li>
+																						<li>Enter the kit number and click on purchase</li>
+																						<li>Your contract is activated and valid for 18 months from the date of purchase. You will receive an E-Mail confirmation with contract details and invoice.</li>
+																					</ol>
+																				</div>
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-2" aria-expanded="false" class="collapsed">
+																						How long does kit activation take?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Auto kit activation can take up to 2-24 Hours, subjective to the payment status and transaction confirmation on the block chain, all transaction would require minimum 3 confirmations on the block chain for auto kits activation.
+																					<p><strong>Please note due to sudden surge in the BTC price, block chain has been witnessing a delay in confirmation specially among transactions with lesser chosen transaction fee type.</strong></p>
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-3" aria-expanded="false" class="collapsed">
+																						I chose wrong contact by mistake, how can I get replacement kit?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>If you have chosen a wrong contract against your active kit i.e. user has an Amaze Nano 0.1 Btc kit   but he used it to buy an Amaze Micro contract which is of 0.2 Btc value, the system will block that contract.</p>
+																					<p>In this case you can notify the support team by raising a ticket and request for a cancelation of contract, we will cancel the contract and issue you a new kit within 24 Hours.</p>
+																					<p><strong>Please note that contract cancellation request has to be initiated within the cooling off period and since we will issue a new kit your MO will be calculated from the day you buy a new contract.</strong></p>
+																				</div> 
+																			</div> 
+																		</div>
+															<!--			<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-4" aria-expanded="false" class="collapsed">
+																						Can I use my Gainbitcoin wallet to make payments for new Kits?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-4" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-5" aria-expanded="false" class="collapsed">
+																						Can I buy Kits using Tokens from my pay-out wallet?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-5" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-6" aria-expanded="false" class="collapsed">
+																						I have an active kit in my account but my mining contract is still not active?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-6" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>Please note your mining out put does not starts unless you purchase a contract using an active kit, if you have not bought a contract yet kindly follow these steps to activate a contract:</p>
+																				</div> 
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>1. LOGIN to your account and click on buy new contract</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq12.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>	
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>2. Scroll down to “Buy contact” and from drop down choose the contract type based upon your kit value</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq13.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>																				
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>3. Enter an active Kit No. and click ‘Purchase’</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq14.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>	
+																				<div class="panel-body">
+																						<ol style="list-style:none;">
+																							<li>4. There will be confirmation message displayed on screen once the contract is active</li>
+																						</ol>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq15.jpg" class="img-responsive center-block">
+																						</div>	
+																					
+																				</div>																				
+																			</div> 
+																		</div>				
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-7" aria-expanded="false" class="collapsed">
+																						I successfully made payment, but my kit is still not active?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-7" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Auto kits activation fails to perform and Manual kits activation comes into an effect under following scenarios:
+																				</div> 
+																				<div class="panel-body">
+																					<p><strong>SHORT PAID:</strong> when users have made a partial payment i.e. lesser amount paid due to either fee deduction selection type or because simply due to lack of sufficient funds in wallet, kindly check the transaction details on the blockchain and identify if this is the case, </p>		
+																					<p>Considering that it’s a case of short payment you can deposit the remaining balance amount on this wallet ID: <strong>1LcKmM94gA4om3nDTrZarT2nVfKq3zP7AL</strong> and share the transaction id with the support team for kit activation.</p>
+																				</div>																				
+																				<div class="panel-body">
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/qrStatic.png" class="img-responsive center-block">
+																						</div>	
+																	
+																				</div>	
+																				<div class="panel-body">
+																					<p><strong>OVER PAID/REPEAT ON THE SAME WALLET:</strong> when users are purchasing multiple kits with different invoice id’s in a short span of time, sometimes transactions get accumulated and would reflect as payment done against a single kit invoice, we advice users to either choose multiple kits from the kit no’s selection tab while choosing kit type and make collective payment or to keep at least 5 minutes of time span between different invoice payments.</p>
+																				</div>
+																				<div class="panel-body">
+																					<p>If it’s a case of over payment you can raise a query and provide us with the following information:</p>
+																						<ol style="list-style:disc;">
+																							<li>Kit value</li>
+																							<li>Invoice Id’s against which the payment is made</li>
+																							<li>Transaction Id’s to support and verify the claim</li>
+																						</ol>
+
+																					Once we receive following information the kits will be activated within 2-3 hours depending upon the confirmation status of the payment on blockchain.
+																				</div>	
+																				
+																				<div class="panel-body">
+																					<p><strong>PAID AFTER TIMEOUT:</strong> When you select the kit type and click to make payment system keeps that invoice active for 1 Hour, if user fails to make payment within one hour of generation of kit the system would not map that invoice.</p>
+																				</div>
+																				<div class="panel-body">
+																					<p>If it’s a case of ‘Paid after timeout’ you can raise a query and provide us with the following information:</p>
+																						<ol style="list-style:disc;">
+																							<li>Kit value</li>
+																							<li>Invoice Id’s against which the payment is made</li>
+																							<li>Transaction Id’s to support and verify the claim</li>
+																						</ol>
+
+																					Once we receive following information the kits will be activated within 2-3 hours depending upon the confirmation status of the payment on blockchain.
+																				</div>																						
+																			</div> 
+																		</div>
+																<!--		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-8" aria-expanded="false" class="collapsed">
+																						Can I share an active kit with other users in my structure? 
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-8" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-4" href="#collapseFourInner-9" aria-expanded="false" class="collapsed">
+																						I have kits with duplicate kit no.’s?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFourInner-9" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>If you have multiple kits with similar kit no’s, you can raise a support ticket and share following information with us:</p>
+																						<ol style="list-style:disc;">
+																							<li>Duplicate kit number.</li>
+																							<li>Invoice Id’s.</li>
+																						</ol>
+																					<p>After verification the technical team will issue a new kit with in 24 hrs.</p>
+																				</div> 
+																			</div> 
+																		</div>																			
+																		<!-- Test div-->	
+																	</div>
+																</div>
+															</div><!-- row-->
+														</div> 
+													</div> 
+												</div> 
+												<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseThree-2" class="collapsed" aria-expanded="false">
+																Payouts & Calculations
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseThree-2" class="panel-collapse collapse" aria-expanded="false"> 
+														<div class="panel-body">
+															<div class="row">
+																<div class="col-lg-12"> 
+																	<div class="panel-group" id="accordion-test-5"> 
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-1" aria-expanded="false" class="collapsed">
+																						What are the Pay-out dates?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-1" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ul class="unorder">
+																						<li style="margin-left:17px;">Updated payout balance starts reflecting tentatively on 1st and 16th of each month.</li>
+																						<li style="margin-left:17px;">Once the updated balances are shown system will provide feature to buy kits from GB Wallet for next 3-4 days.</li>
+																						<li style="margin-left:17px;">Payout disbursement starts from 6th till 15th of each month, similarly for next cycle it starts from 21st till 30th.During this time kits activation via GB Wallet will be disabled.</li>
+																						<li style="margin-left:17px;">First payout is released post completion of cooling off period (30 days).</li>
+																					</ul>
+																			<br/><br/>
+																					<div class="bs-example table-responsive">
+
+																					<table class="table table-bordered innertbl display">
+																						<thead>
+																						<tr>
+																							<th>Contract Purchase Date</th>
+																							<th>Cooling off period end date</th>
+																							<th>Mining output period considered</th>
+																							<th>First MO Payout Date</th>
+																							<th>RSI and DSI Payout dates</th>
+																						</tr>
+																						</thead>
+																						<tbody>
+																						<tr>
+																							<td>1st December</td>
+																							<td>30th December</td>
+																							<td>1st to 15th Dec</td>
+																							<td>16th January</td>
+																							<td>16th January</td>
+																						</tr>
+																						<tr>
+																							<td>7th October	</td>
+																							<td>6th November</td>
+																							<td>7th to 15th Oct</td>
+																							<td>16th November</td>
+																							<td>16th November</td>
+																						</tr>
+																						<tr>
+																							<td>17th April</td>
+																							<td>16th May/td>
+																							<td>17th April to 30th April</td>
+																							<td>1st June </td>
+																							<td>1st June</td>
+																						</tr>
+																						<tr>
+																							<td>24th June</td>
+																							<td>23rd July</td>
+																							<td>24th June to 30th June</td>
+																							<td>16th August</td>
+																							<td>16th August</td>
+																						</tr>
+																						</tbody>
+																					</table>
+																					</div>	</br>
+																				</div>
+																			</div> 
+																		</div> -->
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-2" aria-expanded="false" class="collapsed">
+																						When will I receive my first pay-out?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					We comply the 30 days cooling off period, during which users can opt for a refund if they wish, keeping this in consideration the first payout is disbursed post 30 days of contract activation.
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-3" aria-expanded="false" class="collapsed">
+																						Can I put a pay-out hold request?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Yes, you can make a payout hold request by raising a support ticket from your account, a payout hold request may take upto 48hr. to come into effect.
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-4" aria-expanded="false" class="collapsed">
+																						Where can I find my pay-out withdrawal entries?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-4" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																						<p>You can find the pay out withdrawal entries by clicking on withdrawals->History tab from your dashboard.</p>
+																																											<br/><br/>
+	
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq16.jpg" class="img-responsive center-block">
+																																												<br/><br/>
+
+																						</div>
+																						<br/><br/>
+																						<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																							<img src="<?php echo BASEPATH; ?>/images/faq17.png" class="img-responsive center-block">
+																						</div>																					
+																				</div> 
+																			</div> 
+																		</div>
+																<!--		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-5" aria-expanded="false" class="collapsed">
+																						I have received my pay-out but its not updated in my account withdrawal entries?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-5" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-6" aria-expanded="false" class="collapsed">
+																						My pay-out calculations are not correct?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-6" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Please note that since 21st May 2017 a new payout process is in effect, you will receive a variable based daily mining output. You will now receive an aggregated mining output every day depending upon the rigs performance for that day rather then having a fixed 10% but collectively at the end of the contract it will add upto 80% returns on the principal investment as committed
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-7" aria-expanded="false" class="collapsed">
+																						My pay-out details are not updated in withdrawal section?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-7" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>Payout details can take upto 48 hours in few cases subjected to individual account transaction data entry, we suggest you wait upto 48 hours for your account information to get updated.</p>
+																					<p>If you are constantly facing this issue for more then 48 hours you can raise a ticket from your account and technical team will assist you in getting your account’s payout details updated.</p>
+																				</div> 
+																			</div> 
+																		</div>
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-8" aria-expanded="false" class="collapsed">
+																						I have not received pay-out but there is an entry in my withdrawals section? 
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-8" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p></p>
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-9" aria-expanded="false" class="collapsed">
+																						How is DSI and RSI calculated?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-9" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>In addition to the cloud mining contract returns, the company also offers direct sales incentives (DSI) and referral sales incentives (RSI) for users who buy gainbitcoin mining contract through your sponsor id. </p>
+																					<p>Below is the explanation of the incentives.</p>
+																				</div> 
+																				<div class="panel-body">
+																					<ol style="list-style:disc;">
+																						<li>If you refer someone to purchase a cloud mining contract your sponsor id, you get 5% DSI (Direct Sales Incentive) in the form of bitcoins.  </li>
+																						<li>The company also offers an 7% RSI (Referral sales incentive) on multi level referrals who join the mining pool in your downline. </li>
+																					</ol>
+																				</div> 
+																		<!--		<div class="panel-body">
+																					<p>An example of DSI and RSI working is given below. Please refer to the below image for reference.</p>
+																					<ol>
+																						<li>A invests 1 BTC in amaze solo plan. </li>
+																						<li>A refers B to join the pool mining. B invests 1 BTC in amaze solo plan. A places B on the left side.</li>
+																						<li>A refers C to join the pool mining. C invests 1 BTC in amaze solo plan. A places C on the right side.</li>
+																						<li>B refers D to join the pool mining. D invests 1 BTC in amaze solo plan. B places D on the left side.</li>
+																						<li>B refers E to join the pool mining. E invests 1 BTC in amaze solo plan. B places E on the right side.</li>
+																						<li>C refers F to join the pool mining. F invests 1 BTC in amaze solo plan. C places F on the left side.</li>
+																						<li>C refers G to join the pool mining. G invests 1 BTC in amaze solo plan. C places G on the right side.</li>
+																					</ol>
+																				</div> 
+																				<div class="panel-body">
+																					In this scenario, below are the incentive earnings of 'A' from DSI and RSI
+																			<br/>
+																				<strong>INCENTIVE EARNINGS OF 'A'</strong><br/><br>
+																					<div class="bs-example table-responsive">
+																						<table class="table table-bordered innertbl display">
+																					<thead>
+																					<tr>
+																						<th></th>
+																						<th>DSI @ 5% (BTC)</th>
+																						<th>Contracts in Left side (BTC)</th>
+																						<th>Contracts in Right side (BTC)</th>
+																						<th>Binary Pair Contracts (BTC)</th>
+																						<th>RSI @ 8% (BTC)</th>
+																						<th>Total Earning</th>
+																					</tr>
+																					</thead>
+																					<tbody>
+																					<tr>
+																						<td>A refers B and C</td>
+																						<td>0.05 + 0.05 = 0.10 </td>
+																						<td>1</td>
+																						<td>1</td>
+																						<td>1</td>
+																						<td>0.08</td>
+																						<td>0.18</td>
+																					</tr>
+																					<tr>
+																						<td>B refers D & E. C refers F & G</td>
+																						<td>0</td>
+																						<td>2</td>
+																						<td>2</td>
+																						<td>2</td>
+																						<td>0.16</td>
+																						<td>0.16</td>
+																					</tr>
+																					</tbody>
+																				</table>
+																					</div>	
+																				</div>
+																			
+																				<div class="panel-body">
+																					<p>Please note the following important points:</p>
+																					<ol style="list-style:disc;">
+																						<li style="margin-left:17px;">You get DSI only for those people who register using your sponsor id.</li>
+																						<li style="margin-left:17px;">You get RSI only for binary contracts which means for common contracts (of lower value) on the left and right side of your id. </li>
+																						<li style="margin-left:17px;">For example, if you have 3 BTC contracts on the left side and 3 BTC contracts on the right side then you get binary commission of 8% on 3 BTC which is equal to 0.24 BTC.  </li>
+																						<li style="margin-left:17px;">If you have 5 BTC contracts on the left side and 3 BTC contracts on the right side then you get binary commission of 8% on 3 BTC which is equal to 0.24 BTC. The balance of 2 BTC on the left side is carried forward to the next payout cycle. </li>
+																						<li style="margin-left:17px;">If you have 5 BTC contracts on the left side and no contracts on the right side then you do not get any RSI. The left side contracts are carried forward to the next payout. Whenever you add contracts on the right side, you will start getting the RSI payouts.</li>
+																						<li style="margin-left:17px;">You will keep on earning RSI for all new contracts that are bought by users referred by users in your network. Maximum RSI which can be earned in one payout is 15x (15 times your contract value) or 150 BTC whichever is higher. </li>
+																						<li style="margin-left:17px;">DSI/RSI is an optional scheme. You may or may not wish to participate depending on your nature of business and understanding of Direct Sales.</li>
+																			
+																					</ol>
+																				</div> 	-->
+																			</div> 
+																		</div>
+																<!--		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-10" aria-expanded="false" class="collapsed">
+																						I did not receive RSI and DSI incentives for this pay cycle?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-10" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-11" aria-expanded="false" class="collapsed">
+																						What is the mining output (MO) I will receive?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-11" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>There will be a variable based daily mining output disbursed on your registered wallet every day, unlike before having a fixed output of 10%  you will receive and aggregated amount varying from 5% to 15% each day on basis of mining rig’s performance.</p>																			
+																					<p>Collectively when added up at the end of the contract these will as per the contract i.e. 80% to 90% returns on the principal investment.</p>																			
+																				</div> 
+																			</div> 
+																		</div>	
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-12" aria-expanded="false" class="collapsed">
+																						I did not receive correct mining output?
+																					</a>
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-12" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div>  
+
+																			</div> 
+																		</div> -->	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-13" aria-expanded="false" class="collapsed">
+																						Why is my pay-out on hold?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-13" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>If you had requested to put your pay-out on hold for security reasons, after updating your profile information i.e. contact details and making sure that your wallet address is updated and correct you can put in a request to resume your pay-out by sending in a support ticket requesting to release your pay-out.</p>
+																					<p>If there is a conflict over the purchased/used kit type and over payment mode, company shall put pay-out on hold for all involved parties until a proof of payment is submitted along with other necessary supporting documents to support claim of ownership for example:</p>
+																					<ol style="list-style:disc;">
+																						<li>Transaction id used to purchase kit.</li>
+																						<li>Wallet information (wallet address used to make payment).</li>
+																						<li>May ask for KYC documentation depending upon case.</li>
+																					</ol>
+																					<p>Once these documents and submitted and company had established ownership of the contract it will resume the pay-outs process as usual within 24 hrs.</p>
+																				</div> 
+																			</div> 
+																		</div>	
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-14" aria-expanded="false" class="collapsed">
+																						What is admin fee, how much admin fee is charged on my pay-outs?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-14" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>There will be no admin fee charges on pay-outs starting from 1st June 2017</p>
+																				</div> 
+																			</div> 
+																		</div>	
+													<!--					<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-15" aria-expanded="false" class="collapsed">
+																						 What is the max cap on pay-outs I can receive from my MO, RSI & DSI?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-15" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Yes, there is a max of 15 times on your principle investment i.e. if you have a contract of 1BTC active on your account, the maximum collective pay-out which you can receive would be 15 BTC.
+																				</div> 
+																			</div> 
+																		</div>	
+															-->			
+															<!--			<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-10" aria-expanded="false" class="collapsed">
+																						By when shall I will be able to make MCAP withdrawal?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-10" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					 MCAP withdrawals will start 1st June 2017 onwards and it will be disbursed twice a month i.e. on 1st and 16th of each month.
+																				</div> 
+																			</div> 
+																		</div> 			-->															
+																<!--		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-16" aria-expanded="false" class="collapsed">
+																						 What is Tokens, by when shall I will be able to make Token withdrawal?
+																					</a>
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-16" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div>	 -->
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-17" aria-expanded="false" class="collapsed">
+																						How can I select the crypto type I want to get paid in BTC or MCAP?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-17" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																						<p>To select the preferred payment mode, kindly follow these steps:</p>
+																						<div class="panel-body">	
+																							<ol style="list-style:none;">
+																								<li>1. Click on ‘Request’ placed under ‘Withdrawals’ tab on your dashboard.</li>
+																							</ol>																						
+																							<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																								<img src="<?php echo BASEPATH; ?>/images/faq18.jpg" class="img-responsive center-block">
+																							</div>
+																						</div>
+																						<div class="panel-body">	
+
+																							<ol style="list-style:none;">
+																								<li>2. Scroll down to ‘Select preferred payment type’ make your selection, enter wallet address and click save.</li>
+																							</ol>																						
+																							<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																								<img src="<?php echo BASEPATH; ?>/images/faq19.jpg" class="img-responsive center-block">
+																							</div>	
+																						</div>	
+																						<div class="panel-body">	
+																					
+																							<ol style="list-style:none;">
+																								<li><strong>3. Check for a confirmation email, click on the verification link to update the payment mode. </strong></li>
+																							</ol>	
+																					</div>	
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-5" href="#collapseFiveInner-18" aria-expanded="false" class="collapsed">
+																						Is it possible to have Partial pay-out in BTC and partial in MCAPS?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseFiveInner-18" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					We are afraid that’s not possible, you can either choose to be paid full in BTC or MCAP.
+																				</div> 
+																			</div> 
+																		</div>		-->																	
+																		<!-- Test div-->	
+																	</div>
+																</div>
+															</div><!-- row-->
+														</div> 
+													</div> 
+												</div> 
+												<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseFour-2" class="collapsed" aria-expanded="false">
+																Business & Structure details
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseFour-2" class="panel-collapse collapse" aria-expanded="false"> 
+														<div class="panel-body">
+															<div class="row">
+																<div class="col-lg-12"> 
+																	<div class="panel-group" id="accordion-test-6"> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-1" aria-expanded="false" class="collapsed">
+																						Where can I find my mining output details?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-1" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>Once you are logged into your account and click on Outputs->Mining Outputs</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq20.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>On mining outputs page, you can choose the contact you wish to check and click “Check mining outputs”</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq21.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div> 	
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>You can view complete mining output history of selected contract here.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq22.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div> 																																								
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-2" aria-expanded="false" class="collapsed">
+																						Why my mining output is not updated on my dashboard?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Please note that mining output update depends upon automated crone job which happens once every 24 hours, if your mining output section is missing an entry kindly wait up till 24 hrs. before raising a support ticket.
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-3" aria-expanded="false" class="collapsed">
+																						Where can I find my Direct Sales Incentive details?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>From your dashboard click Outputs->DSI</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq23.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>you can see your DSI details here.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq24.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>																				
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-4" aria-expanded="false" class="collapsed">
+																						Why my DSI business details are not updated?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-4" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Please not that DSI/RSI calculations ideally gets updated within 48 hours of completion of cooling off period for that direct referred contract. i.e. if you have made a sale on 1st January then DSI/RSI will be updated in your outputs section by 2nd February. Kindly wait for the cooling off period to conclude before raising a ticket in regard to DSI calculation update.
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-5" aria-expanded="false" class="collapsed">
+																						Where can I find my Referral Sales Incentive details?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-5" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>From your dashboard click Outputs->RSI.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq25.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>	
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>you can see your RSI details here.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq26.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>																					
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-6" aria-expanded="false" class="collapsed">
+																						Why my RSI business details are not updated?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-6" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Please not that DSI/RSI calculations ideally gets updated within 48 hours of completion of cooling off period for that direct referred contract. i.e. if you have made a sale on 1st January then DSI/RSI will be updated in your outputs section by 2nd February. Kindly wait for the cooling off period to conclude before raising a ticket in regard to DSI calculation update.
+																				</div> 
+																			</div> 
+																		</div>				
+
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-9" aria-expanded="false" class="collapsed">
+																						How can I check my business and sales details?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-9" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>From your dashboard click Outputs->Business details</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq27.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>	
+																				
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>Here you can check your complete business details on yearly/monthly basis.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq28.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>																					
+																			</div> 
+																		</div>			
+																	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-10" aria-expanded="false" class="collapsed">
+																						Why my business details are not updated on my dashboard?
+																					</a>
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-10" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Business details on your dashboard may take up to 24 Hours to get updated, kindly wait for 24 hours’ post making a sale before you raise a support ticket.
+																				</div> 
+																			</div> 
+																		</div>				
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-11" aria-expanded="false" class="collapsed">
+																						Where can I check my Binary structure placement?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-11" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>You can see your ‘Binary Structure placement’ by clicking on my network/Binary tree from your dashboard</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq29.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>	
+																				<div class="panel-body">
+																					<ol style="list-style:none;">
+																					<li>You can find your binary structure tree here, pls. note all red id’s denote inactive users; you can click on any user to expand or contract their network.</li>
+																					</ol>
+																					<div class="col-md-10 col-xs-10 col-xs-offset-1 col-md-offset-1">
+																						<img src="<?php echo BASEPATH; ?>/images/faq30.jpg" class="img-responsive center-block">
+																					</div>	
+																				
+																				</div>																																									
+																			</div> 
+																		</div>
+																	<!--	<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-12" aria-expanded="false" class="collapsed">
+																						I am unable to see my binary tree/structure placement? 
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-12" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<!--<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-13" aria-expanded="false" class="collapsed">
+																						I just added a user with active contract, but its showing red in binary structure?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-13" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																<!--		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-7" aria-expanded="false" class="collapsed">
+																						What does TOTAL BALANCE under mining output in withdrawal section means?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-7" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.	
+																				</div> 
+																			</div> 
+																		</div> -->
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-6" href="#collapseSixInner-8" aria-expanded="false" class="collapsed">
+																						What does TOTAL OUTPUT section in my dashboard means?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSixInner-8" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Total output indicates complete earnings achieved till date including MO, RSI and DSI outputs of all the active contracts on your account.
+																				</div> 
+																			</div> 
+																		</div>																		
+																		<!-- Test div-->	
+																	</div>
+																</div>
+															</div><!-- row-->
+														</div> 
+													</div> 
+												</div> 			
+										<!--		<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseFive-2" class="collapsed" aria-expanded="false">
+																Refunds
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseFive-2" class="panel-collapse collapse" aria-expanded="false"> 
+														<div class="panel-body">
+															<div class="row">
+																<div class="col-lg-12"> 
+																	<div class="panel-group" id="accordion-test-7"> 
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-1" aria-expanded="false" class="collapsed">
+																						What is a cooling off period?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-1" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					It is a period of time (30 days) after a sale contract is agreed during which the buyer can cancel the contract without incurring a penalty.
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-2" aria-expanded="false" class="collapsed">
+																						How can I request for Refund?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-2" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>You can request a refund within 30 days of contract purchase by logging into your account and following these steps:</p>
+																					<ol style="list-style:disc;">
+																						<li>Login to your account and click on “Refund Request” placed under Refunds tab on your dashboard.</li>
+																						<li>Enter all details carefully and accurately and click Refund request button.</li>
+																						<li>Check your email id for a confirmation email, reply back on that email to confirm the request.</li>
+																					</ol>
+																					<p>Once you have confirmed a refund request over confirmation email same shal be processed within 30 days of confirmation.</p>
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-3" aria-expanded="false" class="collapsed">
+																						I am unable to request a refund?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-3" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>Please note that you will be unable to make a refund request from your account if:</p>
+																					<ol style="list-style:disc;">
+																						<li>Your cooling off period is over.</li>
+																						<li>If you are using a shared Kit.</li>
+																						<li>If the Kit you are using was assigned to you as a pay-out settlement Kit.</li>
+																					</ol>
+																					<p>If above mentioned criterion afre met but still you are unable to make a refund request kindly raise a support ticket and technical team will assist you get the request processed.</p>
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-4" aria-expanded="false" class="collapsed">
+																						I am using a shared Kit, how can I request a refund?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-4" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>If you are using a kit shared with you by other member, then in this case you will have to contact that member and put in a refund request through their User ID.</p>
+																					<p>Gainbitcoin has a fixed policy regarding refunds that all refunds will be processed into registered wallet address of the account holder (First owner) who was allotted the kit after making a payment.</p>
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-5" aria-expanded="false" class="collapsed">
+																						What is refund request processing time?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-5" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					All refund requests are processed within 30 days from day of confirmation of your refund request.
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-6" aria-expanded="false" class="collapsed">
+																						How can I confirm my refund request?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-6" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>Once you have successfully raised a refund request, you will have to verify and confirm it before it gets processed.</p>
+																					<p>After initiating a request through your account you will receive a verification email within 48 Hrs. regarding confirmation of the request, unless we receive a reply on that email with your approval your refund request wont get processed.</p>
+																				</div> 
+																			</div> 
+																		</div>				
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-7" aria-expanded="false" class="collapsed">
+																						Is it possible to have refund processed to third party wallet?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-7" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					 Yes, you can have to your refund processed in any wallet.
+																				</div> 
+																			</div> 
+																		</div> 													
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-8" aria-expanded="false" class="collapsed">
+																						Can I request for a new contract instead of Refund in wallet?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-8" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					<p>Yes, it is possible to generate a new kit against the refund request, kindly follow these steps to generate a new kit against refund request.</p>
+																					<ol style="list-style:disc;">
+																						<li>Login to your account and click on “Refund Request” placed under Refunds tab on your dashboard.</li>
+																						<li>Enter all details carefully and accurately and click Refund request button. </li>
+																						<li>Check your email id for a confirmation email, reply back on that email to confirm the request.</li>
+																						<li>Once you have confirmed a refund request over email, either raise a ticket for new kit activation or write in an email at <a href="#">refunds@gainbitcoin.com</a> requesting to get a replacement kit issued in your account.</li>
+																					
+																					</ol>
+																					
+																					<p> Please note replacement kits get activated with in 48 hours of confirmation of request.</p>
+																				</div> 
+																			</div> 
+																		</div>
+																		<div class="panel"> 
+																			<div class="panel-heading padding-panel shadow"> 
+																				<h4 class="panel-title text-small"> 
+																					<a data-toggle="collapse" data-parent="#accordion-test-7" href="#collapseSevenInner-9" aria-expanded="false" class="collapsed">
+																						Can I cancel a Refund request?
+																					</a> 
+																				</h4> 
+																			</div> 
+																			<div id="collapseSevenInner-9" class="panel-collapse collapse" aria-expanded="false" style="height: 0px;"> 
+																				<div class="panel-body">
+																					Yes, you can cancel a refund request by either raising a support ticket or alternatively writing in email at <a href="#">refunds@gainbitcoin.com</a>
+																				</div> 
+																			</div> 
+																		</div>																			
+																	</div>
+																</div>
+															</div>
+														</div> 
+													</div> 
+												 </div> -->
+							<!--					<div class="panel panel-primary"> 
+													<div class="panel-heading"> 
+														<h4 class="panel-title"> 
+															<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseSix-2" class="collapsed" aria-expanded="false">
+																Raise a ticket
+															</a> 
+														</h4> 
+													</div> 
+													<div id="collapseSix-2" class="panel-collapse collapse" aria-expanded="false"> 
+														<div class="panel-body">
+															<div class="card-box-content form-compoenent " id="form_sh">
+																<p id="error" style="color: red; font-weight: bolder"></p>
+																<p id="sucess"></p>										
+																<form method="post" id="help_frm" name="help_frm" class="form-basic">
+																<div class="form-group" >
+																	<label for="" class="lblTxt">Category</label>  
+																	<select id="category" name="category" class="form-control">	
+																	<option value="">Select</option>																					
+																		<?php  
+																		 if(!empty($this->user_cat['lovcategory_data']) && sizeof($this->user_cat['lovcategory_data'])>0)
+																				{
+																				for($i=0;$i<sizeof($this->user_cat['lovcategory_data']);$i++)
+																					{?>
+
+																				<option value="<?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?>"><?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?></option>
+
+																				<?php }
+																		}
+																		?>					
+																	</select>												
+																</div>
+																<div class="form-group">
+																	<label for="" class="lblTxt">Email Id</label>
+																	<?php
+																	if(!empty($this->userinfo['comm_email']) && $this->userinfo['comm_email']!='') {
+																		$email = $this->userinfo['comm_email'];
+																	}
+																	else
+																	{
+																		$email = $this->userinfo['email_address'];
+																	}
+																	?>
+																	<input type="text" class="form-control" id="email" name="email" value="<?php if(!empty($email)){ echo $email; }else { echo ''; } ?>" >
+
+																</div>
+																<div class="form-group">
+																	<label for="" class="lblTxt">Mobile</label>
+																	<input type="text" id="mobile" class="form-control  isnumber" maxlength="10" name="mobile" value="<?php echo $this->userinfo['phone'];?>">
+
+
+																</div>
+																<div class="form-group1">
+																	<label for="comment" class="lblTxt">Description:</label>
+																	<textarea class="form-control " name="message" rows="5" id="comment" style="height:125px;"></textarea>
+																</div>
+
+
+														<div class="clearfix">&nbsp;</div>
+														<div>
+																				<button type="button" class="btn btn-primary btn-md" id="send" onclick="generateTicket();">Submit</button>
+
+																				<button type="reset" class="btn btn-inverse btm-md" onclick="removeText();">Reset</button>
+														</div>
+
+															<?php
+
+															if(!empty($this->permissions_data) && ($CurrentDate >= $this->permissions_data['start']) && ($CurrentDate <= $this->permissions_data['end'])){
+																echo '<p style = "text-align:left;">Please Note: Refund requests are disabled till '.date('d F, Y',strtotime($this->permissions_data['end'])).'</p>';
+															}
+															?>
+														</form>
+														<div class="modal" id="myModal1" ></div>	
+													</div>			-->						
+												<a href="#" onclick="showForm()" class="pull-right" style="padding-top:10px;">Didn't find solution? Raise a ticket.</a>
+														</div> 
+													</div> 
+												</div> 												
+								<div class="row" id="langBox" style="display:none;">
+									<div class="col-lg-12">
+										<div class="card-box-head  border-b m-t-0 " style="padding:0px 20px !important;">
+											<h4 class="header-title"><b>Choose Support Type</b><i class="fa fa-close pull-right" id="close" style="cursor:pointer;"></i></h4>
+										</div>										
+										<div class="card-box-content form-compoenent " id="lang_sh">
+											<div class="col-md-5" style="background-color:#fff;border:1px solid #c2c2c2;padding:10px;">
+											<!--	<i class="fa fa-language fa-5x pull-left"></i> -->
+												<div class="row">
+													<div class="col-md-3">
+														<img src="<?php echo BASEPATH; ?>/images/help_icon.png" class="img-responsive center-block" style="width:100%;">													
+													</div>
+													<div class="col-md-9">
+														<h2>Normal Support</h2>
+													</div>
+												</div>
+												<div class="row" style="margin-top:49px;">
+													<div class="col-md-6 col-md-offset-4">			
+														
+													</div>
+												</div>												
+												<div class="row">
+													<ul class="col-md-12" style="font-size:14px;text-align:justify;padding:30px;">
+														<li>We serve tickets on Mon-Fri from 10:00 to 19:00 IST</li>
+														<li>You will hear from us with 24-48 hours</li>
+														<li>Please fill ticket fields correctly for faster resolution</li>
+														<li>Please do not use foul language, we do not serve such tickets & by default will be marked closed</li>
+													</ul>
+												</div>
+												<div class="row">
+													<div class="col-md-6 col-md-offset-3">
+														<button class="btn btn-md btn-primary" onclick="showFormPaid(1);" id="btnNormal">Click to proceed</button>		
+													</div>
+												</div>
+												
+												
+											</div>
+											<div class="col-md-5 col-md-offset-1" style="background-color:#fff;border:1px solid #c2c2c2;padding:10px;">
+												<div class="row">
+													<div class="col-md-3">
+														<img src="<?php echo BASEPATH; ?>/images/help_icon.png" class="img-responsive center-block" style="width:100%;">													
+													</div>
+													<div class="col-md-9">
+														<h2>Paid Support</h2>
+													</div>	
+												</div>	
+
+												<?php 
+													$db = Zend_Db_Table::getDefaultAdapter();
+	
+													$username = $authUserNamespace->user;	
+												
+													$query = "select * from query_payments where status='Active' AND username='$username'";
+													$result=$db->query($query);
+													//echo $query;
+													$paymentDetails = $result->fetchAll();
+													//var_dump($paymentDetails); 
+													if(!empty($paymentDetails) && sizeof($paymentDetails)>0){
+													$orderId = $paymentDetails[0]['invoice_id']; 
+
+												?>
+												<div class="row" style="margin-top:8px;">
+													<div class="col-md-9 col-md-offset-2">												
+														<h4> 1 paid ticket available to raise.</h4>
+													</div>
+												</div>												
+												<?php } else {
+														$query1 = "select ticket_cost from special_permissions";
+														$result1=$db->query($query1);
+														//echo $query;
+														$ticketCost = $result1->fetchAll();													
+												?>
+												<div class="row">
+													<div class="col-md-6 col-md-offset-4">			
+
+														<h3><?php echo $ticketCost[0]['ticket_cost']?>&nbsp;BTC</h3>
+															
+													</div>
+												</div>	
+												<?php }?>
+												<div class="row">
+													<ul class="col-md-12" style="font-size:14px;text-align:justify;padding:30px;">
+														<li>We serve tickets on Mon-Sat from 10:00 to 22:00 IST</li>
+														<li>Your query will be resolved within 2-4 hours</li>
+														<li>Please fill ticket fields correctly for faster resolution</li>
+														<li>Please do not use foul language, we do not serve such tickets & by default will be marked closed</li>
+													</ul>
+												</div>			
+												<div class="row">
+													<div class="col-md-6 col-md-offset-3">
+														<button class="btn btn-md btn-primary" onclick="showFormPaid(2)" id="btnPaid">Click to proceed</button>
+													</div>
+												</div>	
+											</div>
+									
+										</div>
+									</div>
+								</div>	
+								
+								<div class="row" id="PaymentBox" style="display:none;">
+									<div class="col-lg-12">
+										<div class="card-box-head  border-b m-t-0 " style="padding:0px 20px !important;">
+											<h4 class="header-title"><b>Make Payment </b></h4>
+										</div>	
+																			
+										<div class="card-box-content form-compoenent " id="payment_sh">
+											<div class="card-box-content form-compoenent " id="disclaimer_sh" style="padding-bottom:0px !important">
+												<div class="alert alert-info" style="color:#000;">
+														<li>Please make sure you pay exact amount i.e &nbsp;<?php echo $ticketCost[0]['ticket_cost'];?> BTC + transaction fee.</li>
+														<li>Please note the Order ID before payment for further reference.</li>
+														<li>You will be able to raise ticket after 1 confirmation on blockchain.</li>
+														<li>Please come back on same page once you receive 1 confirmation on blockchain.</li>
+												</div>
+											</div>									 	
+										</div>
+									</div>
+								</div>	
+								
+							
+												<div class="row" id="formBox" style="display:none;">
+													<div class="col-lg-12">
+
+														<div class="card-box-head  border-b m-t-0 " style="padding:0px 20px !important;">
+															<h4 class="header-title"><b>Create a ticket</b><i class="fa fa-close pull-right" id="close1" style="cursor:pointer;"></i></h4>
+														</div>		
+
+														<div class="card-box-content form-compoenent " id="form_sh">
+															<p id="error" style="color: red; font-weight: bolder"></p>
+															<p id="sucess"></p>										
+															<form method="post" id="help_frm" name="help_frm" class="form-basic">
+															<input type="hidden" id="mode" name="mode" value="">
+															<input type="hidden" id="payment_id" name="payment_id" value="<?php echo $orderId;?>">
+															<input type="hidden" id="language" name="language" value="english">
+																
+														<!--	<div class="form-group" style="width:45%;">
+																<label for="" class="lblTxt"><b>Language</b></label>  
+																<select id="language" name="language" class="form-control">	
+																<option value="">Select</option>																					
+																<option value="english">English</option>
+																<option value="russian">Russian</option>
+																</select>												
+															</div>											
+														-->
+															<div class="form-group">
+																<label for="" class="lblTxt"><b>Category</b></label>  
+																<select id="category" name="category" class="form-control">	
+																<option value="">Select</option>																					
+																	<?php  
+																	 if(!empty($this->user_cat['lovcategory_data']) && sizeof($this->user_cat['lovcategory_data'])>0)
+																			{
+																			for($i=0;$i<sizeof($this->user_cat['lovcategory_data']);$i++)
+																				{?>
+
+																			<option value="<?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?>"><?php echo $this->user_cat['lovcategory_data'][$i]['value']; ?></option>
+
+																			<?php }
+																	}
+																	?>					
+																</select>												
+															</div>
+															<div class="form-group">
+																<label for="" class="lblTxt"><b>Email Id</b></label>
+																<?php
+																if(!empty($this->userinfo['comm_email']) && $this->userinfo['comm_email']!='') {
+																	$email = $this->userinfo['comm_email'];
+																}
+																else
+																{
+																	$email = $this->userinfo['email_address'];
+																}
+																?>
+																<input type="text" class="form-control" id="email" name="email" value="<?php if(!empty($email)){ echo $email; }else { echo ''; } ?>" >
+
+															</div>
+															<div class="form-group">
+																<label for="" class="lblTxt"><b>Mobile</b></label>
+																<input type="text" id="mobile" class="form-control  isnumber" maxlength="10" name="mobile" value="<?php echo $this->userinfo['phone'];?>">
+
+
+															</div>
+
+															<div class="form-group" style="display:none;" id="invoiceBox">
+																<label for="" class="lblTxt"><b>Invoice ID<span>*</span></b></label>
+																<input type="text" id="invoice" class="form-control" name="invoice" value="">
+
+
+															</div>
+															<div class="form-group" style="display:none;width:45%;" id="txnBox">
+																<label for="" class="lblTxt"><b>Transaction Number<span>*</span></b></label>
+																<input type="text" id="txn" class="form-control" name="txn" value="">
+
+
+															</div>		
+													<!--		<div class="form-group" style="display:none;width:45%;" id="payBox">
+																<label for="" class="lblTxt"><b>Payment Order ID</b></label>
+																<input type="text" id="payment_id" class="form-control" name="payment_id" value="">
+
+
+															</div> -->																												
+															<div class="form-group1">
+																<label for="comment" class="lblTxt"><b>Description</b></label>
+																<textarea class="form-control " name="message" rows="5" id="comment" style="height:125px;"></textarea>
+															</div>
+
+
+													<div class="clearfix">&nbsp;</div>
+													<div id="btnGroup">
+																			<button type="button" class="btn btn-primary btn-md" id="send" onclick="generateTicket();">Submit</button>
+
+																			<button type="reset" class="btn btn-inverse btm-md" onclick="removeText();">Reset</button>
+													</div>
+
+													</form>
+													<div class="modal" id="myModal1" ></div>	
+												</div>	
+													</div>
+												</div>
+
+<!-- Paid Form open -->
+											<div class="row" id="formBoxPaid" style="display:none;">
+												<div class="card-box-content form-compoenent " id="disclaimer_sh" style="padding-bottom:0px !important">
+													<div class="alert alert-info">
+														<p style="color:#000;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. </p>
+													</div>
+												</div>												
+											</div>
+								
+								
+<!-- Paid Form open -->							
+							
+							
+											</div> 
+										</div>
+								  </div>
+							</div>
+							</div>
+				</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+<script data-cfasync='false' type="text/javascript">
+	
+	$('#category').on('change', function() {
+		$('#error').hide();
+		
+		if ( this.value == 'Kit Activation'){
+			$('#invoiceBox').show();
+			$('#txnBox').show();
+		}
+		else{
+			$('#invoiceBox').hide();
+			$('#txnBox').hide();
+		}
+	});
+
+	function removeText(){
+		$('#comment').html('');
+	}		
+	
+	function showForm(){
+	$('#langBox').css('display','block');	
+	$('#content').css('display','none');	
+		
+	//$('#content').css('display','none');		
+	}
+	
+	$("#close").on('click', function() {
+		$('#langBox').css('display','none');	
+		$('#content').css('display','block');	  
+	});
+	$("#close1").on('click', function() {
+		$('#formBox').css('display','none');	
+		$('#langBox').css('display','block');	
+		//$('#content').css('display','block');	  
+	});	
+	function showFormNormal(mode){
+		$('#langBox').css('display','none');	
+		$('#formBox').css('display','block');
+		
+		document.getElementById('mode').value=mode ;
+		
+	}
+	function showFormOther(mode){
+		$('#langBox').css('display','none');	
+	//	$('#formBoxPaid').css('display','block');	
+		document.getElementById('mode').value=mode ;
+		
+	}		
+	function showFormPaid(mode){
+			$.ajax({
+			url:"<?php echo BASEPATH; ?>/Servicerequest/checkpaymentstatus", 
+			type: "POST",    
+			data: 'mode='+mode,
+			success:function(response)
+			{
+				var data=JSON.parse(response);
+				
+				if(data['success']!=''){
+					if(data['data']  == "1" || data['data']  == "3"){
+					$('#formBox').css('display','block');						
+					showFormOther(mode);
+					}else{
+					//	$('#nrmBtn').css('display','none');	
+					//	$('#formBoxPaid').html("Available Monday-Friday , 10AM to 7PM");	
+					}
+				}else{
+					 $.ajax({
+						url:"<?php echo BASEPATH; ?>/Servicerequest/showqr", 
+						type: "POST",    
+						success:function(response)
+						{
+						var data=JSON.parse(response);
+							//alert(data['payment_url']);
+							//alert(data.payment_url);
+							//console.log(data);
+							var innerhtml = '';
+
+							innerhtml += '<div id = "payment_block">' +
+										 '<iframe id="if1" style="visibility:visible;border:0px;min-height:740px;width:100%;" src="' + data.payment_url + '"></iframe>' +
+										 '</div>';		
+
+								$('#PaymentBox').css('display','block');					
+								$('#PaymentBox').append(innerhtml);
+								$('#langBox').css('display','none');
+
+
+						}
+					 });				
+				}			
+			
+			}});	
+
+
+
+		
+	}	
+   function generateTicket()
+   {
+		$('#error').hide();
+		$('#btnGroup').hide();
+		var language=$('#language').val();
+		var category=$('#category').val();
+		var comment=$('#comment').val();
+		var token=$('#token').val();
+		var mob = $('#mobile').val();
+		var email = $('#email').val();
+	   	var txn = $('#txn').val();
+	    var invoice = $('#invoice').val();
+	    var payment_id = $('#payment_id').val();
+	    var mode = $('#mode').val();
+	//	alert(payment_id);
+	   
+	   if(!language || language=='select')
+		{
+			$('#error').empty();
+			$('#error').append('Please Select Language');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			
+			return false;
+		}else if(!category || category=='select')
+		{
+			$('#error').empty();
+			$('#error').append('Service Request Category');
+			$('#error').css("display","block");
+			$('#btnGroup').show();			
+			return false;
+		}
+		else if(!email || email=='')
+		{
+			
+			$('#error').empty();
+			$('#error').append('Please Add Email');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		}
+		else if(!validateEmail(email))
+		{
+			$('#error').empty();
+			$('#error').append('Please Enter valid Email address');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		}
+		
+		else if(!mob || mob=='')
+		{	
+			$('#error').empty();
+			$('#error').append('Please Add Mobile');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		}
+		else if(!phonenumber(mob))
+		{	
+			$('#error').empty();
+			$('#error').append('Please enter valid Mobile Number');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		}
+		
+   
+	   	else if(category=='Kit Activation' && invoice=='')
+		{
+			$('#error').empty();
+			$('#error').append('Invoice ID is required');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		}
+	   	else if(category=='Kit Activation' && txn=='')
+		{
+			$('#error').empty();
+			$('#error').append('Transaction number is required');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+			
+		}	   
+	   	/*else if(mode=='2' && payment_id=='')
+		{
+			$('#error').empty();
+			$('#error').append('Payment/Order ID required');
+			$('#error').css("display","block");
+			return false;
+		}*/			
+		else if(!comment || comment=='')
+		{
+			$('#error').empty();
+			$('#error').append('Please Add Description');
+			$('#error').css("display","block");
+			$('#btnGroup').show();
+			return false;
+		} 		
+		else
+		{
+			 $.ajax({
+					
+				//	url:"<?php echo BASEPATH; ?>/Servicerequest/generateticket", 
+					url:"<?php echo BASEPATH; ?>/Servicerequest/generateticketviaapi", 
+					type: "POST",    
+				    data: 'payment_id='+payment_id+'&type='+mode+'&txn='+txn+'&category='+category+'&comment='+comment+'&token='+token+'&mob='+mob+'&email='+email+'&language='+language+'&invoice='+invoice,
+					
+			  		success:function(response)
+			  		{			  
+						var data=JSON.parse(response);
+						if(data['success']!='')
+						{  //alert(data);
+							$('#cont_hold').empty();
+						//	$('#cont_hold').append('<b>'+data['data']+'</b>');
+							$('#cont_hold').append('<b>Your Ticket Has Been Raised, We\'\ll Get Back To You Soon.</b>');
+							$('#ticket_done').addClass('openpop');
+							$('#ticket_done').addClass('alert');
+							$('#ticket_done').addClass('alert-success');
+							setTimeout(function(){
+							 $('#ticket_done').removeClass('openpop');
+							// window.location.href=("<?php echo BASEPATH; ?>/Servicerequestlist");
+							 window.location.href=("<?php echo BASEPATH; ?>/Servicerequest");
+							},5000);
+							$('#btnGroup').show();							
+							return false;
+						}
+						else
+						{
+							$('#error').empty();
+							$('#error').append(data['data']);
+							$('#error').css("display","block");
+							$('#btnGroup').show();							
+							return false;
+						}
+					//	$('#btnGroup').show();
+
+					}
+				 });
+		}
+   }
+   function closealt()
+   {
+	   $('#ticket_done').removeClass('openpop');
+	  // window.location.href=("<?php echo BASEPATH; ?>/Servicerequestlist");
+	   window.location.href=("<?php echo BASEPATH; ?>/Servicerequest");
+	   
+   }
+   function validateEmail(email) {
+	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	}
+	
+  function phonenumber(mob)
+   {
+       var patte1 = new RegExp(/^\d{10}$/);
+   	   return patte1.test(mob);
+   }
+
+      
+$('.shadow a').click(function() {
+    $('.shadow').removeClass('actives');
+    $(this).parents('.shadow').addClass('actives');
+    
+    $('.panel-title').removeClass('actives'); //just to make a visual sense
+    $(this).parent().addClass('actives'); //just to make a visual sense
+    
+    //alert($(this).parents('.panel-heading').attr('class'));
+ });
+</script>

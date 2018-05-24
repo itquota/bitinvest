@@ -1,0 +1,113 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+		
+		<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad">Contract -SHA ROI (SHA)</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active">Dashboard</a></li>
+                  <li><a href="#">Mining Outputs</a></li>
+  
+            </ol> 
+            
+
+         
+     
+
+
+      
+   
+
+     
+
+        <div class="clearfix">
+       
+        <div class="col-lg-12">
+
+ 
+
+<div class="clearfix">&nbsp;</div>     
+              
+        </div>
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+        <div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">Time</th> 
+                        <th class="sortboth">Net BTC Earned</th>
+                         
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+				  <?php 
+				  if(!$this->result['data'] && isset($this->result['data']))
+				  {
+				  $sn=1;
+					for($k=0;$k<sizeof($this->result['data']);$k++)
+					{					
+				  ?>
+                    <tr>
+                     <td scope="row"><?php echo $sn; ?></td> 
+                     <td><?php 	echo ($result['data']['timestamp']); ?></td>
+                      <td><?php echo number_format((double)$result['data']['total_amt'], 8, '.', '') . " BTC"; ?></td> 
+					</tr>
+				<?php 
+						$sn;
+					}	
+					}
+				  ?>
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+
+    </div>
+
+      
+        
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>

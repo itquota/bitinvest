@@ -1,0 +1,243 @@
+/*For Desktop starts*/
+#tandc p{
+	margin:0px 30px 10px;
+}
+.loginPadd {
+    padding-top: 55px;
+}
+.loreg-page{
+    background: #1d2734 url(../images/bg.jpg) no-repeat center;
+    background-size: cover;
+    height: 100%;
+    position: relative;
+    width: 100%;
+	overflow:auto;
+}	
+.logincontainer {
+    width: 450px;
+    margin: 0 auto;
+}	
+.white_text {
+    color: #fff;
+    font-size: 15px;
+    margin: 12px 0 50px;
+}	
+	
+.form-group{
+	margin-bottom:22px;
+}	
+
+.input-box{
+    width: 100%;
+    height: 48px;
+    border: 1px solid #fff;
+    color: #fff;
+    font-size: 15px;
+    border-radius: 0px;
+    background: transparent;
+    padding: 0 20px;	
+
+	
+}
+    
+.button	{
+	width: 100%;
+    background: #fff;
+    border: none;
+    border-radius: 0px;
+    height: 48px;
+    color: #ff000c;
+    text-transform: uppercase;
+    font-size: 16px;
+    transition: .2s;
+	-webkit-transition: .2s;
+	}	
+.copy {
+    color: #ccc;
+    font-size: 15px;
+	text-align:center;
+	position:relative; 
+	width:100%; 
+	height:70px; 
+	padding:5px; 
+	bottom:0px;
+}
+	
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: #fff;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #fff;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: #fff;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: #fff;
+}
+
+
+
+.cbox {
+	color:#fff;
+	text-align:left;
+	padding-left:30px;
+	position:relative;
+}
+
+.menubg{
+	background-color:#1c2b36;
+}
+
+.submenubg{
+	background-color:#17242d;
+}
+
+.menutext{
+	color:#c1daec;
+}
+.paddTen{
+    padding-top: 10px;
+}
+
+
+.topbar {
+    left: 0px;
+    position: fixed;
+    right: 0;
+    top: 0;
+	z-index: 9999;
+	
+   /* box-shadow: 205px 0.9px 3px rgba(0, 0, 0, 0.15);*/
+}
+
+.topbar .topbar-left {
+    float: left;
+    position: relative;
+    width: 225px;
+    z-index: 1;
+    background: #1c2b36;
+}
+.badge_inpage{
+	width:77px;
+	border-radius:3px;
+	text-transform:none!important;
+}
+.abc {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+
+.bg-popup{
+ 	z-index:999999;
+	background:rgba(32,30,30,0.6);
+}
+.height-popup{
+ 	height: 500px;
+	overflow-y: auto;
+}
+.pop-group{
+	display: inline-block;
+    width: 260px;
+	padding:15px 0px;
+}
+
+.main_div {
+    margin-left: 25%;
+    padding: 10px;
+}
+.sub_div {
+    font-weight: 600;
+    width: 30%;
+    display: inline-block;
+    text-align: left;
+}
+.sub_div2 {
+    width: 42%;
+    display: inline-block;
+    text-align: left;
+}
+.sub_div3 {
+    width: 65%;
+    display: inline-block;
+    text-align: left;
+}
+.openpop{
+	display:block;
+}
+	@media (max-width: 768px){
+	.pop-group{
+    width: 100%;
+	text-transform:none!important;	
+}
+}	
+.no-padding{
+padding:0px!important;	
+}	
+
+.header_bg{
+	
+background:rgba(0,0,0),0.5;	
+
+}		
+.error {
+	color: red !important;
+}
+.image_align{
+	text-align:-webkit-right;
+}
+.dbdthalign{
+	text-align: center;
+	padding: 30px 15px;
+}
+.dbdtdalign{
+	text-align: center;
+	padding: 34px 15px;
+}
+
+.tdalign{
+	padding:17px 15px;
+	text-align:center;
+}
+.thalign{
+	padding:10px 15px;
+	text-align:center;
+}	
+@media (max-width : 480px){
+.image_align{
+	text-align:center;
+	margin-top:20px;
+}	
+
+		
+@media (max-width : 480px){
+.image_align1{
+	text-align:center;
+	margin-top:20px;
+}		
+}
+		
+		
+/*for Desktop Ends*/
+
+@media (max-width: 480px){
+	.logincontainer{
+		width:300px;
+		margin:0 auto;
+	}	
+	
+	.copy {
+		color: #ccc;
+		font-size: 15px;
+		text-align:center;
+		position:relative; 
+		width:100%; 
+		height:70px; 
+		padding:5px; 
+		bottom:0px;
+	}	
+}
+

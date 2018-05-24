@@ -1,0 +1,245 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+	 .form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+.clearfix {
+  margin-top:-7px;
+}
+
+
+	
+ </style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Add Achievers</li>
+  
+            </ol>
+          
+
+          <div class="clearfix">&nbsp;</div>
+
+         
+     
+
+
+      
+   
+
+     
+
+        <div class="clearfix">
+       
+        
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               Add Achievers
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form method="post" action="<?php echo BASEPATH; ?>/Addachiever">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+   <div id="msg1">
+
+<?php
+if(!empty($this->msg) && $this->msg!='')
+{
+?>
+    <label for="" class="lblTxt1" style="color:green;"><?php echo $this->msg; ?></label>
+ 
+  
+ <?php } ?> 
+ </div>
+ <div id="msg2"> 
+ <?php 
+ $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+ 
+ if(!empty($authUserNamespace->errormsg) && $authUserNamespace->errormsg!=""){?>
+ 
+     <label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->errormsg; ?></label>
+ 
+ 
+ <?php $authUserNamespace->errormsg="";}?>
+ </div>
+ 
+	<div class="err1">
+          <label style="color:red" for="" class="lblTxt"> </label>
+         </div>
+   <div class="form-group">
+    <label for="inputHashRate" class="lblTxt">User Name</label>
+
+     <input type="text" class="form-control CommonInputBox" id="username" name="username" placeholder="User Name">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="inputHashRate" class="lblTxt">Pairs</label>
+
+     <input type="text" class="form-control CommonInputBox isnumber" id="pairs" name="pairs" placeholder="Pairs">
+
+
+      
+  </div>
+  
+ <div class="form-group">
+    <label for="" class="lblTxt">Prize</label>
+
+     <input type="text" class="form-control CommonInputBox" id="prize" name="prize" placeholder="Prize">
+
+
+      
+  </div>
+   
+  
+   
+    <div>
+  <button type="button" class="btn btn-default Commonbtn" onclick="return validateForm()">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+	</div>
+  
+</form>
+  </div>
+          </div>
+
+
+       
+
+    
+       <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    <?php   //echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";?>
+				
+
+        
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+    
+    <script>
+    function validateForm(){
+        $('#msg1').empty();
+        $('#msg2').empty();
+    	 var username=$("#username").val();
+         var pairs=$("#pairs").val();
+ 		 var prize=$("#prize").val();
+		 var token=$("#token").val();
+
+		 if((username).trim()==''){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Username.</label>');
+	 			return false;
+	 		}	
+	 		else if((pairs).trim()==''){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Pairs. </label>');
+	 			return false;
+	 		}
+	 	/*	else if(isNaN(pairs)){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Pairs accept numbers only </label>');
+	 			return false;
+	 		}*/
+	 		else if((prize).trim()==''){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Prize.</label>');
+	 			return false;
+	        }
+	 	/*	else if(isNaN(prize)){
+	 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Prize accept numbers only </label>');
+	 			return false;
+	 		}*/
+	 	else  {
+    		var dataString ='username='+username+'&pairs='+pairs+'&prize='+prize+'&token='+token;
+    		$.ajax({
+    			
+    			url:"<?php echo BASEPATH;?>/Addachiever", 
+    			type: "POST",    
+    		    data: dataString,
+    		
+    	  		success:function(response)
+    	  		{
+    				 var data=JSON.parse(response);
+    				 
+    				 if(data['success']!='')
+    				 {
+    					/*$(".err1").css("display","block");
+    						document.getElementById("err1").innerHTML="Data inserted successfully.";
+    						$('.err1').css('color','green');*/
+    				         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+    						//window.location = "<?php echo BASEPATH;?>/Addachiever";
+    				 }
+    				 else
+    				 {
+    					  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+    				 }
+    				
+    				
+    			}
+    				
+    			
+    		 });
+    	
+    		
+
+            
+            //document.form.submit();
+            return true;
+        }
+     }
+    
+    
+    </script>

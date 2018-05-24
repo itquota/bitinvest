@@ -1,0 +1,317 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+
+<script type="text/javascript">
+
+	
+	function exportdata()
+	{	
+	
+			window.location="<?php echo BASEPATH; ?>/taskpl/openprojectexport";
+		
+	}
+</script>
+<style>
+.col-first {
+    width: 315px;
+}
+.greenClass
+{
+	background-repeat:repeat-x;
+	background-color:#8EC555;
+    height: 32px;
+    margin: -8px 0 0;
+    padding: 8px 0 0;
+    background-image:url("<?php echo BASEPATH ;?>/images/common/menubg-grn.gif");
+}
+</style>
+
+</head>
+<body>
+<?php
+
+	 function minutetohr($minute)
+	{
+		$hr=$minute/60;
+		$minute =intval($minute);
+		$hr= intval($minute/60);
+		$hr=round($minute/60,2);
+		$hr1 = explode('.', $hr);
+		$min=$minute%60;
+		if($min < 10)
+		{
+			$hrs=$hr1[0].".0".$min;
+		}
+		else 
+		{
+			$hrs=$hr1[0].".".$min;
+		}
+		
+		return $hrs;
+	}
+
+?>
+<div id="subheader">
+	<form id="searchprojectform" name="searchprojectform" action="" method="post">
+	<div class="wrapper">
+	<div id="holder" style="margin-left: 60px !important;width: 90%;height: 26px;">
+      <br class="clear">
+        <br class="clear">
+  		<div class="flow_right" style="margin:-46px 10px 0 0" onclick="exportdata();"><a href="javascript:void(0);" class="searchbg">Export</a></div>
+  		<div class="flow_right" style="margin: -51px 178px 0 0;"><a href="<?php echo BASEPATH?>/taskpl/reportscreenindex" style="float:left;margin-left:-670px;" class="searchbg">Report-homepage</a></div>
+  		<!--<div class="flow_right" style="margin:0 10px 0 0" onclick="projectdata();"><a href="javascript:void(0);" class="searchbg">Submit</a></div> -->
+  	</div>
+    <br class="clear" />
+    </form>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+        <br class="clear">
+        <br class="clear">
+      	<div style="font-weight:bold;text-align: left;width:841px;">Project Milestone(Open Projects)</div>
+        <div id="tablebg" style="height:40px;width: 90%;">
+        	<div class="col-first" style="width:190px;">Project Name</div>
+        	 <div class="col" style="width:170px;">Milestone</div>
+            <div class="col" style="width:170px;">Target Delivery Date</div>
+            <div class="col" style="width:170px;">Actual Delivery Date</div>
+        </div>
+         <div id="content" style="width: 90%;">
+        <?php if(isset($this->final_result) && sizeof($this->final_result)>0){
+        		foreach($this->final_result as $f){
+        			
+        	$taskobj = new Aranca_Model_DbTable_Task();
+        	if($authUserNamespace->designation_id=="57")
+			{
+						$where= '1=1 && p.practive_leader='.$authUserNamespace->id.' && p.practice_id='.$authUserNamespace->practice_id.'';
+			}
+        	$project_id = $f['project_id'];
+        	$projecttype = $f['type'];
+     
+        	if($projecttype == 'adhoc')
+        	{
+        	$selftask= $taskobj->fetchAll($taskobj->select()
+				    	                               ->setIntegrityCheck(false)
+				    	                               ->from(array('t'=>DATABASE_PREFIX."task"))
+				    	                               ->joinLeft(array('p'=>DATABASE_PREFIX.'adproject'),"t.project_id = p.id",array('p.id as pid','p.title as ptitle'))
+													   ->where("$where && t.project_id='$project_id' && t.project_type='$projecttype' && t.member_id = '$authUserNamespace->id' ")
+													   ->order(array("t.title asc")));
+													   
+				$selftask_array = array();
+				$i=0;
+				if(isset($selftask) && sizeof($selftask)>0)
+				{
+					foreach($selftask as $self)
+					{
+						$selftask_array[$i]['id']=$self->id;
+						$selftask_array[$i]['budgeted_hrs']=$self->budgeted_hrs;
+						$i++;
+					}									   
+				}												   
+													   
+													   
+				$allocatetask = $taskobj->fetchAll($taskobj->select()
+				    	                               ->setIntegrityCheck(false)
+				    	                               ->from(array('t'=>DATABASE_PREFIX."task"))
+				    	                               ->joinLeft(array('p'=>DATABASE_PREFIX.'adproject'),"t.project_id = p.id",array('p.id as pid','p.title as ptitle'))
+													   ->where("$where && t.project_id='$project_id' && t.project_type='$projecttype' && t.allocate_id = '$authUserNamespace->id' ")
+													   ->order(array("t.title asc")));
+													   
+				$allocatetask_array = array();
+				$i=0;
+				if(isset($allocatetask) && sizeof($allocatetask)>0)
+				{
+					foreach($allocatetask as $allocate)
+					{
+						$allocatetask_array[$i]['id']=$allocate->id;
+						$allocatetask_array[$i]['budgeted_hrs']=$allocate->budgeted_hrs;
+						$i++;
+					}											   
+				}
+			$final_result=array();
+			$final_result=array_merge($selftask_array,$allocatetask_array);										   
+        	}
+        	elseif($projecttype == 'contract')
+        	{
+        		$selftask= $taskobj->fetchAll($taskobj->select()
+				    	                               ->setIntegrityCheck(false)
+				    	                               ->from(array('t'=>DATABASE_PREFIX."task"))
+				    	                               ->joinLeft(array('p'=>DATABASE_PREFIX.'annsubproject'),"t.project_id = p.id",array('p.id as pid','p.title as ptitle'))
+													   ->where("$where && t.project_id='$project_id' && project_type='$projecttype' && t.member_id = '$authUserNamespace->id' ")
+													   ->order(array("t.title asc")));
+													   
+													   
+										   
+				$selftask_array = array();
+				$i=0;
+				if(isset($selftask) && sizeof($selftask)>0)
+				{
+					foreach($selftask as $self)
+					{
+						$selftask_array[$i]['id']=$self->id;
+						$selftask_array[$i]['budgeted_hrs']=$self->budgeted_hrs;
+						$i++;
+					}	
+				}								   
+										   
+													   
+				$allocatetask = $taskobj->fetchAll($taskobj->select()
+				    	                               ->setIntegrityCheck(false)
+				    	                               ->from(array('t'=>DATABASE_PREFIX."task"))
+				    	                               ->joinLeft(array('p'=>DATABASE_PREFIX.'annsubproject'),"t.project_id = p.id",array('p.id as pid','p.title as ptitle'))
+													   ->where("$where && t.project_id='$project_id' && t.project_type='$projecttype' && t.allocate_id = '$authUserNamespace->id' ")
+													   ->order(array("t.title asc")));
+													   
+        		$allocatetask_array = array();
+				$i=0;
+				if(isset($allocatetask) && sizeof($allocatetask)>0)
+				{
+					foreach($allocatetask as $allocate)
+					{
+						$allocatetask_array[$i]['id']=$allocate->id;
+						$allocatetask_array[$i]['budgeted_hrs']=$allocate->budgeted_hrs;
+						$i++;
+					}	
+				}								   
+													   
+													   
+			$final_result=array();
+			$final_result=array_merge($selftask_array,$allocatetask_array);										   
+
+        	}
+        	
+      
+			$sum = 0;$sum_budgetedhrs = 0;										   
+			if(isset($final_result) && sizeof($final_result) >0)
+			{
+					foreach($final_result as $tk)
+					{
+						$clientObj= new Aranca_Model_DbTable_Client();
+										$emp_taskObj = new Aranca_Model_DbTable_Emptask();
+										$taskid = $tk['id'];
+										
+											$where1 = "  et.task_id = '$taskid' ";
+										
+						
+															;
+										$listing = $emp_taskObj->fetchAll($emp_taskObj->select()
+																->setIntegrityCheck(false)
+																->from(array('et'=>DATABASE_PREFIX."emp_task"),array('et.id as editid','et.task_id as task_id','et.st_time as st_time','et.end_time as end_time'))
+																->where($where1)
+															);
+										$hours=0;
+										$totalhours=0;	
+										$totalminits=0;
+										$result="0.0";							
+										foreach ($listing as $list)
+										{	if(isset($list->st_time) && $list->st_time!="" && $list->st_time!="0000-00-00 00:00:00" && isset($list->end_time) && $list->end_time!="" && $list->end_time!="0000-00-00 00:00:00")
+										{								
+											$date_a = new DateTime($list['st_time']);
+											$date_b = new DateTime($list['end_time']);						
+											$diff=$date_b->diff($date_a);
+											$hours=$diff->h;
+											$minits=$diff->i;
+											$totalminits+=$minits;
+											$totalhours+=$hours+($diff->d*24);	
+											$total_min = $totalhours*60;
+											$result = $total_min+$totalminits;	
+										}				
+										} 
+					        			
+										
+										$actual_hour =$result;
+
+										$sum = $sum + $actual_hour;
+										$final_task_result_sum['sum']=$sum;
+										
+										
+										$budgetedhrs= $tk['budgeted_hrs'];
+										$sum_budgetedhrs = $sum_budgetedhrs + $budgetedhrs;
+										
+					}
+					
+										
+			}
+        		
+       ?>
+    
+        <div id='rowbg'>
+        	
+        	<div class="col-first" style="width:190px;"><?php echo $f['title'];?></div>
+        	<div class="col" style="width:170px;margin-bottom:10px;">Total Budgeted Hrs: <?php if(isset($sum_budgetedhrs) && $sum_budgetedhrs) {echo $sum_budgetedhrs;}else{echo 0 ;}?></div>
+            <div class="col" style="width:170px;margin-bottom:10px;">Total Actual Hrs: <?php if(isset($sum) && $sum!="") { echo minutetohr($sum) ;}else{echo 0 ;}?></div>
+            <div class="col" style="width:108px;margin-bottom:10px;">&nbsp;</div>
+           
+           
+            <div style="clear:both;height:0;"></div>
+            
+        	<?php if(isset($f['milestone1']) && $f['milestone1'] != ''){?><div class="col-first" style="width:190px;">&nbsp;</div><?php }?>
+        	<?php if(isset($f['milestone1']) && $f['milestone1'] != ''){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php echo $f['milestone1'];?></div><?php }?>
+            <?php if(isset($f['target_date1']) && $f['target_date1'] != '0000-00-00'){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php if(isset($f['target_date1']) && $f['target_date1'] != '0000-00-00') echo date('d/m/Y',strtotime($f['target_date1']));?></div><?php }?>
+            <?php if(isset($f['act_del_date1']) && $f['act_del_date1'] != '0000-00-00'){?><div class="col" style="width:108px; margin-bottom: 10px;"><?php if(isset($f['act_del_date1']) && $f['act_del_date1'] != '0000-00-00') echo date('d/m/Y',strtotime($f['act_del_date1']));?></div><?php }?>
+            <div style="clear:both;height:0;"></div>
+            
+           <?php if(isset($f['milestone2']) && $f['milestone2'] != ''){?><div class="col-first" style="width:190px;">&nbsp;</div><?php }?>
+            <?php if(isset($f['milestone2']) && $f['milestone2'] != ''){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php echo $f['milestone2'];?></div><?php }?>
+            <?php if(isset($f['target_date2']) && $f['target_date2'] != '0000-00-00'){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php if(isset($f['target_date2']) && $f['target_date2'] != '0000-00-00') echo date('d/m/Y',strtotime($f['target_date2']));?></div><?php }?>
+            <?php if(isset($f['act_del_date2']) && $f['act_del_date2'] != '0000-00-00'){?><div class="col" style="width:108px; margin-bottom: 10px;"><?php if(isset($f['act_del_date2']) && $f['act_del_date2'] != '0000-00-00') echo date('d/m/Y',strtotime($f['act_del_date2']));?></div><?php }?>
+            <div style="clear:both;height:0;"></div>
+            
+            <?php if(isset($f['milestone3']) && $f['milestone3'] != ''){?><div class="col-first" style="width:190px;">&nbsp;</div><?php }?>
+            <?php if(isset($f['milestone3']) && $f['milestone3'] != ''){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php echo $f['milestone3'];?></div><?php }?>
+            <?php if(isset($f['target_date3']) && $f['target_date3'] != '0000-00-00'){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php if(isset($f['target_date3']) && $f['target_date3'] != '0000-00-00') echo date('d/m/Y',strtotime($f['target_date3']));?></div><?php }?>
+            <?php if(isset($f['act_del_date3']) && $f['act_del_date3'] != '0000-00-00'){?><div class="col" style="width:108px; margin-bottom: 10px;"><?php if(isset($f['act_del_date3']) && $f['act_del_date3'] != '0000-00-00') echo date('d/m/Y',strtotime($f['act_del_date3']));?></div><?php }?>
+            <div style="clear:both;height:0;"></div>
+            
+            <?php if(isset($f['milestone4']) && $f['milestone4'] != ''){?><div class="col-first" style="width:190px;">&nbsp;</div><?php }?>
+            <?php if(isset($f['milestone4']) && $f['milestone4'] != ''){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php echo $f['milestone4'];?></div><?php }?>
+            <?php if(isset($f['target_date4']) && $f['target_date4'] != '0000-00-00'){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php if(isset($f['target_date4']) && $f['target_date4'] != '0000-00-00') echo date('d/m/Y',strtotime($f['target_date4']));?></div><?php }?>
+            <?php if(isset($f['act_del_date4']) && $f['act_del_date4'] != '0000-00-00'){?><div class="col" style="width:108px; margin-bottom: 10px;"><?php if(isset($f['act_del_date4']) && $f['act_del_date4'] != '0000-00-00') echo date('d/m/Y',strtotime($f['act_del_date4']));?></div><?php }?>
+         	<div style="clear:both;height:0;"></div>
+         	
+         	  <?php if(isset($f['milestone5']) && $f['milestone5'] != ''){?><div class="col-first" style="width:190px;">&nbsp;</div><?php }?>
+            <?php if(isset($f['milestone5']) && $f['milestone5'] != ''){?><div class="col" style="width:170px; margin-bottom: 10px;"><?php echo $f['milestone5'];?></div><?php }?>
+            <?php if(isset($f['target_date5']) && $f['target_date5'] != '0000-00-00'){?><div class="col" style="width:170px;margin-bottom: 10px;"><?php if(isset($f['target_date5']) && $f['target_date5'] != '0000-00-00')  echo date('d/m/Y',strtotime($f['target_date5']));?></div><?php }?>
+            <?php if(isset($f['act_del_date5']) && $f['act_del_date5'] != '0000-00-00'){?><div class="col" style="width:108px; margin-bottom: 10px;"><?php if(isset($f['act_del_date5']) && $f['act_del_date5'] != '0000-00-00') echo date('d/m/Y',strtotime($f['act_del_date5']));?></div><?php }?>
+         	<div style="clear:both;height:0;"></div>
+         	
+         </div>
+         <?php    } 
+            echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+        }else{?>
+         <div class='grid-row2'>
+			<div align='' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>  
+		<?php }?>   
+        </div>
+        
+       
+<!--        <div class="pagination"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>-->
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+</html>

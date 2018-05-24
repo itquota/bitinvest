@@ -1,0 +1,201 @@
+ <?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+ ?>
+<style> 
+	.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 380px;
+}
+
+	 
+ </style>
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Change Permission</li>
+  
+            </ol>
+           
+
+          <div class="clearfix">&nbsp;</div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               Change Permission
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form method="post" action="<?php echo BASEPATH; ?>/Changepermission" id="submit" role="form">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+	<div class="err1">
+          <label style="color:red" for="" class="lblTxt"> </label>
+    </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Seminar Popup</label>
+
+     <input type="text" id="seminar_popup" name="seminar_popup" class="form-control CommonInputBox isnumber" placeholder="Input 0 or 1" value="<?php echo $this->result['seminar'];?>" >
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Show  Offers</label>
+
+     <input type="text"  name="offers_popup" id="offers_popup" class="form-control CommonInputBox isnumber" placeholder="Input 0 or 1" value="<?php echo $this->result['offers'];?>">
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Quarterly Offers</label>
+
+     <input type="text"  name = "quarterly_offers" id="quarterly_offers" class="form-control CommonInputBox isnumber" placeholder="Input 0 or 1" value="<?php echo $this->result['quarterly_offers'];?>">
+
+
+      
+  </div>
+  
+   <div class="form-group">
+    <label for="" class="lblTxt">Admin Silver Kits</label>
+
+     <input type="text" name = "admin_kits" id = "admin_kits" class="form-control CommonInputBox isnumber" placeholder="Input Extra Silver Kits" value="<?php echo $this->result['admin_kits'];?>">
+
+
+      
+  </div>
+  
+  
+    <div>
+  <button type="button" name="submit" id="submit" class="btn btn-default Commonbtn" onclick="changepermission()">SUBMIT</button>
+   <input type="hidden" value="<?php echo $this->result['id'];?>" id="userid" name="userid">
+  
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+	</div>
+  
+</form>
+  </div>
+          </div>
+         
+     
+
+ 
+   
+
+     
+
+       
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+    
+    <script>
+
+
+    function changepermission(){
+        
+	 var seminar_popup=$("#seminar_popup").val();
+   	 var offers_popup=$("#offers_popup").val();
+	 var quarterly_offers=$("#quarterly_offers").val();
+	
+	 var admin_kits=$("#admin_kits").val();
+	 var token=$("#token").val();
+	 var userid=$("#userid").val();
+
+	 /*	if((seminar_popup).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Seminar Popup.</label>');
+			return false;
+		}	
+		if((offers_popup).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Show Offers </label>');
+			return false;
+		}	
+		if((quarterly_offers).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Quarterly Offers</label>');
+			return false;
+		}	
+
+		if((admin_kits).trim()==''){
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Admin Silver Kits</label>');
+			return false;
+		}	
+
+		else{*/
+			
+ 			var dataString ='seminar_popup='+seminar_popup+'&offers_popup='+offers_popup+'&quarterly_offers='+quarterly_offers+'&admin_kits='+admin_kits+'&userid='+userid+'&token='+token;
+			
+ 			 $.ajax({
+  				
+  				url:"<?php echo BASEPATH;?>/Changepermission/updatepermission", 
+  				type: "POST",    
+  			    data: dataString,
+  			
+  		  		success:function(response)
+  		  		{
+  					 var data=JSON.parse(response);
+  					
+  					 if(data['success']!='')
+  					 {
+  						/*$(".err1").css("display","block");
+  							document.getElementById("err1").innerHTML="Data inserted successfully.";
+  							$('.err1').css('color','green');*/
+  					         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+  							//window.location = "<?php echo BASEPATH;?>/Findus";
+  					 }
+  					 else
+  					 {
+  						  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+  					 }
+  					
+  					
+  				}
+  					
+  				
+  			 });
+  	 		
+  	
+			
+		//}
+	 	
+    
+    }
+    </script>
+    
+    

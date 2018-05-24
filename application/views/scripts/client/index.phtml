@@ -1,0 +1,309 @@
+<?php
+ $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); 
+ 	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+ ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+<script type="text/javascript">
+
+
+
+function ed(cmd)
+{
+	//alert(cmd);
+	//jConfirm('Are you sure you want to edit?', 'Edit Box', function(r) {
+	   // if(r){
+	    	window.location.href = '<?php echo BASEPATH;?>/client/addclient/id/'+cmd;
+	   //   return true;
+	  //  }
+	  //  else
+	    	
+	     // return false;
+	  //}
+	//  );
+	
+}
+
+function del(cmd)
+{
+	//alert(cmd);
+
+	jConfirm('Are you sure you want to delete client? ', 'Delete Box', function(r) {
+		
+	   if(r){
+		   
+	    	window.location.href = '<?php echo BASEPATH;?>/client/deleteclient/clientid/'+cmd;
+	     return true;
+	    }
+	    else
+	    	 
+	      return false;
+	  }
+	 );
+	
+}
+
+
+
+function view(cmd,view)
+{
+	    	window.location.href = '<?php echo BASEPATH;?>/client/addclient/id/'+cmd+'/view/'+view;
+}
+
+function ed1(value)
+{
+	window.location.href = '<?php echo BASEPATH;?>/client/index/letter/'+value;
+	
+}
+
+function submitForm(){
+	var getValue = '6';
+	//alert(getValue);
+	var getText = document.getElementById("clientname").value;
+	var getText1 = document.getElementById("clientcategory").value;
+	var getText2 = document.getElementById("clienttype").value;
+	var getText3 = document.getElementById("businessline").value;
+	var getText4 = document.getElementById("country").value;
+	var getText5 = document.getElementById("region").value;
+	var getText6 = document.getElementById("sector").value;
+	var getText7 = document.getElementById("SelectedDate1").value;
+	//alert(getText7);
+	if (getText7 != "")
+	  {
+		var positionval  = getText7.split('/');
+		var date = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+	  }
+	else
+	{
+		var date= "";
+	}
+	
+	var getText8 = document.getElementById("SelectedDate2").value;
+	if (getText8 != "")
+	  {
+		var positionval1  = getText8.split('/');
+		var date1 = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+	  }
+	else
+	{
+		var date1= "";
+	}
+	
+	window.location="<?php echo BASEPATH; ?>/client/index/searchtext/"+getText+"/searchtext1/"+getText1+"/searchtext2/"+getText2+"/searchtext3/"+getText3+"/searchtext4/"+getText4+"/searchtext5/"+getText5+"/searchtext6/"+getText6+"/searchtext7/"+date+"/searchtext8/"+date1+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+	
+}
+
+function formReset()
+{
+	$('#clientname').val('');
+	$('#clientcategory').val('');
+	$('#clienttype').val('');
+	$('#businessline').val('');
+	$('#country').val('');
+	$('#region').val('');
+	$('#sector').val('');
+	$('#SelectedDate1').val('');
+	$('#SelectedDate2').val('');
+
+	window.location = '<?php echo BASEPATH; ?>/client/index';
+	
+}
+</script>
+</head>
+<body>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div id="subheader">
+	<div class="wrapper">
+	    <div id="holder">
+        	<label style="margin:0 0 0 8px;">Client Name</label>
+            <input name="clientname" id="clientname" type="text" class="field" style="width:352px;" value="<?php if(isset($this->clientname) && $this->clientname!="") echo $this->clientname; ?>"/>
+        </div>
+  		<div id="holder" style="margin:0;">
+        	<label>Client Category</label>
+            <select name="clientcategory" id="clientcategory" class="field">
+             <option value="">Select</option>
+	       	<?php	foreach ($this->userdata1 as $userauth1){?>
+			<option value="<?php  if(isset($userauth1->id) && $userauth1->id !=""){ echo $userauth1->id;}?>" <?php if($this->clientcategory==$userauth1->id) echo "selected";?>><?php echo $userauth1->value;?></option>
+			<?php } ?> 	
+            </select>
+        </div>
+        <div id="holder" style="margin:0;">
+        	<label>Client Type</label>
+            <select name="clienttype" id="clienttype" class="field">
+            <option value="">Select</option>
+	       	<?php	foreach ($this->userdata as $userauth){?>
+			<option  <?php if(isset($this->clienttype)) {if($this->clienttype == $userauth->id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth->id) && $userauth->id !=""){ echo $userauth->id;}?>"><?php echo $userauth->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <br class="clear">
+        <div id="holder">
+        	<label>Business Line</label>
+            <select name="businessline" id="businessline" class="field">
+            <option value="">Select</option>
+            <?php	foreach ($this->userdata4 as $userauth4){?>
+			<option  <?php if(isset($this->businessline)) {if( $this->businessline== $userauth4->id ) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth4->id) && $userauth4->id !=""){ echo $userauth4->id;}?>"><?php echo $userauth4->value;?></option>
+			<?php } ?>
+               
+            </select>
+        </div>
+        <div id="holder" style="float:right;margin-right:11px;">
+        	<label>Date</label>
+            <input name="project" type="text" value="<?php if(isset($this->startdate)) echo $this->startdate; ?>" class="field calendar" value="" id="SelectedDate1" readonly onClick="GetDate(this);" style="width:164px;"/>
+            <input name="project" type="text" value="<?php if(isset($this->enddate)) echo $this->enddate; ?>" class="field calendar" value="" id="SelectedDate2" readonly onClick="GetDate(this);" style="width:164px;"/>
+      	</div>
+        <br class="clear">
+        
+        <div id="holder">
+        	<label style="margin:0 0 0 8px;">Country</label>
+            <select name="country" id="country" class="field">
+             <option value="">Select</option>
+	           	 <?php	foreach ($this->userdata5 as $userauth5){?>
+				<option <?php if(isset($this->country)) {if($userauth5->id == $this->country) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth5->id) && $userauth5->id !=""){ echo $userauth5->id;}?>"><?php echo $userauth5->value;?></option>
+				<?php } ?>
+            </select>
+        </div>
+        <div id="holder">
+        	<label>Region</label>
+            <select name="region" id="region" class="field">
+            <option value="">Select</option>
+            <?php	foreach ($this->userdata2 as $userauth2){?>
+			<option  <?php if(isset($this->region)) {if($userauth2->id == $this->region) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth2->id) && $userauth2->id !=""){ echo $userauth2->id;}?>"><?php echo $userauth2->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <div id="holder">
+        	<label>Sector</label>
+            <select name="sector" id="sector" class="field">
+            <option value="">Select</option>
+            <?php	foreach ($this->userdata3 as $userauth3){?>
+			<option <?php if(isset($this->sector)) {if($userauth3->id == $this->sector) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth3->id) && $userauth3->id !=""){ echo $userauth3->id;}?>"><?php echo $userauth3->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        <br class="clear">
+  		<div class="flow_right"><a href="#" class="searchbg" onclick="javascript:submitForm();">Search</a></div>
+  		<div class="flow_right"><a href="#" class="searchbg" style="margin-right:20px;" onclick="javascript:formReset();">Reset</a></div>
+  	</div>
+    <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    <br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+        <div class="flow_right"><a href="<?php echo BASEPATH; ?>/client/addclient" class="createbg">Create Client</a></div>
+        <div class="pagination"><strong>
+        	<a id="A" name="A" href="#" onclick="ed1(this.id);">A</a> | <a id="B" name="B" href="#" onclick="ed1(this.id);">B</a> | <a id="C" name="C" href="#" onclick="ed1(this.id);">C</a> | <a id="D" name="D" href="#" onclick="ed1(this.id);">D</a> | <a id="E" name="E" href="#" onclick="ed1(this.id);">E</a> | 
+            <a id="F" name="F" href="#" onclick="ed1(this.id);">F</a> | <a id="G" name="G" href="#" onclick="ed1(this.id);">G</a> | <a id="H" name="H" href="#" onclick="ed1(this.id);">H</a> | <a id="I" name="I" href="#" onclick="ed1(this.id);">I</a> | <a id="J" name="J" href="#" onclick="ed1(this.id);">J</a> | 
+            <a id="K" name="K" href="#" onclick="ed1(this.id);">K</a> | <a id="L" name="L" href="#" onclick="ed1(this.id);">L</a> | <a id="M" name="M" href="#" onclick="ed1(this.id);">M</a> | <a id="N" name="N" href="#" onclick="ed1(this.id);">N</a> | <a id="O" name="O" href="#" onclick="ed1(this.id);">O</a> | 
+            <a id="P" name="P" href="#" onclick="ed1(this.id);">P</a> | <a id="Q" name="Q" href="#" onclick="ed1(this.id);">Q</a> | <a id="R" name="R" href="#" onclick="ed1(this.id);">R</a> | <a id="S" name="S" href="#" onclick="ed1(this.id);">S</a> | <a id="T" name="T" href="#" onclick="ed1(this.id);">T</a> | 
+            <a id="U" name="U" href="#" onclick="ed1(this.id);">U</a> | <a id="V" name="V" href="#" onclick="ed1(this.id);">V</a> | <a id="W" name="W" href="#" onclick="ed1(this.id);">W</a> | <a id="X" name="X" href="#" onclick="ed1(this.id);">X</a> | <a id="Y" name="Y" href="#" onclick="ed1(this.id);">Y</a> | <a id="Z" name="Z" href="#" onclick="ed1(this.id);">Z</a></strong>
+        </div>
+        
+        <br class="clear">
+        <div id="tablebg">
+        	<div class="col-first" style="width:390px;text-align:left;">Client Name</div>
+            <div class="col">&nbsp;</div>
+            <div class="col _m" style="margin-right:-10px;">Primary Contact</div>
+            <div class="col _l" style="margin-left:34px;">Secondary Contact</div>
+            <div class="col_l" style="float:right;margin:4px 10px 0 0;width:160px;"><span style="float:left;width:auto;line-height:14px;">Projects</span><em style="float: left; line-height: 12px; margin: 2px 0px 0px 5px;">(Open / Completed)</em></div>
+        </div>
+        <?php if(isset($this->employees) && sizeof($this->employees)>0){?>
+         <?php	foreach ($this->employees as $employees){?>
+       <div id="rowbg">
+   	  	  <div class="col-first" style="width:355px;text-align:left;">
+   	  	  <a onclick="view(<?php echo $employees->id;?>,'view')" href="javascript:void(0)"><?php  if(isset($employees->name) && $employees->name !=""){ echo $employees->name;}?></a> (<?php  if(isset($employees->client_id) && $employees->client_id !=""){ echo $employees->client_id;}?>)<br>
+  	      <?php  if(isset($employees->value1) && $employees->value1 !=""){ echo $employees->value1;}?> | <?php  if(isset($employees->website) && $employees->website !=""){ echo $employees->website;}?></div>
+          <div class="col" style="width:100px;"><a href="#"><img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" onclick="ed(<?php echo $employees->id;?>)"/></a> &nbsp; <a href="#"><img src="<?php echo BASEPATH;?>/images/common/view.gif"  onclick="view(<?php echo $employees->id;?>,'view')"border="0" /><img style="margin-left:10px;" src="<?php echo BASEPATH;?>/images/cross.png"  border="0" onclick="del(<?php echo $employees->id;?>)"></a></div>
+            <div class="col _m" style="text-align:left;width: 120px;"><?php  if(isset($employees->project_fn) && $employees->project_fn !=""){ echo $employees->project_fn;}?><br />+91 <?php  if(isset($employees->project_tel) && $employees->project_tel !=""){ echo $employees->project_tel;}?></div>
+            <div class="col _m" style="text-align:left;width: 120px;"><?php  if(isset($employees->billing_fn) && $employees->billing_fn !=""){ echo $employees->billing_fn;}?><br />+91 <?php  if(isset($employees->billing_tel) && $employees->billing_tel !=""){ echo $employees->billing_tel;}?></div>
+            <div class="col _l"  style="float:right;margin:0 20px 0 0;width:115px;"><a href="javascript:void(0)"  onclick="view(<?php echo $employees->id;?>,'view')" class="viewbg icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>5 / 10</div>
+        </div> <?php }
+        
+      
+        echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+        }
+        else{
+		?>
+		
+		<div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+		
+		<?php } ?>
+       <!--   <div id="rowbg">
+   	  	  <div class="col-first" style="width:410px;text-align:left;"><a href="#">ABC Infotech Pvt. Ltd.</a> (4596320018)<br>
+  	      India | www.protoinfotech.com</div>
+          <div class="col"><a href="#"><img src="/images/common/edit.gif" border="0" /></a> &nbsp; <a href="#"><img src="/images/common/view.gif" border="0" /></a></div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _l" style="float:right;"><a href="#" class="viewbg">View</a>5 / 10</div>
+        </div>
+        
+        <div id="rowbg">
+   	  	  <div class="col-first" style="width:410px;"><a href="#">Presense Private Limited</a> (4596320018)<br>
+  	      India | www.protoinfotech.com</div>
+          <div class="col"><a href="#"><img src="/images/common/edit.gif" border="0" /></a> &nbsp; <a href="#"><img src="/images/common/view.gif" border="0" /></a></div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _l" style="float:right;"><a href="#" class="viewbg">View</a>5 / 10</div>
+        </div>
+        
+        <div id="rowbg">
+   	  	  <div class="col-first" style="width:410px;"><a href="#">Pronto Infotech</a> (4596320018)<br>
+  	      India | www.protoinfotech.com</div>
+          <div class="col"><a href="#"><img src="images/common/edit.gif" border="0" /></a> &nbsp; <a href="#"><img src="images/common/view.gif" border="0" /></a></div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _l" style="float:right;"><a href="#" class="viewbg">View</a>5 / 10</div>
+        </div>
+        
+        <div id="rowbg">
+   	  	  <div class="col-first" style="width:410px;"><a href="#">ABC Infotech Pvt. Ltd.</a> (4596320018)<br>
+  	      India | www.protoinfotech.com</div>
+          <div class="col"><a href="#"><img src="images/common/edit.gif" border="0" /></a> &nbsp; <a href="#"><img src="images/common/view.gif" border="0" /></a></div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _l" style="float:right;"><a href="#" class="viewbg">View</a>5 / 10</div>
+        </div>
+        
+        <div id="rowbg">
+   	  	  <div class="col-first" style="width:410px;"><a href="#">Presense Private Limited</a> (4596320018)<br>
+  	      India | www.protoinfotech.com</div>
+          <div class="col"><a href="#"><img src="images/common/edit.gif" border="0" /></a> &nbsp; <a href="#"><img src="images/common/view.gif" border="0" /></a></div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _m">Abhijeet<br />+91 9988678021</div>
+            <div class="col _l" style="float:right;"><a href="#" class="viewbg">View</a>5 / 10</div>
+        </div>-->
+        
+        <!-- <div class="pagination" style="margin-left:-828px;"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+<script>
+<?php 
+	      if(isset($authUserNamespace->status_message)){
+	      	
+	?>
+	   jAlert("<?php echo $authUserNamespace->status_message; ?>");
+	   //alert('hiee');
+	      
+	<?php
+	  unset($authUserNamespace->status_message);
+	}
+	?>
+</script>
+</html>

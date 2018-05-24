@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<?php $authUserNamespace = new Zend_Session_Namespace('Aranca_Auth'); ?>
+
+<html>
+
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<?php
+		
+		echo $this->headTitle("Aranca Project Management System - Admin Panel");
+		
+		echo $this->headLink()->appendStylesheet(BASEPATH.'/css/user.css')
+							  ->appendStylesheet(BASEPATH.'/css/jquery-ui-1.8.2.custom.css')
+							  ->appendStylesheet(BASEPATH.'/css/jquery.ui.datepicker.css')
+							  ->appendStylesheet(BASEPATH.'/css/jquery.ui.core.css')
+							  ->appendStylesheet(BASEPATH.'/css/jquery.alerts.css')
+							  ->appendStylesheet(BASEPATH.'/css/style.css');
+		
+		echo $this->headScript()->appendFile(BASEPATH.'/js/crud.js')
+								->appendFile(BASEPATH.'/js/jquery-1.4.2.min.js')
+								->appendFile(BASEPATH.'/js/jquery.ui.core.js')
+								->appendFile(BASEPATH.'/js/jquery.ui.datepicker.js')
+								->appendFile(BASEPATH.'/js/jquery.alerts.js');
+	?>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-93894880-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+
+<body>
+
+	<div id="headerContent">
+		Aranca Project Management System - Admin Panel
+	</div>
+	
+	<div id="bodyWrapper">
+		
+		<div id="leftContent">
+			
+			<div id="menuWrapper">
+				
+				<div class="menuContainer">
+					
+					<div class="menuHeader">Admin Menu</div>
+					
+					<div class="menuList">
+						<div class="menuItem">
+							<div class="menuItemContainer" onclick="window.location = '<?php echo BASEPATH; ?>/admin/home'">Home</div>
+						</div>
+						<div class="menuItem">
+							<div class="menuItemContainer" onclick="window.location = '<?php echo BASEPATH; ?>/employee'">Manage Employee</div>
+						</div>
+						
+					</div>
+					
+				</div>
+				
+				<br/>
+				
+				<!-- <div class="menuContainer">
+					
+					<div class="menuHeader">Import </div>
+					
+					<div class="menuList">
+						<div class="menuItem">
+							<div class="menuItemContainer" onclick="window.location = '<?php echo BASEPATH; ?>/admin/import'">Merchants</div>
+						</div>
+						<div class="menuItem">
+							<div class="menuItemContainer" onclick="window.location = '<?php echo BASEPATH; ?>/admin/importspecialoffer'">Special Offers</div>
+						</div>
+						<div class="menuItem">
+							<div class="menuItemContainer" onclick="window.location = '<?php echo BASEPATH; ?>/admin/locationimport'">Locations</div>
+						</div>
+					</div>
+				</div> 
+				
+				<br/>-->
+				
+				<!-- <div class="menuContainer">
+					
+					<div class="menuHeader">Manage </div>
+					
+					<div class="menuList">
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/page'">
+							<div class="menuItemContainer" >Page Content</div>
+						</div>
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/overview'">
+							<div class="menuItemContainer" >Overview Content</div>
+						</div>
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/imageupload/landingpageimages'">
+							<div class="menuItemContainer" >Landing Page Images</div>
+						</div>
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/imageupload/homepageimages'">
+							<div class="menuItemContainer" >Home Slider Images</div>
+						</div>
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/cardtype'">
+							<div class="menuItemContainer" >Overview Banner</div>
+						</div>
+					</div>
+				</div> -->
+				
+				<br/>
+				
+				<div class="menuContainer">
+					
+					<div class="menuHeader">Manage Profile</div>
+					
+					<div class="menuList">
+						<div class="menuItem" onClick="window.location = '<?php echo BASEPATH; ?>/admin/changepassword'">
+							<div class="menuItemContainer" >Change Password</div>
+						</div>
+						<div class="menuItem" onclick="window.location = '<?php echo BASEPATH; ?>/admin/logout'">
+							<div class="menuItemContainer">Log Out</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div id="rightContentWrapper">
+			
+			<div id="rightContent">
+				
+				<div id="rightContentHeader">
+					<div id="rightContentHeaderText">
+						<?php echo $authUserNamespace->admin_page_title; ?>
+					</div>
+				</div>
+				
+				<br/><br/>
+				
+				<div id="rightContentBody">
+					<?php echo $this->layout()->content; ?>
+				</div>
+			</div>
+			<div style="margin-bottom:20px;">&nbsp;</div>
+		</div>
+		
+		<div class="clearfix"></div>
+		
+	</div>
+	
+	<div id="footerContentWrapper">
+		<div id="footerLeftContent">
+			&nbsp;Copyright &copy; Aranca (Mumbai) Pvt. Ltd.
+		</div>
+		<div id="footerRightContent">
+			Powered by <a href="http://www.aranca.com" target="_blank">Aranca</a>&nbsp;&nbsp;
+		</div>
+	</div>
+	<div class="clearfix">&nbsp;</div>
+</body>
+
+</html>

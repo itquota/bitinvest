@@ -1,0 +1,220 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+  <style>
+
+.clearfix {
+  margin-top:-7px;
+}
+</style>
+ 
+ 
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Paid After Timeout</li>
+  
+            </ol>
+           
+          <div class="clearfix">&nbsp;</div>
+
+         
+     
+
+
+      
+   
+
+     
+
+        <div class="clearfix">
+       
+        <div class="col-lg-12">
+
+ 
+
+<div class="clearfix">&nbsp;</div>
+
+
+              
+
+             
+              
+        </div>
+
+      
+	<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+		{
+		?>
+	<div class="form-group">
+    <label for="" class="lblTxt" style="color:green; margin-left:16px;"><?php echo $authUserNamespace->msg; ?></label>
+    </div>
+     <?php $authUserNamespace->msg=""; 
+	 
+	 }
+	 
+     if(!empty($authUserNamespace->message) && $authUserNamespace->message!=""){
+     ?> 
+     <div class="form-group">
+    <label for="" class="lblTxt" style="color:red; margin-left:16px;"><?php echo $authUserNamespace->message; ?></label>
+    </div>
+      <?php  $authUserNamespace->message=""; }?> 
+   
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+   
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                    <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">SR.<br>NO </th>
+                        <th class="sortboth">USERNAME</th> 
+                        <th class="sortboth">KIT INVOICE</th>
+                         <th class="sortboth">KITS PRICE</th> 
+                         <th class="sortboth">AMOUNT PAID</th> 
+                          <th class="sortboth">STATUS</th>
+                          <th class="sortboth">CREATED</th>
+                           <th class="sortboth">ACTION</th> 
+                           
+                     </tr> 
+                 </thead>
+
+                  <tbody> 
+                        <?php 
+        			$j=1;
+     		foreach($this->result as $result)
+       					{ ?>
+                   <tr>
+                  <td scope="row"><?php echo $j;?></td> 
+                     <td><?php echo $result['username']; ?></td>
+                      <td><?php echo $result['invoice_id']; ?></td> 
+                      <td><?php echo $result['contract_rate']; ?></td>
+                      <td><?php echo $result['paid_amount']; ?></td> 
+                      <td><?php echo $result['status']; ?></td> 
+                      <td><?php echo $result['created_on']; ?></td> 
+                      <td><form method="post" action="<?php echo BASEPATH; ?>/Paymentdetail" name="form" id="form<?php echo $result['invoice_id'];?>">
+			
+			
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+			
+						<input type="hidden" value="<?php echo $result['invoice_id'];?>" id="<?php echo $result['invoice_id'];?>" name="invoiceid">
+			
+						<a href="#" onclick="changepaid('<?php echo $result['invoice_id']; ?>')">Mark as Paid</a>
+			
+					</form>
+			
+					</td>
+                      
+                      
+                      
+                   <!--  <td><a onclick="changepaid('<?php echo $result['invoice_id']; ?>','<?php  echo $authUserNamespace->token;?>');">Mark as Paid</a></td>->
+                       
+                    <!--  <td>
+                        <a class="btn btn-default Commonbtn text-uppercase" href="#" role="button">CHECK MINING OUTPUTS</a>
+
+                      </td> --> 
+
+                     
+                  </tr> 
+
+               
+
+                
+
+                  
+
+               
+             
+             <?php $j++;}  ?>  
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+
+    </div>
+
+  
+	 
+       <!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+       
+
+   
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+     <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">   
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+    
+    <script>
+    function changepaid(invoiceid)
+    {
+    	// var token=$("#token").val();
+        // var invoiceid=invoiceid;
+        
+         var r = confirm("Are you sure?");
+         if (r == true) {
+        	 document.getElementById('form'+invoiceid).submit();
+ 			//window.location="<?php echo BASEPATH;?>/Paymentdetail?invoiceid="+invoiceid+"&token="+token;
+ 			
+ 		}
+ 
+     
+    }
+   </script>
+    

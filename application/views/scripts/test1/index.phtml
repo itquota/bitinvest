@@ -1,0 +1,180 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+ 
+
+			<script>
+		$(document).ready(function() {
+		    $('#example').DataTable();
+		} );
+		</script>
+    <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad">Kit Detail</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+                  <li><a href="#">Kit Details</a></li>
+  
+            </ol>
+
+
+          <div class="clearfix">&nbsp;</div>
+
+         
+          
+        <div class="col-lg-12" align="right">
+
+
+
+           <a class="btn btn-default Commonbtn text-uppercase" href="<?php echo BASEPATH; ?>/Kitadd" role="button">Add kit</a>
+
+        </div>
+
+      
+   
+
+     
+
+        <div class="clearfix">
+       
+        <div class="col-lg-12">
+
+ 
+
+<div class="clearfix">&nbsp;</div>
+              
+
+             
+              
+        </div>
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                  <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr. No </th>
+                        <th class="sortboth">Invoice Id</th> 
+                        <th class="sortboth">Kit No.</th>
+                         <th class="sortboth">Kit Type</th> 
+                         <th class="sortboth">Price</th> 
+                          <th class="sortboth">Created Date</th>
+                          <th class="sortboth">Status</th>
+                           <th class="sortboth">Comment</th> 
+                            <th class="sortboth">&nbsp;</th> 
+                     </tr> 
+                 </thead>
+                  <tbody> <?php  
+                  $sn=1;
+                  foreach($this->result['data'] as $data)
+                  {
+                  if($data['status']!=='Deleted'){
+						$invoiceid = isset($data['invoice_id']) ? $data['invoice_id'] : '';
+						$kitNo = isset($data['kit_number']) ? $data['kit_number'] : '';
+						$date = isset($data['created_on']) ? $data['created_on'] : '';
+						$status = isset($data['status']) ? $data['status'] : '';
+						$kit_type = isset($data['kit_type']) ? $data['kit_type'] : '';
+						$kit_price = isset($data['kit_price']) ? $data['kit_price'] : '';
+                  }
+											 ?>
+                    <tr>
+                    <td scope="row"><?php echo $sn; ?></td> 
+                     <td><?php echo $invoiceid; ?></td> 
+                     <td><?php echo $kitNo; ?></td>
+                      <td><?php echo $kit_type; ?></td> 
+                      <td><?php echo number_format($kit_price,1); ?></td>                  
+                      <td><?php echo date("jS M, Y H:m", strtotime($date)); ?></td> 
+                      <td><?php echo $status;?></td> 
+                      <td><?php 
+										if($status =="Inactive"){
+												echo $data["confirmations"]." payment confirmations received";
+												if($data["confirmations"]>0 && $data["amtPaid"]!=$data["contract_rate"])
+													echo "<br/><ul style='color: red'><li>You have not paid the requested amount (".$data["contract_rate"]." BTC) for this kit.</li><li>You paid ".$data["amtPaid"]." BTC.</li><li>Please pay the balance amount to <b>".$this->result['my_bitcoin_address']."</b> and contact us to resolve this issue. Please make sure you enter the Transaction ID of the balance payment and this Invoice ID in your correspondance to us.</li>.</ul>";
+										?>
+		
+											
+		
+										<?php } else {
+											echo "Kit purchase completed";	
+										}?></td> 
+                      <td>
+                        
+                      	<?php 
+									if($status =="Inactive" || $status =="Pending"){ 
+										echo '<a href="'.BASEPATH.'/Makekitpayment?invoice_id='.$invoiceid.'" data-toggle="tooltip" title="Make Payment" data-placement="bottom"><img src="'.BASEPATH.'/images/makepayment.png" alt=""></a>&nbsp;<a href="'. BASEPATH .'/Invoicestatus?invoice-id='.$invoiceid.'" data-toggle="tooltip" title="Activate Your Kit" data-placement="bottom"><img src="'.BASEPATH.'/images/active.png" alt=""></a>';
+										
+										
+											} ?>
+                      </td>
+                  </tr> 
+
+				<?php $sn++; } ?>
+
+
+                
+
+                  
+
+               
+             
+             
+             
+                 </tbody>
+                  </table> 
+                  <div class="clearfix">&nbsp;</div>
+              </div>
+
+        </div>
+
+    </div>
+
+       
+
+    
+
+        
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        
+           <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+        
+        

@@ -1,0 +1,129 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.card-box-content {
+    padding:0px 20px;
+}	
+	
+</style>
+  <div class="content">
+			<div class="page-title-group">
+				<h4 class="page-title">Refunds</h4>
+				<h5 class="text-muted page-title-alt">Refund Status</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+      
+			<?php if(isset($authUserNamespace->msg) && $authUserNamespace->msg!='') { ?>
+			<p id="error" style="color: green; font-weight: bolder;margin-left:5%;"><?php echo $authUserNamespace->msg; ?></p>
+			<?php $authUserNamespace->msg='';
+			 } ?>	
+					
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Refund Status</b></h4>
+						</div>
+						<div class="card-box-content">
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>					
+													 <th>S.No.</th>
+													 <th>Kit Number</th>
+													 <th>TX ID</th>
+													 <th>Reason</th>
+													 <th>Wallet</th>
+													 <th>Status</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+										<?php
+										if(isset($this->allRequests) && sizeof($this->allRequests) > 0){ 
+										$sn=1;
+										foreach($this->allRequests as $allRequest)
+										{
+										?>
+										  <tr>
+											<td scope="row"><?php echo $sn; ?></td>
+											<td style="text-align:left;"><?php echo $allRequest['kit_number']; ?></td>
+
+											<td style="text-align:left;"><?php echo $allRequest['txid']; ?></td>
+											<td style="text-align:left;"><?php echo $allRequest['reason_to_refund']; ?></td>
+											<td style="text-align:left;"><?php echo $allRequest['wallet_addr']; ?></td>
+										   <td>
+										   <?php
+												if($allRequest['status']==1){
+													 echo '<span class="badge " style="background-color:#39b54a;">Refunded</span>';
+												}else if($allRequest['status']==2){ 
+													 echo '<span class="badge " style="background-color:#ed7161;">Rejected</span>';
+												}else if($allRequest['status']==3){ 
+													 echo '<span class="badge " style="background-color:#ed7161;">Refund in Progress</span>';
+												}else{
+													 echo '<span class="badge " style="background-color:#ffbd4a;"> Pending </span>'; 
+												}
+											?>
+											</td>
+										  </tr>
+										  <?php $sn++; }
+											}				 
+											?>
+									</tbody>
+							  </table>
+								<br/>
+							</div>							
+						</div>
+					</div>
+				</div>
+			</div>				
+
+          </div>					
+				</div>
+	  		</div>	
+<script>
+function openRefund(invoice_id)
+{
+	$('#invoiceId').val();
+	$('#invoiceId').val(invoice_id);
+	$('#changestatus').addClass('openpop');
+}
+function closeRefund()
+{
+	$('.modal').removeClass('openpop');
+}
+function submitStatus()
+{
+	var wadd = $('#wadd').val();
+	var comment = $('#comment').val();
+	var invoiceId = $('#invoiceId').val();
+
+	if(!wadd || wadd=='')
+	{
+		$('#refund_err').empty();
+		$('#refund_err').append('Please enter Wallet Address');
+	}
+	else
+	{
+		 $.ajax({			
+				url:"<?php echo BASEPATH; ?>/Refundcontracts/refund", 
+				type: "POST",    
+			    data: 'wadd='+wadd+'&comment='+comment+'&invoiceId='+invoiceId,	
+			    async:false,		
+		  		success:function(response)
+		  		{
+					if(response!='failed')
+					{
+						$("#main"+ticket).text(status);
+						$("#child"+ticket).text('');
+						
+					}
+		  		}
+		 });
+	}
+}
+</script>

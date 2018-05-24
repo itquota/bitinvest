@@ -1,0 +1,101 @@
+<html>
+<head>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script type="text/javascript">
+
+function setvalue()
+{
+	var filename = document.getElementById('filepc').value.replace(/^.*\\/, "");
+	document.getElementById('fakefilepc').value = filename;
+}
+function save1()
+{		
+	$('input[name="filepc"]').each(function() {		
+	var	fileDocVar= this.value;
+		var afterDot = fileDocVar.split(".");
+		var ext = afterDot[afterDot.length-1];
+		afterDot = ext.toLowerCase();
+			
+		if(fileDocVar == "" ){jAlert('Please upload the document.');return false;}
+		else if(afterDot == 'pdf' || afterDot == 'xlsx' || afterDot == 'xls' || afterDot == 'jpg' || afterDot == 'jpeg' || afterDot == 'png' || afterDot == 'gif' || afterDot == 'doc' || afterDot == 'txt' || afterDot == 'ppt' || afterDot == 'pptx' || afterDot == 'docx' || afterDot == 'ppt' || afterDot == 'pptx')
+		{	
+			<?php if(isset($this->projectid) && $this->projectid!="") {?>
+			saveForm('<?php echo BASEPATH;?>/project/uploadfile/projectid/<?php echo $this->projectid; ?>','uploadfileform','uploadfileform');
+			<?php } else { ?> 
+			saveForm('<?php echo BASEPATH;?>/project/uploadfile','uploadfileform','uploadfileform');
+			 <?php }?>
+		}
+		else
+			
+		{jAlert('Please upload the valid document.');flag=1;return false;
+			
+		}
+			
+		
+	});
+
+
+	
+
+}
+		</script>
+
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<style>
+.popMain
+{
+    width: 532px;
+    height: 135px;
+}
+.message
+{
+	text-align:left;
+}
+.small
+{
+	margin-top:0px;float:left;
+}
+.popMain
+{
+	padding: 2% 25px;
+}
+</style>
+</head>
+<body>
+<form action="" name="uploadfileform" id="uploadfileform" method="post" enctype="multipart/form-data" style="float:left;margin:0;">
+    		<div class="popMain">
+	            <h5>Upload Document</h5>
+	            <div class="gap10">&nbsp;</div>
+	            <div id="divinputfile"  style="float: left;">
+	            	<input name="upload" id="upload" type="hidden" value="upload"/>
+	            	<div id="fakeinputfile">
+            			<input name="fakefilepc" type="text" id="fakefilepc"/>
+            		</div>
+            		<div id="brwsr">
+            			<input name="filepc" type="file" id="filepc" errortag="File"  onchange="setvalue();"/>
+<!--            			<input name="filepc" type="file" id="filepc" errortag="File"  onchange="document.getElementById('fakefilepc').value = this.value;"/>-->
+            		</div>	
+	            </div> 
+	            <div class="clearBoth">&nbsp;</div>
+            	<span class="message" id="filepc_error" style="float:left;">&nbsp;</span>
+            	<input type="hidden" id="projectid" name="projectid" value="<?php if(isset($this->projectid) && $this->projectid!="" ) echo $this->projectid ?>" />
+            	<p class="small" style="float:left;margin:0px;"><em style="color:#c72535">*</em> The selected file should be in _ format</p>
+            	<div class="clearBoth">&nbsp;</div> 
+            	<p style="float:left;margin:0px;"><input name="Submit" type="button" value="Submit" onclick="save1();" class="searchbg"/></p>
+            </div>
+</form>            
+		
+		<!-- <form action="" name="uploadfileform" id="uploadfileform" method="post" enctype="multipart/form-data">
+		 <input name="filepc" type="file"  id="filepc" value="" errortag="File" />
+		 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="filepc_error">&nbsp;</span>
+		 <p><input name="Submit" type="button" value="Submit" onclick="save1();" class="searchbg"/></p>
+		 </form> -->
+		
+</body>
+</html> 

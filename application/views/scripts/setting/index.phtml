@@ -1,0 +1,290 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+.clearfix {
+  margin-top:-7px;
+}
+.showingTxt {
+	margin-left:735px;
+	margin-top: -45px;
+}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Setting > </li>
+                  <li>Settings</li>
+  
+            </ol>
+           
+
+          <div class="clearfix">&nbsp;</div>
+
+        <div class="clearfix">
+         <div class="panel panel-primary buynowbox col-lg-12">
+
+             
+              <div class="panel-body revenuebg">
+			 
+<form method="POST">
+          <div class="err1">
+	<label style="color:red;" for="" class="lblTxt"></label>
+      </div>
+   <div>
+    <label for="" class="lblTxt">Quick Post</label>
+
+
+  </div>
+  
+  <div class="form-group">
+    <label for="" class="lblTxt">Current SHA HashRate (GHPS)</label>
+
+     <input type="text" name="hash_rate"  id="inputHashRate" class="form-control CommonInputBox isnumber" value="<?php echo $this->result[0]["hash_rate"]; ?>" placeholder="" >
+     
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Current Hardware HashRate (GHPS)</label>
+
+     <input type="text" name="hash_rate_hardware"  id="inputHashRateMhz" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["hash_rate_hardware"]; ?>">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Target</label>
+
+     <input type="text" name="target" id="inputTarget"  class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["target"]; ?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Progress</label>
+
+     <input type="text" name="progress" id="inputProgress" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["progress"]; ?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">SHA Payout (BTC/GHPS/Day)</label>
+
+     <input type="text" name="payout_ghz" id="inputPayoutGhz" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["payout_ghz"]; ?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Hardware Payout (BTC/GHPS/Day)</label>
+
+     <input type="text" name="payout_hardware" id="inputPayoutMhz" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["payout_hardware"]; ?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Payout Percent Increase(Nic)</label>
+
+     <input type="text" name="payout_nic" id="inputPayoutNic" class="form-control CommonInputBox isnumber"  placeholder="" value="<?php echo $this->result[0]["payout_inc_nic"]; ?>">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Allowed Kits at a time</label>
+
+     <input type="text" name="allowed_kits" id="inputAllowedKits" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["allowed_kits"]; ?>">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Per Kit Cost (BTC)</label>
+
+     <input type="text" readonly='' name="per_kit_cost" id="inputPerKitCost" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["per_kit_cost"]; ?>">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="" class="lblTxt">Shipping Cost</label>
+
+     <input type="text" name="shipping_cost" id="inputShippingCost" class="form-control CommonInputBox isnumber" placeholder="" value="<?php echo $this->result[0]["shipping_cost"]; ?>">
+
+
+      
+  </div>  
+   
+<div>
+  <button type="button" class="btn btn-default Commonbtn" onclick="setting_fun()">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+</div>
+  
+</form>
+  </div>
+          </div>
+       
+      
+     
+<div class="clearfix">&nbsp;</div>
+
+       
+    
+       <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";?>
+				
+       <!--<div class="col-lg-3 showingTxt">Showing 1 to 10 of 159 entries </div>-->
+        
+      
+    </div>
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+   <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">     
+        <!-- /#page-wrapper -->
+
+    </div>
+    <script>
+    function setting_fun()
+    {
+    	var form_data = new FormData();
+  		var inputHashRate = document.getElementById('inputHashRate').value;
+  		var inputHashRateMhz = document.getElementById('inputHashRateMhz').value;
+  		var inputTarget = document.getElementById('inputTarget').value;
+  		var inputProgress= document.getElementById('inputProgress').value
+  		var inputPayoutGhz= document.getElementById('inputPayoutGhz').value
+  		var inputPayoutMhz= document.getElementById('inputPayoutMhz').value
+  		var inputPayoutNic= document.getElementById('inputPayoutNic').value
+  		var inputAllowedKits= document.getElementById('inputAllowedKits').value
+  		var inputPerKitCost= document.getElementById('inputPerKitCost').value
+  		var inputShippingCost= document.getElementById('inputShippingCost').value
+  		var token = $('#token').val();
+  	
+  		form_data.append("inputHashRate", inputHashRate);
+ 		form_data.append("inputHashRateMhz", inputHashRateMhz);
+ 		form_data.append("inputTarget", inputTarget);
+ 		form_data.append("inputProgress", inputProgress);
+ 		form_data.append("inputPayoutGhz", inputPayoutGhz);
+ 		form_data.append("inputPayoutMhz", inputPayoutMhz);
+ 		form_data.append("inputPayoutNic", inputPayoutNic);
+ 		form_data.append("inputAllowedKits", inputAllowedKits);
+ 		form_data.append("inputPerKitCost", inputPerKitCost);
+ 		form_data.append("inputShippingCost", inputShippingCost);
+ 		form_data.append("inputtoken", token);
+
+ 		if((inputHashRate).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Hash Rate.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputHashRateMhz).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Hardware Hash Rate.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputTarget).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Target.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputProgress).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Progress.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputPayoutGhz).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Payout.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputPayoutMhz).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Hardware Payout.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputPayoutNic).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Percent Increase.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputAllowedKits).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Allowed Kits.</label>');
+ 			return false;
+ 		}
+
+ 		if((inputShippingCost).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Shipping Cost.</label>');
+ 			return false;
+ 		}
+ 		
+  $.ajax({
+ 			url:"<?php echo BASEPATH;?>/Setting",
+ 			type: "POST",    
+ 			 data: form_data,
+ 			 contentType: false,
+ 		      processData: false,
+ 	  	success: function(response)
+  		{
+ 				var data=JSON.parse(response);
+ 		  		//alert(data.failure);return;
+ 				 if(data['success']=='success')
+ 	 				 
+				   { 
+						
+			           $(".err1").html('<label for="" class="lblTxt" style="color:green;">Data updated successfully </label>');        
+						window.location = "<?php echo BASEPATH;?>/Setting";
+				   }
+ 				 else if(data['failure']=='failure')
+			      {
+			           
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">Invalid Request Found.</label>');        
+						
+			       }
+ 				 else if(data['failure']!='failure')
+ 				 	{
+			           
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						
+			       }
+  		}
+ 		});
+ 	  
+ 	  }
+    
+    
+    </script>

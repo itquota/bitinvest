@@ -1,0 +1,220 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$user_id=$authUserNamespace->user_id;
+	$data1=$misc_obj->GetAccessRightByUserId('48',$user_id);
+
+	?>
+<style>
+.calculatebtn {
+    width: 42%;
+}
+#reports
+{
+width:11%;
+float:left;
+
+}
+ .form-group {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:300px;
+		}
+	.btn-group {
+    display: inline-block;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:100%;
+		}
+</style>
+<div class="modal req-admin" id="ticket_done">
+  <div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+				<i class="is close-btn"></i></button>
+			</div>
+			<div class="modal-body g-auth-body">
+			   <table class="req-table" cellspacing="0">
+				   <div id="cont_hold"></div>                                          
+				</table>
+
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div>
+
+
+<div id="innerpage-wrapper">
+ <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            
+             <div class="row">
+             
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Audit Wallet</li>
+  
+            	</ol>
+            	
+            	<?php 
+			$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+		
+			if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+		
+		    <label for="" class="lblTxt" style="color:red;width:100%;"><?php echo $authUserNamespace->msg;?></label>
+		
+			<?php $authUserNamespace->msg="";}?>
+            	
+
+            
+            
+
+            <div class="col-lg-12 ">
+            	<!--		<a class="btn btn-default Commonbtn text-uppercase"   style="float:right;margin-right:35px;"name="add" id="add" href="<?php echo BASEPATH; ?>/Addblacklistedwallet" role="button">Add New</a>				-->
+				
+			<form method = "POST" style="padding:12px;">
+				 <label for="" class="lblTxt">Search</label>
+				 <input type="search" class="form-control CommonInputBox"  name="search" id = "search"   placeholder="search" style="width:250px;">
+			</form>
+				
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table" id="parentTable">
+					             
+                   <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+        
+					<tr>
+							<th class="sortboth">Sr.</th>
+							<th class="sortboth">Wallet Address</th>
+							<th class="sortboth">Wallet ID</th>
+							<th class="sortboth">Status</th>						
+							<th style="text-align:center;width: auto;"></th>
+							
+					</tr>
+
+                 </thead>
+                  <tbody id="parentdata"> 
+
+							<?php
+							try{
+								if(!empty($this->reviews) && sizeof($this->reviews) > 0 ){ 
+
+									$sn = 1;
+									if(!empty($get_parameters['page']) && $get_parameters['page'] >1){
+										$sn = ($get_parameters['page']-1)*$PaginateLimit +1;
+									}
+									foreach($this->reviews as $reviews){
+
+										
+										if($reviews['status'] == 1){
+											$status = "Whitelisted";
+										}else if($reviews['status'] == 2){
+											$status = "Blacklisted";
+										}else{
+											$status = "Pending";
+										}
+										
+
+									?>
+									
+							<tr>
+
+								<td style="text-align:center;"><?php echo $sn; ?></td>								
+								<td><?php echo $reviews['wallet_address']; ?></td>
+								<td><?php echo $reviews['wallet_id']; ?></td>
+								<td><?php echo $status; ?></td>
+								<td>
+							<!--	<a class = "btn" onclick="confirmRequest('<?php echo $reviews['wallet_address']; ?>',2)" >Mark as blacklisted</a>			-->
+									
+								<?php 
+									if(((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin') && $reviews['status'] == 1){
+								?>
+									<a class = "btn" onclick="confirmRequest('<?php echo $reviews['wallet_address']; ?>',2)" >Mark as blacklisted</a><br/><br/>
+								<?php 
+									}
+								?>									
+								<?php 
+									if(((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin') && $reviews['status'] == 2){
+								?>
+									<a class = "btn" onclick="confirmRequest('<?php echo $reviews['wallet_address']; ?>',1)" >Mark as Whitelisted</a><br/><br/>
+								<?php 
+									}
+								?>																		
+								</td>
+							</tr>
+								<?php
+
+									$sn++;
+
+								}
+							}
+							}
+							catch(Exception $e)
+							{
+								echo $e->getMessage();
+							}
+								?>
+             
+                 </tbody>
+                  </table> 
+  
+              </div>
+
+        </div>
+		
+    </div>
+	<?php echo $this->SearchResult['Pagination']; ?>
+             
+  </div>
+</div>
+
+<script  data-cfasync='false' type="text/javascript">
+
+		function confirmRequest(wallet,status)
+		{	
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Auditwallet/changestatus", 
+					type: "POST",    
+					data: 'wallet='+wallet+'&status='+status,			
+					success:function(response)
+					{	
+						 var data=JSON.parse(response);
+						 if(data['success']!='')
+						 {
+								$('#cont_hold').empty();
+								$('#cont_hold').append('<b>'+data['success']+'</b>');
+								$('#ticket_done').addClass('openpop');
+								setTimeout(function(){
+								 $('#ticket_done').removeClass('openpop');
+								 window.location.href=("<?php echo BASEPATH; ?>/Auditwallet");
+								},3000);
+								return false;
+						 }
+						 else
+						 {
+							  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+						 }		
+					}
+			 });
+		}
+	
+   function closealt()
+   {
+	   $('#ticket_done').removeClass('openpop');
+	   window.location.href=("<?php echo BASEPATH; ?>/Auditwallet");
+	   
+   }		
+</script>
+		

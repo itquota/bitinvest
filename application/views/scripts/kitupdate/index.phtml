@@ -1,0 +1,246 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+ 
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Kits > </li>
+                  <li>Kit Update</li>
+  
+            </ol>
+
+        <div class="clearfix">
+       
+        <div class="col-lg-12">
+    
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+   <div><?php 
+		$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+		if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+		{
+	?> <label for="" class="lblTxt" style="color: red;"><?php echo $authUserNamespace->msg; ?></label>
+	<?php $authUserNamespace->msg=""; }?> 
+
+	</div>
+      <form method = "POST"><label for="" class="lblTxt">Search</label>
+      <input type="search" class="form-control CommonInputBox"  name="search" id = "search"   placeholder="Search" style="width:250px;">
+		<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">			
+					</form><br>
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                                       <table style="width:100%;" id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">SR.<br>NO </th>
+                        <th class="sortboth">USERNAME</th> 
+                        <th class="sortboth">INVOICE ID</th>
+                         <th class="sortboth">KIT NO.</th> 
+                         <th class="sortboth">COMMENT</th> 
+                          <th class="sortboth">CREATED DATE</th>
+                          <th class="sortboth">KIT STATUS</th>
+                           <th class="sortboth">INVOICE STATUS</th> 
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                   <?php 
+                   $j=1;
+                   foreach($this->result as $result){
+				   if($result['status']!='Deleted')
+				   {
+										$invoiceid = isset($result['invoice_id']) ? $result['invoice_id'] : '';
+										$username = isset($result['username']) ? $result['username'] : '';
+										$kitNo = isset($result['kit_number']) ? $result['kit_number'] : '';
+
+										$date = isset($result['created_on']) ? $result['created_on'] : '';
+
+										$status = isset($result['status']) ? $result['status'] : '';
+										$comment=isset($result['comment']) ? $result['comment'] : '';
+										$inv_sts=isset($result['invoice_status']) ? $result['invoice_status'] : '';
+				   
+				   
+				   
+				   ?>
+                   <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php echo $username; ?></td>
+                      <td><?php echo $invoiceid; ?></td> 
+                      <td><?php echo $kitNo; ?></td>
+                      <td><?php echo $comment; ?></td> 
+                      <td><?php echo date("d-m-y H:m:s", strtotime($date)); ?></td> 
+                      <td>
+                      
+                      <form method="post" action="<?php echo BASEPATH; ?>/Changekitstatus" name="form" id="form<?php echo $kitNo;?>">
+				   <?php 
+					  if($result['status']=="Inactive") { ?>
+					  
+						<a href='#'  onclick=" changeStatus('<?php echo $kitNo; ?>')">Inactive</a>
+					<?php }
+					
+					else if ($result['status']=="Active") { ?>
+						<a href='#' onclick=" changeStatus('<?php echo $kitNo;?>')"><?php echo "Active";?></a>
+					 <?php }
+					 else { echo $status; } ?>
+					 
+					 <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+					 <input type="hidden" value="<?php echo  $username;?>" id="uid" name="user_name">
+					 <input type="hidden" value="<?php echo $kitNo;?>" id="kitno" name="kit_number">
+					 <input type="hidden" value="<?php echo $invoiceid;?>" id="invoiceid" name="invoiceid">
+					 <input type="hidden" value="<?php echo $status;?>" id="status" name="status">
+					 
+					 
+					 </form>
+					 </td> 
+                       <td><?php if($inv_sts==1){ echo "Active"; }else { echo "Inactive";} ?></td> 
+
+
+                     
+                  </tr> 
+
+               
+
+                        
+             
+             <?php $j++;}
+			 }?>  
+             
+                 </tbody>
+                  </table> 
+		<ul class="pagination">
+		 <?php 
+
+		if(!empty($_GET['page']))
+		 {
+			$StartPage=$_GET['page'];
+		 }
+		 else
+		 {
+			$StartPage=1;
+		 }
+		
+		if($this->pages <= 5){
+			  $StartPage = 1;
+		 }else if(!empty($_GET['page']) && $_GET['page'] < $this->pages-6){
+			 // $pageDiff = $pages - $_GET['page'];
+			// $StartPage = $pages - $pageDiff;
+			 $StartPage = $_GET['page'];
+		 }else if(!empty($_GET['page']) && $_GET['page'] >= $this->pages-6){
+			 $StartPage = $this->pages - 5;
+		 }
+			// $limitPage = $StartPage + 4;
+			 if($this->pages > 5){
+				 $limitPage = $StartPage + 4;
+			 }else{
+				 $limitPage = $this->pages;
+			 }
+			 
+		 if(!empty($_GET['page']) && $_GET['page'] > 1){
+		 
+		 ?>
+		<!--	<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Kitupdate?page=1<?php if($_REQUEST['search']) echo "&search=".$_REQUEST['search'];?>" ></a></li>  -->
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Kitupdate?page=<?php echo $_REQUEST['page']?$_REQUEST['page']-1:$StartPage; if($_REQUEST['search']) echo "&search=".$_REQUEST['search'];?>"><i class="mdi-navigation-chevron-left"></i></a></li>
+			 <?php 
+				}
+			 ?>
+			
+			<?php 
+			
+			for($j=$StartPage;$j<=$limitPage;$j++){
+                    ?>
+			<li class="active"><a href="<?php echo BASEPATH; ?>/Kitupdate?page=<?php echo $j; if($_REQUEST['search']) echo "&search=".$_REQUEST['search'];?>"><?php echo $j; ?></a></li>
+			<?php }
+			
+			 if( $_REQUEST['page'] < $this->pages-1){
+				 
+                    ?>
+			
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Kitupdate?page=<?php echo $_REQUEST['page']?$_REQUEST['page']+1:$j; if($_REQUEST['search']) echo "&search=".$_REQUEST['search'];?>"><i class="mdi-navigation-chevron-right"></i></a></li>
+		<!--	<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Kitupdate?page=<?php echo $this->pages-1; if($_REQUEST['search']) echo "&search=".$_REQUEST['search'];?>">Last</a></li> -->
+			<?php }
+			
+                    ?>
+		 </ul>
+              </div>
+
+        </div>
+
+    </div>
+
+  
+	 
+       <!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+       
+ <?php   //echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";?>
+				
+
+  
+   				<!--  <div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>-->
+   
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+    
+		<script>
+                   function changeStatus(invoiceid)
+                     {
+                       // window.location = "<?php echo BASEPATH;?>/Changekitstatus?kit_number="+kit+"&user_name="+user_name+"&status="+status+"&invoiceid="+invoiceid+"&token="+token;
+                	   document.getElementById('form'+invoiceid).submit();
+                      }
+		</script>

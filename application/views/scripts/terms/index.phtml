@@ -1,0 +1,363 @@
+<?php
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+if((empty($authUserNamespace->user) || !isset($authUserNamespace->user) || $authUserNamespace->user=="") || (empty($authUserNamespace->user_type)|| $authUserNamespace->user_type !="binary"))$this->_redirect("/Login");
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta
+	http-equiv="X-UA-Compatible"
+	content="IE=edge"
+>
+<meta
+	name="viewport"
+	content="width=device-width, initial-scale=1"
+>
+<meta
+	name="description"
+	content=""
+>
+<meta
+	name="author"
+	content=""
+>
+<title><?php echo $this->title; ?></title>
+<!-- Bootstrap Core CSS -->
+<link
+	href="<?php echo BASEPATH; ?>/css/bootstrap.min.css"
+	rel="stylesheet"
+>
+<!-- MetisMenu CSS -->
+<link
+	href="<?php echo BASEPATH; ?>/css/metisMenu.min.css"
+	rel="stylesheet"
+>
+<!-- Timeline CSS -->
+<link
+	href="<?php echo BASEPATH; ?>/css/timeline.css"
+	rel="stylesheet"
+>
+<!-- Custom CSS -->
+<link
+	href="<?php echo BASEPATH; ?>/css/sb-admin-2.css"
+	rel="stylesheet"
+>
+<link
+	href="<?php echo BASEPATH; ?>/css/style.css"
+	rel="stylesheet"
+>
+<link
+	href="<?php echo BASEPATH; ?>/css/jquery.dataTables.min.css"
+	rel="stylesheet"
+>
+<script src="<?php echo BASEPATH; ?>/js/jquery-1.11.2.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/d3.v3.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="<?php echo BASEPATH; ?>/js/bootstrap.min.js"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="<?php echo BASEPATH; ?>/js/metisMenu.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/metisMenu.js"></script>
+<!-- Morris Charts JavaScript -->
+<script src="<?php echo BASEPATH; ?>/js/raphael-min.js"></script>
+<!-- <script src="js/morris.min.js"></script>
+  <script src="js/morris-data.js"></script>-->
+<!-- Custom Theme JavaScript -->
+<script src="<?php echo BASEPATH; ?>/js/sb-admin-2.js"></script>
+<!-- network Js-->
+<link
+	href="<?php echo BASEPATH; ?>/css/responsive.bootstrap.min.css"
+	rel="stylesheet"
+>
+<link
+	href="<?php echo BASEPATH; ?>/css/dataTables.bootstrap.min.css"
+	rel="stylesheet"
+>
+<script src="<?php echo BASEPATH; ?>/js/jquery-1.12.3.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/jquery.dataTables.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/dataTables.responsive.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/responsive.bootstrap.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/js/custom.js"></script>
+<script
+	type="text/javascript"
+	data-cfasync="false"
+	src="<?php echo BASEPATH; ?>/js/data-tables-script.js"
+>
+</script>
+
+<style>
+.adjustment {
+	width: 48.3333%;
+}
+
+.popup_container {
+	background-image: url("images/popup-bg.png");
+	background: #fff none repeat scroll 0 0;
+	width: 100%;
+	z-index: 9999;
+	position: fixed;
+	width: 57% !important;
+	top: 8%;
+	display: none;
+	left: 16% !important;
+}
+.center1{ 
+	color: #fff;
+    font-size: 21px;
+   /* margin: 0 auto !important;*/
+    margin-bottom: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 16px;
+   /* vertical-align: middle !important;*/
+    width: 245px;
+    }
+.termsol{
+ 	 padding-left: 0 !important;
+}
+@media only screen and (max-width: 767px) {
+	#mobileadjust {
+		float: right;
+	}
+}
+.fntsze
+{
+	font-size:10px;
+	color: #ffbc00;
+   font-family: 'robotoregular';
+  
+}
+
+</style>
+</head>
+<body onload="changepagination();">
+
+<div id="wrapper"><!-- Navigation --> <nav
+	class="navbar navbar-default navbar-static-top headerbg"
+	role="navigation"
+>
+<div class="navbar-header">
+
+<a
+	class="navbar-brand"
+	href="#"
+><img
+	src="<?php echo BASEPATH; ?>/images/logo.png"
+	alt=""
+></a></div>
+<!-- /.navbar-header -->
+
+<div class="mob-nav">
+<h4 class="center1">TERMS AND CONDITIONS</h4>
+</div>
+<!-- /.navbar-top-links -->
+
+<div class="modal-content">
+		<!--<div class="modal-header">
+		Terms and Conditions
+		<button
+			type="button"
+			class="close"
+			data-dismiss="modal"
+			aria-hidden="true" onclick="closeStatusPop();"
+		><i class="is close-btn"></i></button>
+		</div>
+		--><div class="modal-body g-auth-body">
+			<form name="formkit" id=""formkit"" action='' method="post">
+				<div class="imgPop" style="padding: 10px; text-align: justify;">
+					<h4 class="center">Terms and Conditions</h4>
+							<p><em><strong>TERM OF USE</strong></em></p>
+							<ol class="termsol">
+							<li><strong>Introduction</strong></li>
+							</ol>
+							<p>By accessing and using our website&nbsp;www.gainbitcoin.com&nbsp;or any affiliated website of VARIABLETECH PTE LTD, Singapore&nbsp;or associated entity (referred to as "we", "us", "the Operator", "the website", "www.gainbitcoin.com" or "the company"), you agree to be bound by and abide by the following terms and conditions. Your access to and use of the website is also subject to our Privacy Policy.</p>
+							<p>These terms and conditions ("T&amp;C") apply to all transactions carried out on this and affiliated websites. Do not use the website or any services if you do not agree with any of these T&amp;C.</p>
+							<p>Before executing a transaction on the website, you should review the terms and conditions as they may be updated from time to time. Continued use of this website and services means that you agree to our new T&amp;C</p>
+							 
+							<p style="text-align: center;"><em><strong>PLEASE NOTE : - VERY IMPORTANT</strong></em></p>
+							<p style="text-align: center;"><em>"When purchasing a Bitcoin Cloud Mining Contract through the website the Buyer agrees that he or she is over 18 years of age."</em></p>
+							<p style="text-align: center;"><em>"You must check your local jurisdiction laws applicable before buying the Bitcoin Cloud Mining Contract &amp; only purchase if you are allowed to do so!"</em></p>
+							<p>&nbsp;</p> 
+							<ol start="2" class="termsol">
+							<li><strong>Definitions</strong></li>
+							</ol>
+							<p><span style="text-decoration: underline;"><strong><em>Bitcoin</em></strong></span> is a peer-to-peer payment system and digital currency using cryptography to control the creation and transfer of money. More about Bitcoin can be found here: http://en.wikipedia.org/wiki/Bitcoin</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Bitcoin Cloud Mining Contract</strong></em></span> is a proprietary right to future Bitcoins produced by the Operator's computer systems applying the hash rate agreed between the Buyer and the Operator for the Term.</p>
+							 
+							<p><em><span style="text-decoration: underline;"><strong>Lease Term</strong></span></em> is 18 months from the Mining Contract Purchase Date unless otherwise agreed in writing between the Operator and the Buyer.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Buyer</strong></em></span> is the purchaser of a Bitcoin Cloud Mining Contract through the website, also referred to as "user" or "you".</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Operator</strong></em></span> is the company VARIABLETECH PVT LTD that operates the website&nbsp;www.gainbitcoin.com, affiliated websites, and computer systems that produce Bitcoins, and offers Bitcoin Cloud Mining Contracts.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Operator's computer systems</strong></em></span> are the software and hardware owned and operated by the Operator to produce Bitcoins.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Lease Contract Purchase Date</strong></em></span> is the date the Buyer submits the request to purchase the Bitcoin Cloud Mining Contract via online form at the website unless otherwise agreed in writing between the Operator and the Buyer.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Transaction</strong></em></span> is an agreement between the Buyer and the Operator to purchase a Bitcoin Cloud Mining Contract at an agreed rate.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Price</strong></em></span> means the price for which the Buyer agrees to purchase a Bitcoin Cloud Mining Contract.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Transaction Price</strong></em></span> is the total price comprising the Price payable to the Operator for a Bitcoin Cloud Mining Contract.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="3" class="termsol">
+							<li><strong>Purchase of Bitcoin Cloud Mining Contract</strong></li>
+							</ol>
+							
+							<p>(a) The Buyer agrees to pay to the Operator the Transaction Price;</p>
+							 
+							<p>(b) The Operator agrees to:</p>
+							 
+							<p>i). use its best endeavors to operate the Operator's computer systems applying the hash rate agreed between the Operator and the Buyer to produce Bitcoins; and pay 10% @ current hash difficulty level for a total of 18 months</p>
+							 
+							<p>ii). Transfer such Bitcoins, to the Buyer's designated Bitcoin wallet as selected by the buyer after the Purchase Date and upon these T&amp;C</p>
+							 
+							<p>(c) the Buyer agrees that the Operator's computer systems are operated at the sole discretion of the Operator;</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="4" class="termsol">
+							<li><strong>Process of purchasing a Bitcoin Cloud Mining Contract</strong></li>
+							</ol>
+							
+							<p>www.gainbitcoin.com&nbsp;offers Bitcoin Cloud Mining Contracts. The Buyer accepts the Transaction Price, Price offered by the Operator upon submitting a valid purchase request via the online form at the website. By submitting such a purchase request, online payment will be processed and the Transaction is binding upon you. Please make sure that all your data is correct. If you are paying using Bitcoins please note that Bitcoin transactions in a Bitcoin wallet are not reversible. Also, it is your responsibility to ensure that your email communication is safe and protected against third party access.</p>
+							 
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Personal Account</strong></em></span></p>
+							 
+							<p>In order to purchase a Bitcoin Cloud Mining contract on&nbsp;www.gainbitcoin.com, the user has to create a personal account with the Operator providing his or her name, email address, phone number, mail address, Bitcoin wallet ID and a password. Creating a personal account is free of charge, however you have to acknowledge the terms and conditions. Your username can not be changed. The user must ensure that the username and password are kept confidential at all times. In case of misuse or abuse, the Operator reserves the right to disable your personal account. The Operator will record the amount of Bitcoins produced pursuant to the Buyer's Bitcoin Cloud Mining Contract, in the Buyer's personal account from time to time. While the Operator will use its best efforts to ensure such records are accurate and up to date, the Operator makes no guarantee as to the accuracy of any such records and reserves the absolute right at its sole discretion to vary, correct or alter such records and the Buyer has no absolute right to the amount of Bitcoins recorded on the Buyer's personal account from time to time.</p>
+							 
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Bitcoin transfers</strong></em></span></p>
+							 
+							<p>The Operator will transfer Bitcoin produced pursuant to the Buyer's Bitcoin Cloud Mining Contract, to the Buyer's designated Bitcoin wallet upon request every 15th day paycycle, on 5th &amp; 20th of every month, within a 72 hour grace period and no more than bi-monthly. The Buyer agrees that the Operator will not make any such transfers, despite any request to do so.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="5" class="termsol">
+							<li><strong>Money Laundering Prevention</strong></li>
+							</ol>
+							
+							<p>www.gainbitcoin.com&nbsp;might ask you to confirm your identity or other personal details before we transfer Bitcoin to your wallet. This does not mean in any way that suspicion is falling on you and any information about your identity is held confidentially.</p>
+							<p>Transactions with a cash component of USD$10,000 or more;&nbsp;Any transactions or other activities regarded as suspicious.</p>
+							<p>We have imposed a transaction limit of USD$10,000 per transaction.</p>
+							<p>We are also required to keep full records of all transactions and Bitcoin transfers together with identification provided and constantly monitor any unusual or suspicious transactions of any size. By using our services you will need to identify yourself with your mobile phone number. This is done by SMS-Authentication.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="6" class="termsol">
+							<li><strong>User Obligations</strong></li>
+							</ol>
+							
+							<p>The Buyer warrants that he or she will only use the website in accordance with the purpose of the offered service and solely based on the T&amp;Cs. The Buyer further agrees that he or she has the authority and means to enter a transaction. Furthermore, the Buyer warrants that he or she is the legitimate owner of the monetary sums he or she intends to exchange against a Bitcoin Cloud Mining Contract and that he or she does not infringe the rights of any third party or applicable law.</p>
+							<p>In addition, the Buyer agrees not to use the website or the Bitcoin Cloud Mining Contract whether directly or indirectly for any kind of illegal activity such as money laundering, terrorism financing or negatively affecting the performance of the website. It is prohibited to use or copy any of the information or contents of this or affiliated websites. It is prohibited to send spam or distribute any other material through the website. It is prohibited to distribute any illegal material through the website or use the website in any other way than intended by the Operators.</p>
+							<p>The user must not collect any data from this website or its users without prior written permission by the Operator. Users must not use anonymous networks such as TOR to access our website.</p>
+							<p>Any misuse of our services based on these T&amp;Cs will result in the seizure of the Bitcoin produced pursuant to the Buyer's Bitcoin Cloud Mining Contract and any relevant funds.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="7" class="termsol">
+							<li><strong>Security</strong></li>
+							</ol>
+							
+							<p>Users are responsible for maintaining the confidentiality for and integrity of their Bitcoin wallet including its access information. The user must notify the Operator of&nbsp;www.gainbitcoin.com&nbsp;immediately if the user's wallet address has changed or if there is any other change, loss, fraud or suspicion about the user's Bitcoin wallet or any transfers in or out of it. The Operator will not be held liable for any lost Bitcoin wallet information or hacked Bitcoin wallet accounts, nor any loss arising howsoever as a result including by theft or fraud.</p>
+							<p>We closely observe any activities that might relate to money laundering or illegal activities. The Operator reserves the right to share users' information with third parties to ensure intended operations of the website and its security.</p>
+							<p>www.gainbitcoin.com&nbsp;is not liable for any damages incurred as a result of sending emails though the Internet. Emails should only be sent in encrypted format.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="8" class="termsol">
+							<li><strong>Intellectual Property and Linking</strong></li>
+							</ol>
+							
+							<p>The Operator and the licensors own all intellectual property rights on this and affiliated websites.</p>
+							<p>www.gainbitcoin.com&nbsp;has not reviewed all of the sites linked to the website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by our company of the site. Use of any such linked web site is at the user's own risk.</p>
+							 
+							 <p>&nbsp;</p>
+							 
+							<ol start="9" class="termsol">
+							<li><strong>Bitcoin Services</strong></li>
+							</ol>
+							 
+							<p>By purchasing a Bitcoin Cloud Mining Contract on our website you acknowledge and agree that:</p>
+							<p>- Bitcoin are not recognized as legal tender in certain&nbsp;countries and that Bitcoin are not regulated by any central institution and may be subject to extreme price volatility;<br> - you understand the risks involved with digital currencies including Bitcoin;<br> - you understand that the hash rate required to produce Bitcoin increases about every fortnight resulting in a diminishing return of Bitcoin per hash rate applied to production;<br> - you are responsible for protecting your Bitcoin, Bitcoin wallet, computer, software bank account, address and personal data against any theft, fraud or illegal activity;<br> - we do not accept any responsibility for any loss or damage suffered by you or any of your authorized agents or representatives, in connection with a Bitcoin Cloud Mining Contract, whether directly or indirectly, and including where you provide us with any false information;<br> - all concluded Transactions are irreversible;<br> - we are not responsible for Bitcoin transfers made to any incorrect Bitcoin wallet IDs and you and your agents agree to release us from all loss or damage suffered in connection with such Bitcoin transfers whether directly or indirectly;<br> - you have obtained independent legal and financial advice about the risks associated with buying Bitcoin, or you knowingly and voluntarily elected not to do so;<br> - we have the right to refuse any order for any reason, which is at our absolute discretion and you hereby agree to release and indemnify us in the exercise of that discretion.</p>
+							<p>The Buyer further acknowledges that trading currency including Bitcoin involves risk, especially through price fluctuation. In addition there might be unforeseen risks that are not identified in these T&amp;Cs. We cannot be held liable for any consequences of such unforeseen risks.</p>
+							 
+							<p>&nbsp;</p> 
+							<ol start="10" class="termsol">
+							<li><strong>Liability</strong></li>
+							</ol>
+							<p>www.gainbitcoin.com&nbsp;does not offer any legal, financial, insurance, tax, investment or associated advice. All transactions made are the sole responsibility of the Buyer considering his or her personal circumstances. We do not recommend anything available on the website.</p>
+							<p>www.gainbitcoin.com&nbsp;is not responsible for any loss suffered by the user. Information such as spot prices, buy and sell prices of Bitcoin, and the rate of production of Bitcoin per hash per second, whether on the website or at other, non affiliated platforms are for information only and is not investment advice in any form and should not be construed as such.</p>
+							<p>The service on our website is only offered to facilitate mining Bitcoin for use in international trade which is not regulated.</p>
+							<p>In no event shall&nbsp;www.gainbitcoin.com&nbsp;or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the website, or any part of it, or a Bitcoin Cloud Mining Contract, even if&nbsp;www.gainbitcoin.com&nbsp;or an authorized representative has been notified orally or in writing of the possibility of such damage. Because some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you. In the case that applicable law may not allow the limitation or exclusion of liability or incidental or consequential damages, our liability will be limited to the fullest extent permitted by applicable law.</p>
+							<p>Without limiting the previous paragraph and except as required by, we will not be liable (including in negligence) for any loss of profits, loss of revenue, or any direct, indirect or consequential loss or damage, incurred by or awarded against you or any other person arising directly or indirectly from your use of the website or purchase of a Bitcoin Cloud Mining Contract; or any cost, loss, liability or expense arising from death, personal injury or damage to property resulting directly or indirectly from your use of our service including purchase of a Bitcoin Cloud Mining Contract.</p>
+							<p>Furthermore, we cannot be held liable for any malfunction, breakdown, delay or interruption to the Internet connection, or if for any reason our website is unavailable at any time or for any period. We also cannot be held liable for any incorrect information from third parties displayed on our website. That applies especially to the displayed spot price of Bitcoin and the rate of production of Bitcoin per hash rate applied.</p>
+							<p>In the case of fraud, we will report all necessary information, including names, addresses and all other requested information, to the relevant authorities dealing with fraud and breaches of the law.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="11" class="termsol">
+							<li><strong>Disclaimer</strong></li>
+							</ol>
+							<p>The materials on our website are provided "as is".&nbsp;www.gainbitcoin.com&nbsp;makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, we do not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on our website or otherwise relating to such materials or on any sites linked to this website. The materials appearing on www.gainbitcoin.com&nbsp;could include technical, typographical, or photographic errors. We may make changes to the materials contained on its web site at any time without notice. We do not, however, make any commitment to update the materials.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="12" class="termsol">
+							<li><strong>Termination or suspension</strong></li>
+							</ol>
+							<p>These terms may be terminated by either party without reason at any point of time but with prior notice. However, we may immediately terminate this agreement if the user breaches any of the clauses mentioned in our terms and conditions. In addition we reserve the right to take legal action against the user and suspend access to the website and our services. Therefore, we may block computers using user's IP address from accessing our website. In addition we may contact your Internet service provider and do such measures to block you from accessing our website and services. In addition, we may perform legal action against you and recover the costs from you. Especially if you try to use the website for illegal activities, violate any of these terms or fail to pay for your transaction or any fraud related to that. We also reserve the right to cancel transactions that are not pad for or not confirmed.</p>
+							<p>We can stop supplying our service at any time without notice to you, and we reserve the right to refuse to supply the service to any person for any reason, especially if the user registers or submits a purchase under false identity or with wrong personal information, including email address, interferes with any of the company's operations or uses language that we consider is unacceptable including vulgar, racist, sexual or offensive language.</p>
+							<p><em>No refunds are provided if the user decides to terminate its contract.</em></p>
+							 
+							<p>&nbsp;</p> 
+							<ol start="13" class="termsol">
+							<li><strong>Amendment, assignment, and governing law</strong></li>
+							</ol>
+							 
+							<p>We can assign our various rights under this agreement to any other person without asking your permission. Your rights are personal and not assignable.</p>
+							<p>The laws of the State of Singapore govern these terms and conditions, without regard to its conflict of law provisions, and you irrevocably and unconditionally submit to the non-exclusive jurisdiction of the courts of Singapore to resolve any dispute that arises as a result of or in connection with this agreement.</p>
+							<p>These T&amp;C are to be interpreted so that they comply with all applicable laws and if any provision does not comply then it must be read down so as to give it as much effect as possible however, if it is not possible to give that provision any effect at all then it is to be severed from this agreement in which case the remainder of this agreement will continue to have full force and effect.</p>
+							<p>These T&amp;C and our Privacy Policy are the entire agreement between the parties as to their subject matter and supersede all prior or inconsistent statements or representations as to that subject matter.</p>
+							 
+							<p>&nbsp;</p>
+							<ol start="14" class="termsol">
+							<li><strong>Contact us</strong></li>
+							</ol>
+							<p>Please contact us if you have questions or are not satisfied with anything.</p>
+							<p>E-Mail thegainbitcoin@gmail.com<br> VARIABLETECH PVT LTD, <br> THE FRANKLIN, <br> 3 SCIENCE PARK DRIVE, <br> SINGAPORE-118223</p>					</div>	
+            </form>	
+		</div>
+		</div>
+<footer class="footer" style=" position: relative;z-index: 9999;">
+<div class="container copyrightSection center-text">
+<div>
+<p class="pull-left offset-sm-float ">Copyright &#169; 2015 GAINBITCOIN
+All rights reserved.</p>
+<ul class="list-inline pull-right  offset-sm-float">
+	<li><a href="https://www.facebook.com/thegainbitcoin"> <img
+		src="<?php echo BASEPATH; ?>/images/facebook.png"
+		alt=""
+	></a></li>
+	<li><a href="#"> <img
+		src="<?php echo BASEPATH; ?>/images/googleplus.png"
+		alt=""
+	></a></li>
+	<li><a href="https://twitter.com/thegainbitcoin"> <img
+		src="<?php echo BASEPATH; ?>/images/twitter.png"
+		alt=""
+	> </a></li>
+	<a href="#"> </a>
+</ul>
+</div>
+</div>
+</footer> <!-- /#Footer End-wrapper Here --></div>
+</body>
+
+<script src="<?php echo BASEPATH; ?>/js/common.js"></script>
+<script
+	type="text/javascript"
+	src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+></script>
+</html>

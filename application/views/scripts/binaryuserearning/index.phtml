@@ -1,0 +1,217 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.margin_div {
+	margin: 12px;
+}
+
+.width2 {
+	width: 49% !important;
+	background-color: #00bcd4 !important;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0
+		rgba(0, 0, 0, 0.12);
+	margin-right: 1% !important;
+	min-width: 280px;
+	margin-bottom: 5px !important;
+}
+
+.width {
+	width: 100% !important;
+	margin-right: 2px !important;
+	background-color: #00bcd4 !important;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0
+		rgba(0, 0, 0, 0.12);
+	min-width: 300px;
+	margin-bottom: 3px !important;
+}
+
+.error {
+	color: red !important;
+}
+</style>
+  <div id="wrapper">
+ <div id="innerpage-wrapper">
+ <input type="hidden" id="unm" value="ops">
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+ 					<div class="modal" id="google-auth-verify">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/logo.png"></a>
+                                    <div class="back-btn">
+                                        <a href="<?php echo BASEPATH; ?>/Dashboard"> 
+                                        <i class="is back"></i><span>Back</span></a>
+                                    </div>
+
+                                    
+                                    <div class="input-type-text">
+                                        <label for="">Enter google authentication code</label>
+                                        <input type="text" id="vcode" name="vcode">
+                                    </div>
+                                    <div class="btn_container"><input type="button" value="SUBMIT" class="btn_" onclick="verify();"></div>
+                                    <div class="g-auth-info">
+                                        <p>We strong recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. Take screenshot or save QR Code image by right click on it for backup and restore option.</p>
+                                        <div class="g-auth-social">
+                                             <a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png"></a>
+                                             <a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png"></a>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Admindashboard">Home</a> > </li>
+              
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Binaryuser">Users</a> > </li>
+                  <li>View Outputs</li> 
+           	  </ol>
+            <div class="col-lg-12">
+      
+</div>
+        
+     <div class="col-lg-6 ">
+          <div class="panel panel-default buynowbox">
+            
+              <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                Mining Outputs
+              </div>              
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+               <small> LEDGERS BALANCE </small> <br/>
+                <?php if(isset($this->ledgerDetails[0]['ref_amt']) && $this->ledgerDetails[0]['ref_amt']!="") { 
+					//echo number_format($this->ledgerDetails[0]['ref_amt'], 8); 
+			echo number_format(($this->ledgerDetails[0]['daily_earning_amt'] + $this->ledgerDetails[0]['daily_earning_amt_new']), 8);
+				}else{ echo "0.00000000";}
+                //0.00479822
+                ?> BTC   
+                
+              </div>
+              <!-- /.panel-heading -->
+              <div class="panel-body revenubydaybg text-center ">
+                <p>TOTAL BALANCE</p>
+                <p><?php if(isset($this->totalDailyBalance) && $this->totalDailyBalance!="") { echo number_format($this->totalDailyBalance, 8); } else{ echo "0.00000000";}
+					//0.00479822 
+                ?>BTC</p>
+              </div>
+              <!-- /.panel-body -->
+          </div>
+            <!-- /.panel -->
+  </div>
+          
+          <div class="col-lg-6">
+            <div class="panel panel-default buynowbox">
+              <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                 RSI(Referral Sales Incentive)
+              </div>
+              
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+               <small> LEDGERS BALANCE </small> <br/>
+               <?php if(isset($this->ledgerDetails[0]['binary_amt']) && $this->ledgerDetails[0]['binary_amt']!="") {  echo number_format($this->ledgerDetails[0]['binary_amt'], 8); }else{ echo "0.00000000";}
+					//0.00479822 
+               ?> BTC
+                
+              </div>
+              <!-- /.panel-heading -->
+              <div class="panel-body revenubydaybg text-center ">
+                <p>TOTAL BALANCE</p>
+                <p><?php if(isset($this->totalBinaryBalance) && $this->totalBinaryBalance!="") { echo number_format($this->totalBinaryBalance, 8); } else{ echo "0.00000000";}
+                		//0.00479822
+                ?> BTC</p>
+              </div>
+              <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+          </div>
+          
+          <div class="col-lg-6">
+            <div class="panel panel-default buynowbox">
+              <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                 DSI(Direct Sales Incentive)
+              </div>
+              
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+               <small> LEDGERS BALANCE </small> <br/>
+               <?php if(isset($this->ledgerDetails[0]['ref_amt']) && $this->ledgerDetails[0]['ref_amt']!="") { echo number_format($this->ledgerDetails[0]['ref_amt'], 8); }else{ echo "0.00000000";}
+               //0.00479822
+               ?>  BTC
+                
+              </div>
+              <!-- /.panel-heading -->
+              <div class="panel-body revenubydaybg text-center ">
+                <p>TOTAL BALANCE</p>
+                <p><?php if(isset($this->totalDirectBalance) && $this->totalDirectBalance!="") { echo number_format($this->totalDirectBalance, 8); } else{ echo "0.00000000";}
+                		//0.00479822 
+                ?>BTC</p>
+              </div>
+              <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+          </div>
+          
+          <div class="col-lg-6">
+            <div class="panel panel-default buynowbox">
+              <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                   TOTAL Outputs
+              </div>
+              
+              <!--  <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+               <small> LEDGERS BALANCE </small> <br/>
+                0.00479822 BTC
+                
+              </div>-->
+              
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+              <small style="float:left;" > FINAL AMOUNT <br/>
+         	<?php if(isset($this->totalAmount) && $this->totalAmount!="") { echo number_format($this->totalAmount, 8); } else{ echo "0.00000000";}
+				//0.00479822 
+         	?>BTC</small> <br/>
+               
+                
+               <small style="float:right; margin: -4.1% 0% 0% 0%;" > WITHDRAWAL AMOUNT<br/>
+       		<?php if(isset($this->total_withdrawal) && $this->total_withdrawal!="") { echo number_format($this->total_withdrawal, 8); } else{ echo "0.00000000";}
+			//0.00479822 
+       		?>BTC</small> <br/>
+               
+                
+              </div>
+              
+              <!-- /.panel-heading -->
+              <div class="panel-body revenubydaybg text-center ">
+                <p>BALANCE AMOUNT</p>
+                <p><?php if(isset($this->bal_amt) && $this->bal_amt!="") {  echo number_format($this->bal_amt, 8);  } else{ echo "0.00000000";}
+                		//0.00479822
+                ?> BTC</p>
+              </div>
+              <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+          </div>
+
+
+      <div class="clearfix">&nbsp;</div>
+      
+         
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+  </div>

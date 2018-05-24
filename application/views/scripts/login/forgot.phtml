@@ -1,0 +1,153 @@
+  <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.req-admin .modal-header {
+  color: #fff;
+  font: 20px "robotobold";
+}
+</style>
+    <div class="loginPadd loreg-page" style="position:fixed";>
+
+      <div class="logincontainer paddAll">
+
+        <div class="form-group">
+            <a href = "https://gainbitcoin.com/"> <img src="<?php echo BASEPATH; ?>/images/login-logo.png" alt="" class="img-responsive" style="margin:0 auto;"></a>
+        </div>
+       
+        <div class="form-group text-center">
+        </div>
+        
+        
+		<div class="clearfix"></div>
+
+        <div class="form-group" style="width:80%;margin:0 auto;">
+          <p class="text-center white_text"> Enter username to receive instructions to your registered email</p>      
+        </div>
+        
+		 <div class="form-group text-center err-div-text" style="color:#dc3b40;display:block;"; id="err_div"></div>
+
+        <div class="form-group">
+            <div class="input-group" style="display:block;">
+                 <input type="text" name="forgot_pass_username" id="forgot_pass_username" class="input-box" placeholder="Enter Username">
+
+              </div>
+        </div>
+         <br/>
+	
+   <!--       <div class="modal req-admin" id="req-admin">	
+            <div class="popup" >	
+               <div id="preloader" class="pre_loader" style="top: 50%;left: 50%;position:absolute;display:block;" >
+	                <img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+               </div>
+            </div>
+          </div>
+       -->   
+        <div class="form-group"><button data-toggle="modal" href="#" type="button" class="button" onclick="forgotPass();" >SEND ME
+						<div id="preloader" class="">
+				<img src="<?php echo BASEPATH; ?>/images/ajax_loader_2.gif" height="24" width="24">
+			</div>	
+			</button></div>
+
+        </div>            
+		
+			<div class="white_text" style="text-align:center;">
+               <a href="<?php echo BASEPATH; ?>/Login"> <span style="color:#fff;">Back to login</span> </a>
+           </div>
+   					 <p class="copy" style="bottom:-72px;">© <?php echo date("Y"); ?> &nbsp;GainBitcoin.com.All rights reserved.</p>
+ </div>
+ <span style="color:#fff;">Register now!</span>
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token"> 
+		<div class="modal req-admin bg-popup" id="cat_alt">	
+		<div class="modal-dialog popup pop-center" >
+		<div class="modal-content no-padding">
+		<div class="bg-pop-header">
+			<span class="text-pop-header">PASSWORD RECOVERY</span>
+			<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closealt();">
+					<i class="fa fa-close" style="color:#fff;"></i>
+			</button>
+			
+		</div>
+		<div style="padding:25px;" id="registcontent">
+			<div class="alert alert-success" style="text-align:center;" id="forgot_alert"></div>		
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div> 
+<!--  <div class="modal req-admin bg-popup" id="cat_alt">	
+		<div class="modal-dialog popup pop-center" >
+			<div class="modal-content no-padding">
+				<div class="bg-pop-header">
+					<span class="text-pop-header">Password recovery</span>
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-hidden="true"
+						onclick="closealt();"
+					><i class="fa fa-close" style="color:#fff;"></i></button>
+				</div>
+				<div  style="padding:30px;"> 
+					<div class="alert alert-success" style="text-align:center;" id="forgot_alert">
+					</div>
+				</div>
+		</div>
+	</div>
+		</div> -->	  
+<script type="text/javascript">
+function closealt()
+{
+	$('#cat_alt').css('display','none');
+	window.location="<?php echo BASEPATH;?>/Login/forgot";	
+
+}
+function forgotPass()
+{
+	$('#req-admin').addClass('openpop');
+	$('#preloader').css('display','block');
+	var forgot_pass_username=$('#forgot_pass_username').val();
+	var token = $('#token').val();
+	if(!forgot_pass_username || forgot_pass_username=='')	
+	{
+		$('#preloader').css('display','none');
+		$('#req-admin').removeClass('openpop');
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML='';
+		document.getElementById("err_div").innerHTML="Please enter valid Username";
+		//$('#err_div').text='Please enter valid Username';
+	
+		return false;
+	}
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Login/forgotpassword",
+			type: "POST",    
+		    data: 'forgot_pass_username='+forgot_pass_username+'&token='+token,
+	  		success: function(response)
+   		{
+			$('#req-admin').removeClass('openpop');
+			$('#cat_alt').addClass('openpop');
+			 var data=	JSON.parse(response);
+			
+			 if(data['success']!='' && data['success']=='success')
+			 {
+				//alert(data['data'])	
+				$('#preloader').css('display','none');
+				$("#forgot_alert").empty();
+				$("#forgot_alert").append(data['data']);							
+			 }
+			 else
+			 {
+				$("#forgot_alert").empty();
+				$("#forgot_alert").append(data['failure']);
+				$('#preloader').css('display','none');
+				$("#err_div").css("display", "block");
+				document.getElementById("err_div").innerHTML=data['failure'];
+					
+			 }		
+   			
+   		}
+	});
+}
+</script>

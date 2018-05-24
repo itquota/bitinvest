@@ -1,0 +1,444 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/jquery-1.8.2.min.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript">
+window.onload=function()
+{
+	var score1 = 0;
+	var score2 = 0;
+	var score3 = 0;
+	var score4 = 0;
+	var score5 = 0;
+	
+		 if($('#scores1').val() == '')
+		 {
+			 score1 = 0;
+		 }
+		 else
+		 {
+			 score1 = parseInt($('#scores1').val());
+		 }
+		 
+		 if($('#scores2').val() == '')
+		 {
+			 score2 = 0;
+		 }
+		 else
+		 {
+			 score2 = parseInt($('#scores2').val());
+		 }
+	 
+		 if($('#scores3').val() == '')
+		 {
+			 score3 = 0;
+		 }
+		 else
+		 {
+			 score3 = parseInt($('#scores3').val());
+		 }
+		
+		 if($('#scores4').val() == '')
+		 {
+			 score4 = 0;
+		 }
+		 else
+		 {
+			 score4 = parseInt($('#scores4').val());
+		 }
+		 
+		 if($('#scores5').val() == '')
+		 {
+			 score5 = 0;
+		 }
+		 else
+		 {
+			 score5 = parseInt($('#scores5').val());
+		 }
+		 //alert(score5);
+	var totalsum = score1+score2+score3+score4+score5;
+	$('#active').text(totalsum); 
+	
+	
+};
+
+function actualhrs(emp)
+{
+	var type = $('#type').val();
+	var uid = $('#uid').val();
+	
+	var counter="0";
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/project/workingactualhrs",
+			type: "POST",    
+		    data: "&empid="+emp+"&type="+type+"&uid="+uid,
+		    success: function(response)
+		    { 		
+				if((response!="") && (response!=null))
+				{
+					var jsonObject = JSON.parse(response);
+					document.getElementById('hrs').innerHTML="";
+					document.getElementById('hrs').innerHTML=jsonObject+" Hrs";
+				}
+			}
+	});
+}
+
+function save1()
+{		
+			saveForm('<?php echo BASEPATH;?>/project/scoreinsert','scoreinsertform','scoreinsertform');
+}
+
+
+</script>
+<style>
+.message
+{
+	 font-size: 9px;
+}
+.newWidth
+{
+	margin-left:5px;width:140px;margin-right: 0;
+}
+.newWidth select
+{
+	width:139px;margin:0;margin-right: 0;
+}
+.newWidthL
+{
+	width:375px;margin-right: 0;
+}
+.newWidthL input
+{
+	width:350px !important;
+}
+.newWidthM
+{
+	float:right;margin-left:5px;width:122px;margin-right: 0;
+}
+.newWidthM input
+{
+	width:90px;
+}
+#holder
+{
+	margin: 0 10px 0px 0;
+}
+.readfix {
+    width: 222px;
+}
+#holder .readonly
+{
+	text-align: left;
+}
+</style>
+<style>
+.readfix
+{
+	width:214px;
+}
+</style>
+</head>
+<body>
+<?php $scorelist = $this->score_list ;
+//print "<pre>";
+//print_r($scorelist);exit;
+?>
+<form action="" name="scoreinsertform" id="scoreinsertform" method="post" enctype="multipart/form-data">
+<input type="hidden" name="annprojectid" id="annprojectid" value="<?php if(isset($this->common_list->annproject_id) && $this->common_list->annproject_id != "") {echo $this->common_list->annproject_id;}?>">
+<div id="subheader">
+	<div class="wrapper">
+  		<div id="holder" class="readfix" style="width: 240px;">
+        	<label>Analyst Name:</label>
+            <span class="readonly">
+            <select style="width:145px;" name="analyst"  id="analyst" class="field med" onchange="actualhrs(this.value);" errortag="Analyst">
+            <option value="">Select</option>
+            <?php	foreach ($this->analyst as $analyst){?>
+			<option <?php if(isset($scorelist[0]->emp_id)) {if($analyst->id1 == $scorelist[0]->emp_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($analyst->id1) && $analyst->id1!=""){ echo $analyst->id1;}?>"><?php echo $analyst->name1;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="analyst_error">&nbsp;</span>
+            </span>
+        </div>
+  		<div id="holder" class="readfix">
+        	<label>Project Name:</label>
+            <span class="readonly"><?php if(isset($this->common_list->title) && $this->common_list->title != "") {echo $this->common_list->title;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label>Project Duration:</label>
+            <span class="readonly">120 Hrs</span>
+        </div>
+        <div id="holder" class="readfix" style="width:233px;">
+        	<label>Analyst Budgeted Hrs:</label>
+            <span class="readonly"><?php if(isset($this->common_list->budgeted_hrs) && $this->common_list->budgeted_hrs !=""){ echo $this->common_list->budgeted_hrs;}?></span>
+        </div>
+        <br class="clear">
+        <div id="holder" class="readfix" style="width:241px;">
+        	<label>Actual Analyst Hrs:</label>
+            <span id="hrs" class="readonly"> 0.0 Hrs</span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">Manager:</label>
+            <span class="readonly"><?php if(isset($this->common_list->name) && $this->common_list->name !=""){ echo $this->common_list->name;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">Start Date:</label>
+            <span class="readonly"><?php if(isset($this->common_list->st_date) && $this->common_list->st_date !=""){ echo $this->common_list->st_date;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">End Date:</label>
+            <span class="readonly"><?php if(isset($this->common_list->end_date) && $this->common_list->end_date !=""){ echo $this->common_list->end_date;}?></span>
+        </div>
+  	</div>
+  <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+   	    
+      	<div id="tablebg">
+        	<div class="col-first _m" style="width: 124px;">Criteria</div>
+          	<div class="col _prj" style="width: 116px;">Parameters</div>
+            <div class="col _prj" style="width: 125px;">Weightage</div>
+          	<div class="col _l" style="width:365px;text-align:left;">Corrective Comments</div>
+            <div class="col _prj" style="margin:0;">Scores</div>
+        </div>
+        <div id="rowbg" style="width:944px;">
+       	  	<div class="col _prj newWidth" style="">
+	       	  	<select style=""  name="criteria1" id="criteria1" class="field med"  errortag="Criteria">
+		            <option value="">Select</option>
+		            <?php	foreach ($this->criteria as $criteria){?>
+					<option <?php if(isset($scorelist[0]->criteria_id)) {if($criteria->id == $scorelist[0]->criteria_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($criteria->id) && $criteria->id!=""){ echo $criteria->id;}?>"><?php echo $criteria->value;?></option>
+					<?php } ?>
+	            </select>
+	       	  	 <div class="clearBoth">&nbsp;</div>
+	      		<span class="message" id="criteria1_error">&nbsp;</span>
+       	  	</div>
+            <div class="col _prj newWidth">
+	             <select  name="parameters1"  id="parameters1" class="field med"  errortag="Parameters">
+		            <option value="">Select</option>
+		            <?php	foreach ($this->parameter as $parameter){?>
+					<option <?php if(isset($scorelist[0]->parameter_id)) {if($parameter->id == $scorelist[0]->parameter_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($parameter->id) && $parameter->id!=""){ echo $parameter->id;}?>"><?php echo $parameter->value;?></option>
+					<?php } ?>
+	            </select>
+	             <div class="clearBoth">&nbsp;</div>
+	      		<span class="message" id="parameters1_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidth">
+	            <select  name="weightage1"  id="weightage1" class="field med"  errortag="Weightage">
+		            <option value="">Select</option>
+		            <?php	foreach ($this->weightage as $weightage){?>
+					<option <?php if(isset($scorelist[0]->weightage_id)) {if($weightage->id == $scorelist[0]->weightage_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($weightage->id) && $weightage->id!=""){ echo $weightage->id;}?>"><?php echo $weightage->value;?></option>
+					<?php } ?>
+	            </select>
+	             <div class="clearBoth">&nbsp;</div>
+	      		<span class="message" id="weightage1_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL">
+	            <input name="correctivecomments1"  id="correctivecomments1" type="text" class="field" value="<?php if(isset($scorelist[0]->comments) && $scorelist[0]->comments != ""){echo $scorelist[0]->comments ;}?>" errortag="Correctivecomments"/>
+	             <div class="clearBoth">&nbsp;</div>
+	      		<span class="message" id="correctivecomments1_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthM" style="">
+	            <input style="" name="scores1" id="scores1" type="text" class="field" value="<?php if(isset($scorelist[0]->score) && $scorelist[0]->score != ""){echo $scorelist[0]->score ;}?>" errortag="Scores"/>
+	             <div class="clearBoth">&nbsp;</div>
+	      		<span class="message" id="scores1_error">&nbsp;</span>
+	      		<input type="hidden" name="scoreid1" id="scoreid1" value="<?php if(isset($scorelist[0]->id) && $scorelist[0]->id != ""){echo $scorelist[0]->id ;}?>" />
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;">
+       	  	<div class="col _prj newWidth">
+       	  	<select  name="criteria2"  id="criteria2" class="field med"  errortag="Criteria">
+            <option value="">Select</option>
+             <?php	foreach ($this->criteria as $criteria){?>
+			<option  <?php if(isset($scorelist[1]->criteria_id)) {if($criteria->id == $scorelist[1]->criteria_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($criteria->id) && $criteria->id!=""){ echo $criteria->id;}?>"><?php echo $criteria->value;?></option>
+			<?php } ?>
+            </select>
+       	  	 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="criteria2_error">&nbsp;</span>
+       	  	</div>
+            <div class="col _prj newWidth">
+            <select  name="parameters2"  id="parameters2" class="field med"  errortag="Parameters">
+            <option value="">Select</option>
+            <?php	foreach ($this->parameter as $parameter){?>
+			<option  <?php if(isset($scorelist[1]->parameter_id)) {if($parameter->id == $scorelist[1]->parameter_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($parameter->id) && $parameter->id!=""){ echo $parameter->id;}?>"><?php echo $parameter->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="parameters2_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidth" >
+           <select name="weightage2"  id="weightage2" class="field med"  errortag="Weightage">
+            <option value="">Select</option>
+            <?php	foreach ($this->weightage as $weightage){?>
+			<option <?php if(isset($scorelist[1]->weightage_id)) {if($weightage->id == $scorelist[1]->weightage_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($weightage->id) && $weightage->id!=""){ echo $weightage->id;}?>"><?php echo $weightage->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="weightage2_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL">
+            <input name="correctivecomments2" id="correctivecomments2" type="text" class="field" errortag="Correctivecomments" value="<?php if(isset($scorelist[1]->comments) && $scorelist[1]->comments != ""){echo $scorelist[1]->comments ;}?>" />
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="correctivecomments2_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthM">
+            <input name="scores2" id="scores2" type="text" class="field" value="<?php if(isset($scorelist[1]->score) && $scorelist[1]->score != ""){echo $scorelist[1]->score ;}?>" errortag="Scores"/>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="scores2_error">&nbsp;</span>
+      		<input type="hidden" name="scoreid2" id="scoreid2" value="<?php if(isset($scorelist[1]->id) && $scorelist[1]->id != ""){echo $scorelist[1]->id ;}?>" />
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;">
+       	  	<div class="col _prj newWidth">
+       	  	<select   name="criteria3"  id="criteria3" class="field med"  errortag="Criteria">
+            <option value="">Select</option>
+             <?php	foreach ($this->criteria as $criteria){?>
+			<option  <?php if(isset($scorelist[2]->criteria_id)) {if($criteria->id == $scorelist[2]->criteria_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($criteria->id) && $criteria->id!=""){ echo $criteria->id;}?>"><?php echo $criteria->value;?></option>
+			<?php } ?>
+            </select>
+       	  	 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="criteria3_error">&nbsp;</span>
+       	  	</div>
+            <div class="col _prj newWidth" >
+            <select   name="parameters3"  id="parameters3" class="field med"  errortag="Parameters">
+            <option value="">Select</option>
+            <?php	foreach ($this->parameter as $parameter){?>
+			<option <?php if(isset($scorelist[2]->parameter_id)) {if($parameter->id == $scorelist[2]->parameter_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($parameter->id) && $parameter->id!=""){ echo $parameter->id;}?>"><?php echo $parameter->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="parameters3_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidth" >
+            <select   name="weightage3"  id="weightage3" class="field med"  errortag="Weightage">
+            <option value="">Select</option>
+            <?php	foreach ($this->weightage as $weightage){?>
+			<option <?php if(isset($scorelist[2]->weightage_id)) {if($weightage->id == $scorelist[2]->weightage_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($weightage->id) && $weightage->id!=""){ echo $weightage->id;}?>"><?php echo $weightage->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="weightage3_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL">
+            <input name="correctivecomments3" id="correctivecomments3" type="text" class="field" value="<?php if(isset($scorelist[2]->comments) && $scorelist[2]->comments != ""){echo $scorelist[2]->comments ;}?>" errortag="Correctivecomments" style="width:440px;"/>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="correctivecomments3_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthM" >
+            <input name="scores3" id="scores3" type="text" class="field" value="<?php if(isset($scorelist[2]->score) && $scorelist[2]->score != ""){echo $scorelist[2]->score ;}?>" errortag="Scores"/>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="scores3_error">&nbsp;</span>
+      		<input type="hidden" name="scoreid3" id="scoreid3" value="<?php if(isset($scorelist[2]->id) && $scorelist[2]->id != ""){echo $scorelist[2]->id ;}?>" />
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;">
+       	  	<div class="col _prj newWidth">
+       	  	<select   name="criteria4"  id="criteria4" class="field med"  errortag="Criteria">
+            <option value="">Select</option>
+            <?php	foreach ($this->criteria as $criteria){?>
+			<option  <?php if(isset($scorelist[3]->criteria_id)) {if($criteria->id == $scorelist[3]->criteria_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($criteria->id) && $criteria->id!=""){ echo $criteria->id;}?>"><?php echo $criteria->value;?></option>
+			<?php } ?>
+            </select>
+       	  	 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="criteria4_error">&nbsp;</span>
+       	  	</div>
+            <div class="col _prj newWidth" >
+             <select  name="parameters4"  id="parameters4" class="field med"  errortag="Parameters">
+            <option value="">Select</option>
+            <?php	foreach ($this->parameter as $parameter){?>
+			<option  <?php if(isset($scorelist[3]->parameter_id)) {if($parameter->id == $scorelist[3]->parameter_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($parameter->id) && $parameter->id!=""){ echo $parameter->id;}?>"><?php echo $parameter->value;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="parameters4_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidth" >
+            <select   name="weightage4"  id="weightage4" class="field med"  errortag="Weightage">
+          	 <option value="">Select</option>
+            <?php	foreach ($this->weightage as $weightage){?>
+			<option  <?php if(isset($scorelist[3]->weightage_id)) {if($weightage->id == $scorelist[3]->weightage_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($weightage->id) && $weightage->id!=""){ echo $weightage->id;}?>"><?php echo $weightage->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="weightage4_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" >
+            <input name="correctivecomments4" id="correctivecomments4" type="text" class="field" value="<?php if(isset($scorelist[3]->comments) && $scorelist[3]->comments != ""){echo $scorelist[3]->comments ;}?>" errortag="Correctivecomments"/>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="correctivecomments4_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthM" >
+            <input name="scores4" id="scores4" type="text" class="field" value="<?php if(isset($scorelist[3]->score) && $scorelist[3]->score != ""){echo $scorelist[3]->score ;}?>" errortag="Scores"/>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="scores4_error">&nbsp;</span>
+      		<input type="hidden" name="scoreid4" id="scoreid4" value="<?php if(isset($scorelist[3]->id) && $scorelist[3]->id != ""){echo $scorelist[3]->id ;}?>" />
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;">
+       	  	<div class="col _prj newWidth" >
+       	  	<select   name="criteria5"  id="criteria5" class="field med"  errortag="Criteria">
+            <option value="">Select</option>
+            <?php	foreach ($this->criteria as $criteria){?>
+			<option  <?php if(isset($scorelist[4]->criteria_id)) {if($criteria->id == $scorelist[4]->criteria_id) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($criteria->id) && $criteria->id!=""){ echo $criteria->id;}?>"><?php echo $criteria->value;?></option>
+			<?php } ?>
+            </select>
+       	  	 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="criteria5_error">&nbsp;</span>
+       	  	</div>
+            <div class="col _prj newWidth" >
+            <select   name="parameters5"  id="parameters5" class="field med"  errortag="Parameters">
+            <option value="">Select</option>
+            <?php	foreach ($this->parameter as $parameter){?>
+			<option  <?php if(isset($scorelist[4]->parameter_id)) {if($parameter->id == $scorelist[4]->parameter_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($parameter->id) && $parameter->id!=""){ echo $parameter->id;}?>"><?php echo $parameter->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="parameters5_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidth" >
+            <select   name="weightage5"  id="weightage5" class="field med"  errortag="Weightage">
+            <option value="">Select</option>
+            <?php	foreach ($this->weightage as $weightage){?>
+			<option  <?php if(isset($scorelist[4]->weightage_id)) {if($weightage->id == $scorelist[4]->weightage_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($weightage->id) && $weightage->id!=""){ echo $weightage->id;}?>"><?php echo $weightage->value;?></option>
+			<?php } ?>
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="weightage5_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" >
+            <input name="correctivecomments5" id="correctivecomments5" type="text" class="field" value="<?php if(isset($scorelist[4]->comments) && $scorelist[4]->comments != ""){echo $scorelist[4]->comments ;}?>" errortag="Correctivecomments" />
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="correctivecomments5_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthM" >
+            <input name="scores5" id="scores5" type="text" class="field" value="<?php if(isset($scorelist[4]->score) && $scorelist[4]->score != ""){echo $scorelist[4]->score ;}?>" errortag="Scores" />
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="scores5_error">&nbsp;</span>
+      		<input type="hidden" name="scoreid5" id="scoreid5" value="<?php if(isset($scorelist[4]->id) && $scorelist[4]->id != ""){echo $scorelist[4]->id ;}?>" />
+      		<input type="hidden" name="type" id="type" value="<?php if(isset($this->type) && $this->type != ""){echo $this->type;}?>" />
+      		<input type="hidden" name="uid" id="uid" value="<?php if(isset($this->uid) && $this->uid != ""){echo $this->uid;}?>" />
+            </div>
+        </div>
+        <div class="pagination" style="float:right;margin-left: 20px;margin-top:14px;">Total Score: <a class="active" id="active"></a></div>
+        <p><input style="float:right;" name="Submit" type="button" value="Submit" onclick="save1();" class="searchbg"/></p>
+        <br class="clear">
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</form>
+</body>
+</html>

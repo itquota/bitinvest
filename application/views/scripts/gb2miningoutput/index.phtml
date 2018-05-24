@@ -1,0 +1,95 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.card-box-content {
+    padding:0px 20px;
+}	
+	
+</style>
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+ <div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Mining Output</h4>
+		<h5 class="text-muted page-title-alt">Contract Wise</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						
+						<div class="card-box-content form-compoenent">
+							
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">	
+								<div style = "text-align: right;">
+									<a href = "#" onclick = "showmyoffers();">Fees Calculation</a>
+								</div>
+								<table id="data-table-simple" class="table-bordered table-responsive display" cellspacing="0">
+									 <thead>
+										<tr>
+										   <th class="sortdesc">S.No.</th>
+										   <th class="sortboth">Time</th> 
+										   <th class="sortboth">Net ETH Earned</th> 
+										</tr> 
+									  </thead>
+									  <tbody> 
+											  <?php 
+												if(!empty($this->result) && sizeof($this->result)>0)
+												{
+												$j=1;
+												foreach($this->result['data'] as $result1){?>
+													<tr>
+ 														 <td><?php echo $j;?></td> 
+														 <td><?php echo date("d-m-Y H:m:s", strtotime($result1['timestamp'])); ?></td>
+	     												 <td><?php echo number_format((double) $result1['total_amt'], 8, '.', '') . " ETH"; ?></td>
+     												 </tr> 
+
+											  <?php $j++; }	} ?>
+									 </tbody>
+								 </table> 
+							</div>		
+              			</div>
+        			</div>
+			    </div>
+		    </div>    
+        </div>
+     </div>
+ </div>
+
+<div class="modal bg-popup" id="myModal">
+	<div class="modal-dialog big-pop-center width-auto">
+		<div class="modal-content no-padding">
+			<div class="bg-pop-header"><span class="text-pop-header">Fee Calculation</span>
+				<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closeoffer();">
+					<i class="fa fa-close" style="color:#fff;"></i>
+				</button>
+			</div>
+			<div class="modal-body"  style="text-align:justify;padding:20px 10px;">
+				<?php 
+					echo  '<div class = "row" style = "margin:10px;"><span class = "col-md-6" style = "font-size:16px; font-weight:bold;">Daily Output</span><span class = "col-md-6" > "X" ETH</span></div>' ;
+				echo  '<div class = "row" style = "margin:10px;"><span class = "col-md-6" style = "font-size:16px; font-weight:bold;">Pool Fee </span><span class = "col-md-6"> 1% of "X" ETH </span></div>' ;
+					echo  '<div class = "row" style = "margin:10px;"><span class = "col-md-6" style = "font-size:16px; font-weight:bold;">Electricity Cost Per MH/s </span><span class = "col-md-6" > 0.000385 USD</span></div>';
+					echo  '<div class = "row" style = "margin:10px;"><span class = "col-md-6" style = " font-size:16px; font-weight:bold;">Maintenance Cost Per MH/s </span><span class = "col-md-6" > 0.005 USD</span></div>';
+					echo  '<div class = "row" style = "margin: 20px; text-align: center; background-color: #d2cece66; padding: 10px;"><span style = "font-size:16px; font-weight:bold;">Payable Output = </span><span> Daily Output - (Pool Fee - Electricity Cost - Maintenance Cost) </span></div>';
+				
+				?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+
+
+function showmyoffers()
+{
+//	alert("here");
+    $('#myModal').addClass('openpop');
+}
+</script>

@@ -1,0 +1,304 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+
+<script type="text/javascript">
+
+	function search()
+	{	
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		//alert(startdate);
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+		//alert(enddate);
+		window.location="<?php echo BASEPATH; ?>/taskpl/reportnonchargeable/startdate/"+startdate+"/enddate/"+enddate;
+	}
+	function exportdata()
+	{	
+		var projecttype=document.getElementById('projecttype').value;
+		var id = document.getElementById('projectname').value;
+		if(id == "")
+		{
+			jAlert("Please Select Project Name");
+		}
+		else
+		{
+			window.location="<?php echo BASEPATH; ?>/taskpl/taskdetailexport/id/"+id+"/tasktype/"+projecttype;
+			
+		}//alert(enddate);
+	}
+	function projectdata()
+	{
+		var projecttype=document.getElementById('projecttype').value;
+		var id = document.getElementById('projectname').value;
+		
+		if(id == "")
+		{
+			jAlert("Please Select Project Name");
+		}
+		else
+		{
+			window.location.href = '<?php echo BASEPATH;?>/projectmanager/projectwisedetail/id/'+id+'/tasktype/'+projecttype;
+		}
+	}
+
+
+	function populate_dropdown(tasktype,check)
+	{
+		//document.getElementById('cat_loader1').style.display = 'block';
+		//$('#projectname').width(125);
+		var counter="0";
+		
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/taskpl/projectwisedetail",
+			type: "POST",    
+		    data: "tasktype="+tasktype,
+		    success: function(response)
+		    { 
+			  
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('projectname');
+						
+						for(k=option_ele.length;k>0;k--)
+						{
+							
+							option_ele.remove(k);
+						}
+					
+						for(m=0;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('projectname').options[++j]=option_element;
+
+								if(check=="1"){
+								<?php if(isset($this->project_id) && $this->project_id!="")
+								{?>
+								var pro_ID = '<?php echo $this->project_id;?>';
+								
+								if(jsonObject[m]['id']==pro_ID)
+								{
+									document.getElementById('projectname').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+							}
+						
+				}
+				
+				//document.getElementById('cat_loader1').style.display = 'none';
+				//$('#projectname').width(140);
+					
+			}
+		});
+		
+	}
+		
+
+</script>
+
+
+<script>
+
+	
+</script>
+<style>
+.col-first {
+    width: 315px;
+}
+.greenClass
+{
+	background-repeat:repeat-x;
+	background-color:#8EC555;
+    height: 32px;
+    margin: -8px 0 0;
+    padding: 8px 0 0;
+    background-image:url("<?php echo BASEPATH ;?>/images/common/menubg-grn.gif");
+}
+</style>
+
+</head>
+<body>
+<?php
+
+	  function minutetohr($minute)
+	{
+		$hrs=0;
+		$minute =intval($minute);
+		$hr= intval($minute/60);
+		$hr=round($minute/60,2);
+		if (strpos($hr,'.') !== false)
+		{
+			$hr1 = explode('.', $hr);
+			$min=$minute%60;
+			if($min < 10)
+			{
+				$hrs=$hr1[0].".0".$min;
+			}
+			else 
+			{
+				$hrs=$hr1[0].".".$min;
+			}	
+		}
+		else
+		{
+			$hrs=$hr;
+			$min=$minute%60;
+			if($min < 10)
+			{
+				$hrs=$hr.".0".$min;
+			}
+			else 
+			{
+				$hrs=$hr.".".$min;
+			}
+		}
+		return $hrs;
+	}
+	
+	if(isset($this->projecttype) && $this->projecttype!="" && $this->projecttype == 'adhoc')
+	{
+		$adhocobj = new Aranca_Model_DbTable_Adproject();
+		$projecttitle = $adhocobj->fetchRow("id='$this->project_id'");
+		
+	}
+	elseif(isset($this->projecttype) && $this->projecttype!="" && $this->projecttype == 'contract')
+	{
+		$subprojectobj = new Aranca_Model_DbTable_Annsubproject();
+		$projecttitle = $subprojectobj->fetchRow("id='$this->project_id'");
+	}
+?>
+<div id="subheader">
+	<form id="searchprojectform" name="searchprojectform" action="" method="post">
+	<div class="wrapper">
+	<div id="holder" style="margin-left: 60px !important;width: 90%;">
+			  <div id="holder" style="">
+        	<label>Project Type<em>*</em></label>
+            <select name="projecttype" id="projecttype" class="field" style="float:left;" onchange="populate_dropdown(this.value,'0');" >
+              <option <?php if(isset($this->projecttype)) {if('adhoc' == $this->projecttype) {?> selected="selected" <?php }} ?> value="adhoc">Adhoc Project</option>
+              <option <?php if(isset($this->projecttype)) {if('contract' == $this->projecttype) {?> selected="selected" <?php }} ?> value="contract">Sub Project</option>
+            </select>
+       	
+			<label style="margin-left:10px;">Project Name<em>*</em></label>
+			<select  name="projectname" id="projectname" class="field" style="float:left;" errortag="Project Name">
+			<option  value="">Please select</option>
+       		</select>
+        	<!-- <label>From Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($this->startdate) && $this->startdate!=""){echo $this->startdate; } ?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            <label>To Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($this->enddate) && $this->enddate!=""){echo $this->enddate; }?>" id="SelectedDate" readonly onClick="GetDate(this);"/> -->
+      </div>
+      <br class="clear">
+        <br class="clear">
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="exportdata();"><a href="javascript:void(0);" class="searchbg">Export</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="projectdata();"><a href="javascript:void(0);" class="searchbg">Submit</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH?>/projectmanager/reportscreenindex" style="margin-right:532px;" class="searchbg">Report-homepage</a></div>
+  	</div>
+    <br class="clear" />
+    </form>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+	 	<div class="col" style="width:84px;">Project Name:</div><div class="col" style="width:160px;margin-left:-41px;" id="pvalue" name="pvalue"><?php if(isset($this->ptitle) && $this->ptitle!=""){echo $this->ptitle;}elseif(isset($projecttitle['title']) && $projecttitle['title']!=""){echo $projecttitle['title'];}?></div>
+	 	<div class="col" style="width:110px;">Total Budgeted Hrs:</div><div class="col" style="width:76px;margin-left:-41px;" id="totalbudhrs" name="totalbudhrs"><?php if(isset($this->sum_budgeted_hrs) && $this->sum_budgeted_hrs!=""){echo $this->sum_budgeted_hrs;}else{echo "0";}?></div>
+	 	<div class="col" style="width:110px;">Total Actual Hrs:</div><div class="col" style="width:76px;margin-left:-41px;" id="totalacthrs" name="totalacthrs"><?php if(isset($this->sum_actual_hrs) && $this->sum_actual_hrs!=""){echo minutetohr($this->sum_actual_hrs);}else{echo "0";}?></div>
+        <br class="clear">
+        <br class="clear">
+      	
+        <div id="tablebg" style="height:40px;">
+        	<div class="col-first" style="width:190px;">Task</div>
+            <div class="col" style="width:170px;">Team Member</div>
+            <div class="col" style="width:108px;">Status</div>
+            <div class="col" style="width:108px;">Budgeted Hrs</div>
+            <div class="col" style="width:108px;">Actual Hrs</div>
+            <div class="col" style="width:108px;">Variance</div>
+        </div>
+      <?php if(isset($this->final_result) && sizeof($this->final_result)>0){
+        foreach($this->final_result as $result){
+        ?>
+        <div id='rowbg'>
+			<div class='col-first' style='width:190px;'><a href='#'><?php if(isset($result['name']) && $result['name']!=""){echo $result['name'];}?></a></div>
+			<div class='col' style='width:170px;'><?php if(isset($result['fname']) && $result['fname']!=""){echo ucfirst($result['fname']);}?> <?php if(isset($result['lname']) && $result['lname']!=""){echo ucfirst($result['lname']);}?></div>
+			<div class='col' style='width:110px;'><?php if(isset($result['value']) && $result['value']!=""){echo $result['value'];}?></div>
+			<div class='col' style='width:110px;'><?php if(isset($result['budgeted_hrs']) && $result['budgeted_hrs']!=""){echo $result['budgeted_hrs'];}?></div>
+			<div class='col' style='width:110px;'><?php if(isset($result['actual_hour']) && $result['actual_hour']!=""){echo $result['actual_hour'];}?></div>
+			<div class='col' style='width:110px;'><?php if(isset($result['variance']) && $result['variance']!=""){echo $result['variance'];}?></div>
+			<input type='hidden' id='total' class='total' name='total' value= <?php echo $result['act_hr'];?>>
+		   	</div>
+		   	<?php }
+		   	echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+        }else{?>
+        <div id="content">
+         <div class='grid-row2'>
+			<div align='' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>     
+        </div>
+        <?php }?>
+        
+       
+<!--        <div class="pagination"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>-->
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+
+<script>
+var project_type ='';
+<?php if(isset($this->projecttype) && $this->projecttype!=""){?>
+project_type = '<?php echo $this->projecttype;?>';
+<?php }
+else{ ?>
+project_type='adhoc';
+<?php }?>
+
+$(document).ready(function(){
+	populate_dropdown(project_type,1);
+});
+
+</script>
+</html>

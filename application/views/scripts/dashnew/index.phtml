@@ -1,0 +1,1526 @@
+    <script src="<?php echo BASEPATH; ?>/js/jquery.fixedheadertable.min.js"></script>  
+	<script src="<?php echo BASEPATH; ?>/js/jquery.fixedheadertable.js"></script>  
+	  <style>
+	  #bth
+	  {
+	  width:60px !important;
+	  }
+	  table.dataTable tbody th, table.dataTable tbody td
+	  {
+		padding:0 !important;
+	  }
+	  th{
+		width: 30px;
+	  }
+	  .networkdetailbox h3
+	  {
+		font-size: 18px;
+	  }
+	  .networkdetailbox .totalUserTxt
+	  {
+		font-size: 18px;
+	  }
+	  .networkdetailbox .totaluser
+	  {
+		font-size: 14px;
+	  }
+		.makebold
+		{
+			font-weight:bold;
+		}
+		
+		.Title
+		{
+			font-size:20px;
+		}
+		.panel-heading
+		{
+			 padding: 5px 15px;
+		}
+
+
+		.table > tbody > tr > td
+		{
+			font-size:11px;
+		}
+		span{
+		font-size:11px;
+		}
+		tbody tr
+		{
+			border-top:1px solid #ddd;
+			height:60px;
+		}
+		h3{
+			font-size: 18px;
+		}
+		pack{
+			font-size: 16px;
+		}
+		#data-table-simple_length
+		{
+		display:none;
+		}
+		#data-table-simple_filter
+		{
+		display:none;
+		}
+		#data-table-simple_paginate
+		{
+		display:none;
+		}
+		#data-table-simple_info
+		{
+		display:none;
+		}
+		
+		#data-table-simple1_length
+		{
+		display:none;
+		}
+		#data-table-simple1_filter
+		{
+		display:none;
+		}
+		#data-table-simple1_paginate
+		{
+		display:none;
+		}
+		#data-table-simple1_info
+		{
+		display:none;
+		}
+		.innertbl td
+		{
+			padding:0 !important;
+		}
+		.tbl td
+		{
+			padding:0 !important;
+		}
+		.innertbl th
+		{
+		font-size: 11px;
+		padding:0 !important;
+		}
+		td, th
+		{
+		padding:0 !important;
+		}
+		table.dataTable thead .sorting_asc
+		{
+			 background-image: none !important;
+		}
+		table.dataTable thead .sorting_desc
+		{
+			background-image: none !important;
+		}
+		table.dataTable thead .sorting
+		{
+			background-image: none !important;
+		}
+		#google_translate_element{
+			padding:18px 0px ;
+		}
+		.table-responsive
+		{
+			height:100%;
+		}
+		
+		@media only screen and (max-width: 1199px){	
+				#trending-line-chart-user{
+						width:100% !important;
+					}
+		
+		}
+		@media only screen and (min-width: 320px) and (max-width: 549px){
+			#trending-line-chart {
+				height: 275px !important;
+			}
+			.revenuebg {
+				height: 320px !important;
+			}
+			#trending-line-chart-user {
+				height: 275px !important;
+			}
+			
+		}
+		@media only screen and (min-width: 550px) and (max-width: 768px){
+			#trending-line-chart {
+				height: 328px !important;
+			}
+			#trending-line-chart-user {
+				height: 328px !important;
+			}
+			.revenuebg {
+				height: 365px !important;
+			}
+		}
+		@media only screen and (min-width: 769px) and (max-width: 1199px){
+			#trending-line-chart {
+				height: 376px !important;
+			}
+			#trending-line-chart-user{
+				height: 376px !important;
+				
+			}
+			.revenuebg {
+				height: 420px !important;
+			}
+		}
+		.revenuebg h1
+		{
+			font-size:22px;
+		    line-height: 86px;
+		}
+		.padempty
+		{
+			padding-left:0;
+			padding-right:0;
+		}
+		</style>
+		<script>
+	jQuery(document).ready(function(){
+
+
+
+	getExchangeRates();
+	var right=document.getElementById('rightdiv').style.height;
+var left=document.getElementById('leftdiv').style.height;
+if(left>right)
+{
+    document.getElementById('rightdiv').style.height=left;
+}
+else
+{
+    document.getElementById('leftdiv').style.height=right;
+}
+$('input:radio[name="filtrbus"]').change(function(){
+	var filter=$(this).val();
+
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart-user').empty();
+						$('#canvas_wrapper').empty();
+						var binddata='<canvas id="trending-line-chart-user"  width="500" height="360"> ></canvas>';
+						$('#canvas_wrapper').append(binddata);
+						
+if(filter=='week')
+{
+var data1={"labels":data['dates'],"datasets":{"1":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']}}};
+}
+else
+{
+			var data1={"labels":[data['dates'][0],'','','','','','','','','','','','','',data['dates'][14],'','','','','','','','','','','','','','',data['dates'][29]],"datasets":{"1":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']}}};
+}						
+									
+						var trendingLineChartUser = document.getElementById("trending-line-chart-user").getContext("2d");
+
+						window.trendingLineChartUser = new Chart(trendingLineChartUser).Line(data1, {			
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+						var innerhtml='';	
+					for(var k=0;k<(data['datesarr'].length);k++)
+					{
+					
+						var x=k+1;
+						innerhtml+='<tr>'+
+						 '<td scope="row">'+ x +'</td>'+
+						 '<td>'+ data['data'][k]+'</td>'+
+						 '<td>'+data['datesarr'][k]+'</td>'+ 						   
+					  '</tr>';
+					  $('#businessdata').empty();
+					  $('#businessdata').append(innerhtml);
+					 
+	     			}
+	     		}
+			});
+});
+	
+	
+
+$('input:radio[name="filtr"]').change(function(){
+	var filter=$(this).val();
+	
+	if(filter=='week')
+{
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph/graph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart').empty();
+						$('#canvas_wrapper_revenue').empty();
+						var binddata='<canvas id="trending-line-chart"  width="500" height="360"> </canvas>';
+						$('#canvas_wrapper_revenue').append(binddata);		
+					
+							var innerhtml='';	
+						var dlength=(data["data"]["datesarr"]).length;
+				
+						for(var k=0;k<dlength;k++)
+						{
+						
+							var x=k+1;
+							innerhtml+='<tr><td scope="row">'+x+'</td>'+
+						' <td>'+data["data"]["sales"][k]+'</td>'+
+						 ' <td>'+data["data"]["users"][k]+ '</td> '+
+						  '<td>'+data["data"]["datesarr"][k]+'</td></tr>' ;	
+						}
+						$('#revenuedata').empty();
+					  $('#revenuedata').append(innerhtml);	
+					
+					
+					
+						var datagph={"labels":data['data']['dates'],"datasets":{"1":{"label":"First dataset","fillColor":"#A7B3BC","strokeColor":"#ffffff","pointColor":"#A7B3BC","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#A7B3BC","data":data['data']['users']},"2":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']['sales']}}};
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+						window.trendingLineChart = new Chart(trendingLineChart).Line(datagph, {		
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+			
+			
+	     		}
+			});
+			}
+			
+		if(filter=='month')
+{
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph/graph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart').empty();
+						$('#canvas_wrapper_revenue').empty();
+						var binddata='<canvas id="trending-line-chart"  width="500" height="360"> </canvas>';
+						$('#canvas_wrapper_revenue').append(binddata);	
+
+						var innerhtml='';	
+						var dlength=(data["data"]["datesarr"]).length;
+						//alert(dlength);
+					for(var k=0;k<dlength;k++)
+					{
+					
+						var x=k+1;
+						innerhtml+='<tr><td scope="row">'+x+'</td>'+
+                    ' <td>'+data["data"]["sales"][k]+'</td>'+
+                     ' <td>'+data["data"]["users"][k]+ '</td> '+
+                      '<td>'+data["data"]["datesarr"][k]+'</td></tr>' ;	
+					
+				 
+					}
+						$('#revenuedata').empty();
+					  $('#revenuedata').append(innerhtml);					  
+					
+						var datagph={"labels":[data['data']['dates'][0],'','','','','','','','','','','','','',data['data']['dates'][14],'','','','','','','','','','','','','','',data['data']['dates'][29]],"datasets":{"1":{"label":"First dataset","fillColor":"#A7B3BC","strokeColor":"#ffffff","pointColor":"#A7B3BC","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#A7B3BC","data":data['data']['users']},"2":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']['sales']}}};
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+						window.trendingLineChart = new Chart(trendingLineChart).Line(datagph, {		
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+			
+				
+					  
+					  
+					
+					 
+	     			
+	     		}
+			});
+			}
+
+   
+});
+
+});
+		
+		function generateGraphRevenue(sel)
+		{
+			//alert(sel.value);
+				var filter=(sel.value);
+if(filter=='week')
+{
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph/graph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart').empty();
+						$('#canvas_wrapper_revenue').empty();
+						var binddata='<canvas id="trending-line-chart"  width="500" height="360"> </canvas>';
+						$('#canvas_wrapper_revenue').append(binddata);		
+					
+						var data={"labels":data['data']['dates'],"datasets":{"1":{"label":"First dataset","fillColor":"#A7B3BC","strokeColor":"#ffffff","pointColor":"#A7B3BC","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#A7B3BC","data":data['data']['users']},"2":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']['sales']}}};
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+						window.trendingLineChart = new Chart(trendingLineChart).Line(data, {		
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+			
+					/*	var innerhtml='';	
+					for(var k=0;k<(data['buseness_details'].length);k++)
+					{
+						var x=k+1;
+						innerhtml+='<tr>'+
+						 '<td scope="row">'+ x +'</td>'+
+						 '<td>'+ data['buseness_details'][k]['contract']+'</td>'+
+						 '<td>'+data['buseness_details'][k]['date']+'</td>'+ 						   
+					  '</tr>';
+					  $('#businessdata').empty();
+					  $('#businessdata').append(innerhtml);
+					 
+	     			}*/
+	     		}
+			});
+			}
+			
+	if(filter=='month')
+{
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph/graph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart').empty();
+						$('#canvas_wrapper_revenue').empty();
+						var binddata='<canvas id="trending-line-chart"  width="500" height="360"> </canvas>';
+						$('#canvas_wrapper_revenue').append(binddata);		
+					
+						var data={"labels":data['data']['dates'],"datasets":{"1":{"label":"First dataset","fillColor":"#A7B3BC","strokeColor":"#ffffff","pointColor":"#A7B3BC","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#A7B3BC","data":data['data']['users']},"2":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']['sales']}}};
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+
+						var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+						window.trendingLineChart = new Chart(trendingLineChart).Line(data, {		
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+			
+					/*	var innerhtml='';	
+					for(var k=0;k<(data['buseness_details'].length);k++)
+					{
+						var x=k+1;
+						innerhtml+='<tr>'+
+						 '<td scope="row">'+ x +'</td>'+
+						 '<td>'+ data['buseness_details'][k]['contract']+'</td>'+
+						 '<td>'+data['buseness_details'][k]['date']+'</td>'+ 						   
+					  '</tr>';
+					  $('#businessdata').empty();
+					  $('#businessdata').append(innerhtml);
+					 
+	     			}*/
+	     		}
+			});
+			}
+		}
+		</script>
+		<?php 
+       // echo "<pre>";
+       // print_r($this->userbusiness);exit;
+         ?>
+		 <style>
+
+		 </style>
+        <div id="page-wrapper">
+         
+
+          <div class="clearfix"  >&nbsp;</div>
+
+
+
+			 
+			<div class="row">
+                <div class="col-lg-6 offset-1">
+                    <div class="panel panel-default buynowbox ">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title brdright">
+                          Revenue
+                        
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg " style="height:377px;">
+						<div style="display:inline;">
+						<span style=" margin-left: 3%;"><input checked type="radio" name="filtr" value="week" id="week"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Week</span>
+						<span style=" margin-left: 10%;"><input type="radio" value="month" name="filtr" id="month"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Month</span>
+						</div>
+							<div class="trending-line-chart-wrapper" id="canvas_wrapper_revenue">
+								<canvas id="trending-line-chart"  width="500" height="330"> </canvas>
+							</div>
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                   
+                   
+                </div>
+                <!-- /.col-lg-8 -->
+                <div class="col-lg-6 offset-1">
+                    <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          Revenue By Day
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                        
+                        <div class="panel-body revenubydaybg " style="height:377px;">
+                           <div class="bs-example table-responsive" data-example-id="bordered-table" style="height:100%;"> 
+                    <table id="data-table-simple"  class="table tbl table table-bordered innertbl display">
+                     
+
+                    <thead> 
+                    <tr>
+                       <th>ID</th>
+                        <th>Total Sales</th> 
+                        <th>Total User</th>
+                         <th>Date</th> 
+                         
+                     </tr> 
+                 </thead>
+                  <tbody id="revenuedata">  
+                     <?php for($k=0;$k<sizeof($this->datesarr);$k++) 
+                     {
+                     ?>
+      							<tr>
+                     <td scope="row"><?php echo $k+1; ?></td> 
+                     <td><?php echo $this->result['data']['sales'][$k]['total_sales']; ?></td>
+                      <td><?php echo $this->result['data']['users'][$k]; ?></td> 
+                      <td><?php echo date("jS M, Y", strtotime($this->datesarr[$k])); ?></td> 
+                       
+                  </tr>
+                  <?php } ?>
+
+
+      
+             
+             
+             
+                 </tbody>
+                  </table> 
+              </div>
+                        </div>
+                  
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+             
+            </div>
+            <!-- /.row -->
+             <!-- /Revenue Section End -->
+
+			 
+			 
+			 
+			<div class="row">
+			
+				<div class="col-lg-6 offset-1">
+                    <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          User Business
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                        
+                        <div class="panel-body revenubydaybg " style="height:377px;">
+                            <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+                   <table id="data-table-simple1"  class="table table-bordered innertbl display"> 
+                     
+
+                    <thead> 
+                    <tr>
+                       <th>Sr No.</th>
+                        <th>Total Business</th> 
+                         <th>Date</th> 
+                         
+                     </tr> 
+                 </thead>
+                  <tbody id="businessdata"> 
+                             <?php for($k=0;$k<sizeof($this->datesarr);$k++) 
+                     {
+                     ?>
+      				<tr>
+                     <td scope="row"><?php echo $k+1; ?></td> 
+                     <td><?php if(empty($this->userbusiness[$k]['contract'])){ echo 0; } else { echo $this->userbusiness[$k]['contract']; } ?></td>
+                     <td><?php echo $this->datesarr[$k]; ?></td> 
+                       
+                  </tr>
+                  <?php } ?>
+
+
+      
+             
+             
+             
+                 </tbody>
+                  </table> 
+              </div>
+                        </div>
+                  
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+			
+			
+                <div class="col-lg-6 offset-1">
+                    <div class="panel panel-default buynowbox ">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title brdright">
+                          Business Graph
+						
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg " style="height:377px;">
+							<div style="display:inline;">
+								<span style=" margin-left: 3%;"><input checked type="radio" name="filtrbus" value="week" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Week</span>
+								<span style=" margin-left: 10%;"><input type="radio" value="month" name="filtrbus" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Month</span>
+							</div>
+							<div class="trending-line-chart-wrapper" id="canvas_wrapper">
+								<canvas id="trending-line-chart-user"  width="500" height="330"> ></canvas>
+							</div>
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                   
+                   
+                </div>
+				
+				
+                <!-- /.col-lg-8 -->
+
+             
+            </div>
+			 
+			 
+			 
+			 
+
+             <!-- /Grid Section Start -->
+             <div class="row">
+                      <div class="col-lg-3 offset-0">
+                     <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          My Contracts
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg"  style="height: 166px;">
+                            <h1 class="text-center"><?php echo $this->contractDetails['data']['myContracts']; ?> BTC</h1>
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+
+              </div>
+               <div class="col-lg-3 offset-0">
+                <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          Total Outputs
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg " style="height: 166px;">
+                            <h1 class="text-center"><?php echo $this->contractDetails['data']['totalOutputs']; ?></h1>
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+
+               </div>
+                <div class="col-lg-3 offset-0">
+                <div class="panel panel-default buynowbox" style="padding-top:0;padding-bottom:0;">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          GB Calculator
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg offset-0" style="padding-top:0;padding-bottom:0;height: 166px;">
+                           <h4 class="text-center" style="font-size:14px;">
+                              BTC
+                           </h4>
+
+                        <div class="form-group clearfix">
+                          <div class="col-xs-5  offset-1">
+                           
+                            <input class="form-control calculateSearchbox" id="amount" name="amount"  type="text" placeholder="123">
+                          </div>
+						  <div class="col-xs-1"></div>
+                            <div class="col-xs-5 col-xs-12 offset-1">
+                              
+                                  <button id="calculate" class="btn btn-default calculatebtn text-uppercase" type="button">Calculate</button>
+                             
+                              </div>
+                        </div>
+               
+  <!--  <div class="col-lg-12 col-xs-12 offset-1" id="appendhtml">
+						   <div class="col-lg-6 col-xs-12 offset-1">
+						   <p>Day</p>
+						    <input class="form-control calculateSearchbox"   type="text" placeholder="" value="">
+						   </div>
+						    <div class="col-lg-6 col-xs-12 offset-1">
+							  <p>Month</p>
+							 <input class="form-control calculateSearchbox"   type="text" placeholder="" value="">
+						   </div>
+						    <div class="col-lg-6 col-xs-12 offset-1">
+							  <p>Yearly</p>
+							 <input class="form-control calculateSearchbox"   type="text" placeholder="" value="">
+						   </div>
+						   </div> -->
+						   
+						    <div class="paddAll" id="appendhtml" style="padding-top:0;padding-bottom:0;font-size:12px;">
+                                <p>Per Day Output:</p>
+                                <p>Month Output: </p>
+                                <p>Yearly Output: </p>
+                            </div>
+
+  
+                        
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+
+               </div>
+			   
+			   
+			   <div class="col-lg-3 offset-0">
+                <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                         Exchange Rate
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenuebg offset-0"  style="padding-top:0;padding-bottom:0;height: 166px;">
+						 <h4 class="text-center" style="font-size:14px;">
+                              BTC
+                         </h4>
+						<div class="col-lg-12 offset-0">
+							  <div class="col-lg-2 offset-0"> </div>
+							   <div class="col-lg-8 offset-0 text-center">
+							   <div class="input-type-select">
+									<select id="rates" name="rates" onchange="getExchangeRates();">
+									  <option value="INR">INR</option>
+									  <option value="USD">USD</option>
+									  <option value="SGD">SGD</option>
+									   <option value="MXN">MXN</option>
+									
+							
+									</select>
+								</div>  
+							</div>   
+							<div class="col-lg-2 offset-0"></div>
+						</div>
+						<br>
+						  <div class="clearfix">&nbsp;</div>
+						<div class="col-lg-12 offset-0">
+							<div class="col-lg-2 offset-0">  </div>
+							<div class="col-lg-4 offset-0"> 1 BTC  =  </div>
+						
+							<div class="col-lg-6 offset-0" id="exrate"></div>
+						</div>
+                        
+                   
+                        <!-- /.panel-body -->
+                    </div>
+
+               </div>
+			   </div>
+			   
+
+             </div>
+              <!-- /Grid Section End -->
+
+              <!-- /Buy Hardware Section Start -->
+              <div class="row">
+			  
+			  
+			  
+			  
+			  
+			  
+                  <div class="col-lg-12 offset-0">
+                     <div class="panel panel-default buynowbox offset-margin-0">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                         Buy Hardware
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                  
+                   
+                 
+                    </div>
+                    <!-- /.panel -->
+					<div class="col-lg-12 text-center offset-1 revenuebg"><h1 style="line-height: 80px; min-height: 100px;">COMING SOON</h1>
+					</div>
+
+
+
+
+
+                    </div> 
+					
+					
+					
+					
+
+              </div>
+
+             
+              <div class="clearfix">&nbsp;</div>
+               <!-- /Buy Hardware Section End -->
+
+               <div class="row">
+
+                <div class="col-lg-5 offset-0">
+                     <div class="panel panel-default buynowbox">
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                           Network Details
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div id="leftdiv" class="panel-body revenuebg networkdetailbox networkdetailsminhgt" style="min-height: 390px;">
+
+                          <div class="col-xs-6 text-center offset-1">
+                           
+                             <h3 class="text-uppercase"> Left </h3>
+                             <p><?php echo $this->contractDetails['data']['left']; ?></p>
+                            
+
+                             <h3 class="totalUserTxt"> Total Left Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['totalLeftUsers']; ?></p>
+                                  
+                             <h3 class="totalUserTxt">Active Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['leftActiveUsers']; ?></p>
+                        
+                              <h3 class="totalUserTxt">Inactive Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['leftInactiveUsers']; ?></p>
+                          </div>
+
+                        <div class="col-xs-6  text-center  offset-1">
+                        
+                           <h3 class="text-uppercase"> Right </h3>
+
+                           <p>
+                            <?php echo $this->contractDetails['data']['right']; ?>
+                           </p>
+                         
+                           <h3 class="totalUserTxt"> Total Right Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['totalRightUsers']; ?></p>
+                          
+                              <h3 class="totalUserTxt">Active Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['rightActiveUsers']; ?></p>
+                            
+                              <h3 class="totalUserTxt">Inactive Users </h3>
+                             <p class="totaluser"><?php echo $this->contractDetails['data']['rightInactiveUsers']; ?></p>
+                        </div>
+
+                        
+                       
+
+                         
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+
+              </div>
+
+               <div class="col-lg-7 offset-0">
+                     <div class="panel panel-default buynowbox networkdetailbox" >
+                        <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+                          Special Offers
+                           
+                        </div>
+                        <!-- /.panel-heading -->
+                       
+                        <div class="panel-body revenubydaybg" id="rightdiv">
+                              
+                             <h3 class="text-uppercase text-center"> Monthly Offers </h3>
+                             
+                             <div class="clearfix">&nbsp;</div>
+
+                            <div class="col-lg-4 text-center">
+
+                              <label>No. of Binary Pairs</label>
+                              <div class="whitebg">0</div>
+    
+
+                            </div>
+
+                             <div class="col-lg-4 text-center">
+
+                              <label>No. of Direct Pairs</label>
+                              <div class="whitebg">0</div>
+    
+
+                            </div>
+
+                             <div class="col-lg-4 text-center">
+
+                              <label>Current Achieved</label>
+                              <div class="whitebg">0</div>
+    
+
+                            </div>
+
+                            
+                             <p>&nbsp;</p>
+                             <h3 class="text-uppercase text-center"> Monthly Rewards </h3>
+
+   
+<div class="carousel-reviews broun-block">
+   
+  
+            <div id="carousel-reviews" class="carousel slide" data-ride="carousel">
+            
+                <div class="carousel-inner">
+                    <div class="item active">
+                      <div class="col-md-4 col-sm-6">
+                    <div class="block-text text-center">
+                    <img src="<?php echo BASEPATH; ?>/images/offer_images/thialand.png" alt="" class="img-responsive monthlyrewardsimg">
+
+                    <h4>Thailand Trip**</h4>
+                   <!--<p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+                  35 Pairs (Binary)</h4>-->
+
+                  </div>
+            
+            </div>
+                  <div class="col-md-4 col-sm-6 hidden-xs">
+                <div class="block-text text-center">
+                   <img src="<?php echo BASEPATH; ?>/images/offer_images/laptop.png" alt="" class="img-responsive monthlyrewardsimg">
+
+                   <h4>Laptop**</h4>
+                  <!-- <p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+35 Pairs (Binary)</h4>-->
+
+                    </div>
+              
+            </div>
+            <div class="col-md-4 col-sm-6 hidden-sm hidden-xs">
+              <div class="block-text text-center">
+                <img src="<?php echo BASEPATH; ?>/images/offer_images/phone.png" alt="" class="img-responsive monthlyrewardsimg">
+
+                <h4>Mobile**</h4>
+                 <!--  <p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+35 Pairs (Binary)</h4>-->
+
+              </div>
+              
+            </div>
+                    </div>
+                    <div class="item">
+                        <div class="col-md-4 col-sm-6 text-center">
+                    <div class="block-text ">
+                   <img src="<?php echo BASEPATH; ?>/images/offer_images/car.png" alt="" class="img-responsive monthlyrewardsimg">
+
+                   <h4>Car**</h4>
+                  <!-- <p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+35 Pairs (Binary)</h4>-->
+
+                  </div>
+          
+            </div>
+                  <div class="col-md-4 col-sm-6 hidden-xs">
+                <div class="block-text text-center ">
+                    <img src="<?php echo BASEPATH; ?>/images/offer_images/lasvegas.png" alt="" class="img-responsive monthlyrewardsimg">
+                    <h4>Lasvegas Trip**</h4>
+                   <!--<p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+                  35 Pairs (Binary)</h4>-->
+
+                    </div>
+            
+            </div>
+            <div class="col-md-4 col-sm-6 hidden-sm hidden-xs">
+              <div class="block-text text-center ">
+                  <img src="<?php echo BASEPATH; ?>/images/offer_images/uzbekistan.png" alt="" class="img-responsive monthlyrewardsimg">
+
+                  <h4>Uzbekistan Trip**</h4>
+                  <!-- <p>(Upto INR 30,000)</p>
+
+                   <h4>
+                   0.5 Direct + <br/>
+35 Pairs (Binary)</h4>-->
+
+              </div>
+            
+            </div>
+                    </div>
+                                      
+                </div>
+                <a class="left carousel-control" href="#carousel-reviews" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+					
+                </a>
+                <a class="right carousel-control" href="#carousel-reviews" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+					
+                </a>
+            </div>
+        
+
+</div>
+                       
+                        </div>
+                   
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+
+              </div>
+               </div>
+
+ </div>
+ </div>
+        </div>
+		<?php //echo "<pre>";
+			//	print_r($this->result['data']['dates']);exit;
+		?>
+    <!-- Morris Charts JavaScript -->
+        <script>
+    var salesdata=<?php  echo json_encode( $this->result['data']['sales']); ?>;
+
+	var datesdata=<?php  echo json_encode( $this->result['data']['dates']); ?>;
+	var usersdata=<?php  echo json_encode( $this->result['data']['users']); ?>;
+	var usergraph=<?php  echo json_encode( $this->usergraph); ?>;
+//alert(usersdata);
+//alert(salesdata);
+
+    </script>
+
+	<script>
+	$("#calculate").click(function(){
+		var amount =$("#amount").val();
+		//alert("here");
+		//return false;
+		$.ajax({
+			type:"POST",
+			 url: '<?php echo BASEPATH; ?>/rest/GBcalculator',
+			data:{investment:amount},
+			success: function(data){  
+		
+		
+	
+				var innhtml="<div class='col-xs-12' style='padding-bottom: 1%;'><div class='col-xs-6 padempty'>Per Day Output:</div> <div class='makebold col-xs-6 padempty'>&nbsp;"+data.client_data.daily_earning+"</div></div><div class='col-xs-12' style='padding-bottom: 1%;'><div class='col-xs-6 padempty'>Month Output:</div> <div class='makebold col-xs-6 padempty'>&nbsp;"+data.client_data.daily_earning+"</div></div><div class='col-xs-12'><div class='col-xs-6 padempty'>Yearly Output:</div> <div class='makebold col-xs-6 padempty'>&nbsp;"+data.client_data.yearly_earning+"</div></div>";
+				$('#appendhtml').empty();
+				$('#appendhtml').append(innhtml);
+				
+				
+			
+			}
+		});
+		
+		
+	});
+	function generateGraph(sel)
+	{
+		var filter=(sel.value);
+				 $.ajax({
+				url:"<?php echo BASEPATH; ?>/Generategraph", 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+			     	//alert(response);
+					 var data=	JSON.parse(response);
+					
+						$('#trending-line-chart-user').empty();
+						$('#canvas_wrapper').empty();
+						var binddata='<canvas id="trending-line-chart-user"  width="500" height="360"> ></canvas>';
+						$('#canvas_wrapper').append(binddata);
+											
+						var data1={"labels":data['dates'],"datasets":{"1":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":data['data']}}};						
+						var trendingLineChartUser = document.getElementById("trending-line-chart-user").getContext("2d");
+
+						window.trendingLineChartUser = new Chart(trendingLineChartUser).Line(data1, {			
+							scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+							scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+							scaleGridLineWidth : 1,//Number - Width of the grid lines		
+							scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+							scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+							bezierCurve : true,//Boolean - Whether the line is curved between points		
+							bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+							pointDot : true,//Boolean - Whether to show a dot for each point		
+							pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+							pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+							pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+							datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+							datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+							datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+							animationSteps: 10,// Number - Number of animation steps		
+							animationEasing: "easeOutQuart",// String - Animation easing effect			
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							scaleFontSize: 11,// Number - Scale label font size in pixels		
+							scaleFontStyle: "normal",// String - Scale label font weight style	
+							scaleFontFamily:"robotoregular",		
+							scaleFontColor: "black",// String - Scale label font colour
+							tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+							tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+							tooltipFontColor: "#000",// String - Tooltip label font colour		
+							tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+							tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+							tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+							tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+							tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+							tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+							tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+							tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+							tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+							responsive: true
+							});
+						var innerhtml='';	
+					for(var k=0;k<(data['buseness_details'].length);k++)
+					{
+						var x=k+1;
+						innerhtml+='<tr>'+
+						 '<td scope="row">'+ x +'</td>'+
+						 '<td>'+ data['buseness_details'][k]['contract']+'</td>'+
+						 '<td>'+data['buseness_details'][k]['date']+'</td>'+ 						   
+					  '</tr>';
+					  $('#businessdata').empty();
+					  $('#businessdata').append(innerhtml);
+					 
+	     			}
+	     		}
+			});
+	}
+	</script>
+ 
+
+    <!-- chartjs -->
+    <script type="text/javascript" data-cfasync='false' src="<?php echo BASEPATH; ?>/js/chartjs/chart.min.js"></script>
+
+	
+	<script>
+	/*
+* Trending line chart
+*/
+//var randomScalingFactor = function(){ return Math.round(Math.random()*10)};
+/* var data = {
+	labels : ["JAN","FEB","MAR","APR","MAY","JUNE","JULY"], 
+	datasets : [
+		{
+			label: "First dataset",
+			fillColor : "rgba(128, 222, 234, 0.6)",
+			strokeColor : "#ffffff",
+			pointColor : "#00bcd4",
+			pointStrokeColor : "#ffffff",
+			pointHighlightFill : "#ffffff",
+			pointHighlightStroke : "#ffffff",
+			data: [1, 5, 2, 4, 8, 5, 8]
+		},
+		{
+			label: "Second dataset",
+			fillColor : "rgba(128, 222, 234, 0.3)",
+			strokeColor : "#80deea",
+			pointColor : "#00bcd4",
+			pointStrokeColor : "#80deea",
+			pointHighlightFill : "#80deea",
+			pointHighlightStroke : "#80deea",
+			data: [6, 2, 9, 2, 5, 10, 4]
+		}
+	]
+}; */
+//var data = JSON.parse(document.getElementById("dataValue").value);
+ //console.log(datesdata);
+//alert(usersdata);
+//alert(salesdata);
+
+var data1={"labels":datesdata,"datasets":{"1":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":usergraph}}};
+var data={"labels":datesdata,"datasets":{"1":{"label":"First dataset","fillColor":"#A7B3BC","strokeColor":"#ffffff","pointColor":"#A7B3BC","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#A7B3BC","data":usersdata},"2":{"label":"Second dataset","fillColor":"#2577B5","strokeColor":"#ffffff","pointColor":"#2577B5","pointStrokeColor":"#ffffff","pointHighlightFill":"black","pointHighlightStroke":"#80deea","data":salesdata}}};
+var nReloads = 0;
+var min = 1;
+var max = 10;
+var l =0;
+var trendingLineChart;
+function update() {
+	/*nReloads++;
+
+	var x = Math.floor(Math.random() * (max - min + 1)) + min;
+	var y = Math.floor(Math.random() * (max - min + 1)) + min;
+	trendingLineChart.addData([x, y], data.labels[l]);
+	trendingLineChart.removeData();
+	l++;
+	if( l == data.labels.length)
+		{ l = 0;}*/
+}
+//setInterval(update, 300000);
+
+
+
+/*
+Polor Chart Widget
+*/
+ 
+
+
+
+
+window.onload = function(){
+	var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+	window.trendingLineChart = new Chart(trendingLineChart).Line(data, {		
+		scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+		scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+		scaleGridLineWidth : 1,//Number - Width of the grid lines		
+		scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+		scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+		bezierCurve : true,//Boolean - Whether the line is curved between points		
+		bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+		pointDot : true,//Boolean - Whether to show a dot for each point		
+		pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+		pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+		pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+		datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+		datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+		datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+		animationSteps: 10,// Number - Number of animation steps		
+		animationEasing: "easeOutQuart",// String - Animation easing effect			
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		scaleFontSize: 11,// Number - Scale label font size in pixels		
+		scaleFontStyle: "normal",// String - Scale label font weight style	
+		scaleFontFamily:"robotoregular",		
+		scaleFontColor: "black",// String - Scale label font colour
+		tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+		tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+		tooltipFontColor: "#000",// String - Tooltip label font colour		
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+		tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+		tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+		tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+		tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+		tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+		tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+		tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+		responsive: true
+		});
+			
+			var trendingLineChartUser = document.getElementById("trending-line-chart-user").getContext("2d");
+	window.trendingLineChartUser = new Chart(trendingLineChartUser).Line(data1, {			
+		scaleShowGridLines : true,///Boolean - Whether grid lines are shown across the chart		
+		scaleGridLineColor : "#CECECE",//String - Colour of the grid lines		
+		scaleGridLineWidth : 1,//Number - Width of the grid lines		
+		scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)		
+		scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)		
+		bezierCurve : true,//Boolean - Whether the line is curved between points		
+		bezierCurveTension : 0.4,//Number - Tension of the bezier curve between points		
+		pointDot : true,//Boolean - Whether to show a dot for each point		
+		pointDotRadius : 5,//Number - Radius of each point dot in pixels		
+		pointDotStrokeWidth : 2,//Number - Pixel width of point dot stroke		
+		pointHitDetectionRadius : 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point		
+		datasetStroke : true,//Boolean - Whether to show a stroke for datasets		
+		datasetStrokeWidth : 3,//Number - Pixel width of dataset stroke		
+		datasetFill : true,//Boolean - Whether to fill the dataset with a colour				
+		animationSteps: 10,// Number - Number of animation steps		
+		animationEasing: "easeOutQuart",// String - Animation easing effect			
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		scaleFontSize: 11,// Number - Scale label font size in pixels		
+		scaleFontStyle: "normal",// String - Scale label font weight style	
+		scaleFontFamily:"robotoregular",		
+		scaleFontColor: "black",// String - Scale label font colour
+		tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events		
+		tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour		
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+		tooltipFontColor: "#000",// String - Tooltip label font colour		
+		tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label		
+		tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels		
+		tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style		
+		tooltipTitleFontColor: "#000",// String - Tooltip title font colour		
+		tooltipYPadding: 8,// Number - pixel width of padding around tooltip text		
+		tooltipXPadding: 16,// Number - pixel width of padding around tooltip text		
+		tooltipCaretSize: 10,// Number - Size of the caret on the tooltip		
+		tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border		
+		tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+		responsive: true
+		});
+
+		var doughnutChart = '';
+		window.myDoughnut = new Chart(doughnutChart).Doughnut(doughnutData, {
+			segmentStrokeColor : "#fff",
+			tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label		
+			percentageInnerCutout : 50,
+			animationSteps : 15,
+			segmentStrokeWidth : 4,
+			animateScale: true,
+			percentageInnerCutout : 60,
+			responsive : true
+		});
+
+		var trendingBarChart = '';
+		window.trendingBarChart = new Chart(trendingBarChart).Bar(dataBarChart,{
+			scaleShowGridLines : false,///Boolean - Whether grid lines are shown across the chart
+			showScale: true,
+			animationSteps:15,
+			tooltipTitleFontFamily: "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label		
+			responsive : true
+		});
+
+		/* window.trendingRadarChart = new Chart(document.getElementById("trending-radar-chart").getContext("2d")).Radar(radarChartData, {
+		    
+		    angleLineColor : "rgba(255,255,255,0.5)",//String - Colour of the angle line		    
+		    pointLabelFontFamily : "'Roboto','Helvetica Neue', 'Helvetica', 'Arial', sans-serif",// String - Tooltip title font declaration for the scale label	
+		    pointLabelFontColor : "#fff",//String - Point label font colour
+		    pointDotRadius : 4,
+		    animationSteps:15,
+		    pointDotStrokeWidth : 2,
+		    pointLabelFontSize : 12,
+			responsive: true
+		}); */
+
+		// var pieChartArea = document.getElementById("pie-chart-area").getContext("2d");
+		// window.pieChartArea = new Chart(pieChartArea).Pie(pieData,{
+		// 	responsive: true		
+		// });
+
+
+};
+
+	</script>
+
+<script>
+function getExchangeRates()
+{
+	var filter=document.getElementById("rates").value;
+			 $.ajax({
+				url:"https://api.zebpay.com/api/v1/ticker?currencyCode="+filter, 
+				type: "POST",    
+			    data: 'filter='+filter,
+		  		success: function(response)
+	     		{
+					
+					$('#exrate').empty();
+					$('#exrate').append(response.buy + " " +filter);
+					
+				}
+			 });
+}
+</script>

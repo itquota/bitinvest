@@ -1,0 +1,237 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.margin_div {
+	margin: 12px;
+}
+
+.width2 {
+	width: 49% !important;
+	background-color: #00bcd4 !important;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0
+		rgba(0, 0, 0, 0.12);
+	margin-right: 1% !important;
+	min-width: 280px;
+	margin-bottom: 5px !important;
+}
+
+.width {
+	width: 100% !important;
+	margin-right: 2px !important;
+	background-color: #00bcd4 !important;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0
+		rgba(0, 0, 0, 0.12);
+	min-width: 300px;
+	margin-bottom: 3px !important;
+}
+
+.error {
+	color: red !important;
+}
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+    }
+.centerdiv {
+  left: 27%;
+}
+</style>
+  <div id="wrapper">
+ <div id="innerpage-wrapper">
+ <input type="hidden" id="unm" value="ops">
+ 					<div class="modal" id="google-auth-verify">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/logo.png"></a>
+                                    <div class="back-btn">
+                                        <a href="<?php echo BASEPATH; ?>/Dashboard"> 
+                                        <i class="is back"></i><span>Back</span></a>
+                                    </div>
+
+                                    
+                                    <div class="input-type-text">
+                                        <label for="">Enter google authentication code</label>
+                                        <input type="text" id="vcode" name="vcode">
+                                    </div>
+                                    <div class="btn_container"><input type="button" value="SUBMIT" class="btn_" onclick="verify();"></div>
+                                    <div class="g-auth-info">
+                                        <p>We strong recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. Take screenshot or save QR Code image by right click on it for backup and restore option.</p>
+                                        <div class="g-auth-social">
+                                             <a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png"></a>
+                                             <a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png"></a>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Admindashboard">Home</a> > </li>
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Binaryuser">Users </a> > </li>
+                  <li>Pay Out</li> 
+           	  </ol>
+            <div class="col-lg-12">
+      
+</div>
+        <?php ?>
+     <div class="col-lg-6 centerdiv">
+          <div class="panel panel-default buynowbox">
+            
+              <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+               TOTAL OUTPUTS
+              </div>    
+             <div class="panel-body revenubydaybg text-center ">
+               <small> FINAL AMOUNT </small> <br/>
+                
+              <label><?php echo ($this->totalEarnings['totalAmount']);?>BTC</label> 
+              </div>   
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+               <small> WITHDRAWAL AMOUNT </small> <br/>
+            <label><?php echo ($this->totalEarnings['total_withdrawal']);?>BTC</label> 
+                
+              </div>
+              <div class="panel-heading withdrawbg text-center  text-uppercase ledegerTitle">
+                <small>BALANCE AMOUNT</small><br/>
+            <label><?php echo ($this->totalEarnings['bal_amt']);?>BTC</label> 
+                
+              </div>
+              <!-- /.panel-body -->
+          </div>
+            <!-- /.panel -->
+  	</div>
+  
+           <div class="col-lg-12" style="padding: 0;">
+          <div class="panel panel-primary buynowbox col-lg-6" style="width:100%">
+
+           
+
+           <div class="panel-heading faqtitlebg text-center  text-uppercase Title">
+               SEND AMOUNT TO USER
+              </div>    
+          <div class="panel-body revenuebg">
+          <div class="err1">
+          
+    
+    <?php if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!='')
+	{
+	?>
+	<label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->errmsg; ?></label>
+	<?php $authUserNamespace->errmsg="";}?>
+	</div>
+          <form method="POST" action="<?php echo BASEPATH;?>/Paytouser/editpaytouser">
+         
+          <div id="err_div" name="err_div"></div>
+			<div class="form-group sizecls">
+			    <label for="" class="lblTxt">User Name</label>
+			    <input type="text" name="usr" id="usr" class="form-control CommonInputBox" value="<?php echo ($this->totalEarnings['username']); ?>" readonly>
+		  </div>
+   
+		  <div class="form-group alignmentcls sizecls">
+		    	<label for="" class="lblTxt">Wallet Address</label>   
+				<input type="email" name="withdrawal_address" id="withdrawal_address" class="form-control CommonInputBox" value="<?php echo ($this->query['wallet_addr']); ?>" readonly>  
+		  </div>
+		  
+		  <div class="form-group alignmentcls sizecls">
+		    	<label for="" class="lblTxt">Amount</label>   
+				<input type="text" name="withdrawal_amt" id="withdrawal_amt" class="form-control CommonInputBox isnumber" value="<?php ?>">  
+		  		 <input type="hidden" value="BTC" id="coin_choice" name="coin_choice"/>
+		  </div>
+		  
+		  <div class="form-group alignmentcls sizecls">
+		    	<label for="" class="lblTxt">Date</label>   
+				<input type="text" name="date" id="datepicker" class="form-control CommonInputBox datepick" value="<?php ?>">  
+		  </div>
+
+		   <div class="form-group col-lg-2 offset-1" style="float:left;">
+		   		<label for="" class="lblTxt">Withdrawal Type</label>
+					<select id="withdrawal_type" name="withdrawal_type" class="form-control CommonInputBox">						
+					 <option value = "select">Choose Withdrawal Type</option>
+					<option value = "blockchain">Blockchain</option>
+					<option value = "cash">Cash</option>
+					<option value = "kit">Kit</option>
+					<option value = "counter_settlement">Counter Settlement</option>
+					</select>
+				
+			</div> 
+					 
+	<div class="clearfix">&nbsp;</div>
+	 <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">					 
+  	<button type="submit" class="btn btn-default Commonbtn" onclick="return validatefun();">SUBMIT REQUEST</button>
+	</div>
+  
+</form>
+  </div>
+          </div>
+          
+          
+
+
+      <div class="clearfix">&nbsp;</div>
+      
+         
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+  </div>
+  <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+  
+  </div>
+  
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+		  $(document).ready(function () {
+				var oTable1 = $('#sample-table-2').dataTable();	
+                                
+			});
+			jQuery('.datepick').datetimepicker({			
+			 format:'d-m-Y',
+			 
+			 
+			});
+		</script>
+		<script>
+		function validatefun(){
+
+			 var withdrawal_amt=$("#withdrawal_amt").val();
+			 var contractstatus=$("#withdrawal_type").val();
+		 		if((withdrawal_amt).trim()==''){
+		 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Withdrawal Amount.</label>');
+		 			return false;
+		 		}
+				if(contractstatus=='select'){
+	   			
+	    			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Select Withdrawal Type.</label>');
+	    	
+	    			return false;
+	    		}	
+
+		}
+		</script>
+		

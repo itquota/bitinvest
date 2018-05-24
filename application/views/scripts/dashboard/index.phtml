@@ -1,0 +1,697 @@
+<?php
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj->generateToken();
+
+?>
+
+<script>
+
+    function getBusiness(filter) {
+//$('input:radio[name="filtrbus"]').change(function(){
+        //var filter=$(this).val();
+        $("#data-table-simple1").css("display", "none");
+        $('#salesBD').show();
+        var token = $('#token').val();
+
+        $.ajax({
+            url: "<?php echo BASEPATH; ?>/Generategraph",
+            type: "POST",
+            data: 'filter=' + filter + '&token=' + token,
+            success: function (response) {
+                alert(response);
+                var data = JSON.parse(response);
+
+                $('#trending-line-chart-user').empty();
+                $('#canvas_wrapper').empty();
+                var binddata = '<canvas id="trending-line-chart-user"  width="500" height="360" > ></canvas>' +
+                    '<div id="js-legend" class="chart-legend"><ul class="line-legend"><li><span style="background-color:#2577B5"></span>Business</li></ul></div>';
+                $('#canvas_wrapper').append(binddata);
+
+                if (filter == 'week') {
+                    var data1 = {
+                        "labels": data['dates'],
+                        "datasets": {
+                            "1": {
+                                "label": "Second dataset",
+                                "fillColor": "#F2F2F2",
+                                "strokeColor": "#2577B5",
+                                "pointColor": "#2577B5",
+                                "pointStrokeColor": "#ffffff",
+                                "pointHighlightFill": "black",
+                                "pointHighlightStroke": "#80deea",
+                                "data": data['data']
+                            }
+                        }
+                    };
+                }
+                else {
+                    var data1 = {
+                        "labels": [data['dates'][0], '', '', '', '', '', '', '', '', '', '', '', '', '', data['dates'][14], '', '', '', '', '', '', '', '', '', '', '', '', '', '', data['dates'][29]],
+                        "datasets": {
+                            "1": {
+                                "label": "Second dataset",
+                                "fillColor": "#F2F2F2",
+                                "strokeColor": "#2577B5",
+                                "pointColor": "#2577B5",
+                                "pointStrokeColor": "#ffffff",
+                                "pointHighlightFill": "black",
+                                "pointHighlightStroke": "#80deea",
+                                "data": data['data']
+                            }
+                        }
+                    };
+                }
+
+                var trendingLineChartUser = document.getElementById("trending-line-chart-user").getContext("2d");
+
+                window.trendingLineChartUser = new Chart(trendingLineChartUser).Line(data1, {
+                    scaleShowGridLines: true,///Boolean - Whether grid lines are shown across the chart
+                    scaleGridLineColor: "#CECECE",//String - Colour of the grid lines
+                    scaleGridLineWidth: 1,//Number - Width of the grid lines
+                    scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)
+                    scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)
+                    bezierCurve: true,//Boolean - Whether the line is curved between points
+                    bezierCurveTension: 0.4,//Number - Tension of the bezier curve between points
+                    pointDot: true,//Boolean - Whether to show a dot for each point
+                    pointDotRadius: 3,//Number - Radius of each point dot in pixels
+                    pointDotStrokeWidth: 2,//Number - Pixel width of point dot stroke
+                    pointHitDetectionRadius: 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+                    datasetStroke: true,//Boolean - Whether to show a stroke for datasets
+                    datasetStrokeWidth: 3,//Number - Pixel width of dataset stroke
+                    datasetFill: true,//Boolean - Whether to fill the dataset with a colour
+                    animationSteps: 10,// Number - Number of animation steps
+                    animationEasing: "easeOutQuart",// String - Animation easing effect
+                    tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                    scaleFontSize: 11,// Number - Scale label font size in pixels
+                    scaleFontStyle: "normal",// String - Scale label font weight style
+                    scaleFontFamily: "robotoregular",
+                    scaleFontColor: "black",// String - Scale label font colour
+                    tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events
+                    tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour
+                    tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                    tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+                    tooltipFontColor: "#000",// String - Tooltip label font colour
+                    tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                    tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels
+                    tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style
+                    tooltipTitleFontColor: "#000",// String - Tooltip title font colour
+                    tooltipYPadding: 8,// Number - pixel width of padding around tooltip text
+                    tooltipXPadding: 16,// Number - pixel width of padding around tooltip text
+                    tooltipCaretSize: 10,// Number - Size of the caret on the tooltip
+                    tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border
+                    tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+                    responsive: true
+                });
+                var innerhtml = '';
+                for (var k = 0; k < (data['datesarr'].length); k++) {
+
+                    var x = k + 1;
+                    innerhtml += '<tr>' +
+                        '<td scope="row">' + x + '</td>' +
+                        '<td>' + data['data'][k] + '</td>' +
+                        '<td>' + data['datesarr'][k] + '</td>' +
+                        '</tr>';
+                    $('#salesBD').hide();
+                    $("#data-table-simple1").show();
+
+                    $('#businessdata').empty();
+                    $('#businessdata').append(innerhtml);
+
+                }
+            }
+        });
+//});
+    }
+	
+	
+    function getSales(filter) {
+
+        $("#data-table-simple").css("display", "none");
+        $('#CSBD').show();
+        var token = $('#token').val();
+
+        //var filter=$(id).val();
+        if (filter == 'week') {
+            $.ajax({
+                url: "<?php echo BASEPATH; ?>/Generategraph/graph",
+                type: "POST",
+                data: 'filter=' + filter + '&token=' + token,
+                success: function (response) {
+             //   alert(response);
+					   var data = JSON.parse(response);
+
+					
+					  var data1 = data,
+            config = {
+                data: data1,
+                xkey: 'd',
+                ykeys: ['a', 'b','c','e','f'],
+                labels: ['Total Contracts', 'Total Users', 'BTC Sales', 'MCAP Sales (IN 1000)','MCAP-ETH Sales (IN 1000)'],
+                fillOpacity: 0.6,
+                hideHover: 'auto',
+                behaveLikeLine: true,
+                resize: true,
+                pointFillColors: ['#ffffff'],
+                pointStrokeColors: ['#60ced5', '#0000ff', '#677C38' , '#23649e' ,'#5b5b5a'],
+                lineColors: ['#60ced5', '#0000ff', '#677C38' , '#23649e','#5b5b5a']
+            };
+
+			 /*   config2 = {
+					data: data,
+					xkey: 'y',
+					ykeys: ['a', 'b'],
+					labels: ['Total Income', 'Total Outcome'],
+					fillOpacity: 0.6,
+					hideHover: 'auto',
+					behaveLikeLine: true,
+					resize: true,
+					pointFillColors: ['#ffffff'],
+					pointStrokeColors: ['#60ced5', '#36aab1'],
+					lineColors: ['#60ced5', '#36aab1']
+				};
+		*/
+			   // config2.element = 'area-chart';
+			   // Morris.Area(config2);
+        config.element = 'line-chart1';
+        Morris.Line(config);
+        
+                  
+
+                }
+            });
+        }
+
+        if (filter == 'month') {
+            $.ajax({
+                url: "<?php echo BASEPATH; ?>/Generategraph/graph",
+                type: "POST",
+                data: 'filter=' + filter + '&token=' + token,
+                success: function (response) {
+                    //alert(response);
+                    var data = JSON.parse(response);
+
+                    $('#trending-line-chart').empty();
+                    $('#canvas_wrapper_revenue').empty();
+                    var binddata = '<canvas id="trending-line-chart"  width="auto" height="auto" style="padding:0px 20px;position:relative;"> </canvas>' +
+                        '<div id="js-legend" class="chart-legend"><ul class="line-legend"><li><span style="background-color:#2577B5"></span>Users</li><li><span style="background-color:#A7B3BC"></span>Sales</li></ul></div>';
+                    $('#canvas_wrapper_revenue').append(binddata);
+
+                    var innerhtml = '';
+                    var dlength = (data["data"]["datesarr"]).length;
+                    //alert(dlength);
+                    for (var k = 0; k < dlength; k++) {
+
+                        var x = k + 1;
+                        innerhtml += '<tr><td scope="row">' + x + '</td>' +
+                            ' <td>' + data["data"]["sales"][k] + '</td>' +
+                            ' <td>' + data["data"]["users"][k] + '</td> ' +
+                            '<td>' + data["data"]["datesarr"][k] + '</td></tr>';
+
+
+                    }
+                    $('#CSBD').hide();
+                    $('#data-table-simple').show();
+
+                    $('#hide_cont').show();
+                    $('#revenuedata').show();
+                    $('#revenuedata').empty();
+                    $('#revenuedata').append(innerhtml);
+
+                    var datagph = {
+                        "labels": [data['data']['dates'][0], '', '', '', '', '', '', '', '', '', '', '', '', '', data['data']['dates'][14], '', '', '', '', '', '', '', '', '', '', '', '', '', '', data['data']['dates'][29]],
+                        "datasets": {
+                            "1": {
+                                "label": "First dataset",
+                                "fillColor": "#F2F2F2",
+                                "strokeColor": "#2577B5",
+                                "pointColor": "#2577B5",
+                                "pointStrokeColor": "#ffffff",
+                                "pointHighlightFill": "black",
+                                "pointHighlightStroke": "#A7B3BC",
+                                "data": data['data']['users']
+                            },
+                            "2": {
+                                "label": "Second dataset",
+                                "fillColor": "#F2F2F2",
+                                "strokeColor": "#A7B3BC",
+                                "pointColor": "#A7B3BC",
+                                "pointStrokeColor": "#ffffff",
+                                "pointHighlightFill": "black",
+                                "pointHighlightStroke": "#80deea",
+                                "data": data['data']['sales']
+                            }
+                        }
+                    };
+                    var trendingLineChart = document.getElementById("trending-line-chart").getContext("2d");
+
+                    window.trendingLineChart = new Chart(trendingLineChart).Line(datagph, {
+                        scaleShowGridLines: true,///Boolean - Whether grid lines are shown across the chart
+                        scaleGridLineColor: "#CECECE",//String - Colour of the grid lines
+                        scaleGridLineWidth: 1,//Number - Width of the grid lines
+                        scaleShowHorizontalLines: true,//Boolean - Whether to show horizontal lines (except X axis)
+                        scaleShowVerticalLines: false,//Boolean - Whether to show vertical lines (except Y axis)
+                        bezierCurve: true,//Boolean - Whether the line is curved between points
+                        bezierCurveTension: 0.4,//Number - Tension of the bezier curve between points
+                        pointDot: true,//Boolean - Whether to show a dot for each point
+                        pointDotRadius: 3,//Number - Radius of each point dot in pixels
+                        pointDotStrokeWidth: 2,//Number - Pixel width of point dot stroke
+                        pointHitDetectionRadius: 20,//Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+                        datasetStroke: true,//Boolean - Whether to show a stroke for datasets
+                        datasetStrokeWidth: 3,//Number - Pixel width of dataset stroke
+                        datasetFill: true,//Boolean - Whether to fill the dataset with a colour
+                        animationSteps: 10,// Number - Number of animation steps
+                        animationEasing: "easeOutQuart",// String - Animation easing effect
+                        tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                        scaleFontSize: 11,// Number - Scale label font size in pixels
+                        scaleFontStyle: "normal",// String - Scale label font weight style
+                        scaleFontFamily: "robotoregular",
+                        scaleFontColor: "black",// String - Scale label font colour
+                        tooltipEvents: ["mousemove", "touchstart", "touchmove"],// Array - Array of string names to attach tooltip events
+                        tooltipFillColor: "rgba(255,255,255,0.8)",// String - Tooltip background colour
+                        tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                        tooltipFontSize: 11,// Number - Tooltip label font size in pixels
+                        tooltipFontColor: "#000",// String - Tooltip label font colour
+                        tooltipTitleFontFamily: "robotoregular",// String - Tooltip title font declaration for the scale label
+                        tooltipTitleFontSize: 11,// Number - Tooltip title font size in pixels
+                        tooltipTitleFontStyle: "bold",// String - Tooltip title font weight style
+                        tooltipTitleFontColor: "#000",// String - Tooltip title font colour
+                        tooltipYPadding: 8,// Number - pixel width of padding around tooltip text
+                        tooltipXPadding: 16,// Number - pixel width of padding around tooltip text
+                        tooltipCaretSize: 10,// Number - Size of the caret on the tooltip
+                        tooltipCornerRadius: 6,// Number - Pixel radius of the tooltip border
+                        tooltipXOffset: 10,// Number - Pixel offset from point x to tooltip edge
+                        responsive: true
+                    });
+
+
+                }
+            });
+        }
+        //$("#data-table-simple").css("display", "block");
+
+    }
+
+
+</script>
+<style>
+	#sales_table tr{ 
+		/*padding:5px 32px !important;
+		text-align:center;*/
+		
+	}
+	#sales_table th,td{ 
+		/*padding:5px 32px !important;*/
+		text-align:center;
+		width: 500px;
+	}
+</style>
+<div class="content">
+			<!-- Page-Title -->
+			<div class="page-title-group">
+				<h4 class="page-title">Dashboard</h4>
+				<h5 class="text-muted page-title-alt">Dashboard & statistics!</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="card-box">
+										<div class="card-box-head border-b m-t-0">
+											<h4 class="header-title">COMPANY SALES</h4>
+										</div>
+										
+										
+										<div class="card-box">
+										<div class="card-box-head">
+											<div class="pull-right">
+											</div>
+										</div>
+										<div class="card-box-content">
+											<div id="line-chart1" class="bar-280"></div>
+											<ul class="doughnut-chart-legend" style ="float:right;">
+											
+											 <li class="ultra-small" style = "list-style-type:none;">
+												 <div style="float: left;
+													background-color: #0000ff;
+													width: 13px;
+													height: 13px;
+													margin: ;
+													border: 1px double #ccc;"></div>
+												 <div style = "float:left;margin: 0 4px;">Users</div>
+											  <div style="
+														  float: left;
+													background-color: #60ced5;
+													width: 13px;
+													height: 13px;
+													margin: ;
+													border: 1px double #ccc;"></div>
+												 <div style = "float:left;margin: 0 4px;">Contracts</div>
+											  <div style="
+													float: left;
+													background-color: #677C38;
+													width: 13px;
+													height: 13px;
+													margin: ;
+													border: 1px double #ccc;"></div>
+												 <div style = "float:left;margin: 0 4px;">BTC</div>
+											  <div style="
+													float: left;
+													background-color: #23649e;
+													width: 13px;
+													height: 13px;
+													margin: ;
+													border: 1px double #ccc;"></div>
+												 <div style = "float:left;margin: 0 4px;">MCAP</div>	
+											  <div style="
+													float: left;
+													background-color: #5b5b5a;
+													width: 13px;
+													height: 13px;
+													margin: ;
+													border: 1px double #ccc;"></div>
+												 <div style = "float:left;margin: 0 4px;">MCAP-ETH</div>												 
+												
+												</li>
+                                               
+                                            </ul>										
+										</div>
+	
+										</div>
+	
+										
+									</div>
+								</div>
+								<div class="col-lg-6">
+									<div class="card-box">
+										<div class="card-box-head border-b m-t-0">
+											<h4 class="header-title">MY NETWORK SUMMARY</h4>
+											
+										</div>
+										<div class="card-box-content">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+
+													<div class="table-responsive data-table">
+														<table class="table table-bordred table-striped">
+															<thead>
+													
+																<tr>
+																	<th class="dbdthalign" style="padding: 30px 15px;"></th>
+																	<th class="dbdthalign" style="padding: 30px 15px;"><b>Business</b></th>
+																	<th class="dbdthalign" style="padding: 30px 15px;"><b>Total Users</b></th>
+																	<th class="dbdthalign" style="padding: 30px 15px;"><b>Active Users</b></th>
+																	<th class="dbdthalign" style="padding: 30px 15px;"><b>Inactive Users</b></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td style="padding: 34px 15px;">
+																		<b>Left</b>
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['leftContracts']) && $this->all_users['leftContracts'] != '') {
+																			echo $this->all_users['leftContracts'];
+																		} else {
+																			echo 0;
+																		} ?>
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['totalLeftUsers']) && $this->all_users['totalLeftUsers'] != '') {
+																			echo $this->all_users['totalLeftUsers'];
+																		} else {
+																			echo 0;
+																		} ?>													
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['activeLeftUsers']) && $this->all_users['activeLeftUsers'] != '') {
+																			echo $this->all_users['activeLeftUsers'];
+																		} else {
+																			echo 0;
+																		} ?>													
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['inactiveLeftUsers']) && $this->all_users['inactiveLeftUsers'] != '') {
+																			echo $this->all_users['inactiveLeftUsers'];
+																		} else {
+																			echo 0;
+																		} ?>
+																	</td>
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td style="padding: 34px 15px;">
+																		<b>Right</b>
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['rightContracts']) && $this->all_users['rightContracts'] != '') {
+																			echo $this->all_users['rightContracts'];
+																		} else {
+																			echo 0;
+																		} ?>
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['totalRightUsers']) && $this->all_users['totalRightUsers'] != '') {
+																			echo $this->all_users['totalRightUsers'];
+																		} else {
+																			echo 0;
+																		} ?>													
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['activeRightUsers']) && $this->all_users['activeRightUsers'] != '') {
+																			echo $this->all_users['activeRightUsers'];
+																		} else {
+																			echo 0;
+																		} ?>													
+																	</td>
+																	<td class="dbdtdalign">
+																		<?php if (!empty($this->all_users['inactiveRightUsers']) && $this->all_users['inactiveRightUsers'] != '') {
+																			echo $this->all_users['inactiveRightUsers'];
+																		} else {
+																			echo 0;
+																		} ?>
+																	</td>
+																</tr>
+
+															</tbody>
+														</table>
+														<span style = " display: inline-block;  padding: 31px 0px 7px 0px;font-size:11px;" class="note">**Please Note: Displayed business data is updated till <?php echo date('jS F, Y', strtotime($this->business_cycle_date['end']))?>.</span>
+													</div>			
+														
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>								
+							</div>
+							<!-- end row -->
+						</div>
+					</div>
+					<!-- end row -->
+					<div class="row">
+						<!-- Activity app -->
+						<div class="col-lg-4">
+							<div class="card-box">
+								<div class="card-box-head  border-b m-t-0 ">
+									<h4 class="header-title"><b>MY CONTRACTS</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll">
+										<ul class="list-group act-list">
+											<li class="list-group-item">
+												<h2 class="text-center"><?php echo isset($this->contractDetails['data']['myContracts'])?$this->contractDetails['data']['myContracts']:0; ?>
+													<br/></h2><h3 class="text-center">BTC</h3>												
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="card-box">
+								<div class="card-box-head  border-b m-t-0 ">
+									<h4 class="header-title"><b>TOTAL OUTPUT</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll">
+										<ul class="list-group act-list">
+											<li class="list-group-item">
+												<h2 class="text-center"><?php if (!empty($this->contractDetails['data']['totalOutputs']) && $this->contractDetails['data']['totalOutputs'] != '') {
+													echo substr_replace($this->contractDetails['data']['totalOutputs'], "", -3);
+													} else {
+														echo 0.00000000;
+													} ?><br/></h2><h3 class="text-center">BTC</h3>												
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>	
+						<div class="col-lg-4">
+							<div class="card-box">
+								<div class="card-box-head  border-b m-t-0 ">
+									<h4 class="header-title"><b>MY SALES BY DAY</b></h4>
+								</div>
+								<div class="card-box-content " style ="padding:10px;">
+									<div class="contact-list  nicescroll">
+										<ul class="list-group act-list">
+											<li class="list-group-item" style="padding:0;">
+												<table id ="sales_table" class="table table-responsive table-striped">
+													<thead style =  "display:block;">
+														<tr>
+															<th style = "min-width:70px;">S.No.</th>
+															<th style = "min-width:70px;">Sale</th>
+															<th style = "min-width:150px;">Created</th>
+														</tr>
+													</thead>
+													<tbody style = "display:block;height:100px;overflow:auto;">
+														<?php 
+															$direct_sales = $this->direct_sales;
+															krsort($direct_sales);
+															$key = 1;
+															foreach($direct_sales as $direct_sale){
+														?>
+														<tr>
+															<td style = "min-width:70px;"><?php echo $key; ?></td>
+															<td style = "min-width:70px;"><?php  echo $direct_sale['sale']; ?></td>
+															<td style = "min-width:150px;"><?php  echo date('d-m-Y',strtotime($direct_sale['date'])); ?></td>
+														</tr>
+														<?php
+															$key++;
+															}
+														?>
+													</tbody>
+												</table>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>							
+					</div>
+				
+			<!-- New Row Starts-->
+					<div class="row">
+						<!-- Activity app -->
+						<div class="col-lg-4">
+							<div class="card-box"  style="min-height:220px;">
+								<div class="card-box-head  border-b m-t-0 ">
+									<h4 class="header-title"><b>NEW JOININGS</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll" style="margin-top:35px;">
+										<marquee >
+											<span style="font-size:30px;line-height:20px;color:#555;">
+
+											<?php
+												for($i=0;$i<=20;$i++){?>
+													<?php echo "  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp;    ".$this->newcount[$i]['username']." &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;       "; ?>
+
+
+											<?php } ?>
+											</span>		
+										</marquee>	
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-lg-4">
+							<div class="card-box"  style="min-height:220px;">
+								<div class="card-box-head  border-b m-t-0 ">
+									<h4 class="header-title"><b>MINING CALCULATOR</b></h4>
+								</div>
+								<div class="card-box-content p-l-0 p-r-0">
+									<div class="contact-list  nicescroll">
+										<div class="form-group clearfix">
+											<div class="row">
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<input class="form-control calculateSearchbox isnumber" id="amount"	name="amount" type="text" placeholder="123">
+												</div>
+												<div class="col-md-6 col-sm-6 col-xs-6">
+													<button id="calculate"
+															class="btn btn-primary btn-md" style="float:right;" type="button">Calculate
+													</button>
+												</div>
+											</div>
+										</div>
+										 <div id="appendhtml" style="padding:0px 5px 0px 20px; font-size: 14px;">
+											 <ul style="list-style-type:disc">
+											  <li>Per Day Output	
+												 <span class="gb-output" id="day_output" style="float:right"></span>
+											  </li>
+											  <li>Monthly Output
+												 <span class="gb-output" id="month_output" style="float:right;"></span>	 
+											  </li>
+											  <li>Yearly Output
+												 <span class="gb-output" id="year_output" style="float:right"></span>	 
+											  </li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>	
+										
+					</div>
+			</div>				
+		<!-- New Row Ends--> 	
+		</div>
+</div>
+	
+	<!-- chartjs -->
+<script type="text/javascript" data-cfasync='false' src="<?php echo BASEPATH; ?>/js/chartjs/chart.min.js"></script>
+	
+	
+	
+<script src="assets/plugins/raphael/raphael-min.js"></script>
+
+
+<script src="assets/plugins/moment/moment.js"></script>
+<script src="assets/plugins/morris/morris.min.js"></script>
+<script src="assets/js/cb-chart.js"></script>
+<!--	
+   <script src="assets/plugins/jquery-sparkline/jquery.sparkline.min.js"></script>   
+<script src="assets/pages/jquery.charts-sparkline.js"></script>
+-->
+
+<script>
+    window.onload = function () {
+        getSales('week');
+	//       getBusiness('week');
+    };
+</script>
+	
+	<script>
+    jQuery(document).ready(function () {
+        
+        $("#calculate").click(function () {
+            var amount = $("#amount").val();
+         
+            $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/rest/GBcalculator',
+                data: {investment: amount},
+                success: function (data) {
+
+
+                    $('#day_output').empty();
+                    $('#day_output').append(data.client_data.daily_earning);
+                    $('#month_output').empty();
+                    $('#month_output').append(data.client_data.monthly_earning);
+                    $('#year_output').empty();
+                    $('#year_output').append(data.client_data.yearly_earning);
+
+
+                }
+            });
+
+
+        });
+    });
+
+
+</script>
+

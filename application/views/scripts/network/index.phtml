@@ -1,0 +1,975 @@
+  <?php 
+  //binarynetwork
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+		
+?>
+
+ <style>
+  .loadermodal {
+    background-image: url("<?php echo BASEPATH; ?>/images/popup-bg.png");
+    display: none;
+    outline: 0 none;
+    position: absolute;
+    z-index: 1050;
+    height: auto;
+} 
+.loadermodal_1 {
+    background-image: url("<?php echo BASEPATH; ?>/images/popup-bg.png");
+    display: none;
+    outline: 0 none;
+    position: absolute;
+    z-index: 1050;
+    height: 1000px;
+    width: 93.6%;
+} 
+	#menu, #sample .footer ,  #sample p,.breadcrumb>li+li:before {
+      display: none;
+      }
+      li a:hover, a li:focus {
+          background: transparent;
+          color: #364a5e;
+      }
+      #sample {
+          margin-left: auto;
+          margin-bottom: 30px;
+          position: relative;
+      }
+
+
+      .node{
+          cursor: pointer;
+      }
+
+      .node circle{
+          stroke: #fff;
+          stroke-width:0.5;
+      }
+
+      .link{
+          fill: none;
+          stroke: lightgray;
+          stroke-width: 1.5px;
+      }
+
+      div#tooltip{
+          color:#ffffff;
+          background:#fff;
+          opacity:1;
+          padding:5px;
+      }
+      #tree {
+        margin: 0 auto;
+		width: 700px;
+		overflow:auto;
+      }
+		  
+	.popup{
+		background-image: url(../images/popup-bg.png);
+		display:none;
+		width: 100%;
+		height: 100%;
+		position: fixed;
+		z-index: 9999;
+		top: 150;
+	}	
+	@media (max-width: 1200px){
+        #tree {
+			margin: 0 auto;
+			width: 300px;
+        }
+     }
+    </style>
+      <div id="innerpage-wrapper">
+        <div class="row lightgraybg">
+          <div class="col-lg-12 offset-1">
+            <h1 class="page-header gain-bit-Titletxt innpercontentPad">MY Network</h1>
+          </div>
+          <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+          <ol class="breadcrumb">
+            <li><a href="<?php if ($authUserNamespace->user_type =='binary') echo BASEPATH.'/Dashboard'; else echo BASEPATH.'/Admindashboard'; ?>">Dashboard ></a></li>
+            <li><a href="#">MY Network ></a></li>
+            <li class="active">Binary Tree</li>
+          </ol>
+	<!--	<div id = "Popup" class = "popup">
+  <div id = "ajax-loader1" class = "center" style = "padding: 150px;"><img src = "<?php echo BASEPATH; ?>/images/ajax-loader-blue.gif" /></div>
+ </div>-->
+          <div class="network-info">
+            <div class="col-lg-5 col-xs-5 left-inline mob-view">
+              <div class="col-lg-6 col-xs-6">
+                <div class="input-type-select">
+                  <select name="search_level" id = "search_level" disabled>
+                    <option value="">Search by Level</option>
+      
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-6 col-xs-6">
+                <div class="input-type-select">
+                  <select name="search_user" id = "search_user" disabled>
+                    <option value = "">Search by Name</option>
+ 
+                  </select>
+                </div>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+            <div class="col-lg-7 col-xs-7 mob-view">
+              <div class="col-lg-9 col-xs-9">
+                <div class="input-type-search">
+                  <input id="username_search" type="text" placeholder="Search for username in network">
+                   <a href="javascript:void(0)" onclick="search_user();" class="search"></a>
+                </div>
+
+                </div>
+              <div class="col-lg-3 col-xs-3"><input id="refresh_network" type="button" class="btn_" value="REFRESH"></div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          
+       <!--     <div class="summary-container">
+            <div class="sum-header">My Summary</div>
+              <div class="sum-content" style="position:relative;">
+             <div class="modal req-admin loadermodal" id="preloader_offer1">
+   			 <div id="" class="" style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; position: absolute;top: 40%;left: 48%;" >
+         		<img style="width: 50px;" src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+    			</div>
+			</div> 
+              <div class="sum-row-head">
+              <div id="refresh"><img title="Refresh" style="cursor: pointer;"
+		src="<?php echo BASEPATH; ?>/images/refresh.png"
+		onclick="refreshNetwork()">
+		</div>
+			   <div id="preloader" class="" style="display:none;">
+					<img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+				</div>
+                <div class="col-lg-4 col-xs-4 head">Left Users</div>
+                <div class="col-lg-4 col-xs-4">&nbsp;</div>
+                <div class="col-lg-4 col-xs-4 head">Right Users</div>
+                <div class="clearfix"></div>
+              </div>
+              <div class="sum-row">
+                <div id="leftContracts" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['leftContracts']) && $this->userdata['leftContracts'] !=''){ echo $this->userdata['leftContracts']; } else { echo 0; } ?> BTC</div>
+                <div class="col-lg-4 col-xs-4 info">Total Contracts</div>
+                <div id="rightContracts" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['rightContracts']) && $this->userdata['rightContracts'] !=''){ echo $this->userdata['rightContracts']; } else { echo 0; } ?> BTC</div>
+                <div class="clearfix"></div>
+              </div>
+               <div class="sum-row">
+                <div id="totalLeftUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['totalLeftUsers']) && $this->userdata['totalLeftUsers'] !=''){ echo $this->userdata['totalLeftUsers']; } else { echo 0; } ?></div>
+                <div class="col-lg-4 col-xs-4 info">Total Users</div>
+                <div id="totalRightUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['totalRightUsers']) && $this->userdata['totalRightUsers'] !=''){ echo $this->userdata['totalRightUsers']; } else { echo 0; } ?></div>
+                <div class="clearfix"></div>
+              </div>
+               <div class="sum-row">
+                <div id="activeLeftUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['activeLeftUsers']) && $this->userdata['activeLeftUsers'] !=''){ echo $this->userdata['activeLeftUsers']; } else { echo 0; } ?></div>
+                <div class="col-lg-4 col-xs-4 info">Active Users</div>
+                <div id="activeRightUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['activeRightUsers']) && $this->userdata['activeRightUsers'] !=''){ echo $this->userdata['activeRightUsers']; } else { echo 0; } ?></div>
+                <div class="clearfix"></div>
+              </div>
+               <div class="sum-row">
+                <div id="inactiveLeftUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['inactiveLeftUsers']) && $this->userdata['inactiveLeftUsers'] !=''){ echo $this->userdata['inactiveLeftUsers']; } else { echo 0; } ?></div>
+                <div class="col-lg-4 col-xs-4 info">Inactive Users</div>
+                <div id="inactiveRightUsers" class="col-lg-4 col-xs-4"><?php if(!empty($this->userdata['inactiveRightUsers']) && $this->userdata['inactiveRightUsers'] !=''){ echo $this->userdata['inactiveRightUsers']; } else { echo 0; } ?></div>
+                <div class="clearfix"></div>
+              </div>
+          </div>
+          </div> -->
+          <div class="clearfix">
+            <div class="col-lg-12 ">
+              <div class="info-tree"><img src="images/info.png" alt=""></div>
+              <div id="sample">
+                <div id='btree' style="position:relative;"></div>
+                  <div class="modal req-admin loadermodal_1" id="preloader_offer">
+   			 		<div id="" class="" style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; position: absolute;top: 40%;left: 48%;" >
+         				<img style="width: 50px;" src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+    				</div>
+					</div> 
+                  <div id="tooltip">
+              </div>
+
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+  <input type = "hidden" id = "master" value="<?php echo $this->username; ?>"/>
+  <input type = "hidden" id = "history_counter" />
+			<input type = "hidden" id = "counter" />
+			<input type = "hidden" id = "child_user" value="<?php echo $this->username; ?>"/>
+			<input type = "hidden" id = "parent_user" value="<?php echo $this->username; ?>" />
+      
+	        <script type="text/javascript">
+			
+	var count_flag=0;
+	var	binaryarr = [];		
+     window.onload=function(){
+    	 	  var token = $('#token').val();
+			  var child_user = $('#child_user').val();
+				   $.ajax({
+						url:"<?php echo BASEPATH; ?>/Networkapi",
+						type: "POST",    
+						async:false,
+						data: "username="+child_user+'&token='+token,
+						success: function(response)
+						{
+							var data=	JSON.parse(response);
+						
+								binaryarr = data['data']['binarydata'];
+						
+						}
+					});
+
+
+	
+
+
+	if(!binaryarr || binaryarr.length<=1)
+	{
+		return false;
+	}
+	else
+	{
+		$('#btree').empty();
+	}
+
+	$('#binarydatarr').val(binaryarr);
+	$('#child_user').val=binaryarr[0]['name'];
+	$('#parent_user').val=binaryarr[0]['name'];
+
+	var binaryData=[];
+	
+
+	 for(var i=0;i<binaryarr.length;i++)
+	 {
+				var json = {
+								
+								key:binaryarr[i]['key'],
+								name:binaryarr[i]['name'],
+								parent:binaryarr[i]['parent'],
+								isactive:binaryarr[i]['isactive'],
+								lock_status:binaryarr[i]['lock_status'],
+								child_position:binaryarr[i]['child_position'],
+								sponsor:binaryarr[i]['sponsor'],
+								date:binaryarr[i]['date'],
+								key:binaryarr[i]['key'],
+								parent_id:binaryarr[i]['parent_id'],
+								amtpaid:binaryarr[i]['amtpaid']
+									
+							};
+							binaryData.push(json);
+	 }
+	  
+
+//Redraw for zoom
+function redraw() {
+  //console.log("here", d3.event.translate, d3.event.scale);
+  svg.attr("transform",
+      "translate(" + d3.event.translate + ")"
+      + " scale(" + d3.event.scale + ")");
+}
+      var dataMap = binaryData.reduce(function(map, node) {
+          map[node.name] = node;
+          return map;
+      }, {});
+
+      var json = [];
+      binaryData.forEach(function(node) {
+          var parent = dataMap[node.parent];
+          if (parent) {
+              (parent.children || (parent.children = []))
+                  .push(node);
+          } else {
+              json.push(node);
+          }
+      });
+      console.log(json)
+      json = json[0];
+      var width = 1000;
+      // if($("#innerpage-wrapper").length > 0 ){
+      //   if(typeof($("#innerpage-wrapper").width()) !="undefined" && $("#innerpage-wrapper").width() > 0){
+      //     width = 1000; 
+      //   }
+        
+      // }
+      var height = 800;
+      var maxLabel = 100;
+      var duration = 500;
+      var radius = 5;
+      var circleSize = 15;
+      var i = 0;
+      var root;	
+	  var textFontStyle = "300 17px 'Roboto',sans-serif";
+	  
+	  if($(window).width() < 1024){
+          height = 300;
+          width = 300;
+          maxLabel = 50;
+          duration = 50;
+          radius = 2;
+          circleSize = 10;
+          textFontStyle = "300 10px 'Roboto',sans-serif";
+      }
+	  
+	  
+      var div = d3.select('#tooltip').append("div") 
+        .attr("class", "tooltip")
+        .style("opacity", 0);   
+
+
+      var tree = d3.layout.tree()
+        .nodeSize([75, 75]);   
+
+      var cluster = d3.layout.cluster()
+      .nodeSize([1, 80])
+      .separation(function(a,b){
+      	return 10 + d3.sum([a,b].map(function(d){
+        	return d.status=="D" ? 70 : 0;
+        }))
+      });  
+      
+      var diagonal = d3.svg.diagonal()
+        .projection(function(d) { return [d.x, d.y]; 
+        });
+
+  /*    var svg = d3.select("#tree").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate(1,30)");
+*/
+      root = json;
+/*      root.x0 = height / 2;
+      root.y0 = 0;*/
+
+      var svg = d3.select("#btree").append("svg").attr("width", 1000).attr("height", 1000)
+      .call(zm = d3.behavior.zoom().scaleExtent([1,3]).on("zoom", redraw)).append("g")
+      .attr("transform", "translate(" + 450 + "," + 80 + ")");
+
+  //necessary so that zoom knows where to zoom and unzoom from
+  zm.translate([350, 20]);
+
+  root.x0 = 0;
+  root.y0 = height / 2;
+      
+      root.children.forEach(collapse);
+
+      function update(source) {
+        console.log(source)
+        // Compute the new tree layout.
+        var nodes = tree.nodes(root).reverse();
+        var links = tree.links(nodes);
+
+        // Normalize for fixed-depth.
+        nodes.forEach(function(d) {
+          d.y = d.depth * maxLabel;
+        });
+
+        // Update the nodes…
+        var node = svg.selectAll("g.node")
+          .data(nodes, function(d) {
+            return d.id || (d.id = ++i);
+          });
+        // Enter any new nodes at the parent's previous position.
+        var nodeEnter = node.enter()
+          .append("g")
+          .attr("class", "node")
+          .attr("transform", function(d) {
+            return "translate(" + source.y0 + "," + source.x0 + ")";
+          })
+          .on("click", click)
+          .on("mouseover", function (d) {
+		    if (d.name != 'N/A') {
+        	  if(!(d.amtpaid) || d.amtpaid=='' || d.amtpaid=='undefined')
+    		  {
+    			d.amtpaid=0;
+    		  }
+                 var r = d3.select(this).node().getBoundingClientRect();
+                /* console.log(d3.select(this));
+                         div.transition()
+                          .duration(200)    
+                          .style("opacity", .9);
+                        div .html("Name : "+d.name + "<br/> Sponsor : " + d.sponsor + "<br/> Ammount Paid : "  + d.amtpaid) 
+                          .style("display", "block")
+                      .style("top", (r.top-25) + "px")
+                      .style("left", (r.left-130) + "px")
+                      .style("background", "black")
+                      .style("font-size", "15px")
+                      .style("position", "absolute") */
+var tooltipItem = d3.select(this)
+                                .classed("top", true);
+			var rectWidth = 150;
+				var sponrectWidth=150;
+	              if(d.name !="N/A" || d.sponsor !="" || d.sponsor !="N/A"){
+	                var nameLength = d.name.length;
+	                var sponsorLength = d.sponsor.length;
+	                console.log("Name: - "+nameLength);
+	                console.log("sponsorLength: - "+sponsorLength);
+	                if(nameLength > sponsorLength){
+	                  rectWidth = nameLength * 18;
+	                  console.log("rectWidth1: - "+rectWidth);
+	                }else{
+	                  sponrectWidth = sponsorLength*18;
+	                  console.log("rectWidth2: - "+sponrectWidth);
+	                }
+	                if(rectWidth < 100){
+	                	sponrectWidth = 150;
+	                }
+	                console.log("rectWidth: - "+rectWidth);
+	              }
+				  if(d.amtpaid !="undefined" || d.name !="N/A" || d.sponsor !="" || d.sponsor !="N/A")
+	              {
+	                if(sponrectWidth < 100){
+	                  rectWidth = 200;
+	                }
+	              }
+	              if(rectWidth>sponrectWidth){
+	            	  rectWidth=rectWidth;
+	              }else{
+	            	  rectWidth=sponrectWidth;
+	              }
+					nodePos = d.child_position;
+	
+		              if(nodePos == 'L'){
+			              childXPos = -200;
+			              childYPos = 20;
+		              }else{
+			              childXPos = 90;
+			              childYPos = 5;}
+		              var tooltipFontStyle = "300 14px 'Roboto',sans-serif";
+                      re = tooltipItem.append("rect")
+	                            .classed('rectInfo', true)
+	                            //.attr("x",10)
+	                            .attr("x", function(d) { 
+	                              return d.children || d._children ? childXPos : 10; })
+	                              .style("fill-opacity", 1)
+	                            .attr("y", -10)   
+	                            .attr("width", rectWidth)
+	                            .attr("height", 95)
+	                            .attr("stroke", "#dfe0e1")
+	                            .style("z-index","99")
+	                            .attr("fill", "#f2f2f2");
+	
+	              var info = tooltipItem.append('text')
+	                        .classed('toolInfo', true)
+	                       // .attr('x', 20) 
+	                        .style("font", tooltipFontStyle)
+	                        .style("fill-opacity", 1)
+	                        .attr("fill", "#414042")
+	                        .style("z-index","999")
+	                        .attr('y', 10)
+	                        .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+
+              info.append('tspan')
+	                  //.attr('x','20')
+	                  .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+	                  .text("USERNAME : "+d.name);
+	
+	
+	              info.append('tspan')
+	                // .attr('x','-90')
+	                .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+	                .attr('dy','14')
+	                .text(" ");
+	
+	              info.append('tspan')
+	                 // .attr('x','-90')
+	                  .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+	                  .attr('dy','14')
+	                  .text("SPONSOR ID : "+d.sponsor);
+	
+	               info.append('tspan')
+	                //.attr('x','-90')
+	                .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+	                .attr('dy','14')
+	                .attr("fill", "#f2f2f2")
+	                .text("A");
+	
+	              info.append('tspan')
+	                  //.attr('x','-90')
+	                  .attr("x", function(d) { 
+	                            return d.children || d._children ? childXPos : 20; })
+	                  .attr('dy','14')
+	                  .text("Contracts : "+d.amtpaid);
+                 }
+				 })
+           .on("mouseout", function(){
+              /* div.transition()
+              .duration(500) 
+              .style("opacity", 0);  */
+			  d3.select(this).select('text.toolInfo').remove();
+              d3.select(this).select('rect.rectInfo').remove();
+          });
+
+        nodeEnter.append("circle")
+          .attr("r", 0)
+          .style("fill", function(d) {
+            if(d.isactive == '1'){
+            return '#2bb673' ;
+            }else{
+              return '#ef4136';
+            }
+
+          })
+
+		  //for heading
+         nodeEnter.append("text")
+         .attr("y", function(d) { 
+          return d.children || d._children ? -30 : 20; })
+		  .attr("x", function(d) { 
+          return d.children || d._children ? -30 : (d.child_position == "L"? -50 : 1); })
+         .attr("dy", ".70em")
+         .style("text-anchor", "right")
+		 .style("font", textFontStyle)
+         .text(function(d) { return d.name; })
+         .style("fill-opacity", 1);
+
+		 
+		 //for node
+          nodeEnter.append("text")
+          .text(function(d) { return  ""+d.child_position; })
+          .style("text-anchor", "middle")
+          .style("font", textFontStyle)
+          //.attr("font-size", "12px")
+          .attr("x", 0) 
+          .attr("y", 4) 
+          .style("fill", function(d) {
+            return "#fff";
+          });
+        // Transition nodes to their new position.
+        var nodeUpdate = node.transition()
+          .duration(duration)
+          .attr("transform", function(d) {
+           return "translate(" + d.x + "," + d.y + ")";
+           });
+
+        nodeUpdate.select("circle")
+          .attr("r", function(d) {
+            return computeRadius(d);
+          })
+          .style("fill", function(d) {
+            if(d.isactive == '1'){
+            return '#2bb673' ;
+            }else{
+              return '#ef4136';
+            }
+
+          });
+
+        nodeUpdate.select("text").style("fill-opacity", 1);
+        nodeUpdate.select("text").style("fill-opacity", 1);
+        // Transition exiting nodes to the parent's new position.
+        var nodeExit = node.exit().transition()
+          .duration(duration)
+          .attr("transform", function(d) {
+            return "translate(" + source.y + "," + source.x + ")";
+          })
+          .remove();
+
+        nodeExit.select("circle").attr("r", 0);
+        nodeExit.select("text").style("fill-opacity", 0);
+        nodeExit.select("text").style("fill-opacity", 0);
+        // Update the links…
+        var link = svg.selectAll("path.link")
+          .data(links, function(d) {
+            return d.target.id;
+          });
+
+        // Enter any new links at the parent's previous position.
+        link.enter().insert("path", "g")
+          .attr("class", "link")
+          .attr("d", function(d) {
+            var o = {
+              x: source.x0,
+              y: source.y0
+            };
+            return diagonal({
+              source: o,
+              target: o
+            });
+          });
+
+        // Transition links to their new position.
+        link.transition()
+          .duration(duration)
+          .attr("d", diagonal);
+
+        // Transition exiting nodes to the parent's new position.
+        link.exit().transition()
+          .duration(duration)
+          .attr("d", function(d) {
+            var o = {
+              x: source.x,
+              y: source.y
+            };
+            return diagonal({
+              source: o,
+              target: o
+            });
+          })
+          .remove();
+
+        // Stash the old positions for transition.
+        nodes.forEach(function(d) {
+          d.x0 = d.x;
+          d.y0 = d.y;
+        });
+      }
+
+      function computeRadius(d) {
+
+       /* if (d.children || d._children) {
+          console.log(radius + (radius * nbEndNodes(d) / 10))
+          return radius + (radius * nbEndNodes(d) / 10);
+        }
+          
+        else return radius;*/
+         return circleSize;
+      }
+
+      function nbEndNodes(n) {
+        nb = 0;
+        if (n.children) {
+          n.children.forEach(function(c) {
+            nb += nbEndNodes(c);
+          });
+        } else if (n._children) {
+          n._children.forEach(function(c) {
+            nb += nbEndNodes(c);
+          });
+        } else nb++;
+
+        return nb;
+      }
+
+      function click(d) {
+    		var uname= d.name;
+    	        if (d.children) {
+    	          d._children = d.children;
+    	          d.children = null;
+    	        } else {
+    					if (d._children === undefined || d._children === null)
+    					{
+						$('#child_user').val(uname);
+						//$('#btree').empty();
+						window.onload.call();
+						//search_by_level(uname);
+						//refreshNetwork(uname);
+    					/*var binaryDt=[];
+    						 $.ajax({
+    								url:"<?php echo BASEPATH; ?>/Networkapi",
+    								type: "POST",    
+    								async: false,
+    								data: "username="+uname,
+    								success: function(dt)
+    								{
+									alert(d.key);
+    									 if(dt!='fail')
+    									 {
+    								
+											var data= JSON.parse(dt);
+											createtree(data);
+										 
+    									 }
+    								}
+    							});
+    							if(binaryDt.length>0)
+    							{
+    								//var delay=1000; //1 second
+
+    								//setTimeout(function() {
+    									
+    									d.children=binaryDt;
+    									d._children = null;
+    								//}, delay);
+    							}
+    							else
+    							{
+    								d.children = d._children;
+    								d._children = null;
+    							}*/
+    							
+    						//d.children=[{"name":"amol","parent":"ops121","child_position":"R","sponsor":"virender13","isactive":"","lock_status":"unlock","amtpaid":"","date":"","limit":3,"key":9,"parent_id":3}]
+    						//d._children = null;
+    					}
+    					else
+    					{
+    						d.children = d._children;
+    						d._children = null;
+    					}    
+    	        }
+    	        update(d);
+    	      }
+
+      function collapse(d) {
+        if (d.children) {
+          d._children = d.children;
+          d._children.forEach(collapse);
+          d.children = null;
+        }
+      }
+
+      update(root);
+
+      function expand(d){   
+          var children = (d.children)?d.children:d._children;
+          if (d._children) {        
+              d.children = d._children;
+              d._children = null;       
+          }
+          if(children)
+            children.forEach(expand);
+      }
+
+      function expandAll(root){
+          expand(root); 
+          update(root);
+      }
+      expandAll(root);
+      function collapseAll(){
+          root.children.forEach(collapse);
+          collapse(root);
+          update(root);
+      }
+	search_by_level(child_user);
+	if(count_flag!=0)
+	{
+		//refreshNetwork(child_user);
+	}
+count_flag = 1;
+	
+      }//]]> 
+	  
+	  
+	  
+	  $("#refresh_network").click(function(){
+		/*	var user = $("#child_user").val();
+			var master = $("#master").val();
+			networkDetails(master,master,1,1); */ 
+			var master = $("#master").val();
+			$('#child_user').val(master);
+			//$('#btree').empty();
+			window.onload.call();
+			//search_by_level(master);
+			//refreshNetwork(master);
+		});
+		
+	//networkDetails(userName,1);
+	
+function networkDetails(userName,master,popup,status){
+	if(!popup){
+		$("#Popup").show();
+	}
+	$("#child_user").val(userName);
+	$("#parent_user").val(userName);
+	var statusParam  = '';
+	if(status){
+		statusParam  = '&status='+status;
+	}
+	if(userName){
+
+		$.ajax({
+			type:"GET",
+			 url: '<?php echo BASEPATH; ?>/Network?usr='+userName+'&master='+master,
+			success: function(resp){  
+			if(!resp || resp==null || resp=='') 
+			{
+				alert("User not exist!!");
+			}
+			else
+			{
+				document.open();
+				document.write(resp);
+				document.close();
+				search_by_level(userName);
+			}
+			//alert(networkDetails);
+				/*if(networkDetails == -1){
+					$("#error").html("user not exist");
+				}else{
+					$("#network").html(networkDetails);
+				}*/
+					/*var startHead = resp.indexOf("<head>");
+				   var endHead = resp.indexOf("</head>");		  
+				   var headString = resp.substring(startHead+6,endHead);
+
+				var startBody = resp.indexOf("<body>");
+				var endBody = resp.indexOf("</body>");
+				var bodyString = resp.substring(startBody+6,endBody);
+
+				  // jQuery('head').html(headString);
+				   //jQuery('body').html(bodyString);
+				   //createtree();*/
+			}
+		});
+	}
+}
+//var userName = '<?php echo $this->binarydata[0]['name']?>';
+	 var userName = '<?php echo $this->username; ?>';
+
+	search_by_level(userName);
+function search_by_level(userName){
+var token = $('#token').val();
+	if(userName){
+		$.ajax({
+			type:"POST",
+			 url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+			 data : 'usr='+userName+'&search_by_level=1&token='+token,
+			success: function(networkDetails){  
+				$("#search_level").removeAttr('disabled');
+				$("#search_level").html(networkDetails);
+				var append = '<option value="">Search by Name</option>';
+				$("#search_user").html('');
+				$("#search_user").html(append);
+				
+			}
+		});
+	}
+}
+
+$("#search_level").change(function(){
+	// alert($(this).val());
+	userName = $('#child_user').val();
+	var level = $(this).val();
+	if(level){
+		searchUser_by_level(userName,level);
+	}
+	
+});
+
+function searchUser_by_level(userName,level){
+	//$("#search_by_level").append('<div id = "ajax-loader2" style = " float: left;"><img src = "<?php echo BASEPATH; ?>/images/ajax-loader.gif" style ="width: 70px;" /></div>');
+var token = $('#token').val();
+	if(userName){
+		$.ajax({
+			type:"POST",
+			 url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+			 data: 'usr='+userName+'&level='+level+'&search_by_user=1&token='+token,
+			success: function(networkDetails){ 
+				// alert(networkDetails);
+				//$("#ajax-loader2").remove();
+				$("#search_user").removeAttr('disabled');
+				$("#search_user").html(networkDetails);
+			}
+		});
+	}
+}
+
+function refreshNetwork()
+{
+	var user = $('#child_user').val();
+	$('#preloader_offer1').show();
+	 $.ajax({
+		 url:"<?php echo BASEPATH; ?>/Dashboard/refreshnetwork",
+			async: false,
+			type: "POST",    
+		    data: 'token='+$('#token').val(),
+	  		success: function(response)
+  			{
+			 var data=	JSON.parse(response);
+			
+			 if(data!='' && data!=null)
+			 {
+				 if((data['leftContracts']) && data['leftContracts']!='' && data['leftContracts']!=null && data['leftContracts']!='null')
+				 {
+					 $('#leftContracts').empty();
+					 $('#leftContracts').append(data['leftContracts'] + " BTC");
+				 }
+				 if((data['totalLeftUsers']) && data['totalLeftUsers']!='' && data['totalLeftUsers']!=null && data['totalLeftUsers']!='null')
+				 {
+					$('#totalLeftUsers').empty();
+					$('#totalLeftUsers').append(data['totalLeftUsers']);
+				 }
+				 if((data['activeLeftUsers']) && data['activeLeftUsers']!='' && data['activeLeftUsers']!=null && data['activeLeftUsers']!='null')
+				 {
+					 $('#activeLeftUsers').empty();
+					 $('#activeLeftUsers').append(data['activeLeftUsers']);
+				 }
+				 if((data['inactiveLeftUsers']) && data['inactiveLeftUsers']!='' && data['inactiveLeftUsers']!=null && data['inactiveLeftUsers']!='null')
+				 {
+					 $('#inactiveLeftUsers').empty();
+					 $('#inactiveLeftUsers').append(data['inactiveLeftUsers']);
+				 }
+				 if((data['rightContracts']) && data['rightContracts']!='' && data['rightContracts']!=null && data['rightContracts']!='null')
+				 {
+					 $('#rightContracts').empty();
+					 $('#rightContracts').append(data['rightContracts'] + " BTC");
+				 }
+				 if((data['totalRightUsers']) && data['totalRightUsers']!='' && data['totalRightUsers']!=null && data['totalRightUsers']!='null')
+				 {
+					 $('#totalRightUsers').empty();
+					 $('#totalRightUsers').append(data['totalRightUsers']);
+				 }
+				 if((data['activeRightUsers']) && data['activeRightUsers']!='' && data['activeRightUsers']!=null && data['activeRightUsers']!='null')
+				 {
+					$('#activeRightUsers').empty();
+					$('#activeRightUsers').append(data['activeRightUsers']);
+				 }
+				 if((data['inactiveRightUsers']) && data['inactiveRightUsers']!='' && data['inactiveRightUsers']!=null && data['inactiveRightUsers']!='null')
+				 {
+					$('#inactiveRightUsers').empty();
+					$('#inactiveRightUsers').append(data['inactiveRightUsers']);
+				 }
+
+			 }
+			
+			$('#preloader_offer1').hide();
+			
+				
+			}
+		 });
+}
+
+$("#search_user").change(function(){
+	// alert($(this).val());
+	var UserName = $(this).val();
+	var master=$('#master').val();
+	if(UserName){
+		//networkDetails(UserName,master);
+		$('#child_user').val(UserName);
+		//$('#btree').empty();
+		window.onload.call();
+		//search_by_level(UserName);
+		//refreshNetwork(UserName);
+	}
+});
+
+$("#search_network").click(function(){
+	var user = $("#searchUser").val();
+	var master=$('#master').val();
+	if(user == ''){
+		return false;
+	}else{
+		$("#error").html("");
+		networkDetails(user,master);
+	}
+});
+
+function search_user()
+{
+	/*	var master=$('#master').val();
+		var UserName = $('#username_search').val();
+		networkDetails(UserName,master);*/
+		var UserName = $('#username_search').val();
+		$('#child_user').val(UserName);
+		//$('#btree').empty();
+		window.onload.call();
+		//search_by_level(uname);
+		//refreshNetwork(uname);
+}
+
+
+
+	  
+   </script>
+   

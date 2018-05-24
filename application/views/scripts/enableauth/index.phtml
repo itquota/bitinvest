@@ -1,0 +1,371 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	//echo"<pre>";
+	//print_r($this->admin_set['google_authenticator']);exit;
+?>
+<style>
+.form-group {
+	width: 300px;
+}
+.clearfix {
+  margin-top:-7px;
+}
+.cls{
+	margin-top:-46px;
+}
+
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+    <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+	<li>Enable Authentication</li>
+
+</ol>
+
+
+
+
+<div class="col-lg-12">
+
+ <div class="modal" id="google-auth">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+                                    <i class="is close-btn" ></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/logo.png"></a>
+                                    <div class="back-btn">
+                                        <a href="<?php echo BASEPATH; ?>/Dashboard"> 
+                                        <i class="is back"></i><span>Back</span></a>
+                                    </div>
+                                      
+                                    <div class="bar-code"><img src="<?php echo $this->qrCodeUrl; ?>" alt=""></div>
+                                    <div class="input-type-text">
+                                        <label for="">Enter google authentication code</label>
+                                        <input type="text" id="code" name="code">
+                                    </div>
+                                    <div class="btn_container"><input type="button" value="SUBMIT" class="btn_" onclick="authenticater();"></div>
+                                    <div class="g-auth-info">
+                                        <p>We strong recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. Take screenshot or save QR Code image by right click on it for backup and restore option.</p>
+                                        <div class="g-auth-social">
+                                             <a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png"></a>
+                                             <a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png"></a>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+ </div>
+ 
+ 	<div class="modal" id="google-auth-disble">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+                                    <i class="is close-btn" ></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/logo.png"></a>
+                                    <div class="back-btn">
+                                        <a href="<?php echo BASEPATH; ?>/Dashboard"> 
+                                        <i class="is back"></i><span>Back</span></a>
+                                    </div>
+
+                                    
+                                    <div class="input-type-text">
+                                        <label for="">Enter google authentication code</label>
+                                        <input type="text" id="gcode" name="gcode">
+                                    </div>
+                                    <div class="btn_container"><input type="button" value="SUBMIT" class="btn_" onclick="deauthenticater();"></div>
+                                    <div class="g-auth-info">
+                                        <p>We strong recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. Take screenshot or save QR Code image by right click on it for backup and restore option.</p>
+                                        <div class="g-auth-social">
+                                             <a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png"></a>
+                                             <a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png"></a>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+                    <form  onsubmit="return false">
+					<div class="modal" id="google-auth-verify">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePopup();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                    <a href="javascript:void(0)"><img alt="" src="<?php echo BASEPATH; ?>/images/logo.png"></a>
+                                    <div class="back-btn">
+                                        <a href="<?php echo BASEPATH; ?>/Dashboard"> 
+                                        <i class="is back"></i><span>Back</span></a>
+                                    </div>
+
+                                     <div id="err_div_auth" name="err_div_auth"></div>
+                                    <div class="input-type-text">
+                                        <label for="">Enter google authentication code</label>
+                                        <input type="text" id="vcode" name="vcode">
+                                    </div>
+                                    <div class="btn_container"><input type="submit" value="SUBMIT" class="btn_" onclick="return verify();"></div>
+                                    <div class="g-auth-info">
+                                        <p>We strong recommend to use <a href="http://authy.com">Authy app</a> for backup and restore option, in case of 2FA device lost. Take screenshot or save QR Code image by right click on it for backup and restore option.</p>
+                                        <div class="g-auth-social">
+                                             <a href="https://itunes.apple.com/en/app/authy/id494168017?mt=8"><img alt="" src="<?php echo BASEPATH; ?>/images/g-store.png"></a>
+                                             <a href="https://play.google.com/store/apps/details?id=com.authy.authy&hl=en"><img alt="" src="<?php echo BASEPATH; ?>/images/g-play.png"></a>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+					</form>
+                    
+
+<div class="clearfix">&nbsp;</div>
+
+
+
+
+<!-- Disable Kit Generation and Fund Transfer -->
+<div class="panel panel-primary buynowbox col-lg-12">
+
+<div class="panel-heading buynowbox Titleheading faqtitlebg">Enable and Disable</div>
+
+<div class="panel-body revenuebg">
+<form action="" method="post" enctype="multipart/form-data">
+
+
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<?php if(!empty($this->admin_set['google_authenticator']) && $this->admin_set['google_authenticator']==2){?>
+<div for="" id="headsel" class="lblTxt" style="color:green">2 Factor authentication is enabled.</div>
+
+<div id="auth_err_div" name="auth_err_div"></div>
+<div class="form-group"> 						
+<input type="radio"  id="enble" checked class = "with-gap" onclick="openAuthPopup();" name="authentication"  value = "1"/>
+<label for = "enable_radio">Enable</label>
+<input type="radio" id="disble"   class = "with-gap" onclick="openAuthPopup();" name="authentication"  value = "2"/>
+<label for = "disable_radio">Disable</label>
+<br/><br/><br/>
+
+</div>
+<?php }else{?>
+<div for="" id="headsel" class="lblTxt" style="color:green">2 Factor authentication is disabled</div>
+
+<div id="auth_err_div" name="auth_err_div"></div>
+<div class="form-group"> 						
+<input type="radio"  id="enble" class = "with-gap" onclick="openAuthPopup();" name="authentication"  value = "1"/>
+<label for = "enable_radio">Enable</label>
+<input type="radio" id="disble" checked class = "with-gap" onclick="openAuthPopup();" name="authentication"  value = "2"/>
+<label for = "disable_radio">Disable</label>
+<br/><br/><br/>
+
+</div>
+<?php }?>
+</form>
+</div>
+</div>
+
+</div>
+
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper --></div>
+
+<script>
+function openAuthPopup()
+{
+	
+
+var selectedval= $("input[name='authentication']:checked").val();
+
+
+	if(selectedval==1)
+	{
+	//	$('#google-auth').css("display","block"); 
+		$('#google-auth').addClass('openpop'); 
+		//authenticater();
+	}
+	else
+	{
+		//$('#google-auth-disble').css("display","block");
+		$('#google-auth-disble').addClass('openpop'); 
+		//deauthenticater();
+	}
+}
+function closePopup()
+{
+
+	$('.modal ').removeClass('openpop');
+	 
+}
+function authenticater()
+{
+
+var code=$('#code').val();
+
+
+				 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Enableauth/enableauth",
+					type: "POST",    
+				    data: 'code='+code,
+					dataType: "json",
+			  		success: function(response)
+		      		{ 
+						
+						if(response.success=="success")
+						{ 
+							$('#auth_err_div').empty();
+							$('#headsel').empty();
+							$('#headsel').css("color","green");
+							$('#headsel').append("2 Factor authentication is enabled");
+							isebable=2;
+							
+						/*	//$("#disble").removeAttr('disabled');;
+							//$("#disble").removeAttr('checked');;
+							$( "#disble" ).removeAttr("disabled");
+							$( "#disble" ).removeAttr("checked");
+							//$("#enble").addAttr('checked');	
+							$( "#enble" ).attr( "checked", "checked" );
+							$( "#enble" ).attr( "disabled", "disabled");
+							//$("#enble").addAttr('disabled');*/
+						
+						 
+							closePopup();
+							
+						}
+						else
+						{
+							$('#auth_err_div').css("color","red");
+							$('#auth_err_div').css("display","block");
+							$('#auth_err_div').empty();
+							$('#auth_err_div').append("Invalid 2FA otp");
+							
+							$( "#enble" ).removeAttr("checked");
+							$("#disble").prop( "checked", "true" );	
+							closePopup();
+						}
+					
+		      			
+		      		}
+				});
+}
+function deauthenticater()
+{
+	
+var code=$('#gcode').val();
+
+				 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Enableauth/disableauth",
+					type: "POST",    
+				    data: 'code='+code,
+					dataType: "json",
+			  		success: function(response)
+		      		{
+					
+						if(response.success=="success")
+						{
+							
+							isebable=1;
+						
+							$('#auth_err_div').empty();
+							$('#headsel').empty();
+							$('#headsel').css("color","green");
+							$('#headsel').append("2 Factor authentication is disabled");
+							
+							
+							
+								closePopup();
+							
+						}
+						else
+						{
+							$('#auth_err_div').css("color","red");
+							$('#auth_err_div').css("display","block");
+							$('#auth_err_div').empty();
+							$('#auth_err_div').append("Invalid 2FA otp");
+							
+							$( "#disble" ).removeAttr("checked");
+							$("#enble").prop( "checked", "true" );
+							closePopup();
+						}
+					
+		      			
+		      		}
+				});
+}
+
+
+function verify()
+{
+	    $('#err_div_auth').empty();
+	    $('#vcode').empty();
+		var code=$('#vcode').val();
+
+		if(!code || code=='' || code==null)
+		{
+			$('#err_div_auth').css("display","block");
+			$('#err_div_auth').empty();
+			$('#err_div_auth').append("Please enter 2FA Authentication code");
+			$('#err_div_auth').css("color","red");
+			return false;
+			//alert(Loginpin.length);
+		}
+		 
+				 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Enableauth/verifyauth",
+					type: "POST",    
+				    data: 'code='+code,
+					dataType: "json",
+			  		success: function(response)
+		      		{
+						
+						if(response.success=="success")
+						{
+							closePopup();
+							
+							
+							
+						}
+						else
+						{
+							
+							$('#err_div_auth').css("display","block");
+							$('#err_div_auth').empty();
+							$('#err_div_auth').append("Incorrect One Time Password for 2FA Authentication. Please generate a new OTP");
+							$('#err_div_auth').css("color","red");
+							return false;
+						}
+					
+		      			
+		      		}
+				});
+}
+
+
+</script>

@@ -1,0 +1,54 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+
+<?php 
+	$news = $this->result;
+?>
+  <!-- Page-Title -->
+  <div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Latest Updates</h4>
+		<a href="<?php echo BASEPATH;?>/Latestnews"><h5 class="text-muted page-title-alt">Back to Updates</h5></a>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b><?php echo $news['headline']?></b></h4>
+							<span style="font-size:11px;">Published On:&nbsp;<?php echo date('d-m-Y h:i A', strtotime($news['created_on'])); ?></span>
+
+						</div>
+						<div class="card-box-content form-compoenent">
+
+					   <div id="rssOutput" class="col-lg-12">
+						<?php 
+							echo $news['news_details'];
+						?>
+						 	
+						</div>
+							
+						
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+						<div class="clearfix"></div>
+						<br>
+						<br>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		</div>
+</div>			
+					
+					
+					
+					
+					
+					

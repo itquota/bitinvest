@@ -1,0 +1,164 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group {
+	width: 418px;
+	float:left;
+}
+.clearfix {
+ 			 margin-top:35px;
+		}
+</style>
+
+<div id="innerpage-wrapper">
+	<div class="row lightgraybg">
+		<div class="col-lg-12">
+			<h1 class="page-header gain-bit-Titletxt"></h1>
+		</div>
+	</div>
+	<div class="row">
+		<ol class="breadcrumb">
+		  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+		  <li class="active"><a href="<?php echo BASEPATH?>/Managegallery">Manage Gallery</a> > </li>
+			<li>Edit Banner</li>
+
+		</ol>
+
+		<div class="clearfix"></div>
+		<div class="panel panel-primary buynowbox col-lg-12">
+			<div class="panel-heading buynowbox Titleheading faqtitlebg">Edit Gallery</div>
+				<div class="panel-body revenuebg">
+					<form method="post" enctype="multipart/form-data" action="<?php echo BASEPATH; ?>/Editgallery/updateimage">
+						<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+						if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+						{
+						?>
+						   <div class="form-group">
+							<label for="" class="lblTxt alert alert-success" style="margin-bottom:0px;"><?php echo $authUserNamespace->msg; ?></label>
+
+						  </div>
+						 <?php $authUserNamespace->msg=""; 
+						//	echo $authUserNamespace->msg;
+						}?>
+						<?php if(!empty($authUserNamespace->msgErr) && $authUserNamespace->msgErr!='')
+						{
+						?>
+							<label for="" class="lblTxt alert alert-danger" style="margin-bottom:0px;"><?php echo $authUserNamespace->msgErr; ?></label>
+
+						 <?php $authUserNamespace->msgErr=""; }?>					
+							<div class="form-group err1" style="width: 100%; margin-bottom: 0px;">
+								<label for="" class="lblTxt" style="color: red;"></label>
+							</div>
+
+							<div class="form-group">
+								<div class="form-group">
+									<label for="" class="lblTxt">Gallery Title</label>
+									<input type="text" class="form-control CommonInputBox" id="title"	name="title" placeholder="" value="<?php echo $this->resultmanagebanner['title'];?>"/>
+								</div>
+
+								<div class="form-group">
+									<label style="width: 100%; margin-bottom: 0px; padding-top: 11px;" for="" class="lblTxt">Cover Image</label> 
+									<?php if(isset($this->resultmanagebanner['title_image']) && $this->resultmanagebanner['title_image'] != ''){?>
+									<img name="image" id="image" value=""
+									style="width: 300px; height: 200px;" class="profile-pic"
+									src="data:image/jpeg;base64,<?php echo base64_encode($this->resultmanagebanner['title_image']);?>" />
+									<?php }else {
+											?>
+										<img style="width:300px; height:200px;" id="image" name="image" class="profile-pic" src="<?php echo BASEPATH; ?>/images/no_image.png" />
+										<?php }?>						
+								</div>
+
+								<div style="width:100%;">
+									<input class="file-upload" name="imgs" id="imgs" type="file" />
+								</div>
+
+								<div class="form-group">
+									<label style="width: 100%; margin-bottom: 0px; padding-top: 11px;" for="" class="lblTxt">Scroller Image</label> 
+								</div>
+								<div id="scrImg">
+								<?php for($i=0;$i<sizeof($this->resultmanagebanner1);$i++){?>
+								<a href="#" onclick="javascript:deleteImage('<?php echo $this->resultmanagebanner1[$i]['id']?>','<?php echo $this->resultmanagebanner1[$i]['gallery_id']?>')">	<img
+										name="<?php echo $this->resultmanagebanner1[$i]['id'];?>"
+										id="<?php echo $this->resultmanagebanner1[$i]['id'];?>"
+										value=""
+										height="75"
+										class="img-thumbnail"
+										width="100"
+										src="data:image/jpeg;base64,<?php echo base64_encode($this->resultmanagebanner1[$i]['subimage']);?>"
+									/>	</a>							
+								<?php } ?>
+								</div>	
+								<p style="color:#ff0000;"><strong>Click on images to delete</strong></p>
+
+								<div style="width:100%;">
+									<input type="file" name="files[]" multiple/>
+									
+									<p>Note: Supported image format: .jpeg, .jpg, .png, .gif</p>
+								</div>
+								<div class="form-group">
+									<label for="" class="lblTxt">Video Links</label>
+									<input type="text" class="form-control CommonInputBox" id="links"	name="links" placeholder="" value="<?php echo $this->resultmanagebanner['video_links'];?>"/>
+								</div>					
+								<div class="form-group" style="width:100%;">
+									<input type="hidden" name='id' value='<?php echo $this->resultmanagebanner['id'];?>'> 
+									<input type="submit" name="sub" id="sub" value="Submit" class="btn btn-default Commonbtn"> 
+								</div>
+							</div>
+						</form>
+				</div>
+			</div>
+	</div>
+</div>
+<!-- /#page-wrapper -->
+<script>
+    
+    /*** upload image ******/
+    
+    $(document).ready(function(){   
+	    var readURL = function(input) {
+	        if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	
+	            reader.onload = function (e) {
+	                $('.profile-pic').attr('src', e.target.result);
+	            }
+	    
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	    }
+	    
+	
+	    $(".file-upload").on('change', function(){
+	        readURL(this);
+	    });
+	    
+	    
+	});
+	
+
+
+function deleteImage(id,gid){
+	var id=id;
+	var gid=gid;
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/Editgallery/deleteimage", 
+			type: "POST",    
+		    data: 'id='+id,
+		    async:false,
+				success:function(response)
+				{
+				 var data=JSON.parse(response);
+
+					if (data) {
+						window.location = '<?php echo BASEPATH;?>/Editgallery?id=' + gid;
+					}		
+				}
+				
+		 });
+		
+		
+	}	
+	
+    </script>

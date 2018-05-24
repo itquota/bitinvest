@@ -1,0 +1,308 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+?>
+<style>
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+</style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/Membershiplist">Manage Membership</a> > </li>
+                  <li>Edit Membership</li>
+  
+            </ol>
+           
+
+         
+
+         <div class="col-lg-12">
+         
+         
+
+
+<div class="clearfix">&nbsp;</div>
+
+           <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+            Edit Membership
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="" method="post"  name="Editmembershipmaster" id="Editmembershipmaster" enctype="multipart/form-data">
+
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:green;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+ 
+ <div class="form-group err1" style="width:100%;margin-bottom: 0px;">
+		<label for="" class="lblTxt" style="color:red;"></label>
+	</div>
+
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Membership Type</label>
+
+     <input type="text" class="form-control CommonInputBox"  name="membershiptype" id="membershiptype"  value="<?php  echo $this->result['membership_type'];?>" placeholder="Membership type" readonly/>
+
+
+      
+  </div>
+
+<div class="form-group">
+    <label for="inputCName" class="lblTxt">Investment Start</label>
+
+     <input type="text" class="form-control CommonInputBox isnumber"   name="investmentstart"   id="investmentstart"  value="<?php echo $this->result['investment_start'];?>" placeholder="Investment start">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Investment End</label>
+
+     <input type="text"  name="investmentend" id="investmentend" class="form-control CommonInputBox isnumber"  value="<?php echo $this->result['investment_end'];?>" placeholder="Investment end">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Level Max</label>
+
+     <input type="text"   class="form-control CommonInputBox isnumber" name="levelmax" id="levelmax" value="<?php echo $this->result['level_max'];?>" placeholder="level max">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Binary Matching</label>
+
+     <input type="text"   class="form-control CommonInputBox isnumber"  name="binarymatching" id="binarymatching" value="<?php echo $this->result['binary_matching'];?>" placeholder="Binary matching">
+
+
+      
+  </div>
+  
+ 
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Binary Matching Multiple</label>
+
+     <input type="text" class="form-control CommonInputBox isnumber"  name="binarymatchingmultiple" id="binarymatchingmultiple" value="<?php echo $this->result['binary_matching_multiple'];?>" placeholder="Binary matching multiple">
+
+
+      
+  </div>
+  
+
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Binary Capping</label>
+
+     <input type="text"  name="binarycapping" id="binarycapping" class="form-control CommonInputBox isnumber"  value="<?php echo $this->result['binary_capping'];?>" placeholder="Binary capping">
+
+
+      
+  </div>
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Trimming</label>
+
+     <input type="text"  name="trimming" id="trimming" class="form-control CommonInputBox isnumber"  value="<?php echo $this->result['trimming'];?>" placeholder="Trimming">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Mining Returns</label>
+
+     <input type="text"  name="miningreturns" id="miningreturns" class="form-control CommonInputBox isnumber"  value="<?php echo $this->result['mining_returns'];?>" placeholder="Mining returns">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Direct Sales Comission</label>
+
+     <input type="text"  name="Directsalescomission" id="Directsalescomission" class="form-control CommonInputBox isnumber"  value="<?php echo $this->result['direct_sales_comission'];?>" placeholder="Mining returns">
+
+
+      
+  </div>
+  <br>
+  <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+    <input type="hidden" name="uid" id="uid" value='<?php echo $this->result['id'];?>'>
+  <button type="button"  onclick="geteditdata();" name="save" id="save" class="btn btn-default Commonbtn">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn" value="Reset">RESET</button>
+
+  
+</form>
+  </div>
+          </div>
+
+
+
+         </div>
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+function geteditdata()
+{
+	var membershiptype=$('#membershiptype').val();
+	var investmentstart=$('#investmentstart').val();
+	var investmentend=$('#investmentend').val();
+	var levelmax=$('#levelmax').val();
+	var binarymatching=$('#binarymatching').val();
+	var binarymatchingmultiple=$('#binarymatchingmultiple').val();
+	var binarycapping=$('#binarycapping').val();
+	var trimming=$('#trimming').val();
+	var miningreturns=$('#miningreturns').val();
+	var directsalescomission=$('#Directsalescomission').val();
+	var token = $('#token').val();
+	var uid=$("#uid").val();
+	
+	
+	if((membershiptype).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Membership Type. </label>');
+		return false;
+	}	
+
+	/*if(!namefunc(membershiptype)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Membership Type should be characters only. </label>');
+		return false;
+	}*/	
+	
+	if((investmentstart).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Investment Start. </label>');
+		return false;
+	}	
+	
+	/*if(isNaN(investmentstart)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Investment Start should be numbers only. </label>');
+		return false;
+	}*/
+	if((investmentend).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Investment End. </label>');
+		return false;
+	}	
+	/*if(isNaN(investmentend)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Investment End should be numbers only. </label>');
+		return false;
+	}*/
+
+	if((levelmax).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Level Max. </label>');
+		return false;
+	}
+	/*if(isNaN(levelmax)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">level Max should be numbers only. </label>');
+		return false;
+	}*/
+	if((binarymatching).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Binary Matching. </label>');
+		return false;
+	}
+	/*if(isNaN(binarymatching)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Binary Matching should be numbers only. </label>');
+		return false;
+	}*/
+	if((binarymatchingmultiple).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Binarymatching Multiple.</label>');
+		return false;
+	}
+	/*if(isNaN(binarymatchingmultiple)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Binarymatching Multiple should be numbers only. </label>');
+		return false;
+	}*/
+	if((binarycapping).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Binary Capping.</label>');
+		return false;
+	}
+	/*if(isNaN(binarycapping)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Binary Capping should be numbers only.</label>');
+		return false;
+	}*/
+	if((trimming).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Trimming.</label>');
+		return false;
+	}
+	/*if(isNaN(trimming)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Trimming should be numbers only. </label>');
+		return false;
+	}*/
+	if((miningreturns).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Mining Returns.</label>');
+		return false;
+	}
+	/*if(isNaN(miningreturns)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Mining Returns should be numbers only. </label>');
+		return false;
+	}*/
+	if((directsalescomission).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Direct Sales Comission.</label>');
+		return false;
+	}
+	/*if(isNaN(directsalescomission)){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Direct Sales Comission should be numbers only. </label>');
+		return false;
+	}*/
+	else{
+	 $.ajax({
+			
+			url:"<?php echo BASEPATH;?>/Editmembershipmaster/updatemembershipmaster", 
+			type: "POST",    
+		    data: $("#Editmembershipmaster").serialize(),
+		
+	  		success:function(response)
+	  		{
+				 var data=JSON.parse(response);
+				
+				 if(data['success']!='')
+				   { 
+						//alert("User updated successfully");
+			           $(".err1").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+						window.location = "<?php echo BASEPATH;?>/Membershiplist";
+				   }
+			       else{
+			           //alert(data);return false;
+
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						
+			       }
+
+			}
+				
+			
+		 });
+	}
+    
+}   
+function namefunc(name)
+{
+	var pattern12 = new RegExp(/^[a-zA-Z ]+$/);
+	return pattern12.test(name);
+}	
+
+    </script>

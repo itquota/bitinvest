@@ -1,0 +1,386 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+	 .form-group {
+	    width: 300px;
+	}
+	.CommonInputBox {
+	    border: 1px solid #ccc !important;
+	  
+	}
+	.clearfix {
+		  margin-top:-7px;
+		}
+			
+ </style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Add Events</li>
+  
+            </ol>
+           
+
+          <div class="clearfix">&nbsp;</div>
+  
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                     <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0"> 
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">Title</th> 
+                        <th class="sortboth">Start Date</th>
+                         <th class="sortboth">End Date</th> 
+                          <th class="sortboth">Status</th> 
+                          <th class="sortboth">Change Status</th> 
+                            <th class="sortboth">Show Popup</th> 
+                         
+                          
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                  <?php $j=1;
+                  foreach($this->result as $result){
+                  	
+                  ?>
+                   <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php echo $result['title'];?></td>
+                      <td><?php echo $result['start'];?></td> 
+                      <td><?php echo $result['end'];?></td>
+                       <td><?php 
+					$event_status = $result['status'];
+					if($event_status==0){
+						echo "Inactive";
+					}else if($event_status ==1){
+						echo "Active";
+					}
+					else{
+						echo "Cancelled";
+					}
+				?></td>
+                        <td><a class="confirmation" href="#" onclick="Changeevent(<?php
+                                                                                           echo $result['id'];
+                                                                                               ?>,<?php
+                                                                                              echo $result['status'];
+                                                                                               ?>)">
+                          <?php 
+							$event_status = $result['status'];
+							if($event_status==0){
+								echo "Activate";
+							}else if($event_status==1){
+								echo "Deactivate";
+							}
+							else{
+								echo "";
+							}
+						?>	
+                      </a></td>
+                     <td><input type = "checkbox" class = "filled-in show_pop" name = "show_pop" id = "show_pop<?php echo $result['id']; ?>" <?php if($result['pop_flag']) echo "checked"; ?> />
+					  <label for="show_pop<?php echo $result['id']; ?>" id = "label_show_pop<?php echo $result['id']; ?>"></label>
+					  </td>
+
+                     
+                  </tr> 
+
+               
+
+                
+
+                  
+
+               
+             
+             
+             <?php $j++;} ?>
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+		
+    </div>
+
+    
+     <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";?>
+				
+<div class="clearfix">&nbsp;</div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              Add Events
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="<?php echo BASEPATH;?>/Addevents" method="post" id="add_event">
+
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+
+
+
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group err">
+    <label for="" class="lblTxt" style="width: 100%;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+
+
+
+ <div class="err1">
+  <label style="color:red" for="" class="lblTxt"> </label>
+         </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Enter Title</label>
+
+     <input type="text"    name="title"  id="title" class="form-control CommonInputBox"  value="<?php ?>" placeholder="Enter Title">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Enter Start Date</label>
+
+     <input type="text" id="datetimepicker"  name="start" class="dp form-control" value="<?php ?>" placeholder="Enter Start Date" autocomplete="off">
+
+
+      
+  </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Enter End Date</label>
+
+     <input type="text"  id="datetimepicker1"  name="end"   class="dp form-control" value="<?php ?>" placeholder="Enter End Date" autocomplete="off">
+
+
+      
+  </div>
+    
+  <button type="button"  name="add_event" id="add_event" class="btn btn-default Commonbtn" onclick="return validatefn()">SUBMIT</button>
+ 
+
+  
+</form>
+  </div>
+          </div>
+        
+
+    
+       <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+   
+       
+        
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+    
+   <!--   <link rel="stylesheet" type="text/css" href="<?php //echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php // echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>-->
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+    <script  data-cfasync='false' type="text/javascript">
+		$(".show_pop").on("click",function(){
+		var token = $('#token').val();
+		var event = $(this).attr("id");
+		if($(this).is(':checked')){
+			var checked = 1;
+		}else{
+			var checked = 0;
+		}
+		// alert(event);
+		// return false;
+		$.ajax({
+			type: 'POST',
+			//url: '../../controller/changeEventStatus.php',
+			url: '<?php echo BASEPATH; ?>/changeEvent',
+			data: {"event":event,"checked":checked,"token":token},
+
+			success:function(data){
+				if(data=='true')
+				{
+					//alert("Changed successfully");
+				}
+				else
+				{
+					alert(data);
+				}				
+			},
+		});
+	});
+	
+	jQuery('.dp').datetimepicker({
+	 format:'d-m-Y H:i:j',
+	});
+	
+	  /* $('.dp').on('change', function(){
+        $('.xdsoft_datetimepicker ').hide();
+    }); */
+		
+    </script>
+    
+    
+    
+    
+ <script>
+			function Changeevent(id,status)
+			{
+                   //alert('id'+ id + 'status'+status);
+                   // alert(<?php //echo BASEPATH; ?>/Changeevent);
+					var token = $('#token').val();
+                   var x=confirm('It will Active/Inactive event as well');
+                   if(x)
+                   {
+		$.ajax({
+        type: 'POST',
+       url: "<?php echo BASEPATH; ?>/Changeevent",
+		data:'eventId='+id+'&status_value='+status+'&token='+token,
+         success: function (data) {
+           //alert(data);
+          //alert(data);return false;
+		   if(data=='true')
+		   {
+				alert("Status Of the events  has been changed  succesfully. You will now be navigated back to Special offers page.");
+                           // window.location ="<?php echo BASEPATH ?>/Addevents";
+			location.reload();
+		   }
+          else{
+              alert(data);return false;
+          }
+          
+       }
+
+      
+      
+   	});
+	}    
+		}
+</script>
+<script>
+function validatefn(){
+	var title=$("#title").val();
+    var start=$("#datetimepicker").val();
+    var end=$("#datetimepicker1").val();
+	var token=$("#token").val();
+	if((title).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter title.</label>');
+		return false;
+	}	
+	else if((start).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter start date. </label>');
+		return false;
+	}
+	else if((end).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter end date. </label>');
+		return false;
+	}
+   else  {
+       //document.form.submit();
+       ///return true;
+		var dataString ='title='+title+'&start='+start+'&end='+end+'&token='+token;
+		 $.ajax({
+				
+				url:"<?php echo BASEPATH;?>/Addevents/eventadd", 
+				type: "POST",    
+			    data: dataString,
+			
+		  		success:function(response)
+		  		{
+					 var data=JSON.parse(response);
+					 
+					 if(data['success']!='')
+					 {
+						/*$(".err1").css("display","block");
+							document.getElementById("err1").innerHTML="Data inserted successfully.";
+							$('.err1').css('color','green');*/
+					         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+							window.location = "<?php echo BASEPATH;?>/Addevents";
+					 }
+					 else
+					 {
+						  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+					 }
+					
+					
+				}
+					
+				
+			 });
+		 return true;
+			
+
+
+       
+   }
+	
+}
+
+
+</script>

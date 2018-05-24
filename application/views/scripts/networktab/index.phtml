@@ -1,0 +1,456 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+
+?>
+<style>
+#menu, #sample .footer ,  #sample p,.breadcrumb>li+li:before {
+  display: none;
+}
+li a:hover, a li:focus {
+  background: transparent;
+  color: #364a5e;
+}    
+</style>   
+<div class="content">
+			<!-- Page-Title -->
+			<div class="page-title-group">
+				<h4 class="page-title">My Network</h4>
+				<h5 class="text-muted page-title-alt">Tabular Form</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+					<div class="row">
+							<div class="col-lg-12">
+									<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">My Network Summary</h4>
+											
+										</div>
+										<div class="card-box-content">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+													<div class="row">
+														<div class="col-md-12">
+													         <div class="err1">
+																		 <?php 
+																		 $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+																if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!="")
+																{
+																	?> <label for="" class="lblTxt" style="color: red;"><?php echo $authUserNamespace->errmsg; ?></label>
+																	<?php $authUserNamespace->errmsg=""; }?>
+															</div>
+ 															  <div class="row">
+																<div class="col-md-4 col-xs-12" style="margin:5px 0px;">
+																	<select name="search_level" id = "search_level" class="form-control" disabled>
+																	  <option value="">Search by Level</option>
+
+																	</select>
+																</div>
+																<div class="col-md-4 col-xs-12" style="margin:5px 0px;">
+																	<select name="search_user" id = "search_user" class="form-control" disabled>
+																	  <option>Search by Name</option>
+																	 <option value = "">Search by Name</option>
+																	</select>
+																</div>
+															  <div class="col-md-4 col-xs-12" style="margin:5px 0px;">
+																 <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+																 <input id="refresh_network" type="button" class="btn btn-inverse btn-md" value="REFRESH">
+															  </div>
+															</div>
+														</div>	
+													</div>	
+													<div class="table-responsive data-table">
+														<div class="m-t-20"></div>
+														<table class="table table-bordred table-striped">
+															<thead>
+																
+																
+																<tr>
+																	<th class="thalign"></th>
+																	<th class="thalign"><b>Total Contracts</b></th>
+																	<th class="thalign"><b>Total Users</b></th>
+																	<th class="thalign"><b>Active Users</b></th>
+																	<th class="thalign"><b>Inactive Users</b></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Left Users</b>
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['leftContracts']) && $this->userdata['leftContracts'] !='' ) { echo $this->userdata['leftContracts']; }else{ echo 0; } ?> BTC
+																	</td>
+																	<td class="thalign">
+												           			    <?php if(!empty($this->userdata['totalLeftUsers']) && $this->userdata['totalLeftUsers'] != '') { echo $this->userdata['totalLeftUsers']; }else{ echo 0; } ?>  
+																	</td>
+																	<td class="thalign">
+																	  <?php if(!empty($this->userdata['activeLeftUsers']) && $this->userdata['activeLeftUsers'] !='' ) { echo $this->userdata['activeLeftUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																	<td class="thalign">
+																	  <?php if(!empty($this->userdata['inactiveLeftUsers']) && $this->userdata['inactiveLeftUsers'] !='' ) { echo $this->userdata['inactiveLeftUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Right Users</b>
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['rightContracts']) && $this->userdata['rightContracts'] !='' ) { echo $this->userdata['rightContracts']; }else{ echo 0; } ?> BTC 	
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['totalRightUsers']) && $this->userdata['totalRightUsers'] !='' ) { echo $this->userdata['totalRightUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['activeRightUsers']) && $this->userdata['activeRightUsers'] !='' ) { echo $this->userdata['activeRightUsers']; }else{ echo 0; } ?>													
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['inactiveRightUsers']) && $this->userdata['inactiveRightUsers'] !='' ) { echo $this->userdata['inactiveRightUsers']; }else{ echo 0; } ?>													
+																	</td>
+																</tr>
+
+															</tbody>
+														</table>
+														
+													</div>			
+													<div style = "font-weight:bold;background: none repeat scroll 0 0 #fff; padding:10px 0px 0px 5px;">
+																 <p>*Please Note: Displayed business data is updated till <?php echo date('jS F, Y', strtotime($this->business_cycle_date['end']))?>.
+															</div>
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+					
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="panel panel-color panel-primary">
+								<div class="panel-heading">
+									<h4 class="panel-title">Left Users</h4>
+
+								</div>
+								<div class="card-box-content">
+									<div class="row">
+										<div class="col-md-12 col-sm-12">
+											<div class="row">
+												<div class="bs-example table-responsive">
+													<table id="data-table-simple-1"  class="table table-bordered innertbl display" cellspacing="0">
+													   <thead>
+													   <tr>
+																<?php if(!empty($this->binarydata) && sizeof($this->binarydata)>0) { 
+																?>
+
+																  <th class="sortdesc">Username</th>
+																  <th class="sortdesc">Sponsor ID</th>
+																  <th class="sortdesc">Contracts</th>
+																  <th class="sortdesc">Activated on</th>
+
+																</tr>
+															  </thead>
+															  <tbody>
+
+																<?php
+																foreach ($this->binarydata as $leftdata)
+																{
+																if($leftdata['pos']=='L')
+																{
+																if($leftdata['name']!='N/A'){
+																?>
+
+																<tr>
+																  <td><?php echo $leftdata['name']; ?></td>
+																  <td><?php echo $leftdata['sponsor']; ?></td>
+																  <td><?php echo $leftdata['amtpaid']; ?></td>
+																  <td><?php echo $leftdata['date']; ?></td>
+																 </tr>
+
+
+																<?php
+																	}	}
+																	}
+																}
+																?>
+
+																</tbody>
+															</table>
+													</div>												
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>	
+						</div>
+						<div class="col-md-6">
+							<div class="panel panel-color panel-primary">
+								<div class="panel-heading">
+									<h4 class="panel-title">Right Users</h4>
+
+								</div>
+								<div class="card-box-content">
+									<div class="row">
+										<div class="col-md-12 col-sm-12">
+											<div class="row">
+												   <div class="bs-example table-responsive" data-example-id="bordered-table">
+														<table id="data-table-simple-2"  class="table table-bordered innertbl display" cellspacing="0">
+														   <thead>
+														   <tr>
+																	<?php if(!empty($this->binarydata) && sizeof($this->binarydata)>0) { 
+																	?>
+
+																	  <th class="sortboth">Username</th>
+																	  <th class="sortboth">Sponsor ID</th>
+																	  <th class="sortboth">Contracts</th>
+																	  <th class="sortboth">Activated on</th>
+
+
+																   </tr>
+																  </thead>
+																  <tbody>
+																	<?php
+																	foreach ($this->binarydata as $rightdata)
+																	{
+																	if($rightdata['pos']=='R' )
+																	{
+																	if($rightdata['name']!='N/A')
+																	{
+																	?>
+																   <tr>
+																	  <td><?php echo $rightdata['name']; ?></td>
+																	  <td><?php echo $rightdata['sponsor']; ?></td>
+																	  <td><?php echo $rightdata['amtpaid']; ?></td>
+																	  <td><?php echo $rightdata['date']; ?></td>
+																	  </tr>
+
+
+																	<?php
+																			}}
+																		}
+																	}
+																	?>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>	
+						</div>					
+					</div>
+				</div>
+			</div>
+</div>	
+
+	  <input type="hidden" id="binarydatarr" value='<?php  echo json_encode( $this->binarydata); ?>'>
+		<input type = "hidden" id = "history_counter" />
+		<input type = "hidden" id = "master" value="<?php echo $this->username; ?>"/>
+		<input type = "hidden" id = "child_user" value="<?php echo $this->username; ?>"/>
+		<input type = "hidden" id = "parent_user" value="<?php echo $this->username; ?>" />
+<script type="text/javascript">
+ $("#refresh_network").click(function(){
+			var user = $("#child_user").val();
+			var master = $("#master").val();
+			networkDetails(master,master,1,1);
+		});
+		
+	//networkDetails(userName,1);
+	
+function networkDetails(userName,master,popup,status){
+	if(!popup){
+		$("#Popup").show();
+	}
+	$("#child_user").val(userName);
+	$("#parent_user").val(userName);
+	var token = $('#token').val();
+	var statusParam  = '';
+	if(status){
+		statusParam  = '&status='+status;
+	}
+	if(userName){
+		$.ajax({
+			type: "POST",   
+			 url: '<?php echo BASEPATH; ?>/Networktab',
+			async:false,
+			data: "usr="+userName+"&master="+master+"&token="+token,
+				success: function(networkDetails){  
+			if(!networkDetails || networkDetails==null || networkDetails=='')
+			{
+				alert("User not exists!!");
+			}
+			//alert(networkDetails);
+				/*if(networkDetails == -1){
+					$("#error").html("user not exist");
+				}else{
+					$("#network").html(networkDetails);
+				}*/
+			else
+			{
+				document.open();
+				document.write(networkDetails);
+				document.close();
+				search_by_level(userName);
+			}
+				
+			}
+		});
+	}
+}
+var userName = $('#master').val();
+//search_by_level(userName);
+
+
+function search_by_level(userName){
+	var token = $('#token').val();
+	if(userName){
+		$.ajax({
+			type:"POST",
+			 url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+			 data : 'usr='+userName+'&search_by_level=1'+'&token='+token,
+			success: function(networkDetails){  
+				$("#search_level").removeAttr('disabled');
+				$("#search_level").html(networkDetails);
+				
+			}
+		});
+	}
+}
+
+$("#search_level").change(function(){
+	// alert($(this).val());
+	var level = $(this).val();
+	if(level){
+		searchUser_by_level(userName,level);
+	}
+	
+});
+
+function searchUser_by_level(userName,level){
+	//$("#search_by_level").append('<div id = "ajax-loader2" style = " float: left;"><img src = "<?php echo BASEPATH; ?>/images/ajax-loader.gif" style ="width: 70px;" /></div>');
+var token = $('#token').val();
+	if(userName){
+		$.ajax({
+			type:"POST",
+			 url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+			 data : 'usr='+userName+'&level='+level+'&search_by_user=1'+'&token='+token,
+			success: function(networkDetails){ 
+				// alert(networkDetails);
+			//	$("#ajax-loader2").remove();
+				$("#search_user").removeAttr('disabled');
+				$("#search_user").html(networkDetails);
+				
+			}
+		});
+	}
+}
+
+$("#search_user").change(function(){
+	// alert($(this).val());
+	var UserName = $(this).val();
+	var master=$('#master').val();
+	if(UserName){
+		networkDetails(UserName,master);
+	}
+});
+
+$("#search_network").click(function(){
+	var user = $("#searchUser").val();
+	var master=$('#master').val();
+	if(user == ''){
+		return false;
+	}else{
+		$("#error").html("");
+		networkDetails(user,master);
+	}
+});
+</script>   
+<script>
+$(window).load(function() {
+	
+	var oTable1 = $('#data-table-simple-1').dataTable();
+	//responsive: true,
+	responsive: true;	
+	$('.top').hide();
+	$('.col-sm-6').hide();
+	
+	
+});
+$(window).load(function() {
+	//responsive: true;
+	var oTable1 = $('#data-table-simple-2').dataTable();	
+	$('.top').hide();
+	$('.col-sm-6').hide();
+	$('.col-sm-5').remove();
+	$('.col-sm-7').css("width","100%");
+	
+});
+</script>
+<script>
+function refreshNetwork()
+{
+	$('#refresh').hide();
+	$('#preloader').show();
+	var user = $('#child_user').val();
+	//alert(user);
+	 $.ajax({
+		 url:"<?php echo BASEPATH; ?>/Dashboard/refreshnetwork",
+			type: "POST",    
+		    data: 'token='+$('#token').val(),
+	  		success: function(response)
+  			{
+			 var data=	JSON.parse(response);
+			 if(data!='' && data!=null)
+			 {
+				 if((data['leftContracts']) && data['leftContracts']!='' && data['leftContracts']!=null && data['leftContracts']!='null')
+				 {
+					 $('#leftContracts').empty();
+					 $('#leftContracts').append(data['leftContracts'] + " BTC");
+				 }
+				 if((data['totalLeftUsers']) && data['totalLeftUsers']!='' && data['totalLeftUsers']!=null && data['totalLeftUsers']!='null')
+				 {
+					$('#totalLeftUsers').empty();
+					$('#totalLeftUsers').append(data['totalLeftUsers']);
+				 }
+				 if((data['activeLeftUsers']) && data['activeLeftUsers']!='' && data['activeLeftUsers']!=null && data['activeLeftUsers']!='null')
+				 {
+					 $('#activeLeftUsers').empty();
+					 $('#activeLeftUsers').append(data['activeLeftUsers']);
+				 }
+				 if((data['inactiveLeftUsers']) && data['inactiveLeftUsers']!='' && data['inactiveLeftUsers']!=null && data['inactiveLeftUsers']!='null')
+				 {
+					 $('#inactiveLeftUsers').empty();
+					 $('#inactiveLeftUsers').append(data['inactiveLeftUsers']);
+				 }
+				 if((data['rightContracts']) && data['rightContracts']!='' && data['rightContracts']!=null && data['rightContracts']!='null')
+				 {
+					 $('#rightContracts').empty();
+					 $('#rightContracts').append(data['rightContracts'] + " BTC");
+				 }
+				 if((data['totalRightUsers']) && data['totalRightUsers']!='' && data['totalRightUsers']!=null && data['totalRightUsers']!='null')
+				 {
+					 $('#totalRightUsers').empty();
+					 $('#totalRightUsers').append(data['totalRightUsers']);
+				 }
+				 if((data['activeRightUsers']) && data['activeRightUsers']!='' && data['activeRightUsers']!=null && data['activeRightUsers']!='null')
+				 {
+					$('#activeRightUsers').empty();
+					$('#activeRightUsers').append(data['activeRightUsers']);
+				 }
+				 if((data['inactiveRightUsers']) && data['inactiveRightUsers']!='' && data['inactiveRightUsers']!=null && data['inactiveRightUsers']!='null')
+				 {
+					$('#inactiveRightUsers').empty();
+					$('#inactiveRightUsers').append(data['inactiveRightUsers']);
+				 }
+
+			 }
+			 $('#refresh').show();
+			$('#preloader').hide();
+			
+				
+			}
+		 });
+}
+</script>

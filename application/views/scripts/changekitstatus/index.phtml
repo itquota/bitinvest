@@ -1,0 +1,200 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	//echo "<pre>";
+	//print_r($this->result);exit;
+	
+?>
+
+ <style>
+	 .form-group {
+	display: inline-block;
+	width: 300px;
+	padding:15px;
+	margin-top:-30px;
+	float:left;
+}
+
+ </style>
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt">Change kit status</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li >Kits > </li>
+                  <li class="active"><a href="Kitupdate">Kit Update</a> > </li>
+                  <li >Change Kit Status</li>
+  
+            </ol>
+          
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              Change kit status
+              </div>
+              
+			
+		<div class="panel-body revenuebg">
+               <div class="err" style="width:100%;float:left;">
+			
+				<label for="" class="lblTxt" style="color:red;"></label>
+		
+			</div>
+		  
+          <form method="POST" action="<?php echo BASEPATH; ?>/Changekitstatus" id="change_kitstatus">
+        
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+    <div>
+    <div class="err1"></div>
+    <label for="" class="lblTxt">It Will active the Inactive kits as well</label>
+    
+  </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Kit Number</label>
+
+     <input type="text" class="form-control CommonInputBox" id="kit_no" placeholder="Kit Number" value="<?php echo isset($this->result->kit_number)?$this->result->kit_number:"";?>" readonly>
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Created On</label>
+
+     <input type="text" class="form-control CommonInputBox" placeholder="Created On" value="<?php echo isset($this->result->created_on)?$this->result->created_on:"";?>">
+
+
+      
+  </div>
+ <div class="form-group">
+    <label for="" class="lblTxt">Used By</label>
+
+     <input type="text" class="form-control CommonInputBox" id="usedby" placeholder="Used By" value="<?php echo isset($this->result->kit_used_by)?$this->result->kit_used_by:"";?>">
+
+
+      
+  </div>
+  <div class="form-group" >
+    <label for="" class="lblTxt">Status</label>
+
+     <!--  <input type="text" class="form-control CommonInputBox" placeholder="Status" value="<?php echo isset($this->result->status)?$this->result->status:"";?>">-->
+	
+       
+     <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:272px;">
+                       <option value="Active" <?php if($this->result->status=='Active'){ echo 'selected';} ?>>Active</option>
+                        <option value="Inactive" <?php if($this->result->status=='Inactive'){ echo 'selected';} ?>>Inactive</option>
+    </select>
+                                       
+
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Comments</label>
+
+		<textarea style="height:35px"  class="form-control CommonInputBox" id="comment" name="comment" rows="15" cols="80" placeholder="" value=""> </textarea>
+
+
+      
+  </div>
+ <div class="form-group" style="width:100%;">
+			<input type="hidden" id="invoiceid" name="invoiceid" value="<?php echo $this->result->invoice_id; ?>"/>
+            <input type="hidden" id="user_name" name="user_name" value="<?php echo $this->result->username; ?>"/>
+            <input type="hidden" id="kit_number" name="kit_number" value="<?php echo $this->result->kit_number; ?>"/>
+            <input type="hidden"  name="status" value="<?php echo $this->result->status; ?>"/>
+  <button type="button" class="btn btn-default Commonbtn" onclick="return changeConfirmStatus();">SUBMIT</button>
+</div>
+
+  
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+<script>
+
+
+			function changeConfirmStatus()
+			{
+				var kitno=$("#kit_no").val();
+				var status=$("#status").val();
+				var usedby=$("#usedby").val();
+				var token=$("#token").val();
+				var user_name=$("#user_name").val();
+				var invoiceid=$("#invoiceid").val();
+				var comment=$("#comment").val();
+			//	var x=confirm('It will Active/Inactive kits as well');
+				
+				if((kitno).trim()=="")
+				{
+					 $(".err").html('<label class="lblTxt" for="" style="color:red;">Please enter Kit Number.</label>');
+				      	return false;
+												
+				}
+				if((status).trim()=="")
+				{
+					 $(".err").html('<label class="lblTxt" for="" style="color:red;">Please select Status.</label>');
+				      	return false;
+												
+				}
+
+				if((usedby).trim()=="")
+				{
+					 $(".err").html('<label class="lblTxt" for="" style="color:red;">Please enter Used By.</label>');
+				      	return false;
+												
+				}
+				else{
+					
+					
+				var dataString ='kitno='+kitno+'&status='+status+'&usedby='+usedby+'&token='+token+'&user_name='+user_name+'&invoiceid='+invoiceid+'&comment='+comment;
+		          //if(x)
+                        //    {
+						$.ajax({
+                                type: 'POST',
+                                url: "<?php echo BASEPATH; ?>/Changekitstatus/changekitsts" ,
+								//data:$('#change_kitstatus').serializeArray(),
+								data: dataString,
+							    success: function(response) {
+                   //alert(data);return false;
+                 				  var data=JSON.parse(response);
+									   if(data['success']!="")
+									   {
+					                       $(".err").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');
+											window.location ="<?php echo BASEPATH ?>/Kitupdate";
+										//location.reload();
+									   }
+					                   else{
+					                       //alert(data);return false;
+					                       $(".err").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');
+					                   }
+					                   
+               						 }
+
+               
+               
+            				});
+					//	}
+
+			} 					
+		}
+</script>

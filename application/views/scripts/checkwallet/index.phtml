@@ -1,0 +1,117 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	//echo"<pre>";
+	//print_r($this->admin_set['google_authenticator']);exit;
+?>
+<style>
+.form-group {
+	width: 300px;
+}
+.clearfix {
+  margin-top:-7px;
+}
+.cls{
+	margin-top:-46px;
+}
+
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+    <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+	<li>Validate Wallet</li>
+
+</ol>
+
+
+
+
+<div class="col-lg-12">
+	<div class="panel panel-primary buynowbox col-lg-12">
+	  <div class="panel-heading buynowbox Titleheading faqtitlebg">Is Coinbank Wallet ?</div>
+		<div class="panel-body revenuebg">
+			<div id="err_div1" name="err_div" style="display:none;"></div>
+			<div class="form-group" style = "margin:10px;" >
+				<h5>Enter Wallet Address</h5>
+			</div>
+			<div class="form-group" id = "wallet_div" >
+				<input type="text" id="withdrawal_address" class="form-control CommonInputBox" placeholder="Enter BTC Address" value="<?php echo $wallet_addr; ?>">
+		  </div>
+		  <div class="form-group" id="save_button">
+			  <button type="button" onclick="verify();" class="btn btn-primary Commonbtn">Submit</button>
+		  </div>
+		</div>
+	</div>
+</div>
+
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper --></div>
+
+<script>
+
+function verify()
+{		
+		$("#err_div1").css("display", "none");
+		var withdrawal_address=$('#withdrawal_address').val();
+		var dataStr = 'wallet_addr='+withdrawal_address;
+		if(!withdrawal_address || withdrawal_address=='')
+		{
+			$("#err_div1").css("display", "block");
+			document.getElementById("err_div1").innerHTML="";
+			document.getElementById("err_div1").innerHTML="Please provide wallet Address.";
+			$('#err_div1').css('color','red');			
+			return false;
+		}	
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/Checkwallet/checkcoinbankwallet",
+			type: "POST",    
+			data: dataStr,							
+			success: function(response)
+			{
+			 var data=	JSON.parse(response);
+			 if(data['success']!='')
+			 {
+				$("#err_div1").css("display", "block");
+				document.getElementById("err_div1").innerHTML="";
+				document.getElementById("err_div1").innerHTML=data['success'];
+				$('#err_div1').addClass('alert');
+				$('#err_div1').addClass('alert-success');
+				$('#err_div1').css('color','green');
+				 
+
+			 }else{							 
+					 if(data['failure'] && data['failure']!='')
+					 {
+						$("#err_div1").css("display", "block");
+						document.getElementById("err_div1").innerHTML="";
+						document.getElementById("err_div1").innerHTML=data['failure'];
+						$('#err_div1').addClass('alert');
+						$('#err_div1').addClass('alert-danger');
+					 }
+					 else
+					 {
+						$("#err_div1").css("display", "block");
+						document.getElementById("err_div1").innerHTML="";
+						document.getElementById("err_div1").innerHTML='Something wrong. Please try again.';
+						$('#err_div1').addClass('alert');
+						$('#err_div1').addClass('alert-danger');
+
+
+					 }									 
+				 }									
+
+			}
+		});
+}
+
+
+</script>

@@ -1,0 +1,429 @@
+<?php
+ $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<html>
+<head>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-ui.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<link href="<?php echo BASEPATH;?>/shared/jquery.ui.all.css" type="text/css" rel="stylesheet"/>
+<link href="<?php echo BASEPATH;?>/shared/jquery.ui.theme.css" type="text/css" rel="stylesheet"/>
+<link href="<?php echo BASEPATH;?>/shared/jquery.ui.core.css" type="text/css" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$( document ).ready(function() {
+
+	 var inputSearch =  $("#clientname").val();
+	 var dataString = 'searchword='+ inputSearch;
+		 $.ajax({
+				url:"<?php echo BASEPATH; ?>/client/autosuggestclient",
+				type: "POST",    
+			    data: dataString,
+		  		 success: function(response)
+	      		{
+						
+					 var jsonObject = JSON.parse(response);
+					 var i=0;
+					 
+						for(;i<jsonObject.length;i++)
+						{
+							availableTags[i] = jsonObject[i]['name'];
+						}
+						
+	      			
+	      		}
+			});
+	});
+
+
+	function save1()
+	{
+		
+		//document.getElementById("save").onclick = function()
+		//{				
+			//alert("java");
+			saveForm('<?php echo BASEPATH;?>/client/addclient','addclient_form','addclient_form');
+		//};
+		
+	}
+
+	function save2()
+	{
+		
+		window.location.href = "<?php echo BASEPATH;?>/client/index";
+		
+	}
+	
+	function isNumber(evt) 
+	{
+	    evt = (evt) ? evt : window.event;
+	    var charCode = (evt.which) ? evt.which : evt.keyCode;
+	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+	        return false;
+	    }
+	    return true;
+	}
+
+	$(document).ready(function(){
+		$('#sameAdd').click(function(){
+			if($(this).is(':checked')){
+				if($('#FirstName').val() != "")
+				{
+					$('#sameFirstName').val($('#FirstName').val());	
+				}
+				else
+				{
+					$('#sameFirstName').val('First Name');
+				}	
+				if($('#LastName').val() != "")
+				{
+					$('#sameLastName').val($('#LastName').val());
+				}
+				else
+				{
+					$('#sameLastName').val('Last Name');
+				}	
+				if($('#Contact').val() != "")
+				{
+					$('#sameContact').val($('#Contact').val());	
+				}	
+				else
+				{
+					$('#sameContact').val('Contact Nos.');
+				}
+				if($('#EmailID').val() != "")
+				{
+					$('#sameEmailID').val($('#EmailID').val());	
+				}
+				else
+				{
+					$('#sameEmailID').val('Email ID');
+				}
+			}
+			else
+			{
+				$('#sameFirstName').val('First Name');
+				$('#sameLastName').val('Last Name');
+				$('#sameContact').val('Contact Nos.');
+				$('#sameEmailID').val('Email ID');	
+			}
+		})
+	});
+
+
+
+
+
+
+var availableTags = new Array();
+	 $(function() {
+
+
+
+	 $( "#clientname" ).autocomplete({
+		 source: availableTags
+	 });
+		
+		 });
+
+
+</script>
+
+<script type="text/javascript">
+</script>
+<style>
+
+.selectboxbg-md-b
+{
+	background: url("images/common/selectboxbg-md-b.gif") no-repeat scroll 0 0 transparent;
+	 width: 263px;
+}
+.ui-multiselect span
+{
+	font-size:12px;
+}
+.selectboxbg-md-b button.ui-multiselect
+{
+	height:34px !important;
+	width: 263px !important;
+	margin: 0 0 0 5px;
+}
+.ui-autocomplete
+{
+    height: 100px;
+    overflow: auto;
+	width: 110px;
+	text-align: left;
+	padding:5px;
+}
+.ui-autocomplete li
+{
+	cursor:pointer;
+}
+
+#holder
+{	
+	margin-bottom:0px;
+}
+</style>
+</head>
+<body>
+<?php $clientresult = $this->variable;
+?>
+<form  action="" id="addclient_form" name="addclient_form" method="post" enctype="multipart/form-data">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div id="subheader">
+	<div class="wrapper">
+   	  <h5>Create Client</h5>
+        <hr>
+		<br class="clear">
+        <div id="holder" style="width:756px;">
+        	<label>Client Name<em>*</em></label>
+            <input name="clientname" type="text" class="field" id="clientname" value="<?php if(isset($clientresult->name) && $clientresult->name !=""){ echo $clientresult->name;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> style="width:660px;" errortag="Client Name" />
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="clientname_error">&nbsp;</span>
+        </div>
+        <?php
+global $rand;
+ function RandNumber($e){
+ 
+ $rand="";
+ for($i=0;$i<$e;$i++){
+ $rand =  $rand .  rand(0, 9); 
+ }
+ return $rand;
+
+ }
+ 
+ ?>
+  		<div id="holder" style="margin:0;"><strong style="float:left;">Client ID:</strong> <input style="width:78px;float:right;" type="text" value='<?php if(isset($clientresult->client_id) && $clientresult->client_id !=""){ echo $clientresult->client_id;} else {echo RandNumber(10);}?>' class="disabledInput" name="clientid" id="clientid" readonly/></div> 
+        <br class="clear">
+        <div id="holder" style="width:275px;">
+        	<label>Client Type<em>*</em></label>
+            <select name="clienttype" class="field med" id="clienttype" errortag="Client Type" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value=""> Please Select</option>
+	       	<?php	foreach ($this->userdata as $userauth){?>
+			<option  <?php if(isset($clientresult->cl_type_id)) {if($userauth->id == $clientresult->cl_type_id) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth->id) && $userauth->id !=""){ echo $userauth->id;}?>"><?php echo $userauth->value;?></option>
+			<?php } ?>
+                <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option> -->
+            </select>
+             <div class="clearBoth">&nbsp;</div>
+            <span style="margin-left:55px;" class="message" id="clienttype_error">&nbsp;</span>
+        </div>
+  		<div id="holder" style="width:300px;">
+        	<label>Client Category<em>*</em></label>
+            <select name="clientcategory" class="field med" id="clientcategory" errortag="Client Category" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value=""> Please Select</option>
+	       	<?php	foreach ($this->userdata1 as $userauth1){?>
+			<option  <?php if(isset($clientresult->category_id)) {if($userauth1->id == $clientresult->category_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth1->id) && $userauth1->id !=""){ echo $userauth1->id;}?>"><?php echo $userauth1->value;?></option>
+			<?php } ?> 	  			
+                <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option> -->
+            </select>
+             <!-- <div style="margin-left:97px;" class="message" id="clientcategory_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientcategory_error">&nbsp;</span>
+        </div>
+        <div id="holder" style="margin:0;width:310px;">
+        	<label style="width: 105px;">Business Line<em>*</em></label>
+            <select name="businessline" class="field med" id="businessline" errortag="Business Line" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value=""> Please Select</option>
+            <?php	foreach ($this->userdata4 as $userauth4){?>
+			<option  <?php if(isset($clientresult->business_line_id)) {if($userauth4->id == $clientresult->business_line_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth4->id) && $userauth4->id !=""){ echo $userauth4->id;}?>"><?php echo $userauth4->value;?></option>
+			<?php } ?>
+                <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option> -->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="businessline_error">&nbsp;</span>
+        </div>
+        <br class="clear">
+        
+        <div id="holder" style="margin-left:0px;width:275px;">
+        	<label  style="width: 65px;">Region<em>*</em></label>
+            <select name="region" class="field med" id="region" errortag="Region" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value=""> Please Select</option>
+            <?php	foreach ($this->userdata2 as $userauth2){?>
+			<option  <?php if(isset($clientresult->region_id)) {if($userauth2->id == $clientresult->region_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($userauth2->id) && $userauth2->id !=""){ echo $userauth2->id;}?>"><?php echo $userauth2->value;?></option>
+			<?php } ?>
+                <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option> -->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="region_error" >&nbsp;</span>
+        </div>
+        
+       <div id="holder" style="margin-right:19px;width:300px;">
+        	<label style="width: 91px;">Sector<em>*</em></label>
+            <select name="sector" class="field med" id="sector" errortag="Sector" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value=""> Please Select</option>
+            <?php	foreach ($this->userdata3 as $userauth3){?>
+			<option <?php if(isset($clientresult->sector_id)) {if($userauth3->id == $clientresult->sector_id) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth3->id) && $userauth3->id !=""){ echo $userauth3->id;}?>"><?php echo $userauth3->value;?> </option>
+			<?php } ?>
+               <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option>-->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="sector_error" >&nbsp;</span>
+        </div>
+
+		<div id="holder" style="width:308px;">
+        	<label style="width:105px;">Account Manager<em>*</em></label>
+            <!--<input name="project" type="text" class="field med"/>-->
+			<select name="accountmanager" class="field med" id="accountmanager" errortag="AccountManager" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+			<option value=""> Please Select</option>
+            <?php	foreach ($this->employees as $employees){?>
+			<option <?php if(isset($clientresult->account_manager)) {if($employees->id1 == $clientresult->account_manager) {?> selected="selected" <?php }} ?> value="<?php  if(isset($employees->id1) && $employees->id1!=""){ echo $employees->id1;}?>"><?php echo $employees->name;?></option>
+			<?php } ?>
+                <!-- <option selected="selected"></option> 
+                <option value="Option 1">Option 1</option>
+                <option value="Option 1">Option 2</option>
+                <option value="Option 1">Option 3</option> -->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+             <span class="message" id="accountmanager_error">&nbsp;</span>
+        </div>
+  	</div>
+    <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+          
+          <div class="block div288">
+              <span class="option">Project Contact<em>*</em></span><br>
+
+	              <div id="holder">
+	              	<input id="FirstName" name="FirstName" type="text" class="field" onblur="if(this.value==''){this.value='First Name'};" onfocus="if(this.value=='First Name'){this.value=''};" value="<?php if(isset($clientresult->project_fn) && $clientresult->project_fn !=""){ echo $clientresult->project_fn;}else {?>First Name<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="First Name"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="FirstName_error">&nbsp;</span>
+	              </div>
+	              <div id="holder">
+	              	<input id="LastName"name="LastName" type="text" class="field" onblur="if(this.value==''){this.value='Last Name'};" onfocus="if(this.value=='Last Name'){this.value=''};" value="<?php if(isset($clientresult->project_ln) && $clientresult->project_ln !=""){ echo $clientresult->project_ln;}else {?>Last Name<?php }?>"  <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="Last Name"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="LastName_error">&nbsp;</span>
+	              </div>
+	              <div id="holder" style="margin:0;">
+	              	<input id="Contact" name="Contact" type="text" class="field" onkeypress="return isNumber(event)"  onblur="if(this.value==''){this.value='Contact Nos.'};" onfocus="if(this.value=='Contact Nos.'){this.value=''};"  value="<?php if(isset($clientresult->project_tel) && $clientresult->project_tel !=""){ echo $clientresult->project_tel;}else {?>Contact Nos.<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> maxlength=13 errortag="Contact"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="Contact_error" >&nbsp;</span>
+	              </div>
+	              <br class="clear">
+	              <div id="holder" style="margin:0;">
+	              	<input id="EmailID" name="EmailID" type="text" class="field" onblur="if(this.value==''){this.value='Email ID'};" onfocus="if(this.value=='Email ID'){this.value=''};" value="<?php if(isset($clientresult->project_email) && $clientresult->project_email !=""){ echo $clientresult->project_email;}else {?>Email ID<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="Email ID"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="EmailID_error">&nbsp;</span>
+	              </div>
+
+              <br class="clear">              
+              <br class="clear">
+              
+              <?php if(isset($clientresult->billing_fn) && isset($clientresult->project_fn) && $clientresult->billing_fn == $clientresult->project_fn && isset($clientresult->billing_ln) && isset($clientresult->project_ln) && $clientresult->project_ln == $clientresult->billing_ln && isset($clientresult->project_tel) && isset($clientresult->billing_tel) && $clientresult->billing_tel == $clientresult->project_tel && isset($clientresult->project_email) && isset($clientresult->billing_email) && $clientresult->billing_email == $clientresult->project_email){?>
+              <span class="option">Billing Contact<em>*</em></span> <span class="check"><input name="" checked id="sameAdd" type="checkbox" value="" style="width:25px;vertical-align:middle;" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled<?php }?>/>same as above</span><br>
+			  <?php } else {?>
+			  <span class="option">Billing Contact<em>*</em></span> <span class="check"><input name="" id="sameAdd" type="checkbox" value="" style="width:25px;vertical-align:middle;" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled<?php }?>/>same as above</span><br>
+			  <?php }?>
+
+	              <div id="holder">
+	              	<input id="sameFirstName" name="sameFirstName" type="text" class="field" onblur="if(this.value==''){this.value='First Name'};" onfocus="if(this.value=='First Name'){this.value=''};" value="<?php if(isset($clientresult->billing_fn) && $clientresult->billing_fn !=""){ echo $clientresult->billing_fn;}else {?>First Name<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="First Name"/>
+	              	<span class="message" id="sameFirstName_error">&nbsp;</span>
+	              </div>
+	              <div id="holder">
+	              	<input id="sameLastName" name="sameLastName" type="text" class="field" onblur="if(this.value==''){this.value='Last Name'};" onfocus="if(this.value=='Last Name'){this.value=''};" value="<?php if(isset($clientresult->billing_ln) && $clientresult->billing_ln !=""){ echo $clientresult->billing_ln;}else {?>Last Name<?php }?>"  <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="Last Name"/>
+	             	 <div class="clearBoth">&nbsp;</div>
+	             	 <span class="message" id="sameLastName_error">&nbsp;</span>
+	             </div>
+	              <div id="holder" style="margin:0;">
+	              	<input id="sameContact" name="sameContact" type="text" class="field" onkeypress="return isNumber(event)" onblur="if(this.value==''){this.value='Contact Nos.'};" onfocus="if(this.value=='Contact Nos.'){this.value=''};" value="<?php if(isset($clientresult->billing_tel) && $clientresult->billing_tel !=""){ echo $clientresult->billing_tel;}else {?>Contact Nos.<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?>  maxlength=13 errortag="Contact"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="sameContact_error">&nbsp;</span>
+	              </div>
+	              <br class="clear">
+	              <div id="holder" style="margin:0;">
+	              	<input id="sameEmailID" name="sameEmailID" type="text" class="field" onblur="if(this.value==''){this.value='Email ID'};" onfocus="if(this.value=='Email ID'){this.value=''};" value="<?php if(isset($clientresult->billing_email) && $clientresult->billing_email !=""){ echo $clientresult->billing_email;}else {?>Email ID<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="Email ID"/>
+	              	<div class="clearBoth">&nbsp;</div>
+	              	<span class="message" id="sameEmailID_error">&nbsp;</span>
+	              </div>
+
+          
+         
+          </div>
+          
+          <div class="block div288">
+            <div id="holder"><span class="option">Address Line 1<em>*</em></span><br>
+              <input name="addressline1" type="text" class="field" value="<?php if(isset($clientresult->address1) && $clientresult->address1 !=""){ echo $clientresult->address1;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="addressline1" errortag="Address Line 1"/>
+              <div class="clearBoth">&nbsp;</div>
+              <span class="message" id="addressline1_error">&nbsp;</span>
+            </div>
+            <div id="holder"><span class="option">Address Line 2</span><br>
+              <input name="addressline2" type="text" class="field" value="<?php if(isset($clientresult->address2) && $clientresult->address2 !=""){ echo $clientresult->address2;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="addressline2" errortag="Address Line 2"/>
+               <div class="clearBoth">&nbsp;</div>
+               <span class="message" id="addressline2_error">&nbsp;</span>
+            </div>
+            <div id="holder" style="margin:0;"><span class="option">Country<em>*</em></span><br>
+              <select name="country" class="field" id="country" errortag="Country" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+               <option value=""> Please Select</option>
+	           	 <?php	foreach ($this->userdata5 as $userauth5){?>
+				<option <?php if(isset($clientresult->country_id)) {if($userauth5->id == $clientresult->country_id) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth5->id) && $userauth5->id !=""){ echo $userauth5->id;}?>"><?php echo $userauth5->value;?></option>
+				<?php } ?>
+              <!-- <option selected="selected">Please Select</option>
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option> -->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="country_error">&nbsp;</span>
+            </div>  
+            <br class="clear">
+            <div id="holder"><span class="option">State<em>*</em></span><br>
+              <input name="state" type="text" class="field" value="<?php if(isset($clientresult->state) && $clientresult->state !=""){ echo $clientresult->state;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="state" errortag="State"/>
+             <div class="clearBoth">&nbsp;</div>
+              <span class="message" id="state_error">&nbsp;</span>
+            </div>
+            <div id="holder"><span class="option">City<em>*</em></span><br>
+              <input name="city" type="text" class="field" value="<?php if(isset($clientresult->city) && $clientresult->city !=""){ echo $clientresult->city;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="city" errortag="City"/>
+              <div class="clearBoth">&nbsp;</div>
+              <span class="message" id="city_error">&nbsp;</span>
+            </div>
+            <div id="holder" style="margin:0;"><span class="option">Zip<em>*</em></span><br>
+              <input name="zip" type="text" class="field"  value="<?php if(isset($clientresult->zip) && $clientresult->zip !=""){ echo $clientresult->zip;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="zip" errortag="Zip" maxlength=10/>
+              <div class="clearBoth">&nbsp;</div>
+              <span class="message" id="zip_error">&nbsp;</span>
+            </div>
+          <br class="clear">
+           <div id="holder" style="margin:0;"><span class="option">Website</span><br>
+            <input name="website" type="text" class="field med" value="<?php if(isset($clientresult->website) && $clientresult->website !=""){ echo $clientresult->website;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> id="website" errortag="Website"/>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="website_error">&nbsp;</span>
+        </div>
+        <br class="clear"> 
+          </div>
+          
+          <div class="flow_right"><input name="save" type="button" <?php if(isset($this->view1) && $this->view1!= "" ){ ?>value="Back"<?php }else{?> value="Submit"<?php }?> id="save" class="searchbg" <?php if(isset($this->view1) && $this->view1!= "" ){ ?>onclick="save2();"<?php } else {?> onclick="save1();" <?php } ?>/></div>
+          <br class="clear">
+        </div>
+        <!--Ends Here -->    
+    </div>    
+</div>
+</form>
+</body>
+</html>

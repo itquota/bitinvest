@@ -1,0 +1,360 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth");
+ ?> 
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+
+<script type="text/javascript">
+
+	function search()
+	{	
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		//alert(startdate);
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+		//alert(enddate);
+		window.location="<?php echo BASEPATH; ?>/analyst/reportchargeable/startdate/"+startdate+"/enddate/"+enddate;
+	}
+
+	function export1()
+	{	
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		//alert(startdate);
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+		//alert(enddate);
+		window.location="<?php echo BASEPATH;?>/analyst/chargeableexport/startdate/"+startdate+"/enddate/"+enddate;
+	}
+
+</script>
+
+
+<script>
+
+	
+</script>
+<style>
+.col-first {
+    width: 315px;
+}
+.greenClass
+{
+	background-repeat:repeat-x;
+	background-color:#8EC555;
+    height: 32px;
+    margin: -8px 0 0;
+    padding: 8px 0 0;
+    background-image:url("<?php echo BASEPATH ;?>/images/common/menubg-grn.gif");
+}
+</style>
+
+</head>
+<body>
+
+
+
+<div id="subheader">
+<?php
+
+	 function minutetohr($minute)
+	{
+		$hrs=0;
+		$minute =intval($minute);
+		$hr= intval($minute/60);
+		$hr=round($minute/60,2);
+		
+		if (strpos($hr,'.') !== false)
+		{
+			$hr1 = explode('.', $hr);
+			$min=$minute%60;
+			if($min < 10)
+			{
+				$hrs=$hr1[0].".0".$min;
+			}
+			else 
+			{
+				$hrs=$hr1[0].".".$min;
+			}	
+		}
+		else
+		{
+			$hrs=$hr;
+			$min=$minute%60;
+			if($min < 10)
+			{
+				$hrs=$hr.".0".$min;
+			}
+			else 
+			{
+				$hrs=$hr.".".$min;
+			}	
+		}
+		return $hrs;
+	
+	}
+
+?>
+
+	<form id="searchprojectform" name="searchprojectform" action="" method="post">
+	<div class="wrapper">
+	<div id="holder" style="margin:0;">
+        	<label>From Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($this->startdate) && $this->startdate!=""){echo $this->startdate; } ?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            <label>To Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($this->enddate) && $this->enddate!=""){echo $this->enddate; }?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+      </div>
+      <br class="clear">
+        <br class="clear">
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="export1();"><a href="javascript:void(0);" class="searchbg">Export</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="search();"><a href="javascript:void(0);" class="searchbg">Submit</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH?>/analyst/reportscreen" style="margin-right:532px;" class="searchbg">Report-homepage</a></div>
+  	</div>
+    <br class="clear" />
+    </form>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+
+        <br class="clear">
+        <br class="clear">
+        
+        <div id="tablebg">
+        	
+            <div class="col" style="width:112px;">Client Name</div>
+            <div class="col" style="width:112px;">Project Name</div>
+            <div class="col" style="width:112px;">Task</div>
+            <div class="col" style="width:112px;">Status</div>
+            <div class="col" style="width:112px;">Budgeted Hrs</div>
+            <div class="col" style="width:112px;">Actual Hrs</div>
+            <div class="col" style="width:112px;">Variance</div>
+        </div>
+           <?php if(isset($this->result_client) && sizeof($this->result_client)>0){
+         ?>
+        
+         <?php
+
+         foreach ($this->result_client as $view_list){
+         $P =0;
+         	?>
+  
+        <?php if(isset($this->result_client) && sizeof($this->result_client)>0){
+        	
+        	$result_explode = explode(",", $this->result_project[$view_list['cid']]['vname']);
+        	
+        	foreach ($result_explode as $res){?>
+        	
+        	
+        	<?php if(isset($this->result_task) && sizeof($this->result_task)>0){
+        		
+        	$P1 = 0;
+        	$result_explode_task_title = array();
+        	$result_explode_task_status = array();
+        	$result_explode_budgeted_hrs = array();
+        	$result_explode_editid = array();
+        	
+        	$result_explode_task_title = explode(",", $this->result_task[$res]['task_title']);
+        	$result_explode_task_status = explode(",", $this->result_task[$res]['status']);
+        	$result_explode_budgeted_hrs = explode(",", $this->result_task[$res]['budgeted_hrs']);
+        	$result_explode_editid = explode(",", $this->result_task[$res]['editid']);
+        	
+        	?>
+        	<?php  if($P==0 && $P1==0) {$P++;?>
+        	 	<div id="rowbg" style="float:left;"><div class="col-first" style="width:112px;float:left;height:<?php echo 20*sizeof($result_explode_task_title);?>px;"><?php echo $view_list['cname'];?></div>
+        	<?php  }else{?>
+        	 	<div id="rowbg" style="float:left;"><div class="col-first" style="width:112px;float:left;">&nbsp;</div>
+        	<?php  } ?>
+        	
+           	<?php //if($P1==0) {$P1++;?>
+           		 <div class="col" style="width:112px;float:left;height:<?php echo 20*sizeof($result_explode_task_title);?>px;"><?php echo $res;?></div>
+            <?php //}else{?>
+<!--        	 	 <div class="col" style="width:112px;float:left;">&nbsp;</div>-->
+        	<?php // } ?>
+        		
+        	<?php for($i=0;$i<sizeof($result_explode_task_title);$i++){
+        	$lovObj= new Aranca_Model_DbTable_Lov();
+        	$resstatus = $result_explode_task_status[$i];
+        	$lov_Row = $lovObj->fetchRow("id='$resstatus'");
+        	
+        	$taskObj = new Aranca_Model_DbTable_Task();
+					$clientObj= new Aranca_Model_DbTable_Client();
+					$emp_taskObj = new Aranca_Model_DbTable_Emptask();
+					$editid = $result_explode_editid[$i];
+					$startdate = $this->startdate2;
+					$enddate = $this->enddate2;
+					
+					if($startdate!="" && $enddate !="")
+					{
+						$where = "  et.task_id = '$editid' &&  '$startdate' <= DATE(et.st_time) && DATE(et.end_time) <= '$enddate'";
+						//$where = "  et.task_id = '$editid' && et.st_time like '%$startdate%' && et.end_time like '%$startdate%'";
+					}
+					else
+					{
+						$where = "  et.task_id = '$editid' ";
+					}
+					
+					
+	
+					$listing = $emp_taskObj->fetchAll($emp_taskObj->select()
+											->setIntegrityCheck(false)
+											->from(array('et'=>DATABASE_PREFIX."emp_task"),array('et.id as editid','et.task_id as task_id','et.st_time as st_time','et.end_time as end_time'))
+											->where($where)
+										);
+										
+								
+					$hours=0;
+					$totalhours=0;	
+					$totalminits=0;
+					$result="0.0";							
+					foreach ($listing as $list)
+					{	if(isset($list->st_time) && $list->st_time!="" && $list->st_time!="0000-00-00 00:00:00" && isset($list->end_time) && $list->end_time!="" && $list->end_time!="0000-00-00 00:00:00")
+					{								
+						$date_a = new DateTime($list['st_time']);
+						$date_b = new DateTime($list['end_time']);						
+						$diff=$date_b->diff($date_a);
+						$hours=$diff->h;
+						$minits=$diff->i;
+						$totalminits+=$minits;
+						$totalhours+=$hours+($diff->d*24);
+						$total_min = $totalhours*60;
+						$result = $total_min+$totalminits;	
+					}				
+					} 
+        			
+					
+					$actual_hour =$result;
+        			$actual_hour_in_minit = $actual_hour;
+					
+					if(isset($actual_hour_in_minit) && $actual_hour_in_minit!="")
+					{
+						$actual_min_hour = minutetohr($actual_hour_in_minit);
+					}
+        			else 
+					{
+						$actual_min_hour = "0";
+					}
+					
+        			
+					
+			$resultbudgetedhrs = $result_explode_budgeted_hrs[$i];	
+
+        	$budgeted_hours_in_minit = "";
+        			if(strpos($resultbudgetedhrs,'.') !== false)
+					{
+						$ar = explode(".", $resultbudgetedhrs);
+						
+						$temp1= $ar[0]*60;
+						$temp2=$ar[1];
+						$budgeted_hours_in_minit=$temp1+$temp2;
+					}
+					else 
+					{
+						$budgeted_hours_in_minit=$resultbudgetedhrs*60;
+					}
+        	if($resultbudgetedhrs !="" && $resultbudgetedhrs != '0')
+        	{
+        		$variance1 = (($actual_hour_in_minit/$budgeted_hours_in_minit)-1)*100;
+        		$variance1 = round($variance1,2)."%";
+        		
+        		//$variance1 = (($actual_hour - $resultbudgetedhrs)/$resultbudgetedhrs)*100;
+        	}
+        	?>
+        	<div style="float:right;margin-bottom: 6px;">
+            	<div class="col" style="width:112px;float:left;"><?php echo $result_explode_task_title[$i];?></div>
+            
+            	<div class="col" style="width:112px;float:left;"><?php echo $lov_Row['value'];?></div>
+        
+           		 <div class="col" style="width:112px;float:left;"><?php echo $result_explode_budgeted_hrs[$i];?></div>
+            
+            	<div class="col" style="width:112px;float:left;"><?php echo $actual_min_hour;?></div>
+            	
+            	<?php if($resstatus == '47' || $resstatus == '22' ){?>
+            	
+           		 <div class="col" style="width:112px;float:left;"><?php echo "-";?></div>
+           		 
+            	<?php }elseif($resstatus == '23'){?>
+            	
+           		 <div class="col" style="width:112px;float:left;"><?php echo $variance1;?></div>
+           		 
+           		 <?php }?>
+            	
+       		</div>
+        <?php }?>
+         </div>
+         <?php  }?>
+         <?php }} ?>
+       <?php }
+        echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+         } else {?>
+         <div class='grid-row2'>
+		<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+         <?php  } ?>
+       
+<!--        <div class="pagination"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>-->
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+<script>
+
+</script>
+</html>

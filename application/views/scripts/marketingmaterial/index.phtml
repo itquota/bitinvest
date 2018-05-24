@@ -1,0 +1,808 @@
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$common_obj=new Gbc_Model_Custom_CommonFunc();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	?>
+<?php 
+if(isset($_POST['submit'])) {
+	
+	if(isset($_POST['Comment']))
+	{
+	     $comment= $_POST['Comment'];
+	   //echo $comment;
+	}
+	if(isset($_POST['Subject']))
+	{
+	     $sub= $_POST['Subject'];
+	   //echo $subject;
+	}
+	if(isset($_POST['mailTo']))
+	{
+	     $mailstring= $_POST['mailTo'];
+	   	//echo $mailstring;
+	}
+	if(isset($_POST['imageinput']))
+	{
+	     $imageinput= $_POST['imageinput'];
+	   //echo $imageinput;
+	}
+	if(isset($_POST['videourl']))
+	{
+	     $videourl= $_POST['videourl'];
+	   //echo $videourl;
+	}
+	if(isset($_POST['referlink']))
+	{
+	     $referlink= $_POST['referlink'];
+	   //echo $videourl;
+	}
+	if(isset($_POST['appurl']))
+	{
+	     $appurl= $_POST['appurl'];
+	   //echo $videourl;
+	}
+	$message="<div style='border:solid black 1px;padding:2%;width:50%;'> ";
+	$message.="<img src='https://gainbitcoin.com/gbc/images/GainBTCLogo_large.png' style='width: 30%; min-width:300px' /> 
+					<br><br>Referral URL<br/>";
+
+	$message.="<div style='border:solid #ffffff 1px;'><br/> ";
+	$message.="<div style='margin:10px;'>$comment <br/></div>";		
+	if(isset($_POST['imageinput'])){
+		$message.="<div style='margin:10px;'><a href='$videourl' target='_blank'><img style='width:100%;height:auto;' src='$imageinput'/></a><br/></div>";	
+	}
+	if(isset($_POST['appurl']))
+	{
+		$message.="<div style='margin:10px;'> $appurl <br/></div>";
+	}
+	$message.="<div><a href='$referlink' target='_blank'>Click here</a> to Register<br/></div>";
+	$message.="</div>";
+	$message.="</div>";
+
+	
+	$headers = "Content-Type: text/html; charset=iso-8859-1\n";
+	
+	$subject=$sub;
+	//echo $subject;
+	//exit;	
+	if(isset($mailstring)){
+       $mailtoString =$mailstring;
+       $mailToStringArray = explode(',', $mailtoString);
+     }
+     for($i=0;$i<count($mailToStringArray);$i++)
+     {
+     	//echo count($mailToStringArray);
+     	 $sendMailTo = trim($mailToStringArray[$i]);
+     	 $to = $sendMailTo;  
+     	 $from = 'support@gainbitcoin.com';
+		 $replyTo = 'thegainbitcoinhelp@gmail.com';  
+		 $htmlMessage = $message;	 
+     	// mail($to, $subject, $message, $headers);    
+     	$sendMail = $common_obj->sendMailviaAPI($to,$from,$replyTo,$subject,$message,$htmlMessage);    	
+     }	
+}
+?>
+
+<?php
+$FacebookUserContent = 'Name: '.$this->userInfo['data']['name'].'    Phone: '.$this->userInfo['data']['phone'].'    Referrrer ID: '.$this->userInfo['data']['referrer_id'];
+
+$UserContent = 'Name: '.$this->userInfo['data']['name'].'
+	Phone: '.$this->userInfo['data']['phone'].'     
+	Referrrer ID: '.$this->userInfo['data']['referrer_id'];
+
+//echo $FacebookUserContent;exit;
+
+?>
+<style>
+
+
+	.video-width{
+		height:200px;
+		
+	}
+	
+	@media (max-width:480px){
+	.video-width{
+		height:100%;
+		width:100%;
+		
+	}
+	}
+	.slide-width{
+		height:200px;
+		width:300px;		
+	}
+	
+	@media (max-width:480px){
+	.slide-width{
+		height:100%;
+		width:100%;
+		
+	}
+	}
+	
+	.thumb-width{
+		height:150px;
+		width:200px;		
+	}
+	
+	@media (max-width:480px){
+	.thumb-width{
+		height:100%;
+		width:100%;
+		
+	}
+	}	
+</style>
+<script>
+jQuery(document).ready(function(){
+	
+});
+function twitterShare()
+{
+
+	var sURL = document.URL.toString();
+	var sURL1 = sURL.replace(/\#.*/gi, '');
+				
+					
+	var encodedParamTwit = encodeURIComponent(sURL1);
+	var strLink1 = "https://twitter.com/intent/tweet?source=webclient&text="+ encodedParamTwit+"&via=sharethis";
+	window.open(strLink1, 'popup','resizable,height=500,width=700');
+		
+}
+</script>
+
+  <div class="content">
+			<div class="page-title-group">
+				<h4 class="page-title">Referral Program</h4>
+				<h5 class="text-muted page-title-alt">Social Share</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+					<div class="row">
+                    <div class="col-lg-12"> 
+                        <ul class="nav nav-tabs"> 
+                            <li class="active"> 
+                                <a href="#home" data-toggle="tab" aria-expanded="false"> 
+                                    <span class=""><i class="fa fa-link"></i></span> 
+                                    <span class="hidden-xs">Link Share</span> 
+                                </a> 
+                            </li> 
+                            <li class=""> 
+                                <a href="#profile" data-toggle="tab" aria-expanded="true"> 
+                                    <span class="	"><i class="fa fa-youtube-play"></i></span> 
+                                    <span class="hidden-xs">Video Share</span> 
+                                </a> 
+                            </li> 
+							<!--
+                            <li class=""> 
+                                <a href="#messages" data-toggle="tab" aria-expanded="false"> 
+                                    <span class=""><i class="fa fa-slideshare"></i></span> 
+                                    <span class="hidden-xs">Slideshow Share</span> 
+                                </a> 
+                            </li>
+
+							-->
+
+                        </ul> 
+                        <div class="tab-content"> 
+                            <div class="tab-pane active" id="home"> 
+                 <!-- tab content starts-->                   
+								<div class="row  text-center">
+								<!--	<div class="col-lg-12">
+										<img src="images/gbclogo.png" alt="" />
+									</div> -->
+									<div class="col-lg-8 col-lg-offset-2">
+									<h4 id="plcsharelink" class="alert alert-success" style="word-break: break-all;">https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&plc=<?php if($this->userInfo['data']['placement']=='L'){ echo "L";}else{ echo "R"; }?></h4>
+									<h3>Share this link with your friends.</h3>
+									<meta property="og:title" content="Your Referral URL" />
+									<meta property="og:type" content="website" />
+									<meta property="og:url" class="sharemeta" id="metaURL"
+										content="https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&plc=<?php if($this->userInfo['data']['placement']=='L'){ echo "L";}else{ echo "R"; }?>" />
+									<meta property="og:image" content="" />
+									<meta property="og:description" content="Your Referral URL Description" />
+									<script type="text/javascript">var switchTo5x=true;</script> <script
+										type="text/javascript" src="<?php echo BASEPATH; ?>/js/buttons.js"></script> 
+									<script type="text/javascript">stLight.options({publisher: "172e2a8e-3bfb-4a0e-a2df-d3369a4d0af9", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+									<ul style="display:inline-flex;list-style:none;padding:0px;">
+										<li	id="fb-share-button" style="padding:10px;">
+											<img src="<?php echo BASEPATH; ?>/images/facebook_32.png" data-toggle="tooltip" title="Share via facebook" data-placement="bottom">
+										</li>
+
+									<li	id="email-share-button" style="padding:10px;">
+										<a id="" data-toggle="modal" href="#req-admin" name="myname" onclick="getSharelinks(1)" class="myclass">
+											<img src="<?php echo BASEPATH; ?>/images/email_32.png" data-toggle="tooltip" title="Share via email" data-placement="bottom">
+										</a>
+									</li>
+
+									<li id="lshare" st_source="" st_url="https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&plc=<?php if($this->userInfo['data']['placement']=='L'){ echo "L";}else{ echo "R"; }?>"
+										st_title="Referral URL" st_summary="<?php echo $UserContent; ?>"
+										st_image="" class='st_googleplus_large verticle sharespan'
+										displayText='Google +' style="padding:10px;"  data-toggle="tooltip" title="Share via google+" data-placement="bottom">
+
+									</li>
+									<li id="lshare" st_source=""
+										st_url="https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&plc=<?php if($this->userInfo['data']['placement']=='L'){ echo "L";}else{ echo "R"; }?>"
+										st_title="Referral URL" st_summary="<?php echo $UserContent; ?>"
+										st_image="" class='st_twitter_large verticle sharespan' displayText='Tweet' style="padding:10px;" data-toggle="tooltip" title="Share via twitter" data-placement="bottom">
+									</li>
+
+
+									</ul>
+										
+										<div class="subtitle ">PLACEMENT  </div>
+									<div class="form-group" style="display: inline-flex;">
+															   <span style="width: 60px;">
+																	<input onclick="choosePlacement(this)" id="lplace" name="place" value="L" tabindex="15" type="radio" <?php if($this->userInfo['data']['placement']=='L'){ ?> checked="true" <?php }  if($this->totalchild < 1){?> disabled <?php }?>>
+																	Left
+															  </span>
+															  <span >
+																	<input onclick="choosePlacement(this)" id="rplace" name="place" value="R" tabindex="15" type="radio" <?php if($this->userInfo['data']['placement']=='R'){ ?> checked="true" <?php }  if($this->totalchild < 1){?> disabled <?php }?>>
+																	 Right
+															  </span>
+
+														 </div>
+					<?php if($this->totalchild < 1){ ?>
+	  <p>(You need to be an active user with investment in order to place users in both legs.)</p> 
+		<?php } ?>
+															  <br>
+									<p>For Referral URL</p>
+									<form method="post" action="<?php echo BASEPATH;?>/Referral/click" name="form" id="form<?php echo $this->userInfo['data']['username'];?>">
+									<p id="shareurlplc"><a  type="submit" class="btn btn-primary btn-md" class="shareref"
+										href="#" onclick="document.getElementById('form<?php echo $this->userInfo['data']['username'];?>').submit()">Click Here</a></p>
+										<input type="hidden" value="<?php echo $this->userInfo['data']['username']; ?>" name="user" id="user">
+										<input type="hidden" value="1" name="userflag" id="userflag">
+										<input type="hidden" value="<?php echo $this->userInfo['data']['ref_sponsor_id']; ?>" name="ref_sponsor_id" id="ref_sponsor_id">
+											<input type="hidden" value="" name="plc" id="plc">
+										</form>
+
+									</div>
+									</div>
+									<div class="clearfix"></div>
+															<!-- tab content ends -->					
+                            </div> 
+                         
+							<div class="tab-pane" id="profile"> 
+								<div class="row">
+									<div class="col-lg-6">
+										<div class="col-lg-12">
+												<iframe class="video-width"
+													src="https://www.youtube.com/embed/nS77Y1dHnLA" frameborder="0"
+													allowfullscreen>
+												</iframe>
+										</div>
+										<div class="col-lg-12 socialvideo">
+											<a href="https://goo.gl/avBxD4">https://goo.gl/avBxD4</a>
+												<p>Share this video with your friends.</p>
+												<p><strong>What is BITCOIN - Gainbitoin : Hindi</strong></p>
+												<p>You may share your Video URL Using</p>
+												<p class="socialtab"><span id="fb-share-button5"
+													class=""><img
+													src="<?php echo BASEPATH; ?>/images/facebook_32.png" style="vertical-align:baseline;"></span> 
+
+													<span id="email-share-button"
+													><a id="" data-toggle="modal" href="#req-admin" name="myname" onclick="getSharelinks(3)" class="myclass"
+													><img
+													src="<?php echo BASEPATH; ?>/images/email_32.png" style="vertical-align:baseline;"></a></span>
+
+													<span
+													st_url="<?php echo "https://goo.gl/avBxD4"; ?>"
+													st_title="What is BITCOIN - Gainbitoin : Hindi"
+													st_summary="<?php echo $UserContent?>" st_image=""
+													class='st_googleplus_large' displayText='Google +'></span> <span
+													st_url="<?php echo "https://goo.gl/avBxD4"; ?>"
+													st_title="What is BITCOIN - Gainbitoin : Hindi"
+													st_summary="<?php echo $UserContent?>" st_image=""
+													class='st_twitter_large' displayText='Tweet'></span></p>
+										</div>
+									</div>
+
+									<div class="col-lg-6">
+										<div class="col-lg-12">
+										<iframe class="video-width"
+											src="https://www.youtube.com/embed/SV3_p7rhxeY" frameborder="0"
+											allowfullscreen>
+										</iframe>
+										</div>
+										<div class="col-lg-12 socialvideo">
+													<a href="https://goo.gl/ymn1YX" target="_blank">https://goo.gl/ymn1YX</a>
+													<p>Share this video with your friends.</p>
+													<p><strong>What is BITCOIN - Gainbitoin : EN</strong></p>
+													<p>You may share your Video URL Using</p>
+													<p><span id="fb-share-button2"
+														class="stLarge"><img
+														src="<?php echo BASEPATH; ?>/images/facebook_32.png" style="vertical-align:baseline;"></span>
+
+														<span id="email-share-button"
+														><a id="" data-toggle="modal" href="#req-admin" name="myname" onclick="getSharelinks(4)" class="myclass stLarge"><img
+														src="<?php echo BASEPATH; ?>/images/email_32.png" style="vertical-align:baseline;"></a></span>
+
+														 <span
+														st_url="<?php echo "https://goo.gl/ymn1YX"; ?>"
+														st_title="What is BITCOIN - Gainbitoin EN"
+														st_summary="<?php echo $UserContent?>" st_image=""
+														class='st_googleplus_large' displayText='Google +'></span> <span
+														st_url="<?php echo "https://goo.gl/ymn1YX"; ?>"
+														st_title="What is BITCOIN - Gainbitoin EN"
+														st_summary="<?php echo $UserContent?>" st_image=""
+														class='st_twitter_large' displayText='Tweet'></span></p>
+										</div>				
+									</div>
+
+
+
+								</div>	
+							</div> 
+	<!--						
+							<div class="tab-pane" id="messages"> 
+								<div class="row">
+									<div class="slides">
+										<div class="col-lg-6">
+											<iframe class="slide-width" src="//www.slideshare.net/slideshow/embed_code/key/JCnDl8whuNfmYF"	frameborder="0" allowfullscreen></iframe>
+										</div>					
+										<div class="col-lg-6">
+											<a href="https://goo.gl/0374Io" target="_blank">https://goo.gl/0374Io</a>
+											<p>Share this slideshow with  your friends.</p>
+											<p><strong>What is BITCOIN ?</strong></p>
+											<p>You may share your slideshow URL Using</p>
+											<p><span id="fb-share-button8"
+												class="stLarge"><img
+												src="<?php echo BASEPATH; ?>/images/facebook_32.png" style="vertical-align:baseline;"></span>
+												<span id="email-share-button">
+													<a id="" data-toggle="modal" href="#req-admin" name="myname" onclick="getSharelinks(9)" class="myclass stLarge"><img src="<?php echo BASEPATH; ?>/images/email_32.png" style="vertical-align:baseline;"></a></span>
+												 <span
+												st_url="<?php echo "https://goo.gl/0374Io"; ?>"
+												st_title="What is BITCOIN - Gainbitoin : Hindi"
+												st_summary="<?php echo $UserContent?>" st_image=""
+												class='st_googleplus_large' displayText='Google +'></span> <span
+												st_url="<?php echo "https://goo.gl/0374Io"; ?>"
+												st_title="What is BITCOIN - Gainbitoin : Hindi"
+												st_summary="<?php echo $UserContent?>" st_image=""
+												class='st_twitter_large' displayText='Tweet'></span></p>
+										</div>
+								</div>
+
+
+
+								</div>
+                            </div> 
+
+                        </div> 
+                    </div> 
+
+
+-->
+						<div class="modal bg-popup" id="req-admin">	
+							<div class="modal-dialog popup big-pop-center1" >
+								<div class="modal-content no-padding">
+									<div class="bg-pop-header">
+										<span class="text-pop-header">SHARE VIA EMAIL </span>
+											<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true">
+												<i class="fa fa-close" style="color:#fff;"></i>
+										   </button>
+									</div>
+							<div class="pop-body" style="min-width:375px;overflow-x:auto;">
+								<form name="submitform" id="submitform" action='<?php echo BASEPATH; ?>/Marketingmaterial' method="post" class="form-basic">
+									<div id="err_div" name="err_div" style="display: block; color: red;"></div>
+									<div class="formgroup">
+										<label for="" class="lblTxt">Comment</label>
+										<textarea  type="textarea" name="Comment" id="Comment" placeholder="Add a comment.." class="form-control"></textarea>
+									</div>
+									<div class="" id="mailcontent">
+
+									</div>
+									<div class="clearfix"></div>
+									<input type="hidden" name="imageinput" id="imageinput" value="" >
+
+									<input type="hidden" name="referlink" id="referlink" value="" >	
+
+									<input type="hidden" name="videourl" id="videourl" value="" >
+
+									<div class="form-group ">
+										 <label for="" class="lblTxt">Subject</label> 
+										<input type="text" name="Subject" id="Subject" placeholder="Add subject"  Value="" class="form-control">
+									</div>
+
+									<input type="hidden" name="appurl" id="appurl" value="" >
+
+									<div class="form-group">
+										 <label for="" class="lblTxt">To</label> 
+										<input type="text" name="mailTo" id="mailTo" placeholder="Add email addresses" autocomplete="off" class="form-control">
+									</div>
+									<div class="form-group">
+										<!--	<button  type="button" onclick="return emailcheck();" name="submit" class="btn btn-primary btn-md">SHARE</button> -->
+						                <input  type="submit" value="SHARE" onclick="return emailcheck();" name="submit" class="btn btn-primary btn-md">
+
+									</div>	
+								</form>	
+								<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+							</div>
+							</div>
+							<!-- /.modal-content --></div>
+							<!-- /.modal-dialog --></div>
+
+					</div>
+					</div>
+
+					
+				</div>
+	  		</div>
+ </div>  
+
+<script data-cfasync='false'>
+function getSharelinks(id,bannerid)
+{	
+	$('#err_div').empty();
+    var bannerinput =  $('#'+bannerid).attr('src');	
+	//var imgurl='<?php echo BASE;?>';
+	var imgurl='https://gainbitcoin.com/gbc/';
+	var user='<?php echo $this->userInfo['data']['username']; ?>';
+	var comurl=imgurl+'/Referral?user='+user+'';
+	//localStorage.setItem("url", "<?php echo BASE; ?>/Referral?user=<?php echo $this->userInfo['data']['username']; ?>");	
+	localStorage.setItem("url", "https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>");	
+	var localstorage = localStorage.getItem("url");
+	var myRadio = $('input[name=place]:checked').val();
+	parm = "&plc="+myRadio;
+	var finala = localstorage + parm;
+
+	//alert("input"+comurl);
+	if(id==1)
+
+		{	
+			$("#mailcontent").html('<div class="aligncls"><a onclick="addURL(this);"  href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#referlink').val(finala);		
+		}
+	else if(id==2)
+		{
+			$("#mailcontent").html('<div class="aligncls">https://play.google.com/store/apps/details?id=com.gain.bitcoin&hl=en</div><div class="aligncls"><a href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#referlink').val(finala);
+			$('#appurl').val('https://play.google.com/store/apps/details?id=com.gain.bitcoin&hl=en');
+		}
+	else if(id==3)
+		{
+		$("#mailcontent").html('<div class="aligncls"><a href="http://www.youtube.com/watch?v=nS77Y1dHnLA&feature=em-share_video_user" style="text-decoration:none;display:block" class="nonplayable" target="_blank"><br><img src="http://i3.ytimg.com/vi/nS77Y1dHnLA/mqdefault.jpg" class="thumb-width"/></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+		$('#imageinput').val('http://i3.ytimg.com/vi/nS77Y1dHnLA/mqdefault.jpg');
+		$('#videourl').val('http://www.youtube.com/watch?v=nS77Y1dHnLA&feature=em-share_video_user');
+		$('#referlink').val(finala);
+		}
+	else if(id==4)
+		{
+		$("#mailcontent").html('<div class="aligncls"><a href="http://www.youtube.com/watch?v=SV3_p7rhxeY&feature=em-share_video_user" style="text-decoration:none;display:block" class="nonplayable" target="_blank"><br><img src="http://i3.ytimg.com/vi/SV3_p7rhxeY/mqdefault.jpg" class="thumb-width"/></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+		$('#imageinput').val('http://i3.ytimg.com/vi/SV3_p7rhxeY/mqdefault.jpg');
+		$('#videourl').val('http://www.youtube.com/watch?v=SV3_p7rhxeY&feature=em-share_video_user');
+		$('#referlink').val(finala);
+		}
+	else if(id==5)
+		{
+			$("#mailcontent").html('<div class="aligncls"><a href="http://www.youtube.com/watch?v=Nmw8nlwV_iU&feature=em-share_video_user" style="text-decoration:none;display:block" class="nonplayable" target="_blank"><br><img src="http://i3.ytimg.com/vi/Nmw8nlwV_iU/mqdefault.jpg" class="thumb-width"/></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#imageinput').val('http://i3.ytimg.com/vi/Nmw8nlwV_iU/mqdefault.jpg');
+			$('#videourl').val('http://www.youtube.com/watch?v=Nmw8nlwV_iU&feature=em-share_video_user');
+			$('#referlink').val(finala);
+		}
+	else if(id==6)
+		{
+			$("#mailcontent").html('<div class="aligncls"><a href="http://www.youtube.com/watch?v=2wTImjxPY3w&feature=em-share_video_user" style="text-decoration:none;display:block" class="nonplayable" target="_blank"><br><img src="http://i3.ytimg.com/vi/2wTImjxPY3w/mqdefault.jpg" class="thumb-width"/></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#imageinput').val('http://i3.ytimg.com/vi/2wTImjxPY3w/mqdefault.jpg');
+			$('#videourl').val('http://www.youtube.com/watch?v=2wTImjxPY3w&feature=em-share_video_user');
+			$('#referlink').val(finala);
+		}
+	else if(id==7)
+	{		
+		$("#mailcontent").html('<div class="aligncls"><a href="'+imgurl+'/Referral?user='+user+'" target="_blank"><img src='+bannerinput+' alt="" class="img-responsive" /></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+		$('#imageinput').val(imgurl+'/images/banner_share/'+bannerid+'.jpg');
+		$('#referlink').val(finala);			
+	}
+	else if(id==8)
+		{
+			$("#mailcontent").html('<div class="aligncls"><a href="'+imgurl+'/Referral?user='+user+'" target="_blank"><img src="'+imgurl+'/images/banner.jpg" alt="" class="img-responsive" /></a></div><div class="aligncls"><a onclick="addURL(this);" href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#imageinput').val(imgurl+'/images/banner.jpg');
+			$('#referlink').val(finala);
+		}
+	else if(id==9)
+		{
+	
+			$("#mailcontent").html('<div class="aligncls"><a href="http://www.slideshare.net/slideshow/embed_code/key/JCnDl8whuNfmYF" target="_blank"><img src="'+imgurl+'/images/slideshow.png" alt="" class="img-responsive" /></a></div><div class="aligncls"><a href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');
+			$('#imageinput').val(imgurl+'/images/slideshow.png'); 
+			$('#videourl').val('http://www.slideshare.net/slideshow/embed_code/key/JCnDl8whuNfmYF');
+			$('#referlink').val(finala);
+			
+		}
+		else if(id==10)
+		{
+	
+			$("#mailcontent").html('<div class="aligncls"><a href="http://www.slideshare.net/slideshow/embed_code/key/jDLyi35GKOpWde" target="_blank"><img src="'+imgurl+'/images/slideshow.png" alt="" class="img-responsive" /></a></div><div class="aligncls"><a href="'+imgurl+'/Referral?user='+user+'" target="_blank">Click here</a> to Register</div>');  
+			$('#imageinput').val(imgurl+'/images/slideshow.png');
+			$('#videourl').val('http://www.slideshare.net/slideshow/embed_code/key/jDLyi35GKOpWde');
+			$('#referlink').val(finala);
+		}			
+}
+
+window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '142857819408856',
+      xfbml      : true,
+      version    : 'v2.4'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "library/recaptcha/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+   
+   $('#fb-share-button').click(function() {
+	   
+	   FB.ui({
+			  method: 'feed',
+			  link: "https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>", 
+			  picture: 'https://gainbitcoin.com/gbc/images/logo_grey.png',
+			  name: "Referral URL",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+			
+		  }
+		);
+	});
+	 /*  $('#fb-share-button').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'http://facebook.com/', 
+			  picture: 'http://gainbitco.in/wp-content/uploads/2015/04/gbclogo.png',
+			  name: "The name who will be displayed on the post",
+			  caption:'sample',
+			  description: "Name virender kumar Phone 9576745654 Referrrer ID virender",
+			  redirect_uri: 'http://localhost/shareit/'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	}); */
+	   $('#fb-share-button1').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://play.google.com/store/apps/details?id=com.gain.bitcoin&hl=en', 
+			  picture: '',
+			  name: "GainBitCoin APP",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: '<?php echo BASE; ?>/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	
+	   $('#fb-share-button5').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://www.youtube.com/watch?v=e4jxQYQj4AA', 
+			  picture: '',
+			  name: "What is BITCOIN - Gainbitoin : Hindi",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: '<?php echo BASE; ?>/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	}); 
+	
+	$('#fb-share-button2').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://www.youtube.com/watch?v=Ma7rxAZQjnk', 
+			  picture: '',
+			  name: "What is BITCOIN - Gainbitoin EN",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	 
+	$('#fb-share-button3').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://www.youtube.com/watch?v=j7opj5-32hw', 
+			  picture: '',
+			  name: "GainBitcoin - Hindi",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	 
+	$('#fb-share-button4').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://www.youtube.com/watch?v=2wTImjxPY3w', 
+			  picture: '',
+			  name: "Gainbitcoin - English",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	
+$('.fb-share-button6').click(function() {
+		
+		   
+			  var id=this.id;
+			   //alert( id );
+				  // alert("on");return;
+				   $.ajax({
+			 			url:"<?php echo BASEPATH;?>/Marketingmaterial/saveimage",
+			 			type: "POST",    
+			 			 data: "id="+id,
+			 	  	success: function(response)
+			  		{
+							var url= response;
+							//alert(url);
+							localStorage.setItem("url", url);							
+			  		}
+			  		
+			 		});
+					var localstorage = localStorage.getItem("url");
+				   FB.ui({
+						  method: 'feed',
+						  link: localstorage, 
+						  picture: '',
+						  name: "Guaranteed Return",
+						  caption:'GainBitCoin.com',
+						  description: "<?php echo $FacebookUserContent; ?>",
+						  redirect_uri: '<?php echo BASE; ?>/Marketingmaterial'
+						}, function(response){
+							console.log(response);
+					  }
+					);
+	 			  
+		});
+	
+	$('#fb-share-button7').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'https://gainbitcoin.com/gbc/images/banner.jpg"; ?>', 
+			  picture: '',
+			  name: "Best Mining Option",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	
+	   
+   $('#fb-share-button8').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'http://goo.gl/Ev0ebP', 
+			  picture: '',
+			  name: "Bitcoin Cloud Mining And GainBitcoin",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	}); 
+	
+	$('#fb-share-button9').click(function() {
+	   FB.ui({
+			  method: 'feed',
+			  link: 'http://goo.gl/CDW2Cc', 
+			  picture: '',
+			  name: "GainBitCoin Binary Plan",
+			  caption:'GainBitCoin.com',
+			  description: "<?php echo $FacebookUserContent; ?>",
+			  redirect_uri: 'https://gainbitcoin.com/gbc/Marketingmaterial'
+			}, function(response){
+				console.log(response);
+		  }
+		);
+	});
+	
+</script>
+<script>
+function addURL(element)
+{
+	localStorage.setItem("url", "<?php echo BASE; ?>/Referral?user=<?php echo $this->userInfo['data']['username']; ?>");	
+	var localstorage = localStorage.getItem("url");
+	var myRadio = $('input[name=place]:checked').val();
+	parm = "&plc="+myRadio;
+	var finala = localstorage + parm;
+	 $(element).attr('href', function() {
+	        return this.href + '&plc='+myRadio;
+	     //   return this.href;
+	    });
+	 document.getElementById('referlink').value=finala;
+	
+	
+}
+function emailcheck(){
+	$('#err_div').empty();
+	var mailTo=$('#mailTo').val();
+	if(!mailTo || mailTo=='' )
+	{
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide email.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	
+	var splits = mailTo.split(",");
+	var femail=splits[0];
+	if(femail!='')
+	{   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(femail))  {
+	    	
+	    }else{
+	    	document.getElementById("err_div").innerHTML="";
+			document.getElementById("err_div").innerHTML="Please provide valid email.";
+			$('#err_div').css('display','block');
+			$('#err_div').css('color','red');
+			return false;
+	    }
+	}
+
+}
+function choosePlacement(id)
+{
+	localStorage.setItem("url", "https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&userflag='1'");	
+	var localstorage = localStorage.getItem("url");
+	var token = $('#token').val();
+	var myRadio = $('input[name=place]:checked').val();
+	parm = "&plc="+myRadio;
+	 var url = "https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>";
+	var final = url + parm;
+	var finala = localstorage + parm;
+	 document.getElementById('plc').value=myRadio;
+	
+	if(myRadio=='L')
+	{
+		
+		 $('shareurlplc a').attr('href','');
+        $('#remove').remove();
+		// $("#plcsharelink").append("<b id='remove'>&plc="+myRadio+"</b>");
+		 $("#plcsharelink").html(final);
+
+			// $('#shareurlplc a').attr('href',finala);
+		
+		
+	}
+	else
+	{
+		
+		
+		 $('shareurlplc a').attr('href','');
+	        $('#remove').remove();
+			// $("#plcsharelink").append("<b id='remove'>&plc="+myRadio+"</b>");
+ 		$("#plcsharelink").html(final);
+
+				// $('#shareurlplc a').attr('href',finala);
+				
+	
+	}
+	$('#lshare').attr("st_source","Link");
+	$('#metaURL').attr("content","https://gainbitcoin.com/gbc/Referral?user=<?php echo $this->userInfo['data']['username']; ?>&plc="+myRadio);
+	 
+}
+//window.onload = choosePlacement;
+
+
+
+</script>

@@ -1,0 +1,181 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$user_id=$authUserNamespace->user_id;
+	$data1=$misc_obj->GetAccessRightByUserId('37',$user_id);
+
+	?>
+<style>
+.calculatebtn {
+    width: 42%;
+}
+#reports
+{
+width:11%;
+float:left;
+
+}
+ .form-group {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:300px;
+		}
+	.btn-group {
+    display: inline-block;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:100%;
+		}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+ <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            
+             <div class="row">
+             
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Claimed Requests</li>
+  
+            	</ol>
+            	
+            	<?php 
+			$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+		
+			if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+		
+		    <label for="" class="lblTxt" style="color:red;width:100%;"><?php echo $authUserNamespace->msg;?></label>
+		
+			<?php $authUserNamespace->msg="";}?>
+            	
+
+            
+            
+            
+                    <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table" id="parentTable">
+					             
+                   <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+        
+					<tr>
+							<th class="sortboth">Sr.</th>
+							<th class="sortboth">Username</th>
+							<th class="sortboth">Email</th>
+							<th class="sortboth">Comment</th>
+							<th class="sortboth">Status</th>
+							<th class="sortboth">Rating</th>
+							<th class="sortboth">Created</th>						
+							<th style="text-align:center;width: auto;"></th>
+							
+					</tr>
+
+                 </thead>
+                  <tbody id="parentdata"> 
+
+							<?php
+							try{
+								if(!empty($this->reviews) && sizeof($this->reviews) > 0 ){ 
+
+									$sn = 1;
+									if(!empty($get_parameters['page']) && $get_parameters['page'] >1){
+										$sn = ($get_parameters['page']-1)*$PaginateLimit +1;
+									}
+									foreach($this->reviews as $reviews){
+
+										
+										if($reviews['status'] == 1){
+											$status = "Approved";
+										}else if($reviews['status'] == 2){
+											$status = "Rejected";
+										}else{
+											$status = "Pending";
+										}
+										
+
+									?>
+									
+							<tr>
+
+								<td style="text-align:center;"><?php echo $sn; ?></td>
+
+								<td><?php echo $reviews['name']; ?></td>
+								
+								<td>
+								<?php echo $reviews['email'];	?>
+								</td>
+								<td><?php echo $reviews['review']; ?></td>
+								<td><?php echo $status; ?></td>
+								<td><?php echo $reviews['rating']; ?></td>
+								<td><?php echo $reviews['reviewed_on'];?></td>
+								
+								<td>
+								<?php 
+									if(((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin') && $reviews['status']!=1 && $reviews['status']!=2){
+								?>
+									<a class = "btn" onclick="confirmRequest(<?php echo $reviews['id']; ?>,1)" >Approve</a><br/><br/>
+									<a class = "btn" onclick="confirmRequest(<?php echo $reviews['id']; ?>,2)" >Reject</a><br/><br/>
+								<?php 
+									}
+								?>
+									
+								</td>
+							</tr>
+								<?php
+
+									$sn++;
+
+								}
+							}
+							}
+							catch(Exception $e)
+							{
+								echo $e->getMessage();
+							}
+								?>
+             
+                 </tbody>
+                  </table> 
+  
+              </div>
+
+        </div>
+		
+    </div>
+	<?php echo $this->SearchResult['Pagination']; ?>
+             
+  </div>
+</div>
+
+<script  data-cfasync='false' type="text/javascript">
+
+		function confirmRequest(id,status)
+		{
+			 $.ajax({
+					
+					url:"<?php echo BASEPATH; ?>/Reviewlist/changestatus", 
+					type: "POST",    
+					data: 'id='+id+'&status='+status,			
+					success:function(response)
+					{	//alert(response);	
+						window.location = "<?php echo BASEPATH; ?>/Reviewlist";	
+					}
+			 });
+		}
+</script>
+		

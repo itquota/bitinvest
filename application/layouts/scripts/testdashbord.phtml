@@ -1,0 +1,542 @@
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); ?>
+
+<?php  
+	$cms_obj = new Gbc_Model_DbTable_Cms();
+	$cmsNews=$cms_obj->fetchRow($cms_obj->select()
+			->where("handler='news' AND status='Active'")); 
+
+if (isset($authUserNamespace->user) && isset($authUserNamespace->user_type) && ($authUserNamespace->user_type=='binary'))
+{		$user = new Gbc_Model_DbTable_Userinfo();
+		$ver_row = $user->fetchRow($user->select()
+											 ->where("username='".$authUserNamespace->user."'"));
+											 
+		if($ver_row->isVerified!=1)
+		{
+			$desc=$cms_obj->fetchRow($cms_obj->select()
+			->where("handler='require_terms'")); 
+						 
+		}
+		
+}
+
+	$seminar_obj = new Gbc_Model_DbTable_SpecialPermission();
+	$Permissions=$seminar_obj->fetchRow($seminar_obj->select()
+		); 
+		//echo $ver_row->isVerified;exit;
+		
+			$country_obj=new Gbc_Model_DbTable_Country();
+	$country_data=$country_obj->fetchAll($country_obj->select()
+											); 
+	$manage_link_obj=new Gbc_Model_DbTable_Managelinks();	
+
+	$manage_data=array();
+	if(!empty($ver_row) && sizeof($ver_row)>0 && !empty($ver_row->country))
+	{								 
+		$manage_data=$manage_link_obj->fetchAll($manage_link_obj->select()
+										->setIntegrityCheck(false)
+										->from(array('m'=>"manage_links"),array('m.id'))
+										->joinLeft(array('n'=>'navigation_master'),"n.id = m.nav_id",array('n.nav_link','n.nav_controller'))
+										->where("m.country_id='".$ver_row->country."'")
+										->order("n.id asc"));
+									 
+	}
+	
+	$user_category_obj = new Gbc_Model_DbTable_Usercategory();
+	$user_category_data1=array();								
+	$user_category_data1=$user_category_obj->fetchAll($user_category_obj->select()
+										->setIntegrityCheck(false)
+										->from(array('u'=>"user_category"),array('u.id'))
+										->joinLeft(array('l'=>'lov'),"l.id = u.category_id",array('l.value'))
+										->where("u.username='".$authUserNamespace->user."' and l.name='category' and l.status='1'")
+										  );
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+<title><?php echo $this->title; ?></title>
+<?php echo !empty($SharingTag)?$SharingTag:''; ?>
+<?php
+if(!empty($FacebookMetaTags)){
+	echo $FacebookMetaTags;
+}else{
+	echo '<meta name="description" content="overview &amp; stats" />';
+}
+
+?>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/bootstrap.min.css" rel="stylesheet">
+  <!-- MetisMenu CSS -->
+  <link href="<?php echo BASEPATH; ?>/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+  <!-- Timeline CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/timeline.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/sb-admin-2.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css/style.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css/jquery.dataTables.min.css" rel="stylesheet">
+
+  	  <script src="<?php echo BASEPATH; ?>/js/jquery-1.11.2.min.js"></script>
+      <script src="http://d3js.org/d3.v3.min.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/bootstrap.min.js"></script>
+      <!-- Metis Menu Plugin JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/metisMenu.min.js"></script>
+	  
+	   <script src="<?php echo BASEPATH; ?>/js/metisMenu.js"></script>
+      <!-- Morris Charts JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/raphael-min.js"></script>
+
+<!-- <script src="js/morris.min.js"></script>
+  <script src="js/morris-data.js"></script>-->
+
+  <!-- Custom Theme JavaScript -->
+  <script src="<?php echo BASEPATH; ?>/js/sb-admin-2.js"></script>
+  <!-- network Js-->
+  
+  <script type="text/javascript" data-cfasync="false"
+	src="<?php echo BASEPATH; ?>/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" data-cfasync="false"
+	src="<?php echo BASEPATH; ?>/js/data-tables-script.js"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73459138-1', 'auto');
+  ga('send', 'pageview');
+
+</script>	
+<style>
+.adjustment{
+	width: 53.3333%;
+}
+
+@media only screen and (max-width: 767px){
+			
+			#mobileadjust{
+					float: right;
+			}
+			#submenuid{
+					display: block;
+					position: relative;
+					margin-top: 55px;
+			}
+		}
+
+
+</style>
+</head>
+<body onload="changepagination();">	
+  <div id="wrapper">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top headerbg" role="navigation" >
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="index.html"><img src="<?php echo BASEPATH; ?>/images/logo.png" alt=""></a>
+    </div>
+    <!-- /.navbar-header -->
+
+    <div class="col-lg-7 visible-lg hidden-md hidden-sm hidden-xs adjustment">
+        <marquee class="headerTxt"> <?php echo isset($cmsNews->description)? $cmsNews->description:'';?>
+        </marquee>
+    </div>
+
+
+
+
+    <script>
+  /*  $(document).on('click', '.noti-dropdown', function () {
+        $(this).parents('li').addClass('open')
+        $('.noti-popup').slideDown()
+    });
+    $(document).on('click', '.noti-header .close-btn', function () {
+        $(this).parents('.noti-popup').slideUp()
+        $(this).parents('li').removeClass('open')
+    }); */
+    </script>
+
+
+
+<div class="mob-nav">
+
+    <ul class="nav navbar-top-links navbar-right" id="mobileadjust">
+        <li>
+            <a data-toggle="modal" href="<?php echo BASEPATH; ?>/Profile" > 
+                <i class="is user"></i>
+                <!-- <img src="images/user.png" alt=""> -->
+            </a>
+        </li>
+
+        <li>
+            <a href="<?php echo BASEPATH; ?>/Notification" class="noti-dropdown"> 
+                <i class="is noti_"></i><!-- <img src="images/notification.png" alt=""> -->
+            </a>
+            <div class="noti-popup">               
+                <div class="noti-header"> <span>NOTIFICATIONS</span>
+                    <i class="is close-btn"></i>
+                </div>
+                <div class="noti-content">
+                    <div class="cont noti-Bborder"><h3>6 Days Ago</h3>
+                        <p>Dear User, </p>
+                        <p class="n-content">Due to security concern , it is recommended that kindly cross check your updated e-mail address , phone number and wallet address. <br/> If something found unexpected, report us on <br/> thegainbitcoinhelp@gmail.com.</p>
+                        <p>Regards, <br/>Team GainBitcoin</p>
+                    </div>
+                    <div class="cont">
+                        <h3>2 Months Ago</h3>
+                        <p>Amendments in Gainbitcoin</p>
+                    </div>
+                    <div class="btn_container">
+                        <a href="GBC-Notifications.php" class="btn_">Go to Notification</a> 
+                    </div>
+
+                </div>
+            </div>
+        </li>
+
+        <li>
+            <a data-toggle="modal" href="<?php echo BASEPATH; ?>/Login/logout"><i class="is logout"></i> <!-- <img src="images/logout.png" alt=""> -->
+            </li>
+
+
+        </ul>
+		<!--<div id="google_translate_element" style="float:right;"></div>  -->
+    </div>
+        <!-- /.navbar-top-links -->
+
+        <div class="navbar-default sidebar" id="submenuid">
+            <div class="sidebar-nav navbar-collapse">
+                        <ul class="nav" id="side-menu">
+<?php if(!empty($manage_data) && sizeof($manage_data)>0) { 
+	for($n=0;$n<sizeof($manage_data);$n++) {
+		
+		if($manage_data[$n]['nav_link']=='Dashboard')
+		{
+			$navclass='is dashboard';
+		}
+		else if($manage_data[$n]['nav_link']=='Help & Support' || $manage_data[$n]['nav_link']=='FAQS')
+		{
+			$navclass='is faq';
+		}
+		else 
+		{
+			$navclass='is purchage';			
+		}
+		
+?>
+					<?php if($manage_data[$n]['nav_link']=='My Purchases') { ?>
+					<li class="has-sub-menu">
+                        <a href="javascript:void(0)">
+                            <i class="is purchage"></i>
+                            <span>My Purchases</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+                                    <a href="<?php echo BASEPATH; ?>/Kitsdetail">My Kits</a>
+                                    <a href="<?php echo BASEPATH; ?>/Kitadd">Buy Contract</a>                                  
+                                    <a href="<?php echo BASEPATH; ?>/Contracts">My Contracts</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+					<?php } else if($manage_data[$n]['nav_link']=='Output') { ?>
+					
+					<?php  ?>
+						<li class="has-sub-menu" >
+	                        <a href="javascript:void(0)">
+	                            <i class="is purchage"></i>
+	                            <span>Output</span>
+	                        </a>
+	                        <div class="sub-menu">
+	                            <ul>
+	                                    <li>
+	                                    <a href="<?php echo BASEPATH; ?>/Dailyearning">Mining Outputs</a>
+	                                    <?php if(!empty($user_category_data1) && sizeof($user_category_data1)>0) { 
+	                                    for($cat=0;$cat<sizeof($user_category_data1);$cat++) {
+	                                    	if($user_category_data1[$cat]['value']=='Multilevel')
+	                                    ?>
+	                                    <a href="<?php echo BASEPATH; ?>/Binaryearning">Referral Sales Incentive</a>
+	                                    <?php } if($user_category_data1[$cat]['value']=='Referral') { ?>
+	                                    <a href="<?php echo BASEPATH; ?>/Directearning">Direct Sales Incentive</a>
+	                                    <?php }
+	                                    }
+	                                    ?>
+	                                    
+	                                    <a href="<?php echo BASEPATH; ?>/Businessdetails">Business Details</a>
+	                                </li>
+	                            </ul>
+	                        </div>
+	                    </li>
+					<?php } else if($manage_data[$n]['nav_link']=='Withdrawals') {  ?>
+					
+					<?php ?>
+						<li class="has-sub-menu" >
+	                        <a href="javascript:void(0)">
+	                            <i class="is purchage"></i>
+	                            <span>Withdrawals</span>
+	                        </a>
+	                        <div class="sub-menu">
+	                            <ul>
+	                                <li>
+	                                    <a href="<?php echo BASEPATH; ?>/Withdrawals">Withdrawals Request</a>
+	                                    <a href="<?php echo BASEPATH; ?>/Withdrawalstatus">Withdrawals Status</a>
+	                 
+	                                </li>
+	                            </ul>
+	                        </div>
+	                    </li>
+					<?php } else if($manage_data[$n]['nav_link']=='My Network') { ?>
+					
+					<?php  ?>
+						  <li class="has-sub-menu">
+	                        <a href="javascript:void(0)">
+	                            <i class="is purchage"></i>
+	                            <span>My Network</span>
+	                        </a>
+	                        <div class="sub-menu">
+	                            <ul>
+	                                <li>
+	                                   <a href="<?php echo BASEPATH; ?>/Binarynetwork">Binary Tree</a>
+	                                    <a href="<?php echo BASEPATH; ?>/Binraynetwrk">Tabular Form</a> 
+	                                </li>
+	                            </ul>
+	                        </div>
+	                    </li>
+					<?php } else { ?>
+					
+ 					 				<!--	<li <?php if($manage_data[$n]['nav_link']=='Dashboard') { ?> class="dash-view" <?php } ?>> -->
+				 <li class="dash-view">
+                        <a href="<?php echo BASEPATH; ?>/<?php echo $manage_data[$n]['nav_controller']; ?>">  
+                            <i class="<?php echo $navclass; ?>"></i><span><?php echo $manage_data[$n]['nav_link']; ?></span>
+                        </a>
+                    </li>
+                    
+<?php 
+					}
+					}
+	}
+	else { 
+?>
+
+                    <li  class="dash-view">
+                        <a href="<?php echo BASEPATH; ?>/Dashboard">  
+                            <i class="is dashboard"></i><span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="has-sub-menu">
+                        <a href="javascript:void(0)">
+                            <i class="is purchage"></i>
+                            <span>My Purchases</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+                                    <a href="<?php echo BASEPATH; ?>/Kitsdetail">My Kits</a>
+                                    <a href="<?php echo BASEPATH; ?>/Kitadd">Buy Contract</a>                                  
+                                    <a href="<?php echo BASEPATH; ?>/Contracts">My Contracts</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="has-sub-menu" >
+                        <a href="javascript:void(0)">
+                            <i class="is purchage"></i>
+                            <span>Output</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                                   <li>
+	                                    <a href="<?php echo BASEPATH; ?>/Dailyearning">Mining Outputs</a>
+	                                    <?php if(!empty($user_category_data1) && sizeof($user_category_data1)>0) { 
+	                                    for($cat=0;$cat<sizeof($user_category_data1);$cat++) {
+	                                    	if($user_category_data1[$cat]['value']=='Multilevel')
+	                                    ?>
+	                                    <a href="<?php echo BASEPATH; ?>/Binaryearning">Referral Sales Incentive</a>
+	                                    <?php } if($user_category_data1[$cat]['value']=='Referral') { ?>
+	                                    <a href="<?php echo BASEPATH; ?>/Directearning">Direct Sales Incentive</a>
+	                                    <?php }
+	                                    }
+	                                    ?>
+	                                    
+	                                    <a href="<?php echo BASEPATH; ?>/Businessdetails">Business Details</a>
+	                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                 			<li class="has-sub-menu" >
+                        <a href="javascript:void(0)">
+                            <i class="is purchage"></i>
+                            <span>Withdrawals</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+                                    <a href="<?php echo BASEPATH; ?>/Withdrawals">Withdrawals Request</a>
+                                    <a href="<?php echo BASEPATH; ?>/Withdrawalstatus">Withdrawals Status</a>
+                 
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+
+                    <li class="has-sub-menu">
+                        <a href="javascript:void(0)">
+                            <i class="is purchage"></i>
+                            <span>My Network</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+                                   <a href="<?php echo BASEPATH; ?>/Binarynetwork">Binary Tree</a>
+                                    <a href="<?php echo BASEPATH; ?>/Binraynetwrk">Tabular Form</a> 
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                         <a href="<?php echo BASEPATH; ?>/Trainingmaterial">
+                            <i class="is purchage"></i><span>Training Material</span></a>
+                        </li>
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Marketingmaterial"> <i class="is purchage"></i><span>Marketing Material</span></a>
+                        </li>
+                       <!--   <li>
+                            <a href="businessdetails.php"> <i class="is purchage"></i><span>Business Details</span></a>
+                        </li>  -->
+
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Help">  <i class="is faq"></i> <span>Help & Support</span></a>
+                        </li>
+
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Faq"><i class="is faq"></i><span>FAQS</span></a>
+                        </li>
+
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Achiever"> <i class="is purchage"></i><span>Achievers</span></a>
+                        </li>
+
+
+                        <li>
+                           <a href="<?php echo BASEPATH; ?>/Buysell">  <i class="is purchage"></i> <span>Buy/Sell Bitcoins</span></a>
+                        </li>
+
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Newoffer">  <i class="is purchage"></i> <span>Special Offers</span></a>
+                        </li>
+
+                        <li>
+                            <a href="<?php echo BASEPATH; ?>/Latestnews"> <i class="is purchage"></i> <span>Latest News</span></a>
+                        </li>
+			<?php } ?>
+
+
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+
+        <!-- Navigation -->
+        
+
+
+                <div class="modal" id="myModal">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body"><a href="javascript:void(0)"><img alt="" src="images/offer_popup_img.png"> </a></div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
+<?php echo $this->layout()->content;?>
+
+ <footer class="footer">
+      <div class="container copyrightSection center-text">
+       <div> <p class="pull-left offset-sm-float ">Copyright &#169; 2015 GAINBITCOIN All rights reserved.</p>
+
+          <ul class="list-inline pull-right  offset-sm-float">
+               <li>
+                   <a href="https://www.facebook.com/thegainbitcoin"> <img src="<?php echo BASEPATH; ?>/images/facebook.png" alt=""></a>
+               </li>
+
+                <li>
+                   <a href="#">  <img src="<?php echo BASEPATH; ?>/images/googleplus.png" alt=""></a>
+               </li>
+
+                <li>
+                    <a href="https://twitter.com/thegainbitcoin"> <img src="<?php echo BASEPATH; ?>/images/twitter.png" alt="">
+               </a></li><a href="#">
+               
+              
+            </a></ul>
+        </div>
+  
+      
+          
+      </div>
+    </footer>
+
+       <!-- /#Footer End-wrapper Here -->
+	
+ </div>
+</body>
+<script>
+function changepagination()
+{
+	if($("#data-table-simple_previous").length == 0) {
+
+	}
+	else{
+
+	var innerhtml='<img alt="" src="images/leftarw.png">';
+	$("#data-table-simple_previous").empty();
+	$("#data-table-simple_previous").append(innerhtml);
+
+	$('#data-table-simple_filter').after("<div class='clearfix' style='background-color: #FFFFFF! important; float: left; width: 100%; height: 24px;'> </div>");
+	}
+	
+	if($("#data-table-simple_next").length == 0) {
+	
+	}
+	else{
+
+	var innerhtml='<img alt="" src="images/rightarw.png">';
+	$("#data-table-simple_next").empty();
+	$("#data-table-simple_next").append(innerhtml);
+	}
+}
+
+
+</script>
+	   <script src="<?php echo BASEPATH; ?>/js/common.js"></script> 
+	   <script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'af,de,en,es,la,ml,ms,nl,ta,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</html>
+

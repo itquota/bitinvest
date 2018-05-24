@@ -1,0 +1,107 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+ 
+ <style>
+ 	.txt{
+ 			width:225%;
+ 			}
+ 	
+ 	
+ 	.txtarea{
+ 			width:70%;
+	} 
+ </style>
+ 
+ 
+ 
+ 
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                   <li class="active"><a href="<?php echo BASEPATH?>/Queries">Queries</a> > </li>
+                  <li >Reply</li>
+  
+            </ol>
+           
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              Reply
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="<?php echo BASEPATH; ?>/Reply" method="post" id="chng" role="form">
+
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+ 	<?php header('Location:'.BASEPATH.'/Queries');?>
+  </div>
+ <?php } ?>
+
+ <input type="hidden" name="id" value="<?php echo $this->result->id; ?>">
+   <div class="form-group">
+    <label for="" class="lblTxt">To:</label>
+
+     <input type="text" class="form-control CommonInputBox txt" name="email" value="<?php echo $this->result->email ?>" placeholder="Input Box" >
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Subject</label>
+
+     <input type="text"name="subject" class="form-control CommonInputBox txt" value = "Re: <?php echo $this->result->subject ?>" placeholder="Subject">
+
+
+      
+  </div>
+    <div class="form-group txtarea">
+    <label for="" class="lblTxt">Message</label>
+   <textarea  name="message" class="ck_edit" rows="5" placeholder="Textarea" ></textarea>
+   </div>
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">  
+  <button type="submit" name="chng" id="chng" class="btn btn-default Commonbtn" onclick="redirectfun()">SUBMIT</button>
+ <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+ 
+	 <script  data-cfasync='false'  src="<?php echo BASEPATH; ?>/js/ckeditor/ckeditor.js"></script>
+		<script data-cfasync="false" type="text/javascript">
+                // Replace the <textarea id="editor1"> with a CKEditor
+                // instance, using default configuration.
+                CKEDITOR.replace( "message");
+            </script>
+            
+     <script>
+     
+     </script>

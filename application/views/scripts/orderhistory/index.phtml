@@ -1,0 +1,655 @@
+<?php
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$misc_obj->generateToken();
+?>
+
+
+<style>
+	.inputhodler {
+		width: 100%;
+		margin: 0 0 10px 0;
+		text-align:center;
+	}
+	.inputhodler .formsubmit {
+		width: 80%;
+		padding:6px 8px;
+		border: none;
+		background: #34495e;
+		color: #fff;
+		font-size: 20px;
+		box-shadow: none;
+		text-align: center !important;
+	}
+	.inputhodler p {
+		width: 20%;
+		display:inline-block;
+	}
+	.inputhodler input {
+		box-shadow: none !important;
+		text-align: left;
+		width: 75%;
+		padding:6px 8px;
+		border: 1px solid #dadada;
+		vertical-align: top;
+	}
+
+	.req-admin .modal-header {
+		color: #fff;
+		font: 20px "robotobold";
+	}
+
+	
+.card-box-content {
+    padding: 0px 20px;
+}	
+</style>
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Contracts</h4>
+		<h5 class="text-muted page-title-alt">Order History</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>My Order History</b></h4>
+						</div>	
+						<div class="card-box-content">
+							
+							<div class="clearfix"></div>
+							
+	
+			<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+				
+					
+					<table id="data-table-simple" class="table-bordered table-responsive display">
+							<thead>
+							<tr>
+								<th class="sortdesc">S.No.</th>
+								<th class="sortboth">Invoice ID</th>
+								<th class="sortboth">Kit No.</th>
+								<th class="sortboth">Kit Type</th>
+								<th class="sortboth">Price</th>
+								<th class="sortboth">Price in MCAP</th>
+								<th class="sortboth">Created Date</th>
+								<th class="sortboth">Status</th>
+								<th class="sortboth">Kit Share Status</th>
+								<th class="sortboth">Kit Used By</th>
+								<th class="sortboth">Comment</th>
+								<th class="sortboth">Action</th>
+								<th class="sortboth">My Contract</th>
+
+							</tr>
+							</thead>
+							<tbody>
+							<?php
+							$sn=1;
+
+							$contract=$this->new_arr;
+							// print_r($this->result['data']);exit;
+
+							foreach($this->result['data'] as $data)
+							{
+								if($data['status']!=='Deleted'){
+
+									$invoiceid = isset($data['invoice_id']) ? $data['invoice_id'] : '';
+									$contract_id = isset($data['contract_id']) ? $data['contract_id'] : '';
+
+									$kitNo = isset($data['kit_number']) ? $data['kit_number'] : '';
+
+									$date = isset($data['updated_on']) ? $data['updated_on'] : '';
+
+									$status = isset($data['status']) ? $data['status'] : '';
+
+									$kit_type = isset($data['kit_type']) ? $data['kit_type'] : '';
+
+									$kit_price = isset($data['kit_price']) ? $data['kit_price'] : '';
+									$kit_price_in_mcap = isset($data['kit_price_in_mcap']) ? $data['kit_price_in_mcap'] : '';
+
+								}
+
+
+
+								?>
+								<tr>
+									<td scope="row"><?php echo $sn; ?></td>
+									<td style="text-align:left;"><?php echo $invoiceid;
+										//print_r($invoiceid);exit; ?></td>
+									<td style="text-align:left;"><?php echo $kitNo;?></td>
+									<td><?php echo $kit_type;  ?></td>
+									<td><?php
+									//	echo $contract_id;
+										/*
+										if($contract_id > 13){
+											echo "$ ";
+											echo number_format($kit_price,2); 
+										}else{
+											
+											echo number_format($kit_price,2)." BTC"; 
+										}*/
+								echo number_format($kit_price,4)." BTC"; 
+								
+										?></td>
+									<td><?php echo number_format($kit_price_in_mcap,4);  ?></td>
+									<td><?php echo date("jS F, Y  h:i A", strtotime($date)); ?></td>
+									<td><?php echo $status; ?></td>
+									<td><?php
+										if($status =="Used" && kit_share_status!='')
+										{
+											echo "Kit used by ".$data['kit_used_by'];
+										}
+										else if(!empty($data["kit_share_status"]) && $data["kit_share_status"]=='1' && ($authUserNamespace->user==$data["kit_shared_with"]))
+										{
+											echo "Kit Shared By ".$data["username"]."<br><a href='#' onclick='openAcceptKit(\"".$kitNo."\")' style='margin:5px;'>Accept</a><a href='#' style='margin:5px;' data-toggle='modal' href='#Orderhistory' onclick='rejectKit((\"".$kitNo."\"))'>Reject</a>";
+										}
+										else if(!empty($data["kit_share_status"]) && $data["kit_share_status"]=='1' && ($authUserNamespace->user!=$data["kit_shared_with"]))
+										{
+											echo "Kit Shared with ".$data["kit_shared_with"];
+										}
+										else if(!empty($data["kit_share_status"]) && $data["kit_share_status"]=='2' && ($authUserNamespace->user==$data["kit_shared_with"]))
+										{
+											echo "Kit Shared By ".$data["username"];
+										}
+										else if(!empty($data["kit_share_status"]) && $data["kit_share_status"]=='2' && ($authUserNamespace->user!=$data["kit_shared_with"]))
+										{
+											echo "Kit Shared with ".$data["kit_shared_with"];
+										}
+										else
+										{
+											echo '';
+										}
+
+										?></td>
+									<td><?php echo $data['kit_used_by'];?></td>
+									<td><?php
+										if($status =="Inactive"){
+
+											echo $data["confirmations"]." payment confirmations received";
+
+											if($data["confirmations"]>0 && $data["amtPaid"]!=$data["contract_rate"])
+
+												echo "<br/><ul style='color: red'><li>You have not paid the requested amount (".$data["contract_rate"]." BTC) for this kit.</li><li>You paid ".$data["amtPaid"]." BTC.</li><li>Please pay the balance amount to <b>".$this->result['my_bitcoin_address']."</b> and contact us to resolve this issue. Please make sure you enter the Transaction ID of the balance payment and this Invoice ID in your correspondance to us.</li>.</ul>";
+
+
+											?> <?php } else {
+
+											echo "Kit purchase completed";
+
+										}?></td>
+									<td>
+										<?php
+										if($status =="Pending")
+										{ ?>
+
+											<form method="post" action="<?php echo BASEPATH; ?>/Invoicestatus" name="form1" id="form1<?php echo $invoiceid;?>">
+												<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+												<input type="hidden" value="<?php echo $invoiceid;?>" id="<?php echo $invoiceid;?>" name="invoice_id">
+												<a href="#" onclick="document.getElementById('form1<?php echo $invoiceid;?>').submit()" data-toggle="tooltip" class = "btn btn-primary" title="Activate Kit" data-placement="bottom">ACTIVATE KIT</a>
+
+											</form>
+
+
+										<?php }
+										//if((empty($data["kit_share_status"]) || $data["kit_share_status"]=='' ||  $data["kit_share_status"]=='0') && ($data["kit_share_status"]!='1') && ($data["kit_share_status"]!='2') && ($data["kit_share_status"]!='3') && $status !="Inactive" && $status !="Pending" && $status !="Used")
+										if((empty($data["kit_share_status"]) || $data["kit_share_status"]=='' ||  $data["kit_share_status"]=='0') && ($data["kit_share_status"]!='1') && ($data["kit_share_status"]!='2') && ($data["kit_share_status"]!='3') && $status =="Active" )
+										{
+											echo '<a style="padding: 2px 9px;" class="btn btn-default Commonbtn text-uppercase" href="#" onclick="getSharekitData(\''.$data['kit_number'].'\')"
+										role="button" >Share Kit</a>';
+										}
+
+										?>
+									</td>
+									<td>
+
+										<?php
+
+										//print_r($contract);
+
+										if(in_array($data['kit_number'], $contract))
+										{
+
+											?> <a
+											id="<?php echo $data['invoice_id'];?>"
+											data-toggle="modal"
+											href="#req-admin"
+											name="myname"
+											onclick="getContract('<?php echo $data['kit_number']; ?>');"
+											class="myclass"
+										>My contract</a> <?php } else {?> <a href="#"></a> <?php }?>
+									</td>
+
+								</tr>
+								<?php
+
+								$sn++;
+
+							}
+
+							?>
+							</tbody>
+						</table>
+					
+						<div class="clearfix">&nbsp;</div>
+					
+
+					<div class="modal req-admin bg-popup" id="req-admin-kit">
+							<div class="modal-dialog big-pop-center2" >
+								<div class="modal-content no-padding">
+									<div class="bg-pop-header"><span class="text-pop-header">SHARE KIT</span>
+														<button
+										type="button"
+										class="close"
+										data-dismiss="modal"
+										aria-hidden="true" onclick="window.location.reload();return false;"><i class="fa fa-close" style="color:#fff;"></i></button>
+								</div>
+								<div class="">
+									<br/>
+									<form name="formkit" id=""formkit"" action='' method="post">
+									<?php if(!empty($this->msg) && $this->msg!='')
+									{
+										?>
+										<div>
+											<label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+
+										</div>
+									<?php } ?>
+									<div class="inputhodler" id="kit_err" style="display:none;">
+
+									</div>
+									<div class="inputhodler">
+										<p><strong> Kit No:</strong></p> <input type="text" readonly name="kitnodata" id="kitnodata" placeholder=""  Value="">
+									</div>
+
+									<div class="inputhodler">
+										<p><strong> Share With:</strong></p> <input type="text" name="sharewith" id="sharewith" placeholder="Username" value="" >
+									</div>
+									<div class="inputhodler">
+										<p><strong>Pin No.</strong></p> <input type="text" name="pin" id="pin" readonly value="" >
+									</div>
+									<div class="inputhodler btncls" >
+										<input style="width:30%;" type="button" value="SHARE" name="sharekt" onclick="shareKit()" class="formsubmit inputcls">
+									</div>
+									</form>
+								</div>
+							</div>
+							<!-- /.modal-content --></div>
+						<!-- /.modal-dialog --></div>
+					<!-- for lightbox in bootstrap -->
+
+
+					<div
+						class="modal req-admin bg-popup"
+						id="accept_kit"
+					>
+							<div class="modal-dialog big-pop-center2" >
+								<div class="modal-content no-padding">
+									<div class="bg-pop-header"><span class="text-pop-header">ACCEPT KIT</span>
+									<button
+										type="button"
+										class="close"
+										data-dismiss="modal"
+										aria-hidden="true" onclick="closekit();"
+									><i class="is close-btn"></i></button>
+								</div>
+								<div class="modal-body g-auth-body">
+									<form name="formkit" id=""formkit"" action='' method="post">
+									<div class="inputhodler" id="kit_acc_err" style="display:none;">
+
+									</div>
+									<div class="inputhodler">
+										<p><strong> Kit No:</strong></p> <input type="text" readonly name="kitdata" id="kitdata" placeholder=""  Value="">
+									</div>
+
+									<div class="inputhodler">
+										<p><strong>Pin No.</strong></p> <input type="text" name="pin_no" id="pin_no"  value="" >
+									</div>
+									<div class="inputhodler btncls" >
+										<input style="width:30%;" type="button" value="ACCEPT" name="sharekt" onclick="acceptKit()" class="formsubmit inputcls">
+									</div>
+									</form>
+								</div>
+							</div>
+							<!-- /.modal-content --></div>
+						<!-- /.modal-dialog --></div>
+
+
+
+
+
+
+
+						<style>
+							.req-table thead th{
+								font-family: "roboto";
+							}
+							.req-table {
+								margin-bottom: 20px;
+								width: 100%;
+							}
+
+							.req-admin .modal-body {
+								background: none repeat scroll 0 0 #e6e7e8;
+							}
+
+							.req-admin .modal-header {
+								color: #fff;
+								font: 20px "robotobold";
+							}
+
+							.req-table>tbody>tr>td,.req-table>thead>tr>th {
+								font-family: "roboto";
+								font-size: 16px;
+								padding: 5px 0;
+								text-align: center;
+								text-transform: uppercase;
+							}
+
+							.req-table>tbody>tr>td {
+								font-family: "robotoregular";
+								text-transform: none;
+							}
+
+							.search-con input {
+								border: medium none;
+								border-radius: 0;
+								margin-bottom: 10px;
+							}
+
+							.req-btn,.req-btn:hover {
+								background: none repeat scroll 0 0 #34495e;
+								color: #fff;
+							}
+						</style>
+				
+	<div class="modal bg-popup" id="req-admin">	
+		<div class="modal-dialog big-pop-center2" >
+			<div class="modal-content no-padding">
+				<div class="bg-pop-header"><span class="text-pop-header">MY CONTRACT</span>
+					<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true"><i class="fa fa-close" style="color:#fff;"></i></button>
+				</div>  
+			<div class="pop-body row" style="height:150px;">
+				<div class="col-md-12 col-xs-6">
+					<div class="bs-example table-responsive">
+
+									<table class="table table-bordered innertbl display">
+										<thead>
+										<tr>
+											<th>Date/Time</th>
+											<th>Invoice Id</th>
+											<th>Qty</th>
+											<th>Rate</th>
+											<th>Paid  Amount</th>
+											<th>Status</th>
+											<th>PDF</th>
+										</tr>
+										</thead>
+										<tbody id="businessdata">
+										</tbody>
+									</table>			
+					</div>
+				</div>
+		</div>
+			
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+				
+
+					<div class="modal req-admin bg-popup" id="Orderhistory" >
+						<div class="modal-dialog big-pop-center2" >
+							<div class="modal-content no-padding">
+							<div class="bg-pop-header"><span class="text-pop-header">REJECT KIT</span>
+								<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick=closekit();><i class="fa fa-close" style="color:#fff;"></i></button>
+							</div> 
+								<div class="modal-body g-auth-body" id="rejectorder">
+
+								</div>
+							</div>
+							<!-- /.modal-content --></div>
+						<!-- /.modal-dialog --></div>
+				</div>
+				<br>
+							<div class="clearfix">&nbsp;</div>
+			</div>
+		</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<!-- /.row --> <!-- /.row --></div>
+<br>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script>
+
+	// function run(invoice_id)
+	function getContract(id)
+	{
+		var token = $('#token').val();
+		var kit_number=id;
+		$.ajax({
+
+			url:"<?php echo BASEPATH; ?>/Usercontract/contract",
+			type: "POST",
+			data: 'kit_number='+kit_number+'&token='+token,
+
+			success:function(response)
+			{
+
+				var data=JSON.parse(response);
+				if(data['failure'] && data['failure']!='')
+				{
+					alert(data['failure']);
+				}
+				else
+				{
+					var innerhtml='';
+					for(var k=0;k<(data['data'].length);k++)
+					{
+						innerhtml+='<tr>'+
+							'<td>'+data['data'][k]['Date/Time']+'</td>'+
+							'<td>'+ data['data'][k]['InvoiceId']+'</td>'+
+							'<td>'+ data['data'][k]['contract_qty']+'</td>'+
+							'<td>'+data['data'][k]['contract_rate']+'</td>'+
+							'<td>'+ data['data'][k]['amtPaid']+'</td>'+
+							'<td>'+data['data'][k]['invoice_status']+'</td>'+
+							'<td>'
+							+'<form method="post" action="<?php echo BASEPATH; ?>/Generateinvoice" name="form" id="form'+data['data'][k]['InvoiceId']+'">'
+							+'<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">'
+							+'<input type="hidden" value="'+data['data'][k]['InvoiceId']+'" id="'+data['data'][k]['InvoiceId']+'" name="invoiceid">'
+							+'<a href="#" onclick=document.getElementById("form'+data['data'][k]['InvoiceId']+'").submit()>Generate PDF</a>'
+							+'</form>'+'</td>'+
+							'</tr>';
+						$('#businessdata').empty();
+						$('#businessdata').append(innerhtml);
+
+					}
+				}
+
+			}
+		});
+	}
+
+	function getSharekitData(kit_number)
+	{
+		$('#kitnodata').val("");
+		$('#kitnodata').val(kit_number);
+		$('#req-admin-kit').addClass('openpop');
+
+		$.ajax({
+
+			url:"<?php echo BASEPATH; ?>/Orderhistory/generaterand",
+			type: "POST",
+			data: '',
+
+			success:function(response)
+			{
+				$('#pin').val(response);
+			}
+		});
+
+	}
+	function closekit()
+	{
+		$('.modal').removeClass('openpop');
+		window.location = "<?php echo BASEPATH; ?>/Orderhistory";
+	}
+	function shareKit()
+	{
+		var kitnum=$('#kitnodata').val();
+		var sharewith=$('#sharewith').val();
+		var kit_pin=$('#pin').val();
+		var token=$('#token').val();
+		if(!kitnum || kitnum=='')
+		{
+			$('#kit_err').empty();
+			$('#kit_err').append('Kit Number should not be empty.');
+			$('#kit_err').css("display","block");
+			$('#kit_err').css("color","red");
+		}
+		else if(!sharewith && sharewith=='')
+		{
+			$('#kit_err').empty();
+			$('#kit_err').append('Username should not be blank.');
+			$('#kit_err').css("display","block");
+			$('#kit_err').css("color","red");
+		}
+		else
+		{
+			$.ajax({
+
+				url:"<?php echo BASEPATH; ?>/Orderhistory/sharekit",
+				type: "POST",
+				data: 'kitnum='+kitnum+'&sharewith='+sharewith+'&kit_pin='+kit_pin+'&token='+token,
+
+				success:function(response)
+				{
+					var data=JSON.parse(response);
+
+					if(data['success'] && data['success']!='')
+					{
+						$('#kit_err').empty();
+						$('#kit_err').append(data['data']);
+						$('#kit_err').css("display","block");
+						$('#kit_err').css("color","green");
+						window.location = "<?php echo BASEPATH; ?>/Orderhistory";
+					}
+					else
+					{
+						if(data['failure'] && data['failure']!='')
+						{
+							$('#kit_err').empty();
+							$('#kit_err').append(data['failure']);
+							$('#kit_err').css("display","block");
+							$('#kit_err').css("color","red");
+						}
+						else
+						{
+							$('#kit_err').empty();
+							$('#kit_err').append('Error sharing kit. Please try again.');
+							$('#kit_err').css("display","block");
+							$('#kit_err').css("color","red");
+						}
+
+					}
+				}
+			});
+		}
+	}
+
+
+
+	function openAcceptKit(kit_no)
+	{
+		$('#kitdata').empty();
+		$('#kitdata').val(kit_no);
+		$('#accept_kit').addClass('openpop');
+	}
+
+	function acceptKit()
+	{
+		var kitnum=$('#kitdata').val();
+		var kit_pin=$('#pin_no').val();
+		var token=$('#token').val();
+		if(!kitnum || kitnum=='')
+		{
+			$('#kit_acc_err').empty();
+			$('#kit_acc_err').append('Kit Number should not be empty.');
+			$('#kit_acc_err').css("display","block");
+			$('#kit_acc_err').css("color","red");
+		}
+		else if(!kit_pin || kit_pin=='')
+		{
+			$('#kit_acc_err').empty();
+			$('#kit_acc_err').append('Please enter Pin.');
+			$('#kit_acc_err').css("display","block");
+			$('#kit_acc_err').css("color","red");
+		}
+		else
+		{
+			$.ajax({
+
+				url:"<?php echo BASEPATH; ?>/Orderhistory/acceptkit",
+				type: "POST",
+				data: 'kitnum='+kitnum+'&kit_pin='+kit_pin+'&token='+token,
+
+				success:function(response)
+				{
+					var data=JSON.parse(response);
+
+					if(data['failure'] && data['failure']!='')
+					{
+						$('#kit_acc_err').empty();
+						$('#kit_acc_err').append(data['data']);
+						$('#kit_acc_err').css("display","block");
+						$('#kit_acc_err').css("color","red");
+					}
+					else
+					{
+						$('#kit_acc_err').empty();
+						$('#kit_acc_err').append(data['data']);
+						$('#kit_acc_err').css("display","block");
+						$('#kit_acc_err').css("color","green");
+
+						window.location="<?php echo BASEPATH;?>/Dashboard";
+
+					}
+
+				}
+			});
+		}
+	}
+
+	function rejectKit(kit_no)
+	{
+		var token=$('#token').val();
+		$.ajax({
+
+			url:"<?php echo BASEPATH; ?>/Orderhistory/rejectkit",
+			type: "POST",
+			data: 'kitnum='+kit_no+'&token='+token,
+			success:function(response)
+			{
+				var data=JSON.parse(response);
+				if(data['failure'] && data['failure']!='')
+				{
+					//alert("in if")
+					$('#Orderhistory').addClass('openpop');
+					$("#rejectorder").append(data['data']);
+
+				}
+				else
+				{
+					alert(data['data']);
+				}
+			}
+		});
+	}
+
+
+
+
+</script>

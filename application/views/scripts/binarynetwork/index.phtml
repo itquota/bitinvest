@@ -1,0 +1,1164 @@
+<?php
+//binarynetwork
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$misc_obj->generateToken();
+
+?>
+
+<style>
+    .loadermodal {
+        background-image: url("<?php echo BASEPATH; ?>/images/popup-bg.png");
+        display: none;
+        outline: 0 none;
+        position: absolute;
+        z-index: 1050;
+        height: auto;
+    }
+
+    .loadermodal_1 {
+        background-image: url("<?php echo BASEPATH; ?>/images/popup-bg.png");
+        display: none;
+        outline: 0 none;
+        position: absolute;
+        z-index: 1050;
+        height: 1000px;
+        width: 93.6%;
+    }
+
+    #menu, #sample .footer, #sample p, .breadcrumb > li + li:before {
+        display: none;
+    }
+
+    li a:hover, a li:focus {
+        background: transparent;
+        color: #364a5e;
+    }
+
+    #sample {
+        margin-left: auto;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .node {
+        cursor: pointer;
+    }
+
+    .node circle {
+        stroke: #fff;
+        stroke-width: 0.5;
+    }
+
+    .link {
+        fill: none;
+        stroke: lightgray;
+        stroke-width: 1.5px;
+    }
+
+    div#tooltip {
+        color: #ffffff;
+        background: #fff;
+        opacity: 1;
+        padding: 5px;
+    }
+
+    #tree {
+        margin: 0 auto;
+        width: 700px;
+        overflow: auto;
+    }
+
+    .popup {
+        background-image: url(../images/popup-bg.png);
+        display: none;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        z-index: 9999;
+        top: 150;
+    }
+
+    @media (max-width: 1200px) {
+        #tree {
+            margin: 0 auto;
+            width: 300px;
+        }
+    }
+    .loader{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background-color: rgba(194, 195, 196, 0.4);
+        display: none;
+    }
+.embed-submit-field {
+  position: relative;
+	}
+  .embed-submit-field input {
+    width: 100%;
+  /*  padding: 15px;*/
+  }
+.embed-submit-field  button {
+    position: absolute;
+    right: 20px;
+    top: 4px;
+    
+    
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    border: none;
+    background: #fff;
+    border-radius: 3px;
+    padding: 5px;
+    
+    transition: all .2s;
+
+  }
+</style>
+<div class="loader">
+    <div style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; position: absolute;top: 40%;left: 48%;">
+        <img style="width: 50px;" src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+    </div>
+</div>
+<div class="content">
+			<!-- Page-Title -->
+			<div class="page-title-group">
+				<h4 class="page-title">My Network</h4>
+				<h5 class="text-muted page-title-alt">Binary Tree</h5>
+			</div>
+			<div class="cb-page-content">
+				<div class="container">
+					<div class="row">
+								<div class="col-lg-12">
+									<div class="panel panel-color panel-primary">
+										<div class="panel-heading">
+											<h4 class="panel-title">My Network Summary</h4>
+											
+										</div>
+										<div class="card-box-content">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+													<div class="row">
+														<div class="col-md-12">
+													         <div class="err1">
+																		 <?php 
+																		 $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+																if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!="")
+																{
+																	?> <label for="" class="lblTxt" style="color: red;"><?php echo $authUserNamespace->errmsg; ?></label>
+																	<?php $authUserNamespace->errmsg=""; }?>
+															</div>
+ 															  <div class="row">
+																<div class="col-md-3 col-xs-12" style="margin:5px 0px;">
+																	<select name="search_level" id = "search_level" class="form-control" disabled>
+																	  <option value="">Search by Level</option>
+
+																	</select>
+																</div>
+																<div class="col-md-3 col-xs-12" style="margin:5px 0px;">
+																	<select name="search_user" id = "search_user" class="form-control" disabled>
+																	  <option>Search by Name</option>
+																	 <option value = "">Search by Name</option>
+																	</select>
+																</div>
+																<div class="col-md-3 col-xs-12 embed-submit-field" style="margin:5px 0px;">
+                       											     <input id="username_search" class="form-control" onkeyup="if(event.keyCode == 13 && this.value.length > 0)search_user()" type="text" placeholder="Search for username">
+                        											 <button type="submit" onclick="search_user();"><i class="fa fa-search"></i></button>
+                    											</div>
+															  <div class="col-md-3 col-xs-12" style="margin:5px 0px;">
+																 <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+																 <input id="refresh_network" type="button" class="btn btn-inverse btn-md" value="REFRESH">
+															  </div>
+
+																<input type="hidden" id="master" value="<?php echo $this->username; ?>"/>
+																<input type="hidden" id="history_counter"/>
+																<input type="hidden" id="counter"/>
+																<input type="hidden" id="child_user" value="<?php echo $this->username; ?>"/>
+																<input type="hidden" id="parent_user" value="<?php echo $this->username; ?>"/>																  
+															</div>
+														</div>	
+													</div>	
+													<div class="table-responsive data-table">
+														<div class="m-t-20"></div>
+														<table class="table table-bordred table-striped">
+															<thead>
+																
+																
+																<tr>
+																	<th class="thalign"></th>
+																	<th class="thalign"><b>Total Contracts</b></th>
+																	<th class="thalign"><b>Total Users</b></th>
+																	<th class="thalign"><b>Active Users</b></th>
+																	<th class="thalign"><b>Inactive Users</b></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Left Users</b>
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['leftContracts']) && $this->userdata['leftContracts'] !='' ) { echo $this->userdata['leftContracts']; }else{ echo 0; } ?> BTC
+																	</td>
+																	<td class="thalign">
+												           			    <?php if(!empty($this->userdata['totalLeftUsers']) && $this->userdata['totalLeftUsers'] != '') { echo $this->userdata['totalLeftUsers']; }else{ echo 0; } ?>  
+																	</td>
+																	<td class="thalign">
+																	  <?php if(!empty($this->userdata['activeLeftUsers']) && $this->userdata['activeLeftUsers'] !='' ) { echo $this->userdata['activeLeftUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																	<td class="thalign">
+																	  <?php if(!empty($this->userdata['inactiveLeftUsers']) && $this->userdata['inactiveLeftUsers'] !='' ) { echo $this->userdata['inactiveLeftUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																</tr>
+																<tr></tr>
+																<tr>
+																	<td style="padding: 17px 15px;">
+																		<b>Right Users</b>
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['rightContracts']) && $this->userdata['rightContracts'] !='' ) { echo $this->userdata['rightContracts']; }else{ echo 0; } ?> BTC 	
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['totalRightUsers']) && $this->userdata['totalRightUsers'] !='' ) { echo $this->userdata['totalRightUsers']; }else{ echo 0; } ?> 													
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['activeRightUsers']) && $this->userdata['activeRightUsers'] !='' ) { echo $this->userdata['activeRightUsers']; }else{ echo 0; } ?>													
+																	</td>
+																	<td class="thalign">
+																		<?php if(!empty($this->userdata['inactiveRightUsers']) && $this->userdata['inactiveRightUsers'] !='' ) { echo $this->userdata['inactiveRightUsers']; }else{ echo 0; } ?>													
+																	</td>
+																</tr>
+
+															</tbody>
+														</table>
+														
+													</div>			
+													<div style = "background: none repeat scroll 0 0 #fff; padding:10px 0px 0px 5px;">
+																 <p class="note" style="font-size:11px;">**Please Note: Displayed business data is updated till <?php echo date('jS F, Y', strtotime($this->business_cycle_date['end']))?>.
+															</div>
+												</div>
+
+											</div>
+											<div class="row">
+												<div class="col-lg-12 ">
+													<div class="info-tree">
+														<img src="images/info1.png" alt=""  class="img-responsive" style="float:right;">
+													</div>
+													<div id="sample">
+														<div id='btree' style="position:relative;"></div>
+														<div class="modal req-admin loadermodal_1" id="preloader_offer">
+															<div id="" class=""
+																 style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; position: absolute;top: 40%;left: 48%;">
+																<img style="width: 50px;" src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+															</div>
+														</div>
+														<div id="tooltip">
+														</div>
+
+													</div>
+												</div>											
+											</div>
+										</div>
+									</div>
+								</div>
+		
+					</div>
+				</div>
+			</div>
+</div>	
+<input type="hidden" value="<?php echo $authUserNamespace->token; ?>" id="token" name="token">
+
+
+<script type="text/javascript">
+
+    var network_data_store = {};
+    var search_by_level_store = {};
+    var node_data_store = {};
+
+    var ro;
+
+    function find_in_array(needle, haystack) {
+        for (var i = 0; i < haystack.length; i++)
+            if (haystack[i] == needle)
+                return true;
+        return false;
+    }
+
+    var scroll_offset = 0;
+
+    var count_flag = 0;
+    var binaryarr = [];
+    var node_to_update = "undefined";
+    var X = 0;
+    var Y = 0;
+    var search_flag = 0;
+
+    var binaryData;
+    var json;
+    var parent;
+    var width;
+    var height;
+    var maxLabel;
+    var duration;
+    var radius;
+    var circleSize;
+    var i;
+    var root;
+    var textFontStyle;
+    var div;
+    var tree;
+    var cluster;
+    var diagonal;
+    var svg;
+
+    d3.selection.prototype.moveToFront = function() {
+        return this.each(function(){
+            this.parentNode.appendChild(this);
+        });
+    };
+
+    function in_array(arr, username) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i]['username'] == username)
+                return true;
+        }
+        return false;
+    }
+
+    function unique_concat(arr1, arr2) {
+        for (var i = 0; i < arr2.length; i++) {
+            if (!in_array(arr1, arr2[i]['username']))
+                arr1.push(arr2[i])
+        }
+        return arr1;
+    }
+
+    window.onload = function () {
+        scroll_offset = $(window).scrollTop();
+        var token = $('#token').val();
+        var child_user = $('#child_user').val();
+        $.ajax({
+            url: "<?php echo BASEPATH; ?>/Networkapi",
+            type: "POST",
+//            async: false,
+            data: "username=" + child_user + '&token=' + token,
+            beforeSend: function () {
+                $(".loader").show();
+            },
+            complete: function () {
+                $(".loader").hide();
+            },
+            success: function (response) {
+                if (response == '0' || response == 0)
+                    alert("Not in redis yet")
+                else {
+                    var data =JSON.parse(response);
+                    if (search_flag) {
+                        search_flag = 0;
+                        binaryarr = data['data']['binarydata'];
+                    } else {
+                        binaryarr = unique_concat(binaryarr, data['data']['binarydata']);
+                    }
+                }
+
+                if (!binaryarr || binaryarr.length <= 1)
+                    return false;
+                else
+                    $('#btree').empty();
+
+                $('#binarydatarr').val(binaryarr);
+                child_user.val = binaryarr[0]['username'];
+                $('#parent_user').val = binaryarr[0]['username'];
+
+                binaryData = [];
+
+                for (var j = 0; j < binaryarr.length; j++) {
+                    json = {
+                        name: binaryarr[j]['username'],
+                        parent: binaryarr[j]['parent'],
+                        isactive: binaryarr[j]['isactive'],
+                        child_position: binaryarr[j]['child_position'],
+                        medal:binaryarr[j]['medal']
+                    };
+                    binaryData.push(json);
+                }
+
+                //Redraw for zoom
+                function redraw() {
+                    console.log(d3.event.translate);
+                    svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+                }
+
+                var dataMap = binaryData.reduce(function (map, node) {
+                    map[node.name] = node;
+                    return map;
+                }, {});
+
+                json = [];
+                binaryData.forEach(function (node) {
+                    parent = dataMap[node.parent];
+                    if (parent) {
+                        (parent.children || (parent.children = []))
+                            .push(node);
+                    } else {
+                        json.push(node);
+                    }
+                });
+
+                json = json[0];
+                width = 1000;
+                height = 800;
+                maxLabel = 100;
+                duration = 500;
+                radius = 5;
+                circleSize = 15;
+                i = 0;
+                root;
+                textFontStyle = "300 17px 'Roboto',sans-serif";
+
+                if ($(window).width() < 1024) {
+                    height = 300;
+                    width = 300;
+                    maxLabel = 50;
+                    duration = 50;
+                    radius = 2;
+                    circleSize = 10;
+                    textFontStyle = "300 10px 'Roboto',sans-serif";
+                }
+
+
+                div = d3.select('#tooltip').append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+
+                tree = d3.layout.tree()
+                    .nodeSize([75, 75]);
+
+                cluster = d3.layout.cluster()
+                    .nodeSize([1, 80])
+                    .separation(function (a, b) {
+                        return 10 + d3.sum([a, b].map(function (d) {
+                                return d.status == "D" ? 70 : 0;
+                            }))
+                    });
+
+                diagonal = d3.svg.diagonal()
+                    .projection(function (d) {
+                        return [d.x, d.y];
+                    });
+
+                root = json;
+                ro = json;
+
+                //necessary so that zoom knows where to zoom and unzoom from
+
+                if (node_to_update != 'undefined') {
+                    svg = d3.select("#btree").append("svg").attr("width", "100%").attr("height", 1000)
+                        .call(zm = d3.behavior.zoom().scaleExtent([1, 3]).on("zoom", redraw)).append("g")
+                        .attr("transform", "translate(" + X + "," + Y + ")");
+                    zm.translate([X, Y]);
+                } else {
+                    svg = d3.select("#btree").append("svg").attr("width", "100%").attr("height", 1000)
+                        .call(zm = d3.behavior.zoom().scaleExtent([1, 3]).on("zoom", redraw)).append("g")
+                        .attr("transform", "translate(" + 450 + "," + 80 + ")");
+                    zm.translate([450, 80]);
+                }
+
+                root.x0 = 0;
+                root.y0 = height / 2;
+
+                root.children.forEach(collapse);
+
+
+                update(root);
+                expandAll(root);
+
+                search_by_level(child_user);
+                count_flag = 1;
+                $(window).scrollTop(scroll_offset);
+            }
+        });
+
+        function loadNodeData(node, node_obj) {
+            if (typeof node_data_store[node.name] == "undefined") {
+                $.ajax({
+                    url: "<?php echo BASEPATH; ?>/Networkapi/loadNodeData",
+                    type: "POST",
+                    data: "username=" + node.name + '&token=' + token,
+                    success: function (response) {
+                        var data = JSON.parse(response);
+                        jQuery.extend(data, node)
+                        node_data_store[node.name] = data;
+                        node_obj.trigger("hover");
+                    }
+                });
+            } else
+                return node_data_store[node.name];
+        }
+
+        function update(source) {
+            console.log(source)
+            // Compute the new tree layout.
+            var nodes = tree.nodes(root).reverse();
+            var links = tree.links(nodes);
+
+            // Normalize for fixed-depth.
+            nodes.forEach(function (d) {
+                d.y = d.depth * maxLabel;
+            });
+
+            // Update the nodes
+
+            var defs = svg.append('svg:defs');
+
+            defs.append("svg:pattern")
+                .attr("id", "bronze")
+                .attr("width", 50)
+                .attr("height", 50)
+                .append("svg:image")
+                .attr("xlink:href", '<?php echo BASEPATH ?>/images/medals/bronze.png')
+                .attr("width", 50)
+                .attr("height", 50)
+                .attr("x", 0)
+                .attr("y", 0);
+            defs.append("svg:pattern")
+                .attr("id", "silver")
+                .attr("width", 50)
+                .attr("height", 50)
+                .append("svg:image")
+                .attr("xlink:href", '<?php echo BASEPATH ?>/images/medals/silver.png')
+                .attr("width", 50)
+                .attr("height", 50)
+                .attr("x", 0)
+                .attr("y", 0);
+            defs.append("svg:pattern")
+                .attr("id", "gold")
+                .attr("width", 50)
+                .attr("height", 50)
+                .append("svg:image")
+                .attr("xlink:href", '<?php echo BASEPATH ?>/images/medals/gold.png')
+                .attr("width", 50)
+                .attr("height", 50)
+                .attr("x", 0)
+                .attr("y", 0);
+
+            var node = svg.selectAll("g.node")
+                .data(nodes, function (d) {
+                    return d.id || (d.id = ++i);
+                });
+            // Enter any new nodes at the parent's previous position.
+            var nodeEnter = node.enter()
+                .append("g")
+                .attr("class", "node")
+                .attr("transform", function (d) {
+                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                }).on("click", click).on("mouseover", function (d) {
+
+                    var r = d3.select(this).node().getBoundingClientRect();
+                    var tooltipItem = d3.select(this).classed("top", true);
+                    var rectWidth = 250;
+                    var sponrectWidth = 250;
+
+                    nodePos = d.child_position;
+
+                    if (nodePos == 'L') {
+                        childXPos = -200;
+                        childYPos = 20;
+                    } else {
+                        childXPos = 90;
+                        childYPos = 5;
+                    }
+
+                    var tooltipFontStyle = "300 14px 'Roboto',sans-serif";
+
+                    re = tooltipItem.append("rect").classed('rectInfo', true).attr("x", function (d) {
+                        return d.children || d._children ? childXPos : 10;
+                    }).style("fill-opacity", 1)
+                        .attr("y", -10)
+                        .attr("width", rectWidth)
+                        .attr("height", 110)
+                        .attr("stroke", "#222")
+                        .style("z-index", "9999999999")
+                        .attr("fill", "rgb(240, 243, 244)");
+
+                    var info = tooltipItem.append('text').classed('toolInfo', true)
+//                        .style("font", tooltipFontStyle)
+                        .style("fill-opacity", 1)
+                        .attr("fill", "#414042")
+                        .style("z-index", "99999999999")
+                        .attr('y', 10)
+                        .attr("x", function (d) {
+                            return d.children || d._children ? childXPos : 20;
+                        })
+
+                    tooltipItem.moveToFront()
+
+
+                    if (typeof node_data_store[d.name] == "undefined") {
+
+                        var tooltipItem = d3.select(this).classed("top", true);
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos + 20 : 20;
+                        }).text("   USERNAME : " + d.name);
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos : 20;
+                        }).attr('dy', '14').text(" ");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    SPONSOR ID : Loading ...");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos : 20;
+                        }).attr('dy', '14').attr("fill", "#f2f2f2").text("A");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    CONTRACTS : Loading ...");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos : 20;
+                        }).attr('dy', '14').text(" ");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    CREATED ON : Loading ...");
+
+                        loadNodeData(d, $(this))
+
+                    } else {
+
+                        if (!(node_data_store[d.name].amtpaid) || node_data_store[d.name].amtpaid == '' || node_data_store[d.name].amtpaid == 'undefined') {
+                            node_data_store[d.name].amtpaid = 0;
+                        }
+                        if (node_data_store[d.name].name != "N/A" || node_data_store[d.name].sponsor != "" || node_data_store[d.name].sponsor != "N/A") {
+                            var nameLength = node_data_store[d.name].name.length;
+                            var sponsorLength = node_data_store[d.name].sponsor.length;
+                            if (nameLength > sponsorLength)
+                                rectWidth = nameLength * 18;
+                            else
+                                sponrectWidth = sponsorLength * 18;
+
+                            if (rectWidth < 100)
+                                sponrectWidth = 150;
+                        }
+                        if (node_data_store[d.name].amtpaid != "undefined" || node_data_store[d.name].name != "N/A" || node_data_store[d.name].sponsor != "" || node_data_store[d.name].sponsor != "N/A") {
+                            if (sponrectWidth < 100)
+                                rectWidth = 200;
+                        }
+                        if (rectWidth <= sponrectWidth)
+                            rectWidth = sponrectWidth;
+
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos + 20 : 20;
+                        }).text("    USERNAME : " + node_data_store[d.name].name);
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos : 20;
+                        }).attr('dy', '14').text(" ");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    SPONSOR ID : " + node_data_store[d.name].sponsor);
+
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos : 20;
+                        }).attr('dy', '14').attr("fill", "#f2f2f2").text("A");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    CONTRACTS : " + node_data_store[d.name].amtpaid);
+
+                        info.append('tspan').attr("x", function (d) {
+                            return d.children || d._children ? childXPos : 20;
+                        }).attr('dy', '14').text(" ");
+
+                        info.append('tspan').attr("x", function (d) {
+                            return node_data_store[d.name].children || node_data_store[d.name]._children ? childXPos + 20 : 20;
+                        }).attr('dy', '14').text("    CREATED ON : " + node_data_store[d.name].created_on);
+                        info.moveToFront();
+                    }
+                }).on("mouseout", function () {
+                    d3.select(this).select('text.toolInfo').remove();
+                    d3.select(this).select('rect.rectInfo').remove();
+                });
+
+            nodeEnter.append("circle")
+                .attr("r", 27)
+                .attr("transform", function (d) {
+                    return "translate(2, 30)";
+                }).style("fill", function (d) {
+                if(d.medal == 'r')
+                    return 'rgba(0, 0, 0, 0)';
+                else if(d.medal == 'b')
+                    return "url(#bronze)";
+                else if(d.medal == 's')
+                    return "url(#silver)";
+                else if(d.medal == 'g')
+                    return "url(#gold)";
+            }).style("stroke", "transparent");
+
+            nodeEnter.append("circle")
+                .attr("r", 0)
+                .attr("class", "main-circle")
+                .style("fill", function (d) {
+                    if (d.isactive == '1') {
+                        return '#2bb673';
+                    } else {
+                        return '#ef4136';
+                    }
+
+                });
+
+            //for heading
+            nodeEnter.append("text")
+                .attr("y", function (d) {
+                    return d.children || d._children ? -30 : 20;
+                })
+                .attr("x", function (d) {
+                    return d.children || d._children ? -30 : (d.child_position == "L" ? -50 : 1);
+                })
+                .attr("dy", ".70em")
+                .style("text-anchor", "right")
+                .style("font", textFontStyle)
+                .text(function (d) {
+                    return d.name;
+                })
+                .style("fill-opacity", 1);
+
+
+            //for node
+            nodeEnter.append("text")
+                .text(function (d) {
+                    return "" + d.child_position;
+                })
+                .style("text-anchor", "middle")
+                .style("font", textFontStyle)
+                //.attr("font-size", "12px")
+                .attr("x", 0)
+                .attr("y", 4)
+                .style("fill", function (d) {
+                    return "#fff";
+                });
+            // Transition nodes to their new position.
+            var nodeUpdate = node.transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                });
+
+            nodeUpdate.select("circle.main-circle")
+                .attr("r", function (d) {
+                    return computeRadius(d);
+                })
+                .style("fill", function (d) {
+                    if (d.isactive == '1') {
+                        return '#2bb673';
+                    } else {
+                        return '#ef4136';
+                    }
+
+                });
+
+            nodeUpdate.select("text").style("fill-opacity", 1);
+            nodeUpdate.select("text").style("fill-opacity", 1);
+            // Transition exiting nodes to the parent's new position.
+            var nodeExit = node.exit().transition()
+                .duration(duration)
+                .attr("transform", function (d) {
+                    return "translate(" + source.y + "," + source.x + ")";
+                })
+                .remove();
+
+            nodeExit.select("circle").attr("r", 0);
+            nodeExit.select("text").style("fill-opacity", 0);
+            nodeExit.select("text").style("fill-opacity", 0);
+            // Update the links
+
+            var link = svg.selectAll("path.link")
+                .data(links, function (d) {
+                    return d.target.id;
+                });
+
+            // Enter any new links at the parent's previous position.
+            link.enter().insert("path", "g")
+                .attr("class", "link")
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x0,
+                        y: source.y0
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                });
+
+            // Transition links to their new position.
+            link.transition()
+                .duration(duration)
+                .attr("d", diagonal);
+
+            // Transition exiting nodes to the parent's new position.
+            link.exit().transition()
+                .duration(duration)
+                .attr("d", function (d) {
+                    var o = {
+                        x: source.x,
+                        y: source.y
+                    };
+                    return diagonal({
+                        source: o,
+                        target: o
+                    });
+                })
+                .remove();
+
+            // Stash the old positions for transition.
+            nodes.forEach(function (d) {
+                d.x0 = d.x;
+                d.y0 = d.y;
+            });
+        }
+
+        function computeRadius(d) {
+            return circleSize;
+        }
+
+        function nbEndNodes(n) {
+            nb = 0;
+            if (n.children) {
+                n.children.forEach(function (c) {
+                    nb += nbEndNodes(c);
+                });
+            } else if (n._children) {
+                n._children.forEach(function (c) {
+                    nb += nbEndNodes(c);
+                });
+            } else nb++;
+
+            return nb;
+        }
+
+        function click(d) {
+            if (d['children_count'] == 0)
+                return false;
+            var uname = d.name;
+            if (d.children) {
+                d._children = d.children;
+                d.children = null;
+            } else {
+                if (d._children === undefined || d._children === null) {
+                    $('#child_user').val(uname);
+                    node_to_update = d;
+                    myElement = document.querySelector("svg > g");
+                    var xforms = myElement.getAttribute('transform');
+                    var parts = /translate\(\s*([^\s,)]+)[ ,]([^\s,)]+)/.exec(xforms);
+                    X = parts[1];
+                    Y = parts[2];
+                    window.onload.call();
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+            }
+            update(d);
+        }
+
+        function collapse(d) {
+            if (d.children) {
+                d._children = d.children;
+                d._children.forEach(collapse);
+                d.children = null;
+            }
+        }
+
+        function expand(d) {
+            var children = (d.children) ? d.children : d._children;
+            if (d._children) {
+                d.children = d._children;
+                d._children = null;
+            }
+            if (children)
+                children.forEach(expand);
+        }
+
+        function expandAll(root) {
+            expand(root);
+            update(root);
+        }
+
+        function collapseAll() {
+            root.children.forEach(collapse);
+            collapse(root);
+            update(root);
+        }
+
+    }//]]>
+
+
+    $("#refresh_network").click(function () {
+        var master = $("#master").val();
+        $('#child_user').val(master);
+        window.onload.call();
+    });
+
+    function networkDetails(userName, master, popup, status, history) {
+        if (!popup) {
+            $("#Popup").show();
+        }
+
+
+        $("#child_user").val(userName);
+        $("#parent_user").val(userName);
+
+        var statusParam = '';
+        if (status) {
+            statusParam = '&status=' + status;
+        } else {
+
+            if (!history) {
+                if ($("#history_counter").val()) {
+                    var counter = $("#history_counter").val();
+                } else {
+                    var counter = $("#counter").val();
+
+                }
+
+                counter++;
+                $("#counter").val(counter);
+                $("#history_counter").val(counter);
+                if ($("#child_user" + counter).length < 1) {
+                    $("#refresh_network").append('<input type="hidden" id="child_user' + counter + '">');
+                }
+                $("#child_user" + counter).val(userName);
+                $("#child_user").val(userName);
+            }
+
+            var history_counter = $("#history_counter").val();
+            var count = $("#counter").val();
+            // alert("history_counter "+history_counter+" count "+count);
+            if (history_counter > 0) {
+                $("#button_previous").css("cursor", "pointer");
+                $("#button_previous").css("opacity", "1");
+            } else {
+                $("#button_previous").css("cursor", "default");
+                $("#button_previous").css("opacity", "0.3");
+            }
+            if (history_counter < count) {
+                $("#button_next").css("cursor", "pointer");
+                $("#button_next").css("opacity", "1");
+            } else {
+                $("#button_next").css("cursor", "default");
+                $("#button_next").css("opacity", "0.3");
+            }
+        }
+
+        if (userName) {
+
+            $.ajax({
+                type: "GET",
+                url: '<?php echo BASEPATH; ?>/Network?usr=' + userName + statusParam,
+                success: function (resp) {
+                    if (!resp || resp == null || resp == '') {
+                        alert("User not exist!!");
+                    } else {
+                        document.open();
+                        document.write(resp);
+                        document.close();
+                        search_by_level(userName);
+                    }
+                }
+            });
+        }
+    }
+
+    var userName = '<?php echo $this->username; ?>';
+
+    function search_by_level(userName) {
+        var token = $('#token').val();
+        if (userName) {
+            if (typeof search_by_level_store[userName] == 'undefined') {
+                $.ajax({
+                    type: "POST",
+                    url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+                    data: 'usr=' + userName + '&search_by_level=1&token=' + token,
+                    success: function (networkDetails) {
+                        $("#search_level").removeAttr('disabled');
+                        $("#search_level").html(networkDetails);
+                        var append = '<option value="">Search by Name</option>';
+                        $("#search_user").html('');
+                        $("#search_user").html(append);
+
+                        search_by_level_store[userName] = networkDetails
+                    }
+                });
+            } else {
+                $("#search_level").removeAttr('disabled');
+                $("#search_level").html(search_by_level_store[userName]);
+                var append = '<option value="">Search by Name</option>';
+                $("#search_user").html('');
+                $("#search_user").html(append);
+            }
+        }
+    }
+
+    $("#search_level").change(function () {
+        userName = $('#child_user').val();
+        var level = $(this).val();
+        if (level) {
+            searchUser_by_level(userName, level);
+        }
+
+    });
+
+    function searchUser_by_level(userName, level) {
+        var token = $('#token').val();
+        if (userName) {
+            $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Binarynetwork/searchbyuser',
+                data: 'usr=' + userName + '&level=' + level + '&search_by_user=1&token=' + token,
+                success: function (networkDetails) {
+                    $("#search_user").removeAttr('disabled');
+                    $("#search_user").html(networkDetails);
+                }
+            });
+        }
+    }
+
+    function refreshNetwork(user) {
+        var user = $('#child_user').val();
+        $('#preloader_offer1').show();
+        if (typeof network_data_store[user] == 'undefined') {
+            $.ajax({
+                url: "<?php echo BASEPATH; ?>/Dashboard/refreshnetwork",
+                async: false,
+                type: "POST",
+                data: 'token=' + $('#token').val(),
+                success: function (response) {
+                    var data = JSON.parse(response);
+
+                    network_data_store[user] = data;
+
+                    if (data != '' && data != null) {
+                        if ((data['leftContracts']) && data['leftContracts'] != '' && data['leftContracts'] != null && data['leftContracts'] != 'null') {
+                            $('#leftContracts').empty();
+                            $('#leftContracts').append(data['leftContracts'] + " BTC");
+                        }
+                        if ((data['totalLeftUsers']) && data['totalLeftUsers'] != '' && data['totalLeftUsers'] != null && data['totalLeftUsers'] != 'null') {
+                            $('#totalLeftUsers').empty();
+                            $('#totalLeftUsers').append(data['totalLeftUsers']);
+                        }
+                        if ((data['activeLeftUsers']) && data['activeLeftUsers'] != '' && data['activeLeftUsers'] != null && data['activeLeftUsers'] != 'null') {
+                            $('#activeLeftUsers').empty();
+                            $('#activeLeftUsers').append(data['activeLeftUsers']);
+                        }
+                        if ((data['inactiveLeftUsers']) && data['inactiveLeftUsers'] != '' && data['inactiveLeftUsers'] != null && data['inactiveLeftUsers'] != 'null') {
+                            $('#inactiveLeftUsers').empty();
+                            $('#inactiveLeftUsers').append(data['inactiveLeftUsers']);
+                        }
+                        if ((data['rightContracts']) && data['rightContracts'] != '' && data['rightContracts'] != null && data['rightContracts'] != 'null') {
+                            $('#rightContracts').empty();
+                            $('#rightContracts').append(data['rightContracts'] + " BTC");
+                        }
+                        if ((data['totalRightUsers']) && data['totalRightUsers'] != '' && data['totalRightUsers'] != null && data['totalRightUsers'] != 'null') {
+                            $('#totalRightUsers').empty();
+                            $('#totalRightUsers').append(data['totalRightUsers']);
+                        }
+                        if ((data['activeRightUsers']) && data['activeRightUsers'] != '' && data['activeRightUsers'] != null && data['activeRightUsers'] != 'null') {
+                            $('#activeRightUsers').empty();
+                            $('#activeRightUsers').append(data['activeRightUsers']);
+                        }
+                        if ((data['inactiveRightUsers']) && data['inactiveRightUsers'] != '' && data['inactiveRightUsers'] != null && data['inactiveRightUsers'] != 'null') {
+                            $('#inactiveRightUsers').empty();
+                            $('#inactiveRightUsers').append(data['inactiveRightUsers']);
+                        }
+
+                    }
+
+                    $('#preloader_offer1').hide();
+
+
+                }
+            });
+        } else {
+            data = network_data_store[user];
+
+            if (data != '' && data != null) {
+                if ((data['leftContracts']) && data['leftContracts'] != '' && data['leftContracts'] != null && data['leftContracts'] != 'null') {
+                    $('#leftContracts').empty();
+                    $('#leftContracts').append(data['leftContracts'] + " BTC");
+                }
+                if ((data['totalLeftUsers']) && data['totalLeftUsers'] != '' && data['totalLeftUsers'] != null && data['totalLeftUsers'] != 'null') {
+                    $('#totalLeftUsers').empty();
+                    $('#totalLeftUsers').append(data['totalLeftUsers']);
+                }
+                if ((data['activeLeftUsers']) && data['activeLeftUsers'] != '' && data['activeLeftUsers'] != null && data['activeLeftUsers'] != 'null') {
+                    $('#activeLeftUsers').empty();
+                    $('#activeLeftUsers').append(data['activeLeftUsers']);
+                }
+                if ((data['inactiveLeftUsers']) && data['inactiveLeftUsers'] != '' && data['inactiveLeftUsers'] != null && data['inactiveLeftUsers'] != 'null') {
+                    $('#inactiveLeftUsers').empty();
+                    $('#inactiveLeftUsers').append(data['inactiveLeftUsers']);
+                }
+                if ((data['rightContracts']) && data['rightContracts'] != '' && data['rightContracts'] != null && data['rightContracts'] != 'null') {
+                    $('#rightContracts').empty();
+                    $('#rightContracts').append(data['rightContracts'] + " BTC");
+                }
+                if ((data['totalRightUsers']) && data['totalRightUsers'] != '' && data['totalRightUsers'] != null && data['totalRightUsers'] != 'null') {
+                    $('#totalRightUsers').empty();
+                    $('#totalRightUsers').append(data['totalRightUsers']);
+                }
+                if ((data['activeRightUsers']) && data['activeRightUsers'] != '' && data['activeRightUsers'] != null && data['activeRightUsers'] != 'null') {
+                    $('#activeRightUsers').empty();
+                    $('#activeRightUsers').append(data['activeRightUsers']);
+                }
+                if ((data['inactiveRightUsers']) && data['inactiveRightUsers'] != '' && data['inactiveRightUsers'] != null && data['inactiveRightUsers'] != 'null') {
+                    $('#inactiveRightUsers').empty();
+                    $('#inactiveRightUsers').append(data['inactiveRightUsers']);
+                }
+
+            }
+
+            $('#preloader_offer1').hide();
+
+        }
+    }
+
+    $("#search_user").change(function () {
+        var UserName = $(this).val();
+        var master = $('#master').val();
+        if (UserName) {
+            $('#child_user').val(UserName);
+            window.onload.call();
+        }
+    });
+
+    $("#search_network").click(function () {
+        var user = $("#searchUser").val();
+        var master = $('#master').val();
+        if (user == '') {
+            return false;
+        } else {
+            $("#error").html("");
+            networkDetails(user, master);
+        }
+    });
+
+    function search_user() {
+        search_flag = 1;
+        var UserName = $('#username_search').val();
+        $('#child_user').val(UserName);
+        window.onload.call();
+        ;
+    }
+
+</script>

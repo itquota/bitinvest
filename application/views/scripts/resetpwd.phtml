@@ -1,0 +1,131 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+    <div id="wrapper" class="loginPadd">
+
+      <div class="logincontanier lightgraybg ">
+
+      <div class="panel-heading faqtitlebg text-center  text-uppercase loginTitleTxt brdright">
+                        <a href="#">  Home </a>
+                           
+                        </div>
+  <form class="paddAll"
+	onsubmit="event.preventDefault(); validateLoginForm();" role="form"
+	autocomplete="off">
+ <div class="form-group">
+       <img src="<?php echo BASEPATH; ?>/images/login-logonew.png" alt="" class="img-responsive">
+  </div>
+<div class="form-group">
+ <h3 class="text-center loginTitleTxt"> Please Enter Your Information</h3>
+</div>
+<h5 style="color: red; display: none; text-align: center;" id="err_div"></h5>
+  <div class="form-group">
+    <div class="input-group">
+   <span class="input-group-btn ">
+        <img src="<?php echo BASEPATH; ?>/images/loginusername.png" alt="">
+     </span>
+  <input type="text" readonly name="username" value="<?php echo $this->view->username; ?>"  class="form-control CommonInputBox usericons" placeholder="Username">
+ 
+</div><!-- /input-group -->
+   
+  </div>
+<div class="form-group">
+
+    <div class="input-group">
+     <span class="input-group-btn ">
+        <img src="<?php echo BASEPATH; ?>/images/passwordicon.png" alt="">
+     </span>
+  <input type="password" name="password" id="password" class="form-control CommonInputBox usericons" placeholder="Enter New Password">
+</div><!-- /input-group -->
+   
+  </div>
+  <div class="form-group">
+
+    <div class="input-group">
+     <span class="input-group-btn ">
+        <img src="<?php echo BASEPATH; ?>/images/passwordicon.png" alt="">
+     </span>
+  <input type="password" name="password_rpt" id="password_rpt" class="form-control CommonInputBox usericons" placeholder="Re-Enter New Password">
+</div><!-- /input-group -->
+   
+  </div>
+
+
+
+<div class="form-group"><button type="submit" class="btn btn-default calculatebtn">Login</button></div>
+
+
+
+</form>
+
+</div>
+  
+
+
+
+    </div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+    <script>
+
+	  function chnagePassword()
+	  {
+		var password_rpt=$('#password_rpt').val();
+		var password=$('#password').val();
+		var username=$('#username').val();
+		$('#err_div').empty();
+		$("#err_div").css("display", "none");
+
+
+	 if(!password || password=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter valid Password";
+			return false;
+			
+		}
+		else if(!password_rpt || password_rpt=='')	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="Please enter repeat Password";
+			return false;
+			
+		}
+		else if(password!='' && password_rpt!='' && password!=password_rpt)	
+		{
+			$("#err_div").css("display", "block");
+			document.getElementById("err_div").innerHTML="The passwords you entered are not identical";
+			return false;
+			
+		}
+		else
+		{
+			var dataString = 'password='+ password+'&password_rpt='+password_rpt+'&username'+username;
+			 $.ajax({
+					url:"<?php echo BASEPATH; ?>/Login/chkresetpass",
+					type: "POST",    
+				    data: dataString,
+			  		success: function(response)
+		      		{
+					
+					 var data=	JSON.parse(response);
+				
+					 if(data['success']!='' && data['success']=='success')
+					 {
+						 alert(data['data']);
+							window.location.href=("<?php echo BASEPATH; ?>/Login");
+				
+						
+					 }
+					 else
+					 {
+							$("#err_div").css("display", "block");
+							document.getElementById("err_div").innerHTML=data['failure'];
+					 }		
+		      			
+		      		}
+				});
+		}
+	  }
+    </script>

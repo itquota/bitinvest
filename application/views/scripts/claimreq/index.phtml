@@ -1,0 +1,249 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.lblTxt
+{
+	float:left;
+	font-weight: bold;
+}
+
+.form-group {
+    float: left;
+   /* margin-top: -83px;*/
+     margin-right: 20px;
+   
+}
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 370px;
+    padding-bottom: 20px;
+}
+.form-control
+{
+	display: inline-block;
+}
+.typecls{
+	padding-left: 0px;
+    padding-right: 0px;   
+}
+@-moz-document url-prefix() {
+ 	.typecls{
+	 	margin-bottom:16px;   
+	}
+ }
+ @media (max-width:1280px){
+ 	@-moz-document url-prefix() {
+ 	.typecls{
+	 	margin-bottom:0px;   
+	}
+ }
+ } 
+ @media (max-width:480px){
+	 .form-group {
+	    width: 100% !important;
+	}	
+ }
+ @media (max-width:1280px){
+	 .form-group {
+	    width: 44%;
+	}	
+ }
+</style>
+<div id="page-wrapper">
+ <div class="modal req-admin" id="ticket_done">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold"></div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt">Claim Offer</h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+	<li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+	<li>Claim Offer</li>
+
+
+</ol>
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+
+
+
+<div class="col-lg-12">
+<p id="error" style="color: red; font-weight: bolder"></p>
+<p id="sucess"></p>
+<div class="row-fluid " id="form_sh">
+<form name="claim_request" id="claim_request" action="<?php echo BASEPATH; ?>/Claimreq">
+
+	<div id="error" name="error" style="display:block;color:red;"> </div>
+
+	<div class="col-lg-12 typecls form-group" >
+	<label for="" class="lblTxt">Gift</label>
+			<input type="text" id = "gift" name = "gift" class="form-control CommonInputBox" value = "<?php echo $this->offerDetail['prize']; ?>" placeholder = "Gift" readonly />
+	</div>
+		<div class="col-lg-12 typecls form-group" >
+			<label for="" class="lblTxt" style="width:100%;padding:0px;margin:0px;">&nbsp;&nbsp;</label>
+			<div style="width:100%;text-align: left;">
+				<input type = "radio" id = "choice_gift" name = "choice" checked value = "1"/> 
+				<label for = "choice_gift">Gift</label>
+			</div>
+			<div style="width:100%;text-align: left;">
+				<input type = "radio" id = "choice_kit" name = "choice" value = "2"/> 
+				<label for = "choice_kit">Choose this if you want kit of equal price in place of gift</label>
+			</div>
+		</div>
+	<div class="col-lg-12 typecls form-group" >
+			<label for="" class="lblTxt">Email Id</label>
+			<input type="text"  id = "email" name = "email" class="form-control CommonInputBox" placeholder = "Input Email" />
+
+	</div>
+	
+	<div class="col-lg-12 typecls form-group" >
+			<label for="" class="lblTxt">Mobile</label>
+			<input type="text"  id= "mobile" name = "mobile" class="form-control CommonInputBox isnumber" placeholder = "Input Mobile" />
+	</div>
+		<div class="form-group"><label for="comment" class="lblTxt">Description:</label>
+			<textarea class="form-control CommonInputBox" name="comment" rows="5" id="comment" style="height:60px;"></textarea>
+		</div>
+	
+<div class="clearfix">&nbsp;</div>
+<div class="form-group">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<input type = "button" class="btn btn-default Commonbtn" value = "Claim" onclick="generateClaim();">
+
+</div>
+</form>
+</div>
+<div class="clearfix">&nbsp;</div>
+
+</div>
+
+
+
+</div>
+</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+<script data-cfasync='false'>
+  function generateClaim()
+   {
+
+		var comment=$('#comment').val();
+		var choice=($("input[name=choice]:checked").val());
+		var mob = $('#mobile').val();
+		var email = $('#email').val();
+		var token=$('#token').val();
+		var OfferId=<?php echo $this->OfferId; ?>;
+
+		
+		
+		if(!email || email=='')
+		{
+			$('#error').empty();
+			$('#error').append('Please add Email');
+			$('#error').css("display","block");
+			return false;
+		}
+		else if(!validateEmail(email))
+		{
+			$('#error').empty();
+			$('#error').append('Please enter valid Email address');
+			$('#error').css("display","block");
+			return false;
+		}
+		else if(!mob || mob=='')
+		{
+			$('#error').empty();
+			$('#error').append('Please add Mobile');
+			$('#error').css("display","block");
+			return false;
+		}
+		else if(!mobilefunc(mob)){
+			$('#error').empty();
+			$('#error').append('Please enter 10 digit Mobile No.');
+			return false;
+		}
+		else if(!comment || comment=='')
+		{
+			$('#error').empty();
+			$('#error').append('Please add Description');
+			$('#error').css("display","block");
+			return false;
+		}
+		else
+		{
+			$('#error').empty();
+			$('#error').css("display","block");
+			 $.ajax({
+					
+					url:"<?php echo BASEPATH; ?>/Claimreq/generateclaim", 
+					type: "POST",    
+				    data: 'choice='+choice+'&comment='+comment+'&token='+token+'&mob='+mob+'&email='+email+'&OfferId='+OfferId,
+					
+			  		success:function(response)
+			  		{		  
+						var data=JSON.parse(response);
+						if(data['success']!='')
+						{
+							$('#cont_hold').empty();
+							$('#cont_hold').append('<b>'+data['data']+'</b>');
+							$('#ticket_done').addClass('openpop');
+							return false;
+						}
+						else
+						{
+							$('#error').empty();
+							$('#error').append(data['data']);
+							$('#error').css("display","block");
+							return false;
+						}
+
+					}
+				 });
+				 
+		}
+   }
+  function mobilefunc(mobile){
+  	var mob = /^[1-9]{1}[0-9]{9}$/;
+  	return mob.test(mobile)
+  	
+  }
+  function validateEmail(email) {
+	    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	}
+   function closealt()
+   {
+	   $('#ticket_done').removeClass('openpop');
+	   window.location="<?php echo BASEPATH;?>/Newoffer";
+   }
+				 </script>

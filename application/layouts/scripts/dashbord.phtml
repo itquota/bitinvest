@@ -1,0 +1,1164 @@
+<?php
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+if((empty($authUserNamespace->user) || !isset($authUserNamespace->user) || $authUserNamespace->user=="") || (empty($authUserNamespace->user_type)|| $authUserNamespace->user_type !="binary"))$this->_redirect("/Login");
+
+?>
+<?php
+$cms_obj = new Gbc_Model_DbTable_Cms();
+$Gbc_Model_Custom_func_obj=new Gbc_Model_Custom_CommonFunc();
+$user = new Gbc_Model_DbTable_Userinfo();
+$username=$authUserNamespace->user;
+$user_row = $Gbc_Model_Custom_func_obj->validateUserSession($username);
+
+$basepath=$_SERVER['DOCUMENT_ROOT'].BASEPATH;
+$file = '/var/log/apache2/menucliked.log';
+$log = "username:".$username."   session_id:".$authUserNamespace->sess_id."  cookie_session_id:".$user_row->session_id."  ".date("F j, Y, g:i a").PHP_EOL;
+
+$DB = Zend_Db_Table_Abstract::getDefaultAdapter();
+$Notifications = array();
+$sQl="SELECT admin_notifications.*,user_notification_status.notification_id FROM `admin_notifications` left join user_notification_status on  user_notification_status.notification_id = admin_notifications.id  and user_notification_status.username = '$username'  WHERE admin_notifications.status = 'active' and admin_notifications.created >=(select created_on from user_info where username='$username') group by admin_notifications.id order by created desc limit 3";
+$sQl1 = $DB->query('SELECT FOUND_ROWS()');
+
+$notifications = (int) $sQl1->fetchColumn();
+$res = $DB->query($sQl);
+$row = $res->fetchAll();
+
+for($i=0;$i<sizeof($row);$i++)
+{
+    $notificationId = $row['id'];
+    $Notifications[$notificationId] = $row;
+
+}
+//print_r($time_elapsed_string);exit;
+$unreadNotification = count(array_keys($Gbc_Model_Custom_func_obj->array_column($Notifications, 'notification_id'),''));
+// $unreadNotification = mysql_num_rows($unreadNotifications);
+$unreadNotifications = json_encode(array_keys($Gbc_Model_Custom_func_obj->array_column($Notifications, 'notification_id','id'),''));
+$cmsNews=$cms_obj->fetchAll($cms_obj->select()
+->where("handler='news' AND status='Active'"));
+
+if (isset($authUserNamespace->user) && isset($authUserNamespace->user_type) && ($authUserNamespace->user_type=='binary'))
+{
+    $ver_row = $user->fetchRow($user->select()
+    ->where("username='".$authUserNamespace->user."'"));
+
+    if($ver_row->isVerified!=1)
+    {
+        $desc=$cms_obj->fetchRow($cms_obj->select()
+        ->where("handler='require_terms'"));
+
+    }
+
+}
+
+$seminar_obj = new Gbc_Model_DbTable_SpecialPermission();
+$Permissions=$seminar_obj->fetchRow($seminar_obj->select()
+);
+//echo $ver_row->isVerified;exit;
+
+$country_obj=new Gbc_Model_DbTable_Countries();
+$country_data=$country_obj->fetchAll($country_obj->select()
+->order('country ASC')
+);
+$manage_link_obj=new Gbc_Model_DbTable_Managelinks();
+
+$manage_data=array();
+if(!empty($ver_row) && sizeof($ver_row)>0 && !empty($ver_row->country))
+{
+
+    $manage_data=$manage_link_obj->fetchAll($manage_link_obj->select()
+    ->setIntegrityCheck(false)
+    ->from(array('m'=>"manage_links"),array('m.id','m.parent'))
+    ->join(array('n'=>'navigation_master'),"n.id = m.nav_id",array('n.nav_link','n.nav_controller'))
+    ->where("m.country_id='".$ver_row->country."' and m.status=1 and m.nav_id=m.parent")
+    ->order("n.position asc"));
+
+}
+//print_r($manage_data);
+/*$user_category_obj = new Gbc_Model_DbTable_Usercategory();
+$user_category_data1=array();
+$user_category_data1=$user_category_obj->fetchAll($user_category_obj->select()
+->setIntegrityCheck(false)
+->from(array('u'=>"user_category"),array('u.id'))
+->joinLeft(array('l'=>'lov'),"l.id = u.category_id",array('l.value'))
+->where("u.username='".$authUserNamespace->user."' and l.name='category' and l.status='1'")
+);*/
+$userobj = new Gbc_Model_DbTable_Userinfo();
+
+
+$user_info=$userobj->fetchRow($userobj->select()
+->setIntegrityCheck(false)
+->from(array('u'=>"user_info"))
+->where("u.username='".$authUserNamespace->user."' and referral_flag='1'"));
+
+
+
+$lov_obj = new Gbc_Model_DbTable_Lov();
+$cat_count_query = $lov_obj->fetchRow($lov_obj->select()
+->from(array('lov'),array('count(name) as cat_count'))
+->where("name='category' and status='1'"));
+
+if(!empty($cat_count_query) && sizeof($cat_count_query)>0)
+{
+    $category_count=$cat_count_query->cat_count;
+}
+else
+{
+    $category_count=0;
+}
+
+try {
+    $user_category_data=array();
+    $user_category_data=$user_category_data1;
+
+}catch(Exception $e)
+{
+	$log .= " Exception: ".$e->getMessage().PHP_EOL;
+	file_put_contents($file, $log, FILE_APPEND);
+    echo $e->getMessage();exit;
+}
+$category='';
+if(!empty($user_category_data))
+{
+    if($category_count!=sizeof($user_category_data))
+    {
+        $enablePop=1;
+        if(!empty($user_category_data) && sizeof($user_category_data)>0)
+        {
+
+            for($uc=0;$uc<sizeof($user_category_data);$uc++)
+            {
+                if($uc==0)
+                {
+                    $category=$category.$user_category_data[$uc]['value'];
+                }
+                else
+                {
+                    $category=$category."and ". $user_category_data[$uc]['value'];
+                }
+            }
+        }
+    }
+    else
+    {
+        $enablePop=0;
+    }
+}
+else
+{
+    $enablePop=0;
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<!-- META TAGS -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+		<meta name="author" content="SmartBox">
+
+		<!-- TITLE -->
+		<title><?php echo $this->title; ?></title>
+		<?php 
+			echo !empty($SharingTag)?$SharingTag:'';
+			if(!empty($FacebookMetaTags)){
+				echo $FacebookMetaTags;
+			}else{
+				echo '<meta name="description" content="overview &amp; stats" />';
+			}
+		?>
+
+		<!-- FAVICON -->
+		<link rel='shortcut icon' href='<?php echo BASEPATH; ?>/images/favicon/favicon-32x32.png' type='image/x-icon' />
+
+
+		<link href="http://cdn.datatables.net/1.10.6/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+		<link href="js/plugins/data-tables/css/jquery.dataTables.min.css" type="text/css" rel="stylesheet" media="screen,projection">
+
+		<link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection">
+
+
+		<!-- STYLESHEETS -->
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/plugins/morris/morris.css">
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/bootstrap.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/core.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/components.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/icons.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/pages.css" type="text/css" />
+		<link rel="stylesheet" href="<?php echo BASEPATH; ?>/assets/css/responsive.css" type="text/css" />
+
+		<link href="<?php echo BASEPATH; ?>/css/style.css?v=1.1" type="text/css" rel="stylesheet" media="screen,projection">
+		<link href="<?php echo BASEPATH; ?>/css/style1.css?v=1.1" type="text/css" rel="stylesheet">
+		<link rel="stylesheet" href="<?php echo BASEPATH;?>/css/mystyle.css?v=1.1" type="text/css" />
+
+
+		<!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+		<![endif]-->
+
+			<!-- jQuery Library -->
+			<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery-1.11.2.min.js"></script>    
+		<script src="<?php echo BASEPATH; ?>/js/d3.v3.min.js"></script>
+
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+					(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-93894880-1', 'auto');
+			ga('send', 'pageview');
+
+		</script>
+		<!-- MODERNIZER -->
+		<script src="<?php echo BASEPATH; ?>/assets/js/modernizr.min.js"></script>
+		<style>
+			@-webkit-keyframes marquee {
+				0% {text-indent:100%;}
+				100% {text-indent:-10%}
+			}
+
+			.marquee {
+			  -webkit-animation: marquee 20s infinite;
+			  -webkit-animation-timing-function: linear;
+			  }
+			.width-ticker{
+				width:720px !important;
+			}
+		</style>
+		
+	</head>
+
+<body class="fixed-left">
+	
+	
+	<!-- Page Loader --> 
+<div class="page-loader">
+	<!--<a href="#"><img src="<?php echo BASEPATH;?>/assets/images/logogbc.png" class="img-responsive center-block hidden-lg hidden-md" alt="" /></a> 
+	<a href="#"><img src="<?php echo BASEPATH;?>/images/login-logo.png" class="img-responsive center-block hidden-xs hidden-sm" alt="" style="margin-bottom:50px;"/></a>-->
+	<a href="#"><img src="<?php echo BASEPATH;?>/images/login-logo.png" class="img-responsive center-block" alt="" style="margin-bottom:50px;"/></a>
+	<span class="text-uppercase hidden-xs hidden-sm">Loading Please Wait...</span>
+	<span class="text-uppercase hidden-lg hidden-md">Loading...</span></div>
+
+	<?php     
+		if($ver_row->isVerified!=1 && $authUserNamespace->user_type=='binary'){ 
+	?>
+		<div class="modal bg-popup" id="notify_popup_container" style="display:block;">
+			<div class="modal-dialog height-popup big-pop-center">
+				<div class="modal-content no-padding">
+					<div class="bg-pop-header">
+						<span style="font-size:20px;font-weight:bold;color:#fff;">CONTACT DETAILS</span>
+					</div>
+					<div class="modal-body form-compoenent" style="padding:0px 35px;overflow-y: auto;height: 400px;">
+						<form class="form-basic">
+								<?php require("library/recaptcha/captcha.php");
+								$_SESSION['captcha'] = simple_php_captcha();
+								//$imgc_captcha = $_SESSION['captcha']['image_src'];
+								$code = "123456";
+								$authUserNamespace->code = $code;
+								?> <!--     <form id="contactdet" name="contactdet"> -->
+							<div id="err_div" name="err_div"></div>
+							<div class="pop-group">
+								<label for="full_name" class="lblTxt">Full Name</label>  
+								<input type="text" name="name" id="name" class="form-control" value="" placeholder="Full Name">
+							</div>
+							<div class="pop-group">
+								<label for="email" class="lblTxt">Email</label>  								
+								<input type="text" name="email_address" id="email_address" class="form-control" value="" placeholder="Email">
+							</div>
+							<div class="pop-group">
+								<label for="" class="lblTxt">Country Code</label> 
+								<select id="countryCode" name="countryCode" class="form-control" onchange="selectCountry(this);">
+									<?php if(!empty($country_data) && sizeof($country_data)>0) {
+										for($cd=0;$cd<sizeof($country_data);$cd++) { ?>
+										<option
+										<?php if($country_data[$cd]['ccode']=='91') { ?>
+											selected="true"
+											<?php } ?>
+										><?php echo $country_data[$cd]['ccode']; ?></option>
+										<?php
+										}
+									} ?>
+								</select>
+							</div>
+
+							<div class="pop-group contctpopup1">
+								<label for="" class="lblTxt">Mobile</label> 
+								<input type="phonr" name="mobile" id="mobile" class="form-control nokey" value=""maxlength="12" placeholder="Mobile"/>
+							</div>
+							<div class="pop-group">
+								<label for="" class="lblTxt">Country</label> 
+								<select id="country_name" name="country_name" class="form-control" onchange="selectCcode(this);">
+									<?php if(!empty($country_data) && sizeof($country_data)>0) {
+										for($cd=0;$cd<sizeof($country_data);$cd++) { ?>
+										<option
+										<?php if($country_data[$cd]['country']=='India') { ?>
+											selected="true"
+											<?php } ?>
+										><?php echo $country_data[$cd]['country']; ?></option>
+										<?php
+										}
+									} ?>
+								</select>
+							</div>
+							<input type="hidden" id='username' name="username" value='<?php echo $authUserNamespace->user; ?>'/> 
+							<input type="hidden" id='ol_captcha' name="ol_captcha" value='<?php echo $code ?>'/><br/>
+							<div class="" style="padding:10px 0px;">
+								<button type="button" onclick="return contactDetails();" class="btn btn-primary btn-md">REGISTER</button>
+								<button type="reset" class="btn btn-inverse btn-md">RESET</button>
+
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<?php 
+		} 
+		if(($ver_row->isVerified==1)){
+			$Popdate = date('Y-m-d H:i:s');
+			$query = "select created_on from withdraw_agreements where username = '".$authUserNamespace->user."' order by created_on desc limit 1";
+			$res = $DB->query($query);
+			$result = $res->fetchAll();
+
+			if(($result)){
+				foreach($result as $data){
+					$date = $data["created_on"];
+				}
+			}
+
+			$popQuery = "select * from pop_messages where status = 1";
+			$res = $DB->query($popQuery);
+			$result = $res->fetchAll();
+
+			$PopMessages = array();
+			foreach($result as $data){
+				$PopMessages[] = $data;
+			}
+
+			foreach($PopMessages as $PopMessage){
+			$message = $PopMessage["message"];
+				if($PopMessage['type'] == "wallet_disabled"){
+					$startDate = $PopMessage["start_date"];
+					$endDate = $PopMessage["end_date"];
+					if((empty($date) || ($date < $startDate)) && (($Popdate >= $startDate) && ($Popdate <= $endDate))){
+						if(empty($authUserNamespace->PopUP) || !isset($authUserNamespace->PopUP)){
+							$authUserNamespace->PopUP = "1";
+
+	?>
+		<div class="modal openpop bg-popup" id="myModaloffer">
+			<div class="modal-dialog height-popup big-pop-center width-auto">
+				<div class="modal-content height-popup no-padding">
+					<div class="bg-pop-header"><span class="text-pop-header"><?php echo $PopMessage["name"]?></span>
+						<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="closeoffer();">
+							<i class="fa fa-close" style="color:#fff;"></i>
+						</button>
+					</div>
+					<div class="modal-body"  style="height:450px;overflow-y:auto;text-align:justify;padding:20px 30px;">
+						<?php echo  $message;    ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php
+				}
+			 }
+		}else{
+			 if(empty($authUserNamespace->PopUP) || !isset($authUserNamespace->PopUP)){
+				$authUserNamespace->PopUP = "1";
+	?>
+		<div class="modal openpop bg-popup" id="myModaloffer">
+			<div class="modal-dialog height-popup big-pop-center  width-auto">
+				<div class="modal-content height-popup no-padding">
+					<div class="bg-pop-header"><span class="text-pop-header"><?php echo $PopMessage["name"]?></span>
+						<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="hidemyoffer();">
+							<i class="fa fa-close" style="color:#fff;"></i>
+						</button>
+					</div>
+					<div class="modal-body"  style="height:450px;overflow-y:auto;text-align:justify;padding:20px 30px;">
+						<?php echo  $message;    ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	<?php  
+					 }
+				}
+			}
+		}
+	?>
+	
+<!-- Begin page -->
+<div id="wrapper">
+	<!-- Top Bar Start -->
+	<div class="topbar">
+		
+		
+		
+		<!-- LOGO -->
+		<div class="topbar-left">
+			<a href="javascript:void(0)" class="logo d-logo hidden-xs hidden-sm"></a> 
+			<a href="javascript:void(0)" class="logo d-logo hidden visible-xs visible-sm">
+				<img src="<?php echo BASEPATH; ?>/assets/images/gbclogo.png" alt="Gainbitcoin" class="img-responsive hidden-xs" height="0">
+			</a> 
+			<!-- Image Logo here --> 
+		</div>
+		
+		<!-- Button mobile view to collapse sidebar menu -->
+		<div class="navbar navbar-default" role="navigation">
+			<div class="container">
+	
+				<div class="top-fix-navbar">
+				
+					
+					<div class="pull-left">
+						<button class="button-menu-mobile open-left waves-effect waves-light" id="tog-button">
+						<i class="fa fa-outdent"></i>
+						</button>
+						<span class="clearfix"></span>
+					</div>
+					<div style = "margin:20px;" class="navbar-left visible-lg hidden-md hidden-sm hidden-xs adjustment">
+						<div id="google_translate_element"></div>
+					</div>
+	
+					<?php if(count($cmsNews) > 0){
+					?>
+						<div class="navbar-left app-search pull-left visible-lg hidden-md hidden-sm hidden-xs adjustment">
+							<div type="text" 
+								   class="form-control marquee width-ticker" 
+								   style="color:#444 !important;padding-top:7px;overflow:hidden;" 
+								  ><?php
+											for($i=0;$i<=sizeof($cmsNews);$i++){
+											 	echo $cmsNews[$i]['description'];
+											} ?></div>
+					</div>
+					<?php } 
+					
+						$permissions_obj=new Gbc_Model_DbTable_FeaturedPermission();
+						$Price_in_usd = file_get_contents("http://api.coindesk.com/v1/bpi/currentprice.json");
+						if($Price_in_usd){
+							$Price_in_usd = json_decode($Price_in_usd);
+							$Price_in_usd = $Price_in_usd->bpi->USD->rate;
+
+							$update_Price_in_usd = str_replace(',','',$Price_in_usd);
+							$update_Price_in_usd = array('value' => $update_Price_in_usd, 'updated_on'=>new Zend_Db_Expr('NOW()'));
+							$udpatePrice = $permissions_obj->update($update_Price_in_usd,"name = 'btc_usd_price'");
+
+						}else{
+								$permissions_data1=$permissions_obj->fetchRow($permissions_obj->select()
+									->setIntegrityCheck(false)
+									->from(array('featured_permissions'),array('name','value'))
+									->where("name =?",'btc_usd_price'));
+
+									if(!empty($permissions_data1)){
+										$Price_in_usd = $permissions_data1['value'];
+									}else{
+										$Price_in_usd = 0;
+									}
+						}
+						$Price_in_usd = str_replace(',','',$Price_in_usd);
+
+						$McapPrice_in_BTC = file_get_contents("https://bitcoingrowthfund.com/api/market_states/mcap/btc");
+						if($McapPrice_in_BTC){
+							$McapPrice_in_BTC = json_decode($McapPrice_in_BTC);
+							$McapPrice_in_BTC = $McapPrice_in_BTC->last_price;
+
+
+							$update_McapPrice_in_BTC = array('value' => $McapPrice_in_BTC,'updated_on'=>new Zend_Db_Expr('NOW()') );
+							$udpatePrice = $permissions_obj->update($update_McapPrice_in_BTC,"name = 'mcap_btc_price'");
+						}else{
+
+							$permissions_data2=$permissions_obj->fetchRow($permissions_obj->select()
+								->setIntegrityCheck(false)
+								->from(array('featured_permissions'),array('name','value'))
+								->where("name =?",'mcap_btc_price'));
+
+								if(!empty($permissions_data2)){
+									$mcap_btc_price = $permissions_data2['value'];
+								}else{
+									$mcap_btc_price = 0;
+								}
+						//	$mcap_btc_price = 0;
+							$McapPrice_in_BTC = $mcap_btc_price;
+						}
+
+					//	var_dump($McapPrice_in_BTC);
+					//	var_dump($contract_rate);
+
+							$McapPrice_in_USD = round(($Price_in_usd * $McapPrice_in_BTC),4);
+					
+					
+					?>
+					
+					
+					<ul class="nav navbar-nav navbar-right pull-right">
+						<div style = "float:left;">
+							<span style = "display:block;font-size:10px;font-weight:bold;">
+							Reference Rates
+							</span>
+							<span style = "font-size :10px;">
+								1 BTC =  <?php echo $Price_in_usd." USD"; ?>
+							<br>
+								1 MCAP =  <?php echo $McapPrice_in_BTC." BTC"; ?> /  <?php echo $McapPrice_in_USD." USD"; ?>
+							</span>
+
+						</div>
+						<li class="dropdown top-menu-item-xs" >
+							<a href="<?php echo BASEPATH; ?>/Profile" class="waves-effect waves-light" data-toggle="tooltip" title="My Profile" data-placement="bottom">
+							<i class="fa fa-user"></i>
+							</a>
+						</li>
+						
+						<!--
+						<li class="dropdown top-menu-item-xs">
+							<a href="<?php echo BASEPATH; ?>/Notification"  aria-expanded="true" data-toggle="tooltip" title="Notifications" data-placement="bottom">
+							<i class="fa fa-bell-o"></i> 
+								<?php if($unreadNotification > 0){?>
+									<span class="badge badge-xs badge-danger"><?php echo $unreadNotification;?></span>
+								<?php }?>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-lg">
+								<li class="notifi-title">
+									<?php if($unreadNotification > 0){?>
+										<span class="label label-default pull-right">New <?php echo $unreadNotification;?></span>
+									<?php }?>
+									Notification</li>
+								<li class="list-group slimscroll-noti notification-list">
+									
+								   <?php
+									  if(!empty($row)){
+										  for($i=0;$i<sizeof($row);$i++){
+								   ?>
+									<a href="<?php echo BASEPATH; ?>/Notification" class="list-group-item">
+										<div class="media">
+											<div class="pull-left p-r-10">
+												<em class="fa fa-diamond noti-primary"></em>
+											</div>
+                 				   <?php $time_elapsed =  $Gbc_Model_Custom_func_obj->time_elapsed_string($row[$i]['created']); ?>											
+											<div class="media-body">
+												<h5 class="media-heading"><?php echo $time_elapsed;?></h5>
+												<p class="m-0">
+													<?php echo $row[$i]['text'];?>
+												</p>
+											</div>
+										</div>
+									</a>	
+                    			   <?php
+										  }
+									  }
+									?>
+
+
+								</li>
+								<li>
+									<a href="<?php echo BASEPATH; ?>/Notification" class="list-group-item text-right" >
+									<p>See all notifications</p>
+									</a>
+									
+								</li>	
+								
+							</ul>
+						</li>
+						-->
+						
+						<li class="dropdown top-menu-item-xs">
+							<a href="<?php echo BASEPATH; ?>/Dashboard/logout" class="waves-effect waves-light" data-toggle="tooltip" title="Logout" data-placement="bottom">
+							<i class="fa fa-sign-out"></i>
+							</a>
+						</li>						
+						<li class="dropdown top-menu-item-xs">
+							<a href="javascript:void(0)" class="right-bar-toggle profile waves-effect waves-light" style="padding: 0px;"><span class="user-name"><?php echo $authUserNamespace->user;?></span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
+	<!-- Top Bar End -->
+	
+	<!-- ========== Left Sidebar Start ========== -->
+	<div class="left side-menu">
+		<div class="sidebar-inner slimscrollleft">
+			<!--- Divider -->
+			<div id="sidebar-menu">
+				<ul>
+					<?php	if(!empty($manage_data) && sizeof($manage_data)>0) {
+	
+	  						  for($n=0;$n<sizeof($manage_data);$n++) {
+						          if($manage_data[$n]['nav_link']=='Dashboard')
+								  {
+									$navclass='fa fa-dashboard';
+								  }
+						          if($manage_data[$n]['nav_link']=='Training Material')
+								  {
+									$manage_data[$n]['nav_link']='Video Guides';
+									  
+									$navclass='fa fa-play-circle';
+								  }	
+						          if($manage_data[$n]['nav_link']=='Marketing Material')
+								  {
+									$manage_data[$n]['nav_link']='Referral Program';
+									  
+									$navclass='fa fa-user-plus';
+								  }	
+						          if($manage_data[$n]['nav_link']=='Latest News')
+								  {
+									$navclass='fa fa-newspaper-o';
+								  }		
+						          if($manage_data[$n]['nav_link']=='Gallery')
+								  {
+									$navclass='fa fa-picture-o';
+								  }									  
+ 					?>
+								<?php if($manage_data[$n]['nav_link']=='Dashboard') {?>
+										<li >
+											<a href="<?php echo BASEPATH; ?>/<?php echo $manage_data[$n]['nav_controller']; ?>" class="waves-effect"> <i class="<?php echo $navclass;?>"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?></span></a>
+										</li>	
+								<?php } else if($manage_data[$n]['nav_link']=='GB Phase 2') {?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-newspaper-o"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+											<ul>
+												<li class="has_sub">
+														<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-newspaper-o"></i> <span> LIFETIME ETH</span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+															<ul class="list-unstyled">
+																<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+																	if(!empty($child_list) && sizeof($child_list)>0){
+															?>	
+
+
+																			<?php for($x=0;$x<sizeof($child_list);$x++) { ?> 
+																<li>			
+																<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+																		</li>
+																			<?php } ?>
+
+
+															<?php } ?>
+
+
+														</ul>
+													</li>
+												</ul>
+										</li>
+					
+								<?php }
+								  
+								  else if($manage_data[$n]['nav_link']=='Contracts') {?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-newspaper-o"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+															
+																<?php for($x=0;$x<sizeof($child_list);$x++) { ?> 
+													<li>			
+													<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+															</li>
+																<?php } ?>
+															
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>
+					
+								<?php } else if($manage_data[$n]['nav_link']=='Refund Request') {
+										$manage_data[$n]['nav_link']='Refunds';
+								?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-history"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+															
+																<?php for($x=0;$x<sizeof($child_list);$x++) { ?> 
+															<li>			
+																<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+																</li>
+																<?php } ?>
+															
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>
+								<?php } else if($manage_data[$n]['nav_link']=='Output') {
+								$manage_data[$n]['nav_link']='Outputs';
+								?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-suitcase"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+															
+																<?php for($x=0;$x<sizeof($child_list);$x++) { 
+																	  if($child_list[$x]['nav_link'] == 'Referral Sales Incentive'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'RSI';
+																	  }  	
+																	  if($child_list[$x]['nav_link'] == 'Direct Sales Incentive'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'DSI';
+																	  }																	
+																?> 
+													<li>
+																	<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+															</li>
+																<?php } ?>
+															
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>
+								<?php } else if($manage_data[$n]['nav_link']=='Withdrawals') {?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-money"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+															<li>
+																<?php for($x=0;$x<sizeof($child_list);$x++) { 												
+																	  if($child_list[$x]['nav_link'] == 'Withdrawal Request'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'Request';
+																	  }  	
+																	  if($child_list[$x]['nav_link'] == 'Withdrawal History'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'History';
+																	  }																	
+																
+																?> 
+																<li>
+																	<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+																</li>
+																<?php } ?>
+																<li>
+																	<a href="<?php echo BASEPATH; ?>/Withdrawalspending"> <span>Daily Withdrawals</span></a>
+																</li>																
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>
+								<?php } else if($manage_data[$n]['nav_link']=='Help & Support') {?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-support"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+															
+																<?php for($x=0;$x<sizeof($child_list);$x++) { 
+																	  if($child_list[$x]['nav_link'] == 'Log Service Request'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'Log Request';
+																	  }  	
+																	  if($child_list[$x]['nav_link'] == 'My Service Request'){																	  		
+																	  		$child_list[$x]['nav_link'] = 'My Request';
+																	  }	
+													  				  if($child_list[$x]['nav_link'] == 'FAQS'){																	  		
+																	  		$child_list[$x]['nav_link'] = "FAQ's";
+																	  }  
+																?> 
+													<li>
+																	<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+															</li>
+																<?php } ?>
+															
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>
+								<?php } else if($manage_data[$n]['nav_link']=='My Network') {?>
+										<li class="has_sub">
+											<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-group"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?> </span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">
+													<?php $child_list=$Gbc_Model_Custom_func_obj->getchildrenForNavigation($manage_data[$n]['parent'],$ver_row->country);
+														if(!empty($child_list) && sizeof($child_list)>0){
+										        ?>	
+
+														
+																<?php for($x=0;$x<sizeof($child_list);$x++) { ?> 
+														<li>
+																	<a href="<?php echo BASEPATH; ?>/<?php echo $child_list[$x]['nav_controller']; ?>"><?php echo $child_list[$x]['nav_link']; ?></a> 
+																	</li>
+															<?php } ?>
+														
+											
+												<?php } ?>
+
+
+											</ul>
+										</li>					
+								<?php } else {
+											  if($manage_data[$n]['nav_link'] == 'Latest News'){																	  		
+										  		$manage_data[$n]['nav_link'] = 'Latest Updates';
+								  }  ?>
+										<li>
+											<a href="<?php echo BASEPATH; ?>/<?php echo $manage_data[$n]['nav_controller']; ?>" class="waves-effect"> <i class="<?php echo $navclass;?>"></i> <span> <?php echo $manage_data[$n]['nav_link']; ?></span></a>
+										</li>	
+					<?php }}} else {?>					
+					<?php }?>
+									<li>
+										<a href="<?php echo BASEPATH; ?>/Gallery" class="waves-effect"> <i class="fa fa-picture-o"></i> <span> Gallery</span></a>
+									</li>
+					
+									<li>
+										<a href="<?php echo BASEPATH; ?>/Review" class="waves-effect"> <i class="fa fa-star-o"></i> <span>Rate Us</span></a>
+									</li>					
+									<li class="has_sub">
+									 		<a href="javascript:void(0);" class="waves-effect"> <i class="fa fa-server"></i> <span>Miscellaneous</span><span class="fa fa-angle-right cb-nav-arrow"></span> </a>
+  												<ul class="list-unstyled">																							
+														<li>
+															<a href="<?php echo BASEPATH; ?>/Mvplist">Mvp List</a> 
+														</li>
+												</ul>
+									</li>							 
+				</ul>
+				<div class="clearfix"></div>
+			</div>
+			<div class="clearfix"></div>
+
+		</div>
+	</div>
+	<!-- Left Sidebar End --> 
+	
+	
+	
+	<!-- ============================================================== -->
+	<!-- Start right Content here -->
+
+	<div class="content-page">
+		
+		
+		
+		
+		<!-- Start content -->
+    <?php echo $this->layout()->content;?>
+
+	</div>
+		
+	
+		<!-- content -->
+		<footer class="footer text-right">
+			&copy; 2017 GainBitcoin.com. All rights reserved.
+		</footer>
+	
+	<!-- ============================================================== -->
+	<!-- End Right content here -->
+	<!-- ============================================================== -->
+
+</div>
+<!-- END wrapper -->
+	
+
+<!-- SmartBox Js files --> 
+<script>
+
+       var resizefunc = [];
+</script> 
+	<!--
+<script src="<?php echo BASEPATH; ?>/assets/js/jquery.min.js"></script> 
+	-->
+
+<script src="<?php echo BASEPATH; ?>/assets/js/bootstrap.min.js"></script> 
+<script src="<?php echo BASEPATH; ?>/assets/js/pace.min.js"></script> 
+<script src="<?php echo BASEPATH; ?>/assets/js/loader.js"></script> 
+<script src="<?php echo BASEPATH; ?>/assets/js/detect.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/js/fastclick.js"></script>
+
+<script src="<?php echo BASEPATH; ?>/assets/js/wow.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/js/jquery.slimscroll.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/js/jquery.nicescroll.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/js/jquery.scrollTo.min.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/pages/jquery.todo.js"></script>
+	
+<script src="<?php echo BASEPATH; ?>/assets/js/waves.js"></script>
+<script src="<?php echo BASEPATH; ?>/assets/js/jquery.app.js"></script>
+<!-- data-tables -->
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/plugins/data-tables/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/plugins/data-tables/data-tables-script.js"></script>
+
+
+</body>
+	
+<script>
+
+
+$(document).ready(function(){
+
+
+
+setTimeout(function(){
+
+    $('#myModal').removeClass('openpop');
+},15000);
+
+
+});
+
+/*Javascript code to set focus on top when   */	
+document.getElementById('tog-button').onclick = function () {
+	//alert('Here');
+	$(window).scrollTop(0);
+};
+
+function changepagination()
+{
+    if($("#data-table-simple_previous").length == 0) {
+
+    }
+    else{
+    $('#data-table-simple_wrapper .row').append("<div class='clearfix' style='background-color: #FFFFFF! important; float: left; width: 100%; height: 24px;'> </div>");
+    }
+
+
+}
+
+function closeoffer()
+{
+    $('#myModal').removeClass('openpop');
+}
+
+function showmyoffer()
+{
+    $('#myModaloffer').addClass('openpop');
+}
+function hidemyoffer()
+{
+    $('#myModaloffer').removeClass('openpop');
+}
+
+function contactDetails()
+{
+            var name=$('#name').val();
+            var username=$('#username').val();
+            var email_address=$('#email_address').val();
+            var mobile=$('#mobile').val();
+			var captcha="123456";
+			var ol_captcha="123456";
+            var country=($('#countryCode :selected').val());
+            var country_name=$('#country_name').val();
+            var name=$('#name').val();
+   
+            if(email_address!='')
+    {
+        var atpos = email_address.indexOf("@");
+        var dotpos = email_address.lastIndexOf(".");
+    }
+
+    if(!name || name=='' )
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide Full name.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+
+    else if(!email_address || email_address=='')
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide Email.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else if(atpos<1 || dotpos<atpos+2 || dotpos+2>=email_address.length)
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide valid Email.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else if(!mobile || mobile=='' )
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide Mobile.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else if(!country_name || country_name=='' )
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide Country.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else if(!captcha || captcha=='' )
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="Please provide Captcha.";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else if(captcha!=ol_captcha )
+    {
+        $("#err_div").css("display", "block");
+        document.getElementById("err_div").innerHTML="";
+        document.getElementById("err_div").innerHTML="CAPTCHA wrong!!";
+        $('#err_div').css('display','block');
+        $('#err_div').css('color','red');
+        return false;
+    }
+    else
+    {
+        var dataString = 'name='+name+'&email_address='+email_address+'&mobile='+mobile+'&countryCode='+country+'&country_name='+country_name+'&captcha='+captcha;
+                 $.ajax({
+                        url:"<?php echo BASEPATH; ?>/Dashboard/savecont",
+                        type: "POST",
+                        data: dataString,
+                          success: function(response)
+                          {
+                         $("#err_div").css("display", "block");
+                         $("#err_div").css("color", "green");
+                         $("#err_div").css("margin-top", "10px");
+                         $('#err_div').addClass('alert');
+                         $('#err_div').addClass('alert-success');
+                         document.getElementById("err_div").innerHTML=response;
+                         window.location="<?php echo BASEPATH;?>/Dashboard";
+
+                          }
+                    });
+
+    }
+}
+function contfunc(mobile){
+     var mob = /^[1-9]{1}[0-9]{9}$/;
+     return mob.test(mobile)
+ }
+function closeCatPopup()
+{
+    $('#req-admin').removeClass('openpop');
+}
+
+function selectCountry(opt)
+{
+    var code=opt.value;
+
+     $.ajax({
+            url:"<?php echo BASEPATH; ?>/Dashboard/getcountry",
+            type: "POST",
+            data: "code="+code+"&type=ccode",
+              success: function(response)
+           {
+			var data=	JSON.parse(response);
+					
+			 if(data['success']!='')
+			 {
+				 $("#country_name").val(data['success']);
+			 }
+
+
+           }
+        });
+
+}
+function selectCcode(opt)
+{
+    var code=opt.value;
+
+
+     $.ajax({
+            url:"<?php echo BASEPATH; ?>/Dashboard/getcountry",
+            type: "POST",
+            data: "code="+code+"&type=country",
+              success: function(response)
+        {
+
+			var data=	JSON.parse(response);
+					
+			 if(data['success']!='')
+			 {
+				 $("#countryCode").val(data['success']);
+			 }
+
+
+        }
+        });
+}
+</script>
+
+
+<script src="<?php echo BASEPATH; ?>/js/common.js"></script>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: '', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script>
+<script
+    type="text/javascript"
+    src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+></script>
+
+<script>
+
+function newtabfun1(){
+window.open('https://www.facebook.com/thegainbitcoin');
+}
+
+function newtabfun2(){
+    window.open('https://plus.google.com/100191606886810566595/about');
+    }
+
+function newtabfun3(){
+    window.open('https://twitter.com/thegainbitcoin');
+    }
+
+	 jQuery(document).ready(function () {	
+		//  $("#data-table-simple_length select").html("");
+		// return false;
+		 var oTable2 = $('#data-table-simple-2').dataTable();	
+		 var oTable1 = $('#data-table-simple-1').dataTable();
+			 
+		$("#data-table-simple_previous").html("<<");	
+		$("#data-table-simple-1_previous").html("<<");	
+		$("#data-table-simple-2_previous").html("<<");	
+		$("#data-table-simple_next").html(">>");
+		$("#data-table-simple-1_next").html(">>");
+		$("#data-table-simple-2_next").html(">>");
+		 
+		 //$("#data-table-simple_length").html('<label><select name="data-table-simple_length" aria-controls="data-table-simple" class=""><option value="">Show Entries</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select><span class="caret" style = "display:inline-block;margin-left:-48px; position:relative;"></span></label>');
+		 $("#data-table-simple_length select").prepend('<option value="" selected>Show Entries</option>');
+		 $("#data-table-simple-1_length select").prepend('<option value="" selected>Show Entries</option>');
+		 $("#data-table-simple-2_length select").prepend('<option value="" selected>Show Entries</option>');
+		 $("#data-table-simple_length label").append('<span class="caret" style = "margin:-77px 0 0 60px; position:relative;z-index:99999;color:#666;"></span>');
+		 $("#data-table-simple-1_length label").append('<span class="caret" style = "margin:-77px 0 0 60px; position:relative;z-index:99999;color:#666;"></span>');
+		 $("#data-table-simple-2_length label").append('<span class="caret" style = "margin:-77px 0 0 60px; position:relative;z-index:99999;color:#666;"></span>');
+		 $("#data-table-simple_filter input").attr('placeholder', 'Search...');
+		 $("#data-table-simple-1_filter input").attr('placeholder', 'Search...');
+		 $("#data-table-simple-2_filter input").attr('placeholder', 'Search...');
+		 
+	 });
+</script>	
+</html>
+

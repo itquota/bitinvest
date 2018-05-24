@@ -1,0 +1,56 @@
+.carousel-control.left,.carousel-control.right  {background:none;width:3px;}
+.carousel-control.left {left:-1px;}
+.carousel-control.right {right:-1px;}
+.carousel-control {
+    opacity: 1 !important;
+    filter: alpha(opacity=1); /* For IE8 and earlier */
+}
+
+.block-text {
+    background-color: #fff;
+    border-radius: 0px;
+  
+    color: #626262;
+    font-size: 14px;
+    margin-top: 15px;
+    padding: 15px;
+    font-family: 'robotoregular' !important;
+      
+}
+
+.block-text h4 {
+font-family: 'robotoregular' !important;
+color: #414042 !important;
+font-size: 16px !important  ;
+
+}
+
+
+.block-text p {
+    color: #34495e;
+    font-family: 'robotoregular';
+    line-height: 20px;
+
+}
+
+.carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next, .carousel-control .icon-prev {
+
+    background: #34495e;
+    border-radius: 50%;
+   
+}
+
+.carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next, .carousel-control .icon-prev{
+
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 19px;
+    padding-top: 12px
+}
+
+.glyphicon-chevron-left:before {
+    content: "\e257" !important;
+}
+.glyphicon-chevron-right:before {
+    content: "\e258" !important;
+}

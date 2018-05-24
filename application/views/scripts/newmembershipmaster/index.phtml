@@ -1,0 +1,310 @@
+
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+.clearfix {
+ 			 margin-top:35px;
+		}
+</style>
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/Membershiplist">Manage Membership</a> > </li>
+                  <li>Add Membership</li>
+  
+            </ol>
+           
+		<div class="clearfix"></div>
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              Add Membership
+              </div>
+
+              <div class="panel-body revenuebg">
+              
+          <form action="" method="post" id="Newmembershipmaster" role="form">	
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:green;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+	
+	<div class="form-group err1" style="width:100%;margin-bottom: 0px;">
+		<label for="" class="lblTxt" style="color:red;"></label>
+	</div>
+	
+   <div class="form-group">
+    <label for="" class="lblTxt">Membership Type</label>
+
+     <input type="text"  name="membershiptype" id="membershiptype" class="form-control CommonInputBox" placeholder="Membershiptype" value="">
+   </div>
+   
+  	<div class="form-group">
+    <label for="" class="lblTxt">Investment Start</label>
+
+     <input type="text"  name="investmentstart" id="investmentstart" class="form-control CommonInputBox isnumber" placeholder="Investmentstart" value="">
+      </div>
+
+ 	<div class="form-group">
+    <label for="" class="lblTxt">Investment End</label>
+
+     <input type="text"  name="investmentend" id="investmentend" class="form-control CommonInputBox isnumber" placeholder="Investmentend" value="">
+      
+    </div>
+    <div class="form-group">
+    <label for="" class="lblTxt">Level Max</label>
+
+     <input type="text"  name="levelmax" id="levelmax" class="form-control CommonInputBox isnumber" placeholder="Levelmax" value="">
+     
+    </div> 
+     <div class="form-group">
+    <label for="" class="lblTxt">Binary Matching</label>
+
+     <input type="text"  name="binarymatching" id="binarymatching" class="form-control CommonInputBox isnumber" placeholder="Binarymatching" value="">
+      
+    </div>
+     <div class="form-group">
+    <label for="" class="lblTxt">Binary Matching Multiple</label>
+
+     <input type="text"  name="binarymatchingmultiple" id="binarymatchingmultiple" class="form-control CommonInputBox isnumber" placeholder="Binarymatching multiple" value="">
+      
+    </div>
+      <div class="form-group">
+    <label for="" class="lblTxt">Binary Capping</label>
+
+     <input type="text"  name="binarycapping" id="binarycapping" class="form-control CommonInputBox isnumber" placeholder="Binary capping" value="">
+     
+    </div>
+     <div class="form-group">
+    <label for="" class="lblTxt">Trimming</label>
+
+     <input type="text"  name="trimming" id="trimming" class="form-control CommonInputBox isnumber" placeholder="Trimming" value="">
+      
+    </div>
+  	 <div class="form-group">
+    <label for="" class="lblTxt">Mining Returns</label>
+
+     <input type="text"  name="miningreturns" id="miningreturns" class="form-control CommonInputBox isnumber" placeholder="Miningreturns" value="">
+    
+    </div> 
+     <div class="form-group">
+    <label for="" class="lblTxt">Direct Sales Commission</label>
+
+     <input type="text"  name="directsalescomission" id="directsalescomission" class="form-control CommonInputBox isnumber" placeholder="Direct sales commission" value="">
+     
+    </div> 
+  <br>
+ <input type="hidden" name='id' value='<?php echo $_POST['id'];?>'>
+  <button type="button" name="save" id="save" onclick="getadddata();"class="btn btn-default Commonbtn">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn" value="Reset">RESET</button>
+
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+      <script>
+function getadddata()
+{
+
+	var membershiptype=$('#membershiptype').val();
+	var investmentstart=$('#investmentstart').val();
+	var investmentend=$('#investmentend').val();
+	var levelmax=$('#levelmax').val();
+	var binarymatching=$('#binarymatching').val();
+	var binarymatchingmultiple=$('#binarymatchingmultiple').val();
+	var binarycapping=$('#binarycapping').val();
+	var trimming=$('#trimming').val();
+	var miningreturns=$('#miningreturns').val();
+	var directsalescomission=$('#directsalescomission').val();
+	var NumberRegex =/^[0-9]+$/;
+	var token = $('#token').val();
+	/*if(membershiptype=='' || investmentstart=='' || investmentend=='' || levelmax=='' || binarymatching=='' || binarymatchingmultiple=='' || binarycapping=='' || trimming=='' || miningreturns=='' || directsalescomission=='')
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="All fields are required";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+	}*/
+
+	//$('.err1').hide();
+
+	if((membershiptype).trim()==''){
+		$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Membership Type</label>');
+		return false;
+	}	
+
+/*	if(!namefunc(membershiptype))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Membership should be characters only.</label>');
+     	return false;
+     }*/
+
+	 if((investmentstart).trim()==''){
+  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Investment Start.</label>');
+      	return false;
+		}
+
+	/*if(isNaN(investmentstart))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Investment Start should be numbers only.</label>');
+         return false;
+     }*/
+	 if((investmentend).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Investment End.</label>');
+	      	return false;
+			}
+	/* if(isNaN(investmentend))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Investment End should be numbers only.</label>');
+         return false;
+     }*/
+
+	 if((levelmax).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Level Max.</label>');
+	      	return false;
+			}
+	 /*if(isNaN(levelmax))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Level Max should be numbers only.</label>');
+         return false;
+     }*/
+
+	 if((binarymatching).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Binary Matching.</label>');
+	      	return false;
+			}
+	/* if(isNaN(binarymatching))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Binary Matching should be numbers only.</label>');
+         return false;
+     }*/
+     
+	 if((binarymatchingmultiple).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Binary Matching Multiple.</label>');
+	      	return false;
+			}
+	/* if(isNaN(binarymatchingmultiple))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Binary Matching Multiple should be numbers only.</label>');
+         return false;
+     }*/
+	 if((binarycapping).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Binary Capping .</label>');
+	      	return false;
+			}
+	/* if(isNaN(binarycapping))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Binary Capping should be numbers only.</label>');
+         return false;
+     }*/
+	 if((trimming).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Trimming.</label>');
+	      	return false;
+			}
+	/* if(isNaN(trimming))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Trimming should be numbers only.</label>');
+         return false;
+     }*/
+	 if((miningreturns).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Mining Returns.</label>');
+	      	return false;
+			}
+	/* if(isNaN(miningreturns))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Mining Returns should be numbers only.</label>');
+         return false;
+     }*/
+	 if((directsalescomission).trim()==''){
+	  	   $(".err1").html('<label class="lblTxt" for="" style="color:red;">Please enter Direct Sales Comission.</label>');
+	      	return false;
+			}
+	/* if(isNaN(directsalescomission))
+     {
+         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Direct Sales Comission should be numbers only.</label>');
+         return false;
+     }*/
+	
+else{
+
+		var dataString ='membershiptype='+membershiptype+'&investmentstart='+investmentstart+'&investmentend='+investmentend+'&levelmax='+levelmax+'&binarymatching='+binarymatching+'&binarymatchingmultiple='+binarymatchingmultiple+'&binarycapping='+binarycapping+'&trimming='+trimming+'&miningreturns='+miningreturns+'&directsalescomission='+directsalescomission+'&token='+token;
+	
+		
+	 $.ajax({
+			
+			url:"<?php echo BASEPATH;?>/Newmembershipmaster", 
+			type: "POST",    
+		    data: dataString,
+		
+	  		success:function(response)
+	  		{
+				 var data=JSON.parse(response);
+				 
+				 if(data['success']!='')
+				 {
+					/*$(".err1").css("display","block");
+						document.getElementById("err1").innerHTML="Data inserted successfully.";
+						$('.err1').css('color','green');*/
+				         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+						window.location = "<?php echo BASEPATH;?>/Membershiplist";
+				 }
+				 else
+				 {
+					  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+				 }
+				
+				
+			}
+				
+			
+		 });
+	 return true;
+}
+}
+function namefunc(name)
+{
+	var pattern12 = new RegExp(/^[a-zA-Z ]+$/);
+	return pattern12.test(name);
+}	
+
+function phone_number(MobileNumber)
+{
+    var patte1 = new RegExp(/^[0-9]+$/);
+	return patte1.test(MobileNumber);
+}	
+    
+   </script>
+    

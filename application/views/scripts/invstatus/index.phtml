@@ -1,0 +1,97 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+     <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad">Payment Status</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"> <a href="#">Dashboard</a></li>
+                  <li><a href="#">Add New Kit</a></li>
+                   <li class="active">Payment Status</li>
+  
+            </ol>
+          </div>
+       
+        
+<div class="clearfix">&nbsp;</div>
+        
+       
+       <div class="row">
+        <div class="col-lg-12">
+		
+			<?php
+			if($this->result['bitcoinpay_status'] == "true"){	?>
+				<div class="register_success alert alert-success" role="alert"><strong>Congratulations, your Payment is Successful. Thank you!</strong></div><br><div class="clear"></div> 
+			<?php
+			}else if($this->result['bitcoinpay_status']] == "cancel"){ ?>
+				<div class="register_error alert alert-danger" role="alert"><strong>Sorry, Your order was unsuccessful. You can try again</strong>
+				 </div>
+			<?php } ?>
+       
+<div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong>Order Details</strong></h3>
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-condensed">
+                <thead>
+                    <tr>
+                      <td>ORDER NO. <?php echo $this->result['invoiceId']; ?></td>
+                      <td>&nbsp;</td>
+                      <td>&nbsp;</td>
+                       <td>&nbsp;</td>
+                    </tr>
+                </thead>
+                <tbody>
+                 
+                 
+                  <tr>
+                    <td class="thick-line"></td>
+                    <td class="thick-line"></td>
+                    <td class="thick-line"></td>
+                    <td class="thick-line text-right">
+					<?php 
+					if($this->result['bitcoinpay_status'] == "true"){
+						echo "Successful";
+					}
+					else if($this->result['bitcoinpay_status'] == "cancel"){
+						echo "Cancelled";
+					}
+					else if(isset($this->result['status']) && $this->result['status']!='')
+					{
+						echo $this->result['status'];
+					}
+					else
+					{
+						echo "Pending";
+					}
+					?>
+					
+					</td>
+                  </tr>
+                  <tr>
+                    <td class="no-line"></td>
+                    <td class="no-line"></td>
+                    <td class="no-line">&nbsp;</td>
+                    <td class="no-line text-right">Order Total <?php echo $this->result['price']; ?> BTC</td>
+                  </tr>
+                 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div> 
+      
+     </div>
+      </div>        
+          
+          </div>
+          <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

@@ -1,0 +1,266 @@
+
+<?php
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.table-responsive {
+	overflow-x: hidden !important;
+}
+</style>
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12 offset-1">
+<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+<ol class="breadcrumb">
+		<li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard
+		></a></li>
+		<li>Contract Hardware ></li>
+		<li>Refund Request</li>
+</ol>
+<a class="btn btn-default Commonbtn text-uppercase"   style="float:right;margin-right:35px;"name="add" id="add" href="<?php echo BASEPATH; ?>/Addrefundreq" role="button">Add</a>
+<!--  <div class="col-lg-12 ">
+                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                      <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default gain-bit-stepbg text-uppercase active">MINING OUTPUTS</button>
+                      </div>
+                      <div class="btn-group" role="group">
+                        <a href="<?php echo BASEPATH; ?>/Directearning"><button type="button" class="btn btn-default gain-bit-stepbg text-uppercase">DIRECT SALES INCENTIVE</button></a>
+                      </div>
+                      <div class="btn-group" role="group">
+                        <a href="<?php echo BASEPATH; ?>/Binaryearning"><button type="button" class="btn btn-default gain-bit-stepbg text-uppercase">REFERRAL SALES INCENTIVE</button></a>
+                      </div>
+              </div>
+          </div>
+
+          <div class="clearfix">&nbsp;</div>
+
+        <div class="clearfix">-->
+<div class="col-lg-12">
+<!--<form method="POST" action="<?php echo BASEPATH; ?>/Refrequest" />
+<div class="col-lg-3 col-xs-3">
+<div class="input-type-select"><select name="filter_by" id="filter_by">
+		<option value="">Choose Date Type</option>
+		<option value="1">Created Date</option>
+		<option value="2">Updated Date</option>
+</select></div>
+</div>
+<input id="datetimepicker" class="datepick input" type="text"
+		name="created" value="" class="form-control calculateSearchbox"
+		placeholder="Created" /> <input type="text" id="user" name="user"
+		placeholder="Search User" /> <input type="submit" class="btn"
+		id="search_filter" value="filter" />
+</form>
+-->
+</div>
+<div class="form-group" style="font-family:robotoregular;color:red; display:none; padding-left:18px" id="err_purch"> </div>
+<div class="clearfix">&nbsp;</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>"
+		id="token" name="token">
+<div class="col-lg-12 ">
+<div class="clearfix lightgraybg">
+<div class="bs-example table-responsive"
+		data-example-id="bordered-table">
+<table id="data-table-simple"
+		class="table table-bordered innertbl display" cellspacing="0">
+		<thead>
+				<tr>
+						<th class="sortdesc">SR.NO.</th>
+						<th class="sortdesc">USERNAME</th>
+						<th class="sortdesc">FULL NAME</th>
+						<th class="sortdesc">INVOICE ID</th>
+						<th class="sortdesc">KIT NUMBER</th>
+						<th class="sortdesc">EMAIL</th>
+						<th class="sortdesc">PHONE</th>
+						<th class="sortdesc">TXID</th>
+						<th class="sortdesc">REASON</th>
+						<th class="sortdesc">WALLET ADDRESS</th>
+						<th class="sortdesc">STATUS</th>
+						<th class="sortdesc">CREATED</th>
+						<th class="sortdesc">UPDATED</th>
+						<th style="text-align: center; width: auto;"></th>
+				</tr>
+		</thead>
+		<tbody>
+		<?php
+		// printArr($AllRefundRequests);
+		// exit;
+		if($this->AllRefundRequests > 0 ):
+
+		$sn = 1;
+		//printArr($kitDetails);
+		if(!empty($get_parameters['page']) && $get_parameters['page'] >1){
+			$sn = ($get_parameters['page']-1)*$PaginateLimit +1;
+		}
+		foreach($this->AllRefundRequests as $AllRefundRequest):
+
+		if($AllRefundRequest['status']!=='Deleted'):
+
+		$id = isset($AllRefundRequest['id']) ? $AllRefundRequest['id'] : '';
+		if($id){
+			$rand = rand(100000, 999999);
+			$id = $rand.$id;
+			$rand = rand(100000, 999999);
+			$id = $id.$rand;
+		}
+		$username = isset($AllRefundRequest['username']) ? $AllRefundRequest['username'] : '';
+		$full_name = isset($AllRefundRequest['full_name']) ? $AllRefundRequest['full_name'] : '';
+		$invoice_id = isset($AllRefundRequest['invoice_id']) ? $AllRefundRequest['invoice_id'] : '';
+		$kit_number = isset($AllRefundRequest['kit_number']) ? $AllRefundRequest['kit_number'] : '';
+
+		$email = isset($AllRefundRequest['email']) ? $AllRefundRequest['email'] : '';
+		$phone = isset($AllRefundRequest['phone']) ? $AllRefundRequest['phone'] : '';
+		$wallet_addr = isset($AllRefundRequest['wallet_addr']) ? $AllRefundRequest['wallet_addr'] : '';
+		$CreatedDate = isset($AllRefundRequest['created_on']) ? $AllRefundRequest['created_on'] : '';
+		$UpdatedDate = isset($AllRefundRequest['updated_on']) ? $AllRefundRequest['updated_on'] : '';
+		$status = isset($AllRefundRequest['status']) ? 'Refunded' : 'Pending';
+		$reason_to_refund=isset($AllRefundRequest['reason_to_refund']) ? $AllRefundRequest['reason_to_refund'] : '';
+		$txid=isset($AllRefundRequest['txid']) ? $AllRefundRequest['txid'] : '';
+
+		// $inv_sts=isset($valueArray['invoice_status']) ? $valueArray['invoice_status'] : '';
+
+		?>
+				<tr>
+						<td style="text-align: center;"><?php echo $sn; ?></td>
+						<td><?php echo $username; ?></td>
+						<td><?php echo $full_name;	?></td>
+						<td><?php echo $invoice_id;	?></td>
+						<td><?php echo $kit_number;	?></td>
+						<td><?php echo $email; ?></td>
+						<td><?php echo $phone; ?></td>
+						<td><?php echo $txid; ?></td>
+						<td><?php echo $reason_to_refund; ?></td>
+						<td><?php echo $wallet_addr; ?></td>
+						<td><?php 
+							if($AllRefundRequest['status']==1){ 
+						 		echo "Refunded";
+							}else if($AllRefundRequest['status']==2){ 
+							 	echo "Rejected";
+							}else if($AllRefundRequest['status']==3){ 
+							 	echo "In Progress";
+							}else{
+								echo "Pending";
+							} 
+							?>
+						</td>
+						<td><?php echo !empty($CreatedDate) ? date("d-m-Y H:m:s", strtotime($CreatedDate)):''; ?></td>
+						<td><?php echo !empty($UpdatedDate) ? date("d-m-Y H:m:s", strtotime($UpdatedDate)):''; ?></td>
+						<td><?php 
+						if($AllRefundRequest['status'] == 0)
+						{
+							if((!empty($this->data40) && $this->data40['edit']==1) || $authUserNamespace->user=="admin"){
+								?> 
+							<a class="btn" onclick="confirmRequest(<?php echo $id; ?>,1)" href='#'>Accept</a>
+							<a class="btn" onclick="rejectRequest(<?php echo $id; ?>,2)" href='#'>Reject</a>
+						<?php
+							}
+						}
+						?></td>
+				</tr>
+				<?php
+
+				$sn++;
+
+				endif;
+
+				endforeach;
+
+				endif;?>
+		</tbody>
+</table>
+	<div class="modal" id="myModal1" ></div>	
+<div class="clearfix">&nbsp;</div>
+</div>
+</div>
+</div>
+<!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>
+       
+
+				
+       <div class="col-lg-3 showingTxt">Showing 1 to 10 of 159 entries </div>-->
+<!--  <div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+   
+      
+    </div>--></div>
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper -->
+<script>
+	
+function rejectRequest(refund_request,status){
+		
+		// $("#myModal1").show();
+		 $("#myModal1").addClass('openpop');
+		 $("#myModal1").html('<div class="modal-dialog"><div class="modal-content" style= "height: 300px;overflow-y: auto;">'
+			+'<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="is close-btn"></i></button>'
+			+'</div>'
+			+'<div class="modal-body" id = "modal_body" >'
+				+'<h3 style = "text-align:center;">Comment for rejection</h3>'
+			 +'<input type = "text" name = "comment" id ="comment" style ="width:300px;height:50px;"><br><br>'
+			+'<input type = "button" class = "btn btn-default Commonbtn text-uppercase" value = "submit" onclick = "confirmRequest('+refund_request+','+status+')">'
+			+'</div></div></div>');
+
+
+	 
+}
+	
+ function closePop()
+	{
+		//$("#modal_body").append("hyes");
+
+		$("#myModal1").removeClass('openpop');
+		$("#myModal1").html('');
+		// $("#myModal1").hide();
+	}
+	
+function confirmRequest(refund_request,status)
+{
+	var comment = $("#comment").val();
+	 $.ajax({
+			
+			url:"<?php echo BASEPATH; ?>/Refrequest/confirmrequest", 
+			type: "POST",    
+		    data: 'refund_request='+refund_request+'&status='+status+'&comment='+comment,			
+	  		success:function(response)
+	  		{
+				var data=JSON.parse(response);
+				if(data['success']=='success'){
+					$("#err_purch").css("display", "block");
+					$("#err_purch").css("color", "green");
+					$("#myModal1").removeClass('openpop');
+					$("#myModal1").html('');
+					document.getElementById("err_purch").innerHTML='';
+					document.getElementById("err_purch").innerHTML="Updated Successfully.";
+					//$('#err_purch').empty();
+					}
+				else{
+					$('#err_purch').empty();
+					$("#err_purch").css("display", "block");
+					$("#err_purch").css("color", "red");
+					$("#myModal1").removeClass('openpop');
+					$("#myModal1").html('');
+					document.getElementById("err_purch").innerHTML='';
+					document.getElementById("err_purch").innerHTML="Something error.";
+				}
+		  				
+				window.location = "<?php echo BASEPATH;?>/Refrequest";
+								
+	  		}
+	 });
+}
+</script>

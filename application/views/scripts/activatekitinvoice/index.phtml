@@ -1,0 +1,169 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+
+ 
+ 
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad">Kit invoice</h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active">Dashboard</a></li>
+                  <li><a href="#">Kit invoice</a></li>
+  
+            </ol>
+
+
+
+
+         
+     
+
+
+      
+   
+
+     
+
+
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+      
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+  		<form method="POST" action="<?php echo BASEPATH; ?>/Activatekitinvoice" id="Activatekitinvoice">
+             <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+               <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+					 <th class="sortdesc">Sr. No.</th>
+                       <th class="sortdesc">Kit Number</th>
+                        <th class="sortboth">Created on</th> 
+                        <th class="sortboth">UsedBy</th>
+                         <th class="sortboth">Status</th> 
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                   <?php 
+                   $j=1;
+                   for($i=0;$i<sizeof($this->result);$i++){ ?>
+                   <tr>
+						 
+						  <td><?php echo $i+1; ?></td>
+                          <td><?php echo isset($this->result[$i]["kit_number"])?$this->result[$i]["kit_number"]:"";?></td>
+                          <td><?php echo isset($this->result[$i]["created_on"])?$this->result[$i]["created_on"]:"";?></td>
+                          <td><?php echo isset($this->result[$i]["kit_used_by"])?$this->result[$i]["kit_used_by"]:"";?></td>
+                          <td><?php echo isset($this->result[$i]["status"])?$this->result[$i]["status"]:"";?></td>
+
+                     
+                  </tr> 
+
+               
+		
+                
+
+                  
+
+               
+             
+             <?php $j++; } ?>  
+             
+                 </tbody>
+                  </table> 
+			    <div class="form-group">
+    <label for="" style="font-weight:bold;" class="lblTxt">It Will active the Inactive kits as well</label>
+
+		<input type="hidden" name="invoiceId" value=".trim($_REQUEST['invoiceId'])."/>
+        <input type="hidden" name="user" value=".trim($_REQUEST['username'])."/>
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Comments*</label>
+
+       <textarea style="margin: 0px; height: 61px; width: 323px;" name="comment" ></textarea>
+
+
+      
+  </div>
+    <button type="button" class="btn btn-default Commonbtn" onclick="return changeConfirmStatus();">SUBMIT</button>
+  </form>
+              </div>
+
+        </div>
+
+    </div>
+
+  
+
+   
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+
+<script>
+function changeConfirmStatus()
+
+                var x=confirm('It will Active/Inactive kits as well');
+                if(x)
+                {
+				$.ajax({
+                                type: 'POST',
+                                url: "<?php echo BASEPATH; ?>/Changekitstatus/changekitsts" ,
+				data:$('#change_kitstatus').serializeArray(),
+                  success: function (data) {
+                   //alert(data);return false;
+				   if(data=='true')
+				   {
+						alert("Updated successfully");
+                                     window.location ="<?php echo BASEPATH ?>/Kitupdate";
+					//location.reload();
+				   }
+                   else{
+                       alert(data);return false;
+                   }
+                   
+                }
+
+               
+               
+            	});
+			}
+		
+}
+</script>

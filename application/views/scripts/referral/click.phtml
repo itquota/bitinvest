@@ -1,0 +1,708 @@
+<?php
+require("library/recaptcha/captcha.php");
+
+
+
+$_SESSION['captcha'] = simple_php_captcha();
+$imgc_captcha = $_SESSION['captcha']['image_src'];
+
+$code = $_SESSION['captcha']['code'];
+
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$misc_obj->generateToken();
+$authUserNamespace->code = $code;
+
+//$_SESSION['captcha'] = simple_php_captcha();
+//print_r($captcha_config['code'])  ;exit;
+?>
+<script>
+function clickbox()
+{
+	window.location="<?php echo BASEPATH;?>/Dashboard";
+}
+
+
+function registerUser(){
+	 $('#preloader').show(); 
+	$('#err_div_reg').css("display","none");
+		 
+		
+	flag=0;
+	var i=0;
+		setInterval(function(){
+			 
+
+			
+				if(flag==0)
+				{
+					if(i==0)
+					{
+						i++;
+					$('#err_div_reg').empty();
+					var username=$('#username').val();
+					var ref_sponser_id=$('#ref_sponser_id').val();
+					var email_addr=$('#email_addr').val();
+					var password=$('#password').val();
+					var password_rpt=$('#password_rpt').val();
+					var captcha=$('#captcha').val();
+					var og_captcha=$('#og_captcha').val();
+					var userflag=$('#userflag').val();
+					var plc=$('#plc').val();
+					var  child_position = '';
+					var token = $('#token').val();
+					password = encryptPass(password);
+				
+					var dataString = 'username='+ username+'&password='+password+'&ref_sponser_id='+ref_sponser_id+'&email_addr='+email_addr+'&leg='+child_position+'&captcha='+captcha+'&userflag='+userflag+'&plc='+plc+'&token='+token;
+					 $.ajax({
+							url:"<?php echo BASEPATH; ?>/Referral/checkregister",
+							type: "POST",    
+						    data: dataString,
+					  		success: function(response)
+				      		{
+								 $('#preloader').hide(); 
+							      	
+							 var data=	JSON.parse(response);
+							
+							 if(data['success']!='' && data['success']=='success')
+							 {
+								
+							 	 $('#preloader').hide(); 
+								// alert("You are registered successfully");
+								 $("#registid").css("display","block");
+								 // window.location.href=("<?php echo BASEPATH; ?>//Dashboard");
+								 setTimeout(function(){			
+										window.location="<?php echo BASEPATH;?>/Dashboard";		
+									},3000);
+											
+								 
+							 }
+							 else
+							 {
+								 if((data['failure']).indexOf("Duplicate entry") > -1)
+								 {
+									 $('#preloader').hide(); 
+									 
+									 $("#err_div_reg").css("display", "block");
+									 document.getElementById("err_div_reg").innerHTML="Username already present";
+								 }
+								 else							
+								 {
+									 $('#preloader').hide(); 
+									 
+									 $("#err_div_reg").css("display", "block");
+									 document.getElementById("err_div_reg").innerHTML=data['failure'];
+								 }
+							 }		
+				      			
+				      		}
+						});
+					 $('#preloader').hide(); 
+						
+					}
+					 $('#preloader').hide(); 
+						
+				}
+		}, 1000);
+
+
+	  //  e.preventDefault();
+	}
+
+
+
+</script>
+<script  src="<?php echo BASEPATH; ?>/res/js/jquery.validate.min.js"></script>
+<style>
+.modal-header {
+	color: #fff;
+	font: 20px "robotobold";
+}
+.imgPop ol{
+	 margin-left: -23px;
+	  font-weight: 600;
+}
+</style>
+		<div class="modal req-admin bg-popup" id="registid">	
+		<div class="modal-dialog popup pop-center" >
+		<div class="modal-content no-padding">
+		<div class="bg-pop-header">
+			<span class="text-pop-header">CONGRATULATIONS</span>
+			<button type="button" class="close"	data-dismiss="modal" aria-hidden="true" onclick="clickbox();">
+				<a href="<?php echo BASEPATH; ?>/Dashboard">
+					<i class="fa fa-close" style="color:#fff;"></i>
+				</a>
+			</button>
+			
+		</div>
+		<div style="padding:30px;height:120px;" id="registcontent">
+			<div class="alert alert-success" style="text-align:center;"><p>You are registered successfully</p></div>		
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+<div class="loginPadd loreg-page">
+
+<div class="logincontainer ">
+	
+		<form id="registerUserForm" name="registerUserForm" autocomplete="off" novalidate="novalidate" role="form" class="paddAll">
+
+		<div class="form-group"><img src="<?php echo BASEPATH; ?>/images/login-logonew.png" alt="" class="img-responsive" style="margin:0 auto;"></div>
+
+		<div class="clearfix"></div>
+
+		<div class="form-group">
+			<p class="text-center white_text">Enter your details to begin</p>
+		</div>
+		<div class="form-group" id="err_div_reg" style="display:none;color:red;"></div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="text" class="input-box" placeholder="Ref. Sponsor Id/Ref. Username" readonly name="ref_sponser_id" id="ref_sponser_id" value="<?php echo $this->ref_user; ?>">
+				<input type="hidden" name="userflag" id="userflag" value="<?php echo $this->userflag; ?>">				
+			</div>
+		</div>
+			<!-- /input-group -->
+
+
+		<div id = "ref_sponser_id_message"  style = "color:red;font-style:italic;"></div>
+
+
+
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="email" id="email_addr" name="email_addr" class="input-box" placeholder="Email">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group"  style="display:block;" >
+				<input type="text" class="input-box" placeholder="Username" id="username" name="username">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="password" class="input-box" placeholder="Password" name="password" id="password" >
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group" style="display:block;">
+				<input type="password" class="input-box" placeholder="Repeat Password" id="password_rpt" name="password_rpt">
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="input-group">
+				<span class="input-group-btn " style="text-align: center;">
+					<img src="<?php echo $imgc_captcha; ?>" alt="CAPTCHA code">';
+				</span>
+			</div>
+		</div>
+
+
+  		<div class="form-group">
+    		<div class="input-group" style="display:block;">
+  				<input type="password" name="captcha" id="captcha" class="input-box" placeholder="Re-Enter Captcha">
+ 				<input type="hidden" id='og_captcha' value='<?php echo $code;?>' /> 
+			</div>  
+  		</div>
+
+		<div class="checkbox"><label  style="color:#fff;"><input type="checkbox" name="agree" id="agree" >I accept the <a
+			data-toggle="modal" href="#req-admin" name="myname" class="forgotTxt"  style="color:#3d8d92"> Terms & Conditions </a></label></div>
+						 
+  	
+
+<br />
+
+		<div class="form-group">
+			<button onclick="registerUser();" class="button sendmebtn">REGISTER
+				<div id="preloader" class="">
+					<img src="<?php echo BASEPATH; ?>/images/ajax_loader_2.gif" height="24" width="24">
+				</div>	
+			</button>
+		<!--	<button type="reset" class="btn btn-inverse btn-md resetbtn">RESET</button> -->
+		</div>
+
+
+</form>
+
+           <div class="white_text" style="text-align:center;">
+               <a href="<?php echo BASEPATH; ?>/Marketingmaterial"> <span style="color:#fff;">Back</span></a>
+           </div>
+
+	
+	<div class="modal changestatus bg-popup "	id="req-admin">	
+		<div class="modal-dialog popupwidth big-pop-center1" >
+			<div class="modal-content height-popup no-padding">
+				<div class="bg-pop-header"><span class="text-pop-header">TERMS AND CONDITIONS</span>
+					<button	type="button" class="close"	data-dismiss="modal" aria-hidden="true"><i class="fa fa-close" style="color:#fff;"></i></button>
+				</div>  
+		<div class="">
+			<form name="formkit" id=""formkit"" action='' method="post">
+				<div id="tandc" class="pop-body">
+							<p><strong>TERM OF USE</strong></p>
+							<ol>
+							<li><strong>Introduction</strong></li>
+							</ol>
+							<p>By accessing and using our website&nbsp;www.gainbitcoin.com&nbsp;or any affiliated website of VARIABLETECH PTE LTD, Singapore&nbsp;or associated entity (referred to as "we", "us", "the Operator", "the website", "www.gainbitcoin.com" or "the company"), you agree to be bound by and abide by the following terms and conditions. Your access to and use of the website is also subject to our Privacy Policy.</p>
+							<p>These terms and conditions ("T&amp;C") apply to all transactions carried out on this and affiliated websites. Do not use the website or any services if you do not agree with any of these T&amp;C.</p>
+							<p>Before executing a transaction on the website, you should review the terms and conditions as they may be updated from time to time. Continued use of this website and services means that you agree to our new T&amp;C</p>
+							 
+							<p style="text-align: center;"><em><strong>PLEASE NOTE : - VERY IMPORTANT</strong></em></p>
+							<p style="text-align: center;"><em>"When purchasing a Bitcoin Cloud Mining Contract through the website the Buyer agrees that he or she is over 18 years of age."</em></p>
+							<p style="text-align: center;"><em>"You must check your local jurisdiction laws applicable before buying the Bitcoin Cloud Mining Contract &amp; only purchase if you are allowed to do so!"</em></p>
+							<p>&nbsp;</p> 
+							<ol start="2">
+							<li><strong>Definitions</strong></li>
+							</ol>
+							<p><span style="text-decoration: underline;"><strong><em>Bitcoin</em></strong></span> is a peer-to-peer payment system and digital currency using cryptography to control the creation and transfer of money. More about Bitcoin can be found here: http://en.wikipedia.org/wiki/Bitcoin</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Bitcoin Cloud Mining Contract</strong></em></span> is a proprietary right to future Bitcoins produced by the Operator's computer systems applying the hash rate agreed between the Buyer and the Operator for the Term.</p>
+							 
+							<p><em><span style="text-decoration: underline;"><strong>Lease Term</strong></span></em> is 18 months from the Mining Contract Purchase Date unless otherwise agreed in writing between the Operator and the Buyer.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Buyer</strong></em></span> is the purchaser of a Bitcoin Cloud Mining Contract through the website, also referred to as "user" or "you".</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Operator</strong></em></span> is the company VARIABLETECH PVT LTD that operates the website&nbsp;www.gainbitcoin.com, affiliated websites, and computer systems that produce Bitcoins, and offers Bitcoin Cloud Mining Contracts.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Operator's computer systems</strong></em></span> are the software and hardware owned and operated by the Operator to produce Bitcoins.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Lease Contract Purchase Date</strong></em></span> is the date the Buyer submits the request to purchase the Bitcoin Cloud Mining Contract via online form at the website unless otherwise agreed in writing between the Operator and the Buyer.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Transaction</strong></em></span> is an agreement between the Buyer and the Operator to purchase a Bitcoin Cloud Mining Contract at an agreed rate.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Price</strong></em></span> means the price for which the Buyer agrees to purchase a Bitcoin Cloud Mining Contract.</p>
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Transaction Price</strong></em></span> is the total price comprising the Price payable to the Operator for a Bitcoin Cloud Mining Contract.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="3">
+							<li><strong>Purchase of Bitcoin Cloud Mining Contract</strong></li>
+							</ol>
+							
+							<p>(a) The Buyer agrees to pay to the Operator the Transaction Price;</p>
+							 
+							<p>(b) The Operator agrees to:</p>
+							 
+							<p>i). use its best endeavors to operate the Operator's computer systems applying the hash rate agreed between the Operator and the Buyer to produce Bitcoins; and pay 10% @ current hash difficulty level for a total of 18 months</p>
+							 
+							<p>ii). Transfer such Bitcoins, to the Buyer's designated Bitcoin wallet as selected by the buyer after the Purchase Date and upon these T&amp;C</p>
+							 
+							<p>(c) the Buyer agrees that the Operator's computer systems are operated at the sole discretion of the Operator;</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="4">
+							<li><strong>Process of purchasing a Bitcoin Cloud Mining Contract</strong></li>
+							</ol>
+							
+							<p>www.gainbitcoin.com&nbsp;offers Bitcoin Cloud Mining Contracts. The Buyer accepts the Transaction Price, Price offered by the Operator upon submitting a valid purchase request via the online form at the website. By submitting such a purchase request, online payment will be processed and the Transaction is binding upon you. Please make sure that all your data is correct. If you are paying using Bitcoins please note that Bitcoin transactions in a Bitcoin wallet are not reversible. Also, it is your responsibility to ensure that your email communication is safe and protected against third party access.</p>
+							 
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Personal Account</strong></em></span></p>
+							 
+							<p>In order to purchase a Bitcoin Cloud Mining contract on&nbsp;www.gainbitcoin.com, the user has to create a personal account with the Operator providing his or her name, email address, phone number, mail address, Bitcoin wallet ID and a password. Creating a personal account is free of charge, however you have to acknowledge the terms and conditions. Your username can not be changed. The user must ensure that the username and password are kept confidential at all times. In case of misuse or abuse, the Operator reserves the right to disable your personal account. The Operator will record the amount of Bitcoins produced pursuant to the Buyer's Bitcoin Cloud Mining Contract, in the Buyer's personal account from time to time. While the Operator will use its best efforts to ensure such records are accurate and up to date, the Operator makes no guarantee as to the accuracy of any such records and reserves the absolute right at its sole discretion to vary, correct or alter such records and the Buyer has no absolute right to the amount of Bitcoins recorded on the Buyer's personal account from time to time.</p>
+							 
+							 
+							<p><span style="text-decoration: underline;"><em><strong>Bitcoin transfers</strong></em></span></p>
+							 
+							<p>The Operator will transfer Bitcoin produced pursuant to the Buyer's Bitcoin Cloud Mining Contract, to the Buyer's designated Bitcoin wallet upon request every 15th day paycycle, on 5th &amp; 20th of every month, within a 72 hour grace period and no more than bi-monthly. The Buyer agrees that the Operator will not make any such transfers, despite any request to do so.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="5">
+							<li><strong>Money Laundering Prevention</strong></li>
+							</ol>
+							
+							<p>www.gainbitcoin.com&nbsp;might ask you to confirm your identity or other personal details before we transfer Bitcoin to your wallet. This does not mean in any way that suspicion is falling on you and any information about your identity is held confidentially.</p>
+							<p>Transactions with a cash component of USD$10,000 or more;&nbsp;Any transactions or other activities regarded as suspicious.</p>
+							<p>We have imposed a transaction limit of USD$10,000 per transaction.</p>
+							<p>We are also required to keep full records of all transactions and Bitcoin transfers together with identification provided and constantly monitor any unusual or suspicious transactions of any size. By using our services you will need to identify yourself with your mobile phone number. This is done by SMS-Authentication.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="6">
+							<li><strong>User Obligations</strong></li>
+							</ol>
+							
+							<p>The Buyer warrants that he or she will only use the website in accordance with the purpose of the offered service and solely based on the T&amp;Cs. The Buyer further agrees that he or she has the authority and means to enter a transaction. Furthermore, the Buyer warrants that he or she is the legitimate owner of the monetary sums he or she intends to exchange against a Bitcoin Cloud Mining Contract and that he or she does not infringe the rights of any third party or applicable law.</p>
+							<p>In addition, the Buyer agrees not to use the website or the Bitcoin Cloud Mining Contract whether directly or indirectly for any kind of illegal activity such as money laundering, terrorism financing or negatively affecting the performance of the website. It is prohibited to use or copy any of the information or contents of this or affiliated websites. It is prohibited to send spam or distribute any other material through the website. It is prohibited to distribute any illegal material through the website or use the website in any other way than intended by the Operators.</p>
+							<p>The user must not collect any data from this website or its users without prior written permission by the Operator. Users must not use anonymous networks such as TOR to access our website.</p>
+							<p>Any misuse of our services based on these T&amp;Cs will result in the seizure of the Bitcoin produced pursuant to the Buyer's Bitcoin Cloud Mining Contract and any relevant funds.</p>
+							 
+							 
+							<p>&nbsp;</p>
+							<ol start="7">
+							<li><strong>Security</strong></li>
+							</ol>
+							
+							<p>Users are responsible for maintaining the confidentiality for and integrity of their Bitcoin wallet including its access information. The user must notify the Operator of&nbsp;www.gainbitcoin.com&nbsp;immediately if the user's wallet address has changed or if there is any other change, loss, fraud or suspicion about the user's Bitcoin wallet or any transfers in or out of it. The Operator will not be held liable for any lost Bitcoin wallet information or hacked Bitcoin wallet accounts, nor any loss arising howsoever as a result including by theft or fraud.</p>
+							<p>We closely observe any activities that might relate to money laundering or illegal activities. The Operator reserves the right to share users' information with third parties to ensure intended operations of the website and its security.</p>
+							<p>www.gainbitcoin.com&nbsp;is not liable for any damages incurred as a result of sending emails though the Internet. Emails should only be sent in encrypted format.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="8">
+							<li><strong>Intellectual Property and Linking</strong></li>
+							</ol>
+							
+							<p>The Operator and the licensors own all intellectual property rights on this and affiliated websites.</p>
+							<p>www.gainbitcoin.com&nbsp;has not reviewed all of the sites linked to the website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by our company of the site. Use of any such linked web site is at the user's own risk.</p>
+							 
+							 <p>&nbsp;</p>
+							 
+							<ol start="9">
+							<li><strong>Bitcoin Services</strong></li>
+							</ol>
+							 
+							<p>By purchasing a Bitcoin Cloud Mining Contract on our website you acknowledge and agree that:</p>
+							<p>- Bitcoin are not recognized as legal tender in certain&nbsp;countries and that Bitcoin are not regulated by any central institution and may be subject to extreme price volatility;<br> - you understand the risks involved with digital currencies including Bitcoin;<br> - you understand that the hash rate required to produce Bitcoin increases about every fortnight resulting in a diminishing return of Bitcoin per hash rate applied to production;<br> - you are responsible for protecting your Bitcoin, Bitcoin wallet, computer, software bank account, address and personal data against any theft, fraud or illegal activity;<br> - we do not accept any responsibility for any loss or damage suffered by you or any of your authorized agents or representatives, in connection with a Bitcoin Cloud Mining Contract, whether directly or indirectly, and including where you provide us with any false information;<br> - all concluded Transactions are irreversible;<br> - we are not responsible for Bitcoin transfers made to any incorrect Bitcoin wallet IDs and you and your agents agree to release us from all loss or damage suffered in connection with such Bitcoin transfers whether directly or indirectly;<br> - you have obtained independent legal and financial advice about the risks associated with buying Bitcoin, or you knowingly and voluntarily elected not to do so;<br> - we have the right to refuse any order for any reason, which is at our absolute discretion and you hereby agree to release and indemnify us in the exercise of that discretion.</p>
+							<p>The Buyer further acknowledges that trading currency including Bitcoin involves risk, especially through price fluctuation. In addition there might be unforeseen risks that are not identified in these T&amp;Cs. We cannot be held liable for any consequences of such unforeseen risks.</p>
+							 
+							<p>&nbsp;</p> 
+							<ol start="10">
+							<li><strong>Liability</strong></li>
+							</ol>
+							<p>www.gainbitcoin.com&nbsp;does not offer any legal, financial, insurance, tax, investment or associated advice. All transactions made are the sole responsibility of the Buyer considering his or her personal circumstances. We do not recommend anything available on the website.</p>
+							<p>www.gainbitcoin.com&nbsp;is not responsible for any loss suffered by the user. Information such as spot prices, buy and sell prices of Bitcoin, and the rate of production of Bitcoin per hash per second, whether on the website or at other, non affiliated platforms are for information only and is not investment advice in any form and should not be construed as such.</p>
+							<p>The service on our website is only offered to facilitate mining Bitcoin for use in international trade which is not regulated.</p>
+							<p>In no event shall&nbsp;www.gainbitcoin.com&nbsp;or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the website, or any part of it, or a Bitcoin Cloud Mining Contract, even if&nbsp;www.gainbitcoin.com&nbsp;or an authorized representative has been notified orally or in writing of the possibility of such damage. Because some jurisdictions do not allow limitations on implied warranties, or limitations of liability for consequential or incidental damages, these limitations may not apply to you. In the case that applicable law may not allow the limitation or exclusion of liability or incidental or consequential damages, our liability will be limited to the fullest extent permitted by applicable law.</p>
+							<p>Without limiting the previous paragraph and except as required by, we will not be liable (including in negligence) for any loss of profits, loss of revenue, or any direct, indirect or consequential loss or damage, incurred by or awarded against you or any other person arising directly or indirectly from your use of the website or purchase of a Bitcoin Cloud Mining Contract; or any cost, loss, liability or expense arising from death, personal injury or damage to property resulting directly or indirectly from your use of our service including purchase of a Bitcoin Cloud Mining Contract.</p>
+							<p>Furthermore, we cannot be held liable for any malfunction, breakdown, delay or interruption to the Internet connection, or if for any reason our website is unavailable at any time or for any period. We also cannot be held liable for any incorrect information from third parties displayed on our website. That applies especially to the displayed spot price of Bitcoin and the rate of production of Bitcoin per hash rate applied.</p>
+							<p>In the case of fraud, we will report all necessary information, including names, addresses and all other requested information, to the relevant authorities dealing with fraud and breaches of the law.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="11">
+							<li><strong>Disclaimer</strong></li>
+							</ol>
+							<p>The materials on our website are provided "as is".&nbsp;www.gainbitcoin.com&nbsp;makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties, including without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights. Further, we do not warrant or make any representations concerning the accuracy, likely results, or reliability of the use of the materials on our website or otherwise relating to such materials or on any sites linked to this website. The materials appearing on www.gainbitcoin.com&nbsp;could include technical, typographical, or photographic errors. We may make changes to the materials contained on its web site at any time without notice. We do not, however, make any commitment to update the materials.</p>
+							 
+							 <p>&nbsp;</p>
+							<ol start="12">
+							<li><strong>Termination or suspension</strong></li>
+							</ol>
+							<p>These terms may be terminated by either party without reason at any point of time but with prior notice. However, we may immediately terminate this agreement if the user breaches any of the clauses mentioned in our terms and conditions. In addition we reserve the right to take legal action against the user and suspend access to the website and our services. Therefore, we may block computers using user's IP address from accessing our website. In addition we may contact your Internet service provider and do such measures to block you from accessing our website and services. In addition, we may perform legal action against you and recover the costs from you. Especially if you try to use the website for illegal activities, violate any of these terms or fail to pay for your transaction or any fraud related to that. We also reserve the right to cancel transactions that are not pad for or not confirmed.</p>
+							<p>We can stop supplying our service at any time without notice to you, and we reserve the right to refuse to supply the service to any person for any reason, especially if the user registers or submits a purchase under false identity or with wrong personal information, including email address, interferes with any of the company's operations or uses language that we consider is unacceptable including vulgar, racist, sexual or offensive language.</p>
+							<p><em>No refunds are provided if the user decides to terminate its contract.</em></p>
+							 
+							<p>&nbsp;</p> 
+							<ol start="13">
+							<li><strong>Amendment, assignment, and governing law</strong></li>
+							</ol>
+							 
+							<p>We can assign our various rights under this agreement to any other person without asking your permission. Your rights are personal and not assignable.</p>
+							<p>The laws of the State of Singapore govern these terms and conditions, without regard to its conflict of law provisions, and you irrevocably and unconditionally submit to the non-exclusive jurisdiction of the courts of Singapore to resolve any dispute that arises as a result of or in connection with this agreement.</p>
+							<p>These T&amp;C are to be interpreted so that they comply with all applicable laws and if any provision does not comply then it must be read down so as to give it as much effect as possible however, if it is not possible to give that provision any effect at all then it is to be severed from this agreement in which case the remainder of this agreement will continue to have full force and effect.</p>
+							<p>These T&amp;C and our Privacy Policy are the entire agreement between the parties as to their subject matter and supersede all prior or inconsistent statements or representations as to that subject matter.</p>
+							 
+							<p>&nbsp;</p>
+							<ol start="14">
+							<li><strong>Contact us</strong></li>
+							</ol>
+							<p>Please contact us if you have questions or are not satisfied with anything.</p>
+							<p>E-Mail thegainbitcoin@gmail.com<br> VARIABLETECH PVT LTD, <br> THE FRANKLIN, <br> 3 SCIENCE PARK DRIVE, <br> SINGAPORE-118223</p>					</div>	
+            </form>	
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+
+   					 <p class="copy" style="position:relative;">© <?php echo date("Y"); ?>. GainBitcoin.Com</p>
+
+
+</div>
+<input type="hidden" value="<?php echo $this->place;?>" id="plc" name="plc">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script type="text/javascript">
+		var hash = window.location.hash;
+	// alert(hash);
+	if(hash =="#register"){
+		$("#login-box").removeClass("visible");
+		$("#signup-box").addClass("visible");
+	}
+	
+	
+	
+		function check_leg(leg){
+			
+			var LegValue  = leg.value;
+			var RefID = $("#ref_sponser_id").val();
+			var token = $('#token').val();
+			/* if(!RefID){
+				var Message = "Please enter a reference";
+				$("#ref_sponser_id_message").text(Message);
+				return false;
+			}else{
+				$("#ref_sponser_id_message").text("");
+			} */
+			// alert(LegValue);
+			if(RefID){
+				$.ajax({
+					type:"POST",
+					url:'<?php echo BASEPATH; ?>/Checkleg',
+					data: {'leg':LegValue,'ref_sponser_id':RefID,'token':token},
+					success:function(html){
+						
+						var data=	JSON.parse(html);
+						 
+						if(data['data'] != "success"){
+							$("#ref_sponser_id_message").text(data['data']);
+						}else{
+							$("#ref_sponser_id_message").text("");
+						}
+					}
+				});
+			}
+		
+		}
+	
+	function closePopup(){
+		// alert("here");
+		// $("#LeadPopup").hide();
+		$(".popup").hide();
+		return false;
+	}
+	
+	var flag=0;
+$(document).ready(function(e){
+	
+
+
+	
+	$.validator.addMethod("checkusername",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                  url: '<?php echo BASEPATH; ?>/Checkleg/checkusername',
+                  data: {'username':$('#username').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] =='success'){ check=true;}
+                    else{ check=false;}
+                }
+            });
+        return check;
+    });
+	
+	$.validator.addMethod("checkemail",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkemail',
+                data: {'email':$('#email_addr').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {  
+                	var data=	JSON.parse(res); 
+              	  
+                    if(data['success'] =='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+    $.validator.addMethod("check_reg_id",function(value,element){
+		check=false;
+		$.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkregid',
+                data: {'ref_id':$('#ref_sponser_id').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {   
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] !='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+    $.validator.addMethod("check_leg",function(value,element){
+		
+        check=false;
+
+        return true;
+		 
+    });
+	
+	$.validator.addMethod("check_count",function(value,element){
+        check=false;
+        $.ajax({
+                type: "POST",
+                url: '<?php echo BASEPATH; ?>/Checkleg/checkcount',
+                data: {'ref_id':$('#ref_sponser_id').val(),'token':$('#token').val()},
+                async:false,
+                success: function(res)
+                {   
+                	var data=	JSON.parse(res); 
+                	  
+                    if(data['success'] =='success'){ check=false;}
+                    else{ check=true;}
+                }
+            });
+        return check;
+    });
+	
+	 $.validator.addMethod("loginRegex", function(value, element){
+        return this.optional(element) || /^[a-z0-9]+$/i.test(value);
+    }, "Username must contain only letters or numbers");
+
+	 $.validator.addMethod("checkpass",function(value,element){
+			var password = $("#password").val();
+			
+			check=false;
+			var passw=  /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[&@!#+]).+$/;
+		      if(password.match(passw))  
+		      {  
+		    	  check=true; 
+		      }  
+		      else  
+		      {  
+		    	  check=false;
+		      }  
+			return check;
+		});
+
+
+	 
+	
+        $('#registerUserForm').validate({
+        	 debug: true,
+		// Rules for form validation
+			rules : {
+				username : {
+					required : true,
+					loginRegex:true,
+					minlength: 5,
+					checkusername:true,
+				},
+				email_addr : {
+					required : true,
+					email : true,
+					checkemail:true,
+                                },
+				password : {
+					required : true,
+					minlength: 6,
+					checkpass:true
+					
+                                },
+				password_rpt : {
+					required : true,
+					minlength: 6,
+					checkpass:true,
+					equalTo : "#password",
+                                },
+				ref_sponser_id: {
+					required : true,
+					check_reg_id:true,
+					check_count:true
+						 },
+				address : {
+					required : true
+				},
+				captcha : {
+					required : true,
+					equalTo : "#og_captcha",
+				},
+                                agree:{
+                                    required: true,
+                                },
+                                leg:{
+                                    required: true,
+									/* check_leg:true */
+                                },
+                         },
+
+			// Messages for form validation
+			messages : {
+				username : {
+					required : 'Please enter your first name',
+					checkusername:'Username already taken',
+					minlength: "At least {5} alphanumeric characters required.",
+					loginRegex:'Username must contain only letters or numbers'
+					
+				},
+				
+				email_addr : {
+					required : 'Please enter your email address',
+					email : 'Please enter a VALID email address',
+					checkemail:'Email already registred'
+                                        
+				},
+				password : {
+                       required: "Please enter a password.",
+                        minlength: "At least {8} characters required.",
+                        checkpass: "Password must start with Character and must contain Numbers and Special Character between &@!#."
+                                    
+                                        
+				},
+				password_rpt: {
+                        required: "Please enter a re-enter password.",
+                        minlength: "At least {8} characters required.",
+                        checkpass: "Password must start with Character and must contain Numbers and Special Character between &@!#.",
+                        equalTo:"Password not match"
+                },
+				captcha: {
+                        required: "Please enter a captcha",
+                        equalTo:"CAPTCHA wrong!!",
+                },
+				ref_sponser_id:{
+						required: "Please enter a refrence",
+						check_reg_id: 'Reference id wrong',
+						check_count:'Reference id full of level'
+				},	
+				//leg:{
+				//		required: "Please select left or right leg",
+						 /* check_leg: 'Inactivated user', */
+				//},	
+                  agree:{
+                  	required: "Please Confirm agreement",
+                   },
+				
+			},
+
+			// Do not change code below
+			errorPlacement : function(error, element) {
+				flag=1;
+				error.insertAfter(element.parent());
+			}
+		});
+});
+
+			function show_box(id) {
+			 $('.widget-box.visible').removeClass('visible');
+			 $('#'+id).addClass('visible');
+			}
+			
+			function encryptPass(pass)
+			{
+				var flag=0;
+				var newpass	= enc(pass);
+				
+
+				if (newpass.indexOf(" ") >= 0 || newpass.indexOf("+") >=0) {
+					return encryptPass();			
+				}
+				else
+				{
+					flag=1;
+				}
+				if(flag==0)
+				{
+					return	encryptPass();
+				}
+				else
+				{
+					return newpass;
+				}
+				
+			}
+		</script>

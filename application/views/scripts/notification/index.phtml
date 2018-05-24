@@ -1,0 +1,93 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<script>
+/*	
+window.onload = function() {
+  document.getElementById('data-table-simple_length').style.display = 'none';
+  document.getElementById('data-table-simple_filter').style.display = 'none';
+};	
+*/	
+</script>
+<style>
+@media only screen and (max-width: 768px) {
+    #data-table-simple_length {
+        display: none;
+    }
+    #data-table-simple_filter {
+        display: none;
+    }	
+}	
+	
+</style>	
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Notifications</h4>
+		<h5 class="text-muted page-title-alt">View all</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+					<!--	<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Notifications</b></h4>
+						</div>  -->
+						<div class="card-box-content form-compoenent">
+							<div class="bs-example table-responsive">
+								<table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+									<thead>
+									  <tr>	
+										  <th style="display:none;">S.no</th>
+										  <th style="display:none;"></th>	
+									  </tr>
+									</thead>
+									<tbody>							   		
+											<?php 
+										//echo "<pre>";
+									//print_r($this->result[0]['text']);exit;
+											if(!empty($this->result) && sizeof($this->result)>0)
+											{
+											for($j=0;$j<sizeof($this->result);$j++)
+											{
+												$date = date('d-m-Y h:i A', strtotime($this->result[$j]['created']));
+
+											?>
+												<tr>
+													<td style="display:none;"><?php echo $j;?></td>
+													<td style = "text-align:justify;">	
+														<div class="panel">
+														  <div class="card-box-head  border-b m-t-0">
+															  <h3 class="panel-title">GBNF-<?php echo $this->result[$j]['id']; ?></h3>
+														   </div>
+														   <div class="panel-body">
+															   <blockquote style="font-size:14px;"><p><?php echo $this->result[$j]['text']; ?></p></blockquote><blockquote class="blockquote-reverse" style="font-size:14px"><p><?php echo $date; ?></p><footer>By :<cite title="Source Title">Admin</cite></footer></blockquote>
+														   </div>
+														 </div>
+													</td>	
+												</tr>	
+											<?php }
+											}
+											else
+											{
+											?>	<tr>
+													<td>
+														<div class="sum-header">No current notification </div>
+													</td>	
+												</tr>	
+											<?php
+											}
+											?>
+									</tbody>
+								</table>	
+				 			 </div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>  
+    
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

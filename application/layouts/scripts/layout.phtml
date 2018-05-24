@@ -1,0 +1,65 @@
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<style>
+</style>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="shortcut icon" href="<?php echo BASEPATH;?>/images/common/favicon.jpg" />
+	<?php
+		
+		echo $this->headTitle('Aranca');
+		
+		echo $this->headScript()->appendFile(BASEPATH.'/shared/jquery-1.8.2.min.js');
+		
+
+		
+	?>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-93894880-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+
+<body>
+	<div align="center">
+		<div id="wrapper" class="loaderClass">
+			<div id="container">
+				
+				<div class="header">
+					<?php include_once dirname(dirname(__FILE__)).'/helpers/header.php';?>
+				</div>
+				
+				<div class="bannertop"></div>
+				<div class="bannerline"></div>
+				<div class="bannerbottom"></div>
+				
+				<!-- <div class="navigation">
+					<?php //include_once dirname(dirname(__FILE__)).'/helpers/navigation.php';?>
+				</div> -->
+				
+				<div id="homde_div_content">
+					<?php echo $this->layout()->content;?>
+				</div>
+				<div class="bannerline"></div>
+				<div class="footerdividerbottom"></div>
+				
+				<div class="footerarea">
+					<?php include_once dirname(dirname(__FILE__)).'/helpers/footer.php';?>
+				</div>
+<!--				<div style="color: #666666;float: left;font-family: Arial,Helvetica,sans-serif;font-size: 11px;height: 63px;padding-top: 3px;text-align: left;  vertical-align: top;">Copyright &copy; 2012 Pinpoint (India) Pvt. Ltd.</div>-->
+				
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

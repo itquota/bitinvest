@@ -1,0 +1,188 @@
+<?php
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group {
+	display: inline-block;
+	margin-right: 25px;
+	width: 300px;
+}
+.lblTxt {
+	float:left;
+}
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12 offset-1">
+<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+<ol class="breadcrumb">
+	<li class="active"><a href="<?php echo BASEPATH; ?>/Admindashboard">Home</a> > </li>
+	<li class="active"><a href="<?php echo BASEPATH; ?>/Specialoffer">Special Offers</a> > </li>	
+	<li>Edit Offers</li>
+
+</ol>
+
+
+<div class="clearfix">&nbsp;</div>
+
+
+
+
+
+
+<!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>--> <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+//	echo "<div>&nbsp;</div>";?></div>
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="panel panel-primary buynowbox col-lg-12">
+
+<div class="panel-heading buynowbox Titleheading faqtitlebg">Edit Offers</div>
+
+<div class="panel-body revenuebg">
+
+<form align="center">  
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+<div class="err" style="color:red; width:100%; float:left;">
+
+		<label for="" class="lblTxt" ></label>
+</div>
+	
+   <div class="form-group">
+    <label for="" class="lblTxt">Prize</label>
+
+     <input type="text" name="prize" value="<?php echo $this->result['prize'];?>" id="prize" class="form-control CommonInputBox"  placeholder="Enter Prize">
+
+
+      
+  </div>
+  
+  <div class="form-group">
+    <label for="" class="lblTxt">Pairs</label>
+
+     <input type="text" name="pairs" value="<?php echo $this->result['pairs'];?>" id="pairs" class="form-control CommonInputBox isnumber"  placeholder="Enter Pairs">
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Direct Pairs</label>
+
+     <input type="text" name="direct_pairs" id="direct_pairs" value="<?php echo $this->result['direct_pairs'];?>" class="form-control CommonInputBox isnumber"  placeholder="Enter Direct Pairs">
+
+
+      
+  </div>
+
+
+
+    <div>
+    <input type="hidden" name="user_id" value="<?php echo $this->result['id'];?>" id="user_id">
+    
+  <button type="button" name="specialoffer"  id="specialoffer" class="btn btn-default Commonbtn" onclick="Myfunction()">Submit</button>
+</div>
+</form>
+</div>
+</div>
+
+</div>
+
+<!-- /.row -->
+
+<!-- /.row -->
+</div>
+<!-- /#page-wrapper -->
+
+
+
+</div>
+<script>
+function Myfunction(){
+	
+	  var form_data = new FormData();
+	  var prize = document.getElementById('prize').value;
+		 var pairs = document.getElementById('pairs').value;
+		 var direct_pairs = document.getElementById('direct_pairs').value;
+
+		 var user_id= document.getElementById('user_id').value;
+		 var tokenid= document.getElementById('token').value;
+		
+		 form_data.append("prize", prize);
+		 form_data.append("pairs", pairs);
+		 form_data.append("direct_pairs", direct_pairs);
+		 form_data.append("user_id", user_id);
+		 form_data.append("tokenid", tokenid);
+		 
+		 if((prize).trim()==''){
+			$(".err").html('<label for="" class="lblTxt" style="color:red;">Please enter Prize.</label>');
+				return false;
+			}
+		 if((pairs).trim()==''){
+				$(".err").html('<label for="" class="lblTxt" style="color:red;">Please enter Pairs.</label>');
+				return false;
+			}	
+		/* if(isNaN(pairs))
+	     {
+	         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Pairs should be numbers only.</label>');
+	         return false;
+	     }*/
+		if((direct_pairs).trim()==''){
+				$(".err").html('<label for="" class="lblTxt" style="color:red;">Please enter Direct Pairs.</label>');
+				return false;
+			}
+		/* if(isNaN(direct_pairs))
+	     {
+	         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Direct Pairs should be numbers only.</label>');
+	         return false;
+	     }*/
+
+
+		 else{
+	  
+	  $.ajax({
+			url:"<?php echo BASEPATH;?>/Editoffer/offeredit",
+			type: "POST",    
+			 data: form_data,
+		      contentType: false,
+		      processData: false,
+	  	success: function(response)
+  		{
+
+				 var data=JSON.parse(response);
+			  		
+				 if(data['success']!="")
+				   { 
+						//alert("User updated successfully");
+			           $(".err").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+						window.location = "<?php echo BASEPATH;?>/Specialoffer";
+				   }
+			       else{
+			           //alert(data);return false;
+
+			    	   $(".err").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+			       }
+  		}
+		});
+
+		return true;
+		}
+	  }
+</script>

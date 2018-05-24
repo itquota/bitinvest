@@ -1,0 +1,463 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.inputhodler {
+	  width: 100%; 
+	  margin: 0 0 10px 0;
+	  text-align:center;
+  }
+  .inputhodler .formsubmit {
+		width: 80%; 
+		padding:6px 8px; 
+		border: none; 
+		background: #34495e; 
+		color: #fff; 
+		font-size: 20px; 
+		box-shadow: none; 
+		text-align: center !important;
+	}
+.inputhodler p {
+		width: 20%; 
+		display:inline-block;
+	}
+.inputhodler input {  
+		box-shadow: none !important;  
+		text-align: left;
+		width: 75%; 
+		padding:6px 8px; 
+		border: 1px solid #dadada;
+		vertical-align: top;
+	} 
+	
+.req-admin .modal-header {
+  color: #fff;
+  font: 20px "robotobold";
+}
+</style>
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+           
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Withdrawals</li>
+  
+            </ol>
+         
+<form style="margin-left: 15px;" action="<?php echo BASEPATH; ?>/Manualwithdrawals/uploadcsv" method="post" enctype="multipart/form-data">
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:green;"><?php echo $authUserNamespace->msg; ?></label>
+ 
+  </div>
+ <?php $authUserNamespace->msg=""; }
+ if(!empty($authUserNamespace->message) && $authUserNamespace->message!=''){?>
+  <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->message; ?></label>
+ 
+  </div>
+ 
+ 
+<?php $authUserNamespace->message=""; }?>
+
+<div class="form-group"><label for="inputCName" class="lblTxt">Upload
+CSV File :</label> <input type="file" name="file" id="file" placeholder="upload file"></div>
+
+
+
+<input type="submit" class="btn btn-default Commonbtn"
+	id="manual_withdrawal" name="manual_withdrawal" value="SUBMIT"/>
+
+
+</form>
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                                       <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">SR. NO </th>
+                        <th class="sortboth">USERNAME</th> 
+                        <th class="sortboth">AMOUNT</th>
+                         <th class="sortboth">ADDRESS</th> 
+						  <th class="sortboth">WALLET ADDRESS / TRANSACTION ID</th>
+                          <th class="sortboth">REQUEST DATE</th>
+                           <th class="sortboth">STATUS</th>
+							<th class="sortboth">COMMENTS</th>
+						    <th class="sortboth">ACTION</th>
+                         
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                  <?php $j=1;
+                  foreach($this->result as $result1){ ?>
+                    <tr>
+					<td scope="row"><?php echo $j; ?></td> 
+                     <td scope="row"><?php echo $result1['username'];?></td> 
+                     <td><?php echo $result1['amount'];?></td>
+                      <td><?php echo $result1['wallet_address'];?></td> 
+					  <td><?php echo $result1['addr'] ;?><br><?php echo $result1['transaction_id'];?></td>
+                       <td><?php echo date("d-m-Y H:m:s", strtotime($result1['request_date']));?> </td> 	 
+                      <td><?php  echo $result1['status']; ?>
+						<td><?php  echo $result1['comment']; ?>
+					</td> 
+                      <td>
+                      <?php 	$user_id=$authUserNamespace->user_id;
+                            $data7=$misc_obj->GetAccessRightByUserId('30',$user_id);
+							if((!empty($data7->edit) && ($data7->edit==1)) || $authUserNamespace->user=='admin')
+							{?>
+
+                      
+                     	  
+
+                                                     <?php 
+                                                    	 
+														$withdrawal_status = $result1['status']; }
+														if($withdrawal_status=='Requested' ){?>
+
+
+														<a href="#" onclick="getwithdrawalsdata('<?php echo $result1['id']; ?>','<?php echo isset($result1['username'])? $result1['username']:""; ?>','<?php echo $result1['amount']; ?>','<?php echo $result1['wallet_address']; ?>')"  >
+														<?php echo "Approve"; ?>
+														</a>
+														<a href="#" onclick="rejectwithdrawal('<?php echo $result1['id']; ?>')"  >
+															Reject
+														</a>
+														<?php }else{?>
+														
+														
+                                                       <label><?php //echo $withdrawal_status; ?></label>
+													
+														<?php }?>
+														
+                                                         
+
+                                               
+                        
+                        
+                          </td>
+                           
+                  </tr> 
+
+                
+
+                  
+
+               
+             
+             
+             <?php $j++;}?>
+                 </tbody>
+                  </table> 
+				  <!--  pagination code Start -->    
+       <?php 	if($this->pages > 1){ ?>     
+             <ul class="pagination">
+		 <?php 
+		
+		 if(!empty($_GET['page']))
+		 {
+			$StartPage=$_GET['page'];
+		 }
+		 else
+		 {
+			$StartPage=1;
+		 }
+		if($this->pages <= 5){
+			  $StartPage = 1;
+		 }else if(!empty($_GET['page']) && $_GET['page'] < $this->pages-6){
+			 // $pageDiff = $pages - $_GET['page'];
+			// $StartPage = $pages - $pageDiff;
+			 $StartPage = $_GET['page']+1;
+		 }else if(!empty($_GET['page']) && $_GET['page'] >= $this->pages-6){
+			 $StartPage = $this->pages - 5;
+		 }
+			// $limitPage = $StartPage + 4;
+			 if($this->pages > 5){
+				 $limitPage = $StartPage + 4;
+			 }else{
+				 $limitPage = $this->pages;
+			 }
+			 
+		 if(!empty($_GET['page']) && $_GET['page'] > 1){
+		 
+		 ?>
+			<?php 
+				}
+			 ?>
+			<li class="paginate_button previous disabled" id="data-table-simple_previous"><a href="<?php echo BASEPATH; ?>/Manualwithdrawals?page=1" aria-controls="data-table-simple" data-dt-idx="0" tabindex="0"> </a></li>
+			<?php 
+			
+			for($j=$StartPage;$j<=$limitPage;$j++){
+                    ?>
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Manualwithdrawals?page=<?php echo $j; ?>"><?php echo $j ;?></a></li>
+			<?php }
+			
+			 if( $_GET['page'] < $this->pages-1){
+				 
+                    ?>
+			<?php }
+			
+                    ?>
+           <li class="paginate_button next" id="data-table-simple_next"><a href="<?php echo BASEPATH; ?>/Manualwithdrawals?page=<?php echo $this->pages?>" aria-controls="data-table-simple" data-dt-idx="3" tabindex="0"> </a></li>         
+		 </ul>
+		   <?php } ?>     
+       <!--  pagination code End -->           
+
+              </div>
+
+        </div>
+
+    </div>
+
+       
+        
+      
+    </div>
+         
+
+      
+
+       
+
+       
+
+       
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+  <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">      
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    	<div
+			class="modal req-admin"
+			id="req-admin-kit"
+		>	
+		<div class="modal-dialog popup" >
+		<div class="modal-content">
+		<div class="modal-header">Withdrawal
+		<button
+			type="button"
+			class="close"
+			data-dismiss="modal"
+			aria-hidden="true" onclick="window.location.reload();return false;"><i class="is close-btn"></i></button>
+		</div>
+		<div class="modal-body g-auth-body">
+			<p id="message"></p>
+			<form name="formkit" id=""formkit"" action='' method="post">
+			<?php if(!empty($this->msg) && $this->msg!='')
+				{
+				?>
+  			 <div>
+  			  <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+ 	
+ 			 </div>
+			 <?php } ?>
+				<div class="inputhodler" id="kit_err" style="display:none;">
+			               
+	            </div>	          
+	           
+	            <div class="inputhodler">
+	                <p><strong> Transaction ID:</strong></p> <input type="text" name="transactionid" id="transactionid" placeholder="Transaction ID" value="" >
+	            </div>
+                <div class="inputhodler">
+	                <p><strong> Wallet Address:</strong></p> <input type="text" name="adminwalletaddress" id="adminwalletaddress" placeholder="Wallet Address" value="" >
+	            </div>				
+	           	<input type="hidden" readonly name="withdrawalsid" id="withdrawalsid" placeholder=""  Value="" >
+	           		<input type="hidden" readonly name="username" id="username" placeholder=""  Value="" >
+	           		<input type="hidden" readonly name="amount" id="amount" placeholder=""  Value="" >
+	           		<input type="hidden" readonly name="walletaddress" id="walletaddress" placeholder=""  Value="" >
+	            <div class="inputhodler btncls" >
+	                <input style="width:30%;" id="manual_withdraw" type="button" value="SUBMIT" name="SUBMIT" onclick="withdrawals()" class="formsubmit inputcls">
+	            </div>	
+            </form>	
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+    
+	<!-- Reject popup -->
+    <div
+			class="modal req-admin"
+			id="req-reject"
+		>	
+		<div class="modal-dialog popup" >
+		<div class="modal-content">
+		<div class="modal-header">Reject Withdrawal Request
+		<button
+			type="button"
+			class="close"
+			data-dismiss="modal"
+			aria-hidden="true" onclick="window.location.reload();return false;"><i class="is close-btn"></i></button>
+		</div>
+		<div class="modal-body g-auth-body">
+			<p id="message"></p>
+			<form name="formkit"  action='' method="post">
+		
+				<div class="inputhodler" id="cancel_req_err" style="display:none;">
+			               
+	            </div>	          
+	           
+	            <div class="inputhodler">
+	                <p style="float: left;width: 32%;"><strong> Reason for Rejection:</strong></p>
+<!--	                 <input type="text" name="rej_reason" id="rej_reason" placeholder="" value="" >-->
+					<textarea  style="width:50%"class="form-control CommonInputBox" id="rej_reason" name="cmt" ></textarea>
+	            </div>
+               	<input type="hidden" readonly name="withdrawals_id" id="withdrawals_id" placeholder=""  Value="" >			
+	     
+	            <div class="inputhodler btncls" >
+	                <input style="width:30%;" id="reject_withdraw" type="button" value="SUBMIT" name="SUBMIT" onclick="rej_withdrawal()" class="formsubmit inputcls">
+	            </div>	
+            </form>	
+		</div>
+		</div>
+		<!-- /.modal-content --></div>
+		<!-- /.modal-dialog --></div>
+		
+    <!-- Script for this page -->
+    <script  data-cfasync='false' type="text/javascript">
+	
+			function getwithdrawalsdata(withdrawals_id,username,amount,walletaddress)
+			{
+				$('#kitnodata').val("");
+				$('#withdrawalsid').val(withdrawals_id);
+				$('#username').val(username);
+				$('#amount').val(amount);
+				$('#walletaddress').val(walletaddress);
+				$("#message").html("");
+				$('#req-admin-kit').addClass('openpop');
+                 return false;
+			}
+
+			function rejectwithdrawal(withdrawals_id)
+			{
+				
+				$('#withdrawals_id').val(withdrawals_id);
+				$("#message").html("");
+				$('#req-reject').addClass('openpop');
+                 return false;
+			}
+			
+			function withdrawals()
+			{
+				$('#kit_err').empty();
+				$('#manual_withdraw').css('disabled','disabled');
+				var transactionid=$('#transactionid').val();
+				var withdrawalsid=$('#withdrawalsid').val();
+				var username=$('#username').val();
+				var amount=$('#amount').val();
+				var walletaddress=$('#walletaddress').val();
+				var adminwallet=$('#adminwalletaddress').val();
+				var token=$('#token').val();
+
+				   if(!transactionid && transactionid=='')
+				{
+					$('#kit_err').empty();
+					$('#kit_err').append('Transaction Id should not be blank.');
+					$('#kit_err').css("display","block");
+					$('#kit_err').css("color","red");
+				}
+				else if(!adminwallet && adminwallet==''){
+					$('#kit_err').empty();
+					$('#kit_err').append('Wallet Address should not be blank.');
+					$('#kit_err').css("display","block");
+					$('#kit_err').css("color","red");
+				}
+				else
+				{ 
+					$.ajax({
+	                      type: 'POST',
+	                      url: "<?php echo BASEPATH; ?>/Manualwithdrawals/changewithdrawalstatus" ,
+					  data:"transactionid="+transactionid+"&withdrawalsid="+withdrawalsid+"&username="+username+"&amount="+amount+"&walletaddress="+walletaddress+"&adminwallet="+adminwallet,
+	                  success: function (data) {
+	                   	var json_obj = $.parseJSON(data);
+	            		if(json_obj['success']=='success')
+	            		{
+							//alert("Updated successfully");     
+							$("#message").html("Updated successfully");
+							$("#message").css("color","green");								
+							 window.location ="<?php echo BASEPATH;?>/Manualwithdrawals";
+					   }
+	                   else{
+	                	  // alert("Failure"); 
+							$("#message").html("Failure");	
+							$("#message").css("color","red");								
+	                       window.location ="<?php echo BASEPATH;?>/Manualwithdrawals";
+	                   }
+	                   
+	                }
+
+	               
+	               
+	            	});
+				}
+			}
+		
+		function rej_withdrawal(){
+				$('#cancel_req_err').empty();
+				
+				var rej_reason = $('textarea#rej_reason').val();				
+				var withdrawals_id=$('#withdrawals_id').val();
+				
+				if(!rej_reason && rej_reason=='')
+				{
+					$('#cancel_req_err').empty();
+					$('#cancel_req_err').append('Reason should not be blank.');
+					$('#cancel_req_err').css("display","block");
+					$('#cancel_req_err').css("color","red");
+				}
+				else
+				{ 
+					$.ajax({
+	                      type: 'POST',
+	                      url: "<?php echo BASEPATH; ?>/Manualwithdrawals/rejectwithdrawal" ,
+					  data:"withdrawals_id="+withdrawals_id+"&comment="+rej_reason,
+	                  success: function (data) {
+	                   	var json_obj = $.parseJSON(data);
+	            		if(json_obj['success']=='success')
+	            		{
+							//alert("Updated successfully");     
+							$("#message").html("Updated successfully");
+							$("#message").css("color","green");								
+							 window.location ="<?php echo BASEPATH;?>/Manualwithdrawals";
+					   }
+	                   else{
+	                	  // alert("Failure"); 
+							$("#message").html("Failure");
+							$("#message").css("color","red");								
+	                       window.location ="<?php echo BASEPATH;?>/Manualwithdrawals";
+	                   }
+	                   
+	                }
+
+	               
+	               
+	            	});
+				}
+				
+			}
+		</script>

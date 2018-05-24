@@ -1,0 +1,354 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+<script type="text/javascript">
+
+window.onload=function()
+{	
+	var pmid=document.getElementById('projectmanager').value;
+
+	<?php if(isset($this->pro_type) && $this->pro_type=="adhoc") { ?> countworking(pmid,'adhoc'); <?php }?>
+	<?php if(isset($this->pro_type) && $this->pro_type=="contract") { ?> countworking(pmid,'contract'); <?php }?>
+	
+}
+
+function save1()
+{		
+		saveForm('<?php echo BASEPATH;?>/project/plpmclosure','closure_form','closure_form');
+}
+
+//	$(self).bind("change", function() {
+  //  filename.val($(self).val());
+//	}); 
+//	$(self).bind("change", function() {
+  //  var s = $(self).val().replace(/(c:\\)*fakepath/i, '');
+  //  filename.val(s);
+//	});
+
+function back()
+{	
+	var annpr_id=0;
+	annpr_id=document.getElementById('annprojectid').value;
+	<?php if(isset($authUserNamespace->designation_id) &&  ($authUserNamespace->designation_id=="56" || $authUserNamespace->designation_id=="57") ) 
+	{
+		if(isset($this->pro_type) && $this->pro_type=="adhoc")
+		{ ?>
+		window.location.href = "<?php echo BASEPATH;?>/project/index";
+		<?php }else if(isset($this->pro_type) && $this->pro_type=="contract")
+		{ ?>
+		window.location.href = "<?php echo BASEPATH;?>/subproject/index/id/"+annpr_id;
+		<?php }
+		
+	}else if(isset($authUserNamespace->designation_id) &&  ($authUserNamespace->designation_id=="14")) {
+	
+		if(isset($this->pro_type) && $this->pro_type=="adhoc")
+		{ ?>
+		window.location.href = "<?php echo BASEPATH;?>/projectmanager/index";	
+		<?php }if(isset($this->pro_type) && $this->pro_type=="contract")
+		{ ?>
+		window.location.href = "<?php echo BASEPATH;?>/subproject/index/id/"+annpr_id;	
+		<?php }
+		
+	}?>
+	
+}
+
+ function sample(value)
+ {
+	// alert(value);
+	$('#hiddensampleattached').val(value);
+ }
+ function feedbacksent1(value)
+ {
+	$('#hiddenfeedbacksent').val(value);
+	 
+ }
+
+ function triggermail1(value)
+ {
+	 $('#hiddentriggermail').val(value);
+	 
+ }
+
+ function casestudy1(value)
+ {
+	 $('#hiddencasestudy').val(value);
+	 
+ }
+
+ function projecttobeclosed1(value)
+ {
+	 $('#hiddenprojectclosedopen').val(value);
+	 
+ }
+
+ 
+ function inputfile(file)
+	{
+		jAlert("File Uploaded Successfully");
+		var upload = $('#upload').val(file);
+	}
+
+	
+ function download123()
+	{
+		link = $('#upload').val();
+		if(link !="")
+		{
+		var url = "<?php echo BASEPATH;?>"+link;
+		window.open(url,'_blank');
+		}
+		else
+		{
+			alert('Please Upload a file for download');
+		}	
+	}
+
+ function countworking(id,type)
+ {
+ 	//alert(id);
+
+ 	var counter="0";
+ 	var projecttype=type;
+ 	$.ajax({
+ 		url: "<?php echo BASEPATH; ?>/project/workingproject",
+ 		type: "POST",    
+ 		data: "empid="+id+"&type="+projecttype,
+ 	    success: function(response)
+ 	    { 
+ 			j=0;
+ 			
+ 			if((response!="") && (response!=null))
+ 				 { 
+ 					
+ 				 var jsonObject = JSON.parse(response);
+ 				 for(m=0;m<jsonObject.length;m++)
+ 					{
+ 						
+ 							var occupacycount= jsonObject[m]['count'];
+ 							//alert(option_element);	
+ 							document.getElementById('occ').innerHTML="";	
+ 							if(occupacycount==1)
+ 							document.getElementById('occ').innerHTML=":working on " +occupacycount+" project";	
+ 							else
+ 								document.getElementById('occ').innerHTML=":working on " +occupacycount+" projects";			
+ 							
+ 							
+ 						}					
+ 				}
+ 			
+ 				
+ 		}
+ 	});
+ }
+ 
+</script>
+<style type="text/css">
+#holder {
+margin-bottom:0px;!important
+}
+#holder input
+{
+	float:right;
+}
+#holder .dual input[type="radio"]
+{
+	width:15px;
+	height:15px;
+}
+#holder .dual label {
+    min-width: 35px;
+}
+</style>
+</head>
+<body>
+<form  action="" id="closure_form" name="closure_form" method="post" enctype="multipart/form-data">
+<div id="subheader">
+	<div class="wrapper">
+	<?php
+		 global $rand;
+		 function RandNumber($e){
+		 
+		 $rand="";
+		 for($i=0;$i<$e;$i++){
+		 $rand =  $rand .  rand(0, 9); 
+		 }
+		 return $rand;
+		
+		 } 
+	?>
+	<?php if($this->common_list && $this->common_list !=""){?>
+	<?php foreach ($this->common_list as $common_list){
+		//print_r($common_list->budgeted_hrs);exit;
+	?>
+	
+	<input type="hidden" name="annprojectid" id="annprojectid" value="<?php if(isset($common_list->annproject_id) && $common_list->annproject_id!=""){echo $common_list->annproject_id;}?>" >
+   	  <h5>Project Closure</h5>
+        <hr>
+		<br class="clear">
+		<div id="holder" style="width:285px;">
+        	<label>Client Name<em>*</em></label>
+            <select name="clientname" id="clientname" class="field med" errortag="Client Name" disabled>
+              <option value="">Please Select</option>
+            <?php	foreach ($this->clientname_list as $clientname_list){?>
+			<option  <?php if(isset($common_list->client_id)) {if($clientname_list->id == $common_list->client_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>"><?php echo $clientname_list->name;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientname_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+        <div id="holder" style="width:616px;">
+        	<label style="width:100px;" >Project Title<em>*</em></label>
+            <input name="projecttitle" id="projecttitle" type="text" value="<?php if(isset($common_list->title) && $common_list->title!=""){echo $common_list->title;}?>" class="field" style="width:493px;" errortag="Project Title" readonly="readonly"/>
+        	<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projecttitle_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+  		<!-- <div id="holder" style="margin:0;width:140px;"><strong>Project ID:</strong> <input style="width:78px;float:right;" type="text" value='<?php if(isset($common_list->project_id) && $common_list->project_id !=""){ echo $common_list->project_id;} else {echo RandNumber(10);}?>' name="projectid" id="projectid" class="projectid" readonly/></div> -->
+        <br class="clear">
+  		<div id="holder" style="width:286px;">
+        	<label style="width:68px;">Practice<em>*</em></label>
+            <select name="practice" id="practice" class="field med" errortag="Practice" style="margin: 0;" disabled>
+              <option value="">Please Select</option>
+              	<?php	foreach ($this->practice_list as $practice_list){?>
+			<option <?php if(isset($common_list->practice_id)) {if($practice_list->practiceid == $common_list->practice_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid) echo "selected";?>><?php echo $practice_list->value;?></option>
+			<?php } ?> 	
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="practice_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+        <div <?php if($authUserNamespace->designation_id=="14"){?>style="display:none;" <?php }?>id="holder" style="margin:0;width:301px;">
+        	<label>Project Manager<em>*</em></label>
+            <select name="projectmanager" id="projectmanager" class="field med" errortag="Project Manager" <?php if(isset($this->pro_type) && $this->pro_type=="adhoc") {?>onchange="countworking(this.value,'adhoc');" <?php } else if(isset($this->pro_type) && $this->pro_type=="contract") {?> onchange="countworking(this.value,'contract');" <?php }?> disabled>
+              <option value="">Please Select</option>
+            <?php	foreach ($this->projectmanager_list as $projectmanager_list){?>
+			<option <?php if(isset($common_list->pr_manager)) {if($projectmanager_list->m_id == $common_list->pr_manager) {?> selected="selected" <?php }} ?> value="<?php  if(isset($projectmanager_list->m_id) && $projectmanager_list->m_id !=""){ echo $projectmanager_list->m_id;}?>"<?php if($this->projectmanager==$projectmanager_list->m_id) echo "selected";?>><?php echo $projectmanager_list->managername;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmanager_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+        <br class="clear">
+  <div id="holder" style="margin-right:43px;width:284px;">
+        	<label>Start Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($common_list->st_date) && $common_list->st_date !=""){ echo $common_list->st_date;}?>"  readonly onClick="GetDate(this);" style="width:179px;float:right;" errortag="Start Date" disabled/>
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="startdate_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      </div>
+      <div id="holder" style="width:277px;">
+        	<label>End Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($common_list->end_date) && $common_list->end_date  !=""){ echo $common_list->end_date ;}?>"  readonly onClick="GetDate(this);" style="width:179px;" errortag="End Date" disabled/>
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="enddate_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      </div>
+      <br class="clear">
+      <div id="holder" style="width:288px;">
+      		<label>Budgeted Hrs<em>*</em></span></label>
+              <input style="float:left;" name="budgetedhrs" id="budgetedhrs" value="<?php if(isset($common_list->budgeted_hrs) && $common_list->budgeted_hrs!=""){echo $common_list->budgeted_hrs;}?>" type="text" class="field" errortag="Budgeted Hrs" readonly="readonly"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="budgetedhrs_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+      
+      <div id="holder" style="width:288px;">
+      	<label style="width: 97px;">Actual Hrs<em></em></label>
+              <input style="float:left;" name="actualhrs" id="actualhrs" type="text" class="field" errortag="Actual Hrs" value="<?php if(isset($this->actualhrs) && $this->actualhrs!="" ) echo $this->actualhrs;?>" readonly="readonly"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="actualhrs_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+        <br class="clear"> 
+        
+  </div>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+   	  	  <div class="block">
+			<div id="holder" style="margin:0 5px 0 80px;width:326px;">
+        	<label>Send client feedback<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="feedbacksent" type="radio" <?php if (isset($common_list->clienfeedback_sent) && $common_list->clienfeedback_sent !="" && $common_list->clienfeedback_sent  == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle;float:left;" onclick="feedbacksent1(this.value);"/>Yes</label>
+            	<label class="options"><input name="feedbacksent" type="radio" <?php if (isset($common_list->clienfeedback_sent) && $common_list->clienfeedback_sent !="" && $common_list->clienfeedback_sent  == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle;float:left;" onclick="feedbacksent1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="feedbacksent_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      		<input type="hidden" name="hiddenfeedbacksent" id="hiddenfeedbacksent" value="N" />
+        </div>
+        <div id="holder" style="width:444px;">
+        	<label style="width: 225px;">Develop case study<em>*</em></label>
+           <div class="dual">
+            	<label class="options"><input name="casestudy" type="radio" <?php if (isset($common_list->case_att) && $common_list->case_att!="" && $common_list->case_att == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle;float:left;" onclick="casestudy1(this.value);"/>Yes</label>
+            	<label class="options"><input name="casestudy" type="radio" <?php if (isset($common_list->case_att) && $common_list->case_att!="" && $common_list->case_att == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle;float:left;" onclick="casestudy1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="casestudy_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        	<input type="hidden" name="hiddencasestudy" id="hiddencasestudy" value="N" />
+        	</div>
+            <br class="clear">
+            
+            <div id="holder" style="width:409px;">
+        	<label style="margin: 0 0 0 108px;">Develop Sample<em>*</em></label>
+        	<div class="dual">
+            	<label class="options"><input name="sampleattached" type="radio" <?php if (isset($common_list->sample_att) && $common_list->sample_att!="" && $common_list->sample_att == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle;float:left;" onclick="sample(this.value);"/>Yes</label>
+            	<label class="options"><input name="sampleattached" type="radio" <?php if (isset($common_list->sample_att) && $common_list->sample_att!="" && $common_list->sample_att == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle;float:left;" onclick="sample(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="sampleattached_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      		<input type="hidden" name="hiddensampleattached" id="hiddensampleattached" value="N" />
+        </div>
+        
+        <div id="holder" style="margin:0 0 0 0px;width:415px;">
+        	<label>Send email to accounts for invoicing<em>*</em></label>
+        	<div class="dual">
+            	<label class="options"><input name="triggermail" type="radio" <?php if (isset($common_list->trigger_mail) && $common_list->trigger_mail!="" && $common_list->trigger_mail == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle;float:left;" onclick="triggermail1(this.value);"/>Yes</label>
+            	<label class="options"><input name="triggermail" type="radio" <?php if (isset($common_list->trigger_mail) && $common_list->trigger_mail!="" && $common_list->trigger_mail == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle;float:left;" onclick="triggermail1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="triggermail_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+       		<input type="hidden" name="hiddentriggermail" id="hiddentriggermail" value="N" />
+        </div>
+        <br class="clear">
+          </div>
+          <div class="block">
+            <div id="holder" style="width: 288px; margin: 0px 0px 0px 80px;"><span class="option">Project Comments/Learning:</span><br>
+             <textarea id="projectlearnings" name="projectlearnings"  style="width:710px;resize:none;height: 84px;"><?php if(isset($common_list->pr_learnings) && $common_list->pr_learnings!="") echo $common_list->pr_learnings;?></textarea>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectlearnings_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+          </div>
+          
+          <div id="flow_left" class="flow_left" style="text-align:left;margin-top:1px;">
+   	  	  <input name="upload" id="upload" type="hidden" value="<?php if(isset($common_list->file_path) && $common_list->file_path !=""){ echo $common_list->file_path;}?>" ></input>
+   	 			<a rel="<?php echo BASEPATH ;?>/project/uploadfile/id/<?php if(isset($this->uid) && $this->uid!= "" ){echo $this->uid; }?>/type/<?php if(isset($this->type) && $this->type!= "" ){echo $this->type; }?> " href="javascript:void(0);" class="createbg openskillbox" <?php if(isset($this->view1) && $this->view1!= "" ){?>style="display:none";<?php }?>>Upload</a> 	 	  	
+			<div style="color:#666666;font-style:italic; <?php if(isset($this->view1) && $this->view1!= "" ){?>display:none";<?php }?>">(Upload Supporting file for the Final Deliverable, if any)</div>
+   	  	  </div>
+   	  	  
+          <div class="flow_right" style="margin:0 0 0 10px;"><input name="Submit" type="button" value="Back" onclick="back();" class="searchbg"/></div>
+          <div class="flow_right"><input name="Submit" type="button" onclick="save1();" value="Submit" class="searchbg"/></div>
+          <br class="clear">
+        </div>
+        <!--Ends Here -->  
+        <?php } } ?>  
+    </div>    
+</div>
+</form>
+</body>
+</html>

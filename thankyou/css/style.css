@@ -1,0 +1,68 @@
+
+
+@font-face {
+		font-family:"[Days]";
+		src:url("../fonts/Days.ttf") format('truetype');
+		font-family:"[Days]";
+		
+		}
+body{ min-height:auto;}
+
+#bg_img {background-image:url(../img/bg_img.png);
+min-height:400px;
+padding-top:0px;}
+
+.paybits_content{ font-size:36px;
+font-family:"[Days]";
+color:#607D8B;
+padding-top:20px;}
+
+.thumb_circle{
+border-radius:50%;
+width:108px;
+height:108px;
+background-color:#f0f1f5;
+position:relative;
+box-shadow: 0px 5px 5px #555;
+color:#2a1e45;
+margin-top:85px;	
+
+}
+.thumb_pos {
+    padding-top: 13px;
+    padding-left: 15px;
+}
+.bg_top { background-color:#23b67f;
+box-shadow: 5px 5px 5px #555;
+min-height:300px;}
+
+.bg_bottom{
+	background-color:#ffffff;
+box-shadow: 5px 5px 5px #555;
+min-height:250px;
+	
+}
+
+.ryt_img{ padding-top:10px;}
+
+.thank_you {font-size:40px;
+font-family:"[Days]";
+color:#23b67f;
+}
+
+@media (max-width:320px) {
+	body{ min-height:1000px;}
+	
+	#bg_img {
+
+padding-top:8px;
+}		
+}
+
+@media (min-width:768px) and (max-width:991px)
+{
+#bg_img {
+   
+    padding-top: 205px;
+}	
+}

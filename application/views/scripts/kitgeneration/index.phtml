@@ -1,0 +1,348 @@
+<?php
+$unique = rand(1111, 9999);
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$common_obj = new Gbc_Model_Custom_CommonFunc();
+
+?>
+
+<style>
+    li a:hover, a li:focus {
+        background: transparent;
+        color: #364a5e;
+    }
+    .col-lg-2 {
+        width: 9.667%;
+    }
+    textarea {
+        resize: none;
+    }
+    #ship_addr {
+        display: none;
+    }
+	input[type="radio"]:checked+label {
+	  background-color: #60b761;
+	}
+	.c-con{
+		background: #fff;
+		text-align: center;
+		padding: 10px;	
+	}
+	.panel-body{
+		background: #f0f3f4;
+		text-align:center;
+	}
+    .form-group {
+        text-align: left;
+    }
+    textarea.form-control {
+        height: 34px;
+    }
+   .btn-inverse{
+	   background-color: #000;
+	   color: #fff;
+    }
+	.invalid{
+		color:red;	
+	}
+</style>
+
+<div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Contracts</h4>
+		<h5 class="text-muted page-title-alt">Buy Contract</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-content form-compoenent">
+							<div class="row"> 
+								<div class="col-lg-12"> 
+									<div class="panel-group" id="accordion-test-2" style = "margin-left: 200px;"> 
+										<div class="panel  panel-primary "> 
+											<div class="panel-heading"> 
+												<h4 class="panel-title"> 
+													<a data-toggle="collapse" data-parent="#accordion-test-2" href="#collapseOne-2"  aria-expanded="true" class="collapsed">
+													   Select Kit Type
+													</a> 
+												</h4> 
+											</div> 
+											<div id="collapseOne-2" class="panel-collapse collapse in" aria-expanded="true" > 
+												<div id = "select_kit">
+													<form action="<?php echo BASEPATH; ?>/Invoice/purchasekit" method="post" id="kit_form">
+														<input type="hidden" name="unique" value="<?php echo $unique; ?>">
+														<input type="hidden" value="<?php echo $authUserNamespace->token; ?>" name="token">
+														<div class="panel-body">
+															<div class="con-container">
+																<?php
+																	$i = 0;
+																	foreach ($this->sha_contract as $getCotracts) {
+																		if ($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7) {
+																			$type = "ROI";
+																		} else if ($getCotracts['contract_id'] == 4) {
+																			$type = "Silver";
+																		} else {
+																			$type = "Referral";
+																		}
+																		 if ($i % 3 == 0) {
+																?>
+																<div class="con-content">
+																	<?php } ?>
+																	<div class="col-lg-4" style ="padding:5px;">
+																		<div class="c-con"  >
+																			<h4><?php echo($getCotracts['contract_name']) ?></h4>
+																			<span style ="display:block;"><?php echo $getCotracts['contract_qty'] ?> <?php if ($getCotracts['total_price'] <= 0.5) { ?>GHS <?php } else { ?> THS <?php } ?></span>
+																			<span style ="display:block;"><?php echo  ($getCotracts['total_price']) ; ?>
+																				BTC
+																			</span>
+																		
+																			<div class="btn_container" style = "margin: 10px;">
+																				<input type="radio" name="kit_type"
+																						class="" <?php if (!empty($disabled) && $disabled == 1) { ?> disabled <?php } ?>
+																						value="<?php echo $getCotracts['contract_id'] ?>"
+																						id="<?php echo $getCotracts['contract_name']; ?><?php echo $getCotracts['contract_id'] ?>"
+																						onclick="$('#no_of_kits').val('');" style = "display:none;">
+																					<label for = "<?php echo $getCotracts['contract_name']; ?><?php echo $getCotracts['contract_id'] ?>" class="btn btn-inverse btn-md" >SELECT</label>
+																			
+																			</div>
+																		</div>
+																	</div>
+																	<?php if ($i == 2 || $i == 5 || $i == 8 || $i == 11 || $i == 14 || $i == (sizeof($this->sha_contract) - 1)) { 
+																			 if ($i != 0) { ?>
+																			<div class="clearfix"></div>
+																			</div>
+																		<?php 
+																				} 
+																			} 
+																			 $i++;
+																	}
+																?>
+																
+																<div class="clearfix"></div>
+																<div class="con-content">
+																	<div class="col-lg-12" style ="padding:5px;">						
+																		<div class="c-con">
+																			<div style="font-size:14px;font-family:robotoregular;" id="selectkits"></div>
+																			<div class="col-lg-4">
+																				<div class="">
+																					<label for="">No. of Kits</label>
+																					<input name="no_of_kits" id="no_of_kits" class = "form-control" placeholder = "Enter No. of kits">
+																				</div>
+																			</div>
+																			<div class="col-lg-8">
+																				<label for="">Total Amount (BTC)</label>
+																				<input type="text" value="" id="total_amount" name="total_amount" readonly="readonly" class = "form-control" style = "background:#fff;">
+																				<input type="hidden" id="real_total_amount" name="real_total_amount">
+																				<input type="hidden" name="buy_now" value="sha">
+																			</div>
+																			
+																				<div class="clearfix"></div>
+																				<br>
+																			
+																				 <div class="col-lg-4">
+																			<label for="">Comment</label>
+																					<textarea type="text" value="" id="comment" name="comment"  class = "form-control" placeholder = "Enter comment" style = "height:100px;"> </textarea>
+																			
+																				</div>
+																			 
+																				<div class="clearfix"></div>
+																			<br>
+																	
+																	
+																			
+																				 <div class="col-lg-4">
+																					 <label for="">Password</label>
+																				<input type="password" value="" id="password" name="password" class = "form-control" placeholder = "Enter password" >
+																				</div>
+																																					
+																				<div class="clearfix"></div>
+																			
+																			 <div class="col-lg-12">
+																				<div class="btn_contaiiner" style ="margin-top:30px;">
+																					<input type="button" value="PURCHASE" class="btn btn-inverse btn-md" id="purchase" name="action">
+																				</div>
+																			</div>
+																			<div class="col-lg-12">
+
+																				<div id="preloader" class=""
+																					 style="width:100px;  margin: 0 auto; padding-top: 10px; width: 100px; display:none;">
+																					<img src="<?php echo BASEPATH; ?>/images/ajax-loader.gif">
+																				</div>
+
+																			</div>
+																			<div class="clearfix"></div>
+																			<div class="clearfix"></div>
+																		
+																
+															</div>
+																	</div>
+																</div>
+														
+
+															</div>
+														</div>
+
+													</form>
+
+												</div>
+											</div>
+										</div> 
+			
+                        </div> 
+                    </div>
+				</div>
+			
+		
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+	 <div class="clearfix"></div>
+<script data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+<script data-cfasync='false'>
+    $(document).ready(function () {
+        $('input[type=radio][name=kit_type]').change(function () {
+           $("#total_amount").val('');
+			$("#real_total_amount").val('');
+        });
+
+        $('#kit_form').validate({
+            // Rules for form validation
+            rules: {
+                kit_type: {
+                    required: true
+                },
+                no_of_kits: {
+                    required: true,
+                },
+				 comment: {
+                    required: true,
+                },
+				 password: {
+                    required: true,
+                }
+
+            },
+
+            // Messages for form validation
+            messages: {
+                kit_type: {
+                    required: 'Please Select Kit type',
+                },
+
+                no_of_kits: {
+                    required: "Please enter  number of kits."
+                },
+				 comment: {
+                    required: "Please enter  Comment.",
+                },
+				 password: {
+                    required: "Please enter Password.",
+                }
+
+            },
+
+            // Do not change code below
+            errorPlacement: function (error, element) {
+                error.insertAfter(element.parent());
+            }
+        });
+				 
+        $("#purchase").click(function () {
+            $('#preloader').show();
+            if ($('#no_of_kits').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').html('<em for="no_of_kits" class="invalid" style="font-style:normal;">Please enter number of kits.</em>');
+                return false;
+            }
+            else if ($('#total_amount').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').html('<em for="no_of_kits" class="invalid" style="font-style:normal;>Amount should not be blank.</em>');
+                return false;
+            }
+			else if ($('#comment').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').html('<em for="no_of_kits" class="invalid" style="font-style:normal;>Comment should not be blank.</em>');
+                return false;
+            }
+			else if ($('#password').val() == '') {
+                $('#preloader').hide();
+                $('#selectkits').empty();
+                $('#selectkits').html('<em for="no_of_kits" class="invalid" style="font-style:normal;>Password should not be blank.</em>');
+                return false;
+            }
+            else {
+                $.ajax({
+                    url: "<?php echo BASEPATH; ?>/Invoice/purchasekit",
+                    type: 'POST',
+                    data: $("#kit_form").serialize(),
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.success != '') {
+						  	$('#selectkits').html('<em for="no_of_kits" class="valid">Kits generated successfully</em>');
+                            $('#preloader').hide();
+                          
+                        }
+                        else {
+                            $('#preloader').hide();
+                         
+                            $('#selectkits').html('<em for="no_of_kits" class="invalid">' + data.failure + '</em>');
+                            return false;
+                        }
+                    }
+
+
+                });
+                return false;
+            }
+        });
+		
+       
+        
+		$('#no_of_kits').on('change', function () {
+            var kitNo = $('#no_of_kits').val();
+            var cont_id = $('input:radio[name=kit_type]:checked').val();
+           
+            $("#tot_amnt").hide();
+            $("#purchase").hide();
+            var token = $('#token1').val();
+			if(cont_id){
+				$.ajax({
+					url: "<?php echo BASEPATH; ?>/Checkleg/checkkitvalue",
+					type: 'POST',
+					data: {'kitNo': kitNo, 'contract_id': cont_id, 'token': token},
+					success: function (data) {
+						var obj = JSON.parse(data);
+						if (obj.success != '') {
+							$("#purchase").show();
+							$("#tot_amnt").show();
+							$("#total_amount").val(obj.data);
+							$("#real_total_amount").val(obj.data);
+						} else {
+							alert(obj.failure);
+							location.reload();
+							//$(this).closest("li").attr('id','');
+							console.log(obj.failure);
+							
+							$("#purchase").hide();
+						
+						}
+					}
+				});
+			}else{
+				alert("Please select kit type");
+			}
+        });
+    });
+   
+
+
+</script>

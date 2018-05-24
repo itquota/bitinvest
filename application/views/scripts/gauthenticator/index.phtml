@@ -1,0 +1,57 @@
+<?php  
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$user = $authUserNamespace->user;
+require("library/PHPGangsta/GoogleAuthenticator.php");
+$ga = new PHPGangsta_GoogleAuthenticator();
+if(!empty($_POST['authcode']))
+{
+	$secret= $authUserNamespace ->secret;
+	//echo $secret;
+	$checkResult = $ga->verifyCode($secret, $_POST['authcode'], 2);    // 2 = 2*30sec clock tolerance
+		if ($checkResult) {
+			echo 'OK';exit;
+		} else {
+			echo 'FAILED';exit;
+		}
+}
+else
+{
+
+
+$secret = 'DZPVUXRVSX33NZFF';
+echo "Secret is: ".$secret."\n\n";
+
+
+$website = "gainbitcoin"; //Your Website
+$title= $user;
+//$qrCodeUrl = $ga->getQRCodeGoogleUrl($title, $secret,$website);
+
+$authUserNamespace ->secret=$secret;
+}
+//$qrCodeUrl = $ga->getQRCodeGoogleUrl('Blog', $secret);
+//echo "Google Charts URL for the QR-Code: ".$qrCodeUrl."\n\n";
+
+
+$oneCode = $ga->getCode($secret);
+/*echo "Checking Code '$oneCode' and Secret '$secret':\n";
+
+$checkResult = $ga->verifyCode($secret, $oneCode, 2);    // 2 = 2*30sec clock tolerance
+if ($checkResult) {
+    echo 'OK';
+} else {
+    echo 'FAILED';
+}*/
+?>
+<form method="POST" action="<?php echo BASEPATH; ?>/Gauthenticator">
+<div id="innerpage-wrapper">
+<?php echo '<img src="https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=otpauth%3A%2F%2Ftotp%2Fbitcoin%3Fsecret%3DDZPVUXRVSX33NZFF%26issuer%3D'.BASE; ?>">
+
+<div class="clearfix"></div>
+<div>Secret is: <?php echo $secret; ?></div><br>
+<div>one code <?php echo $oneCode ; ?></div>
+
+
+<input type="text" id="authcode" name="authcode"/>
+<button type="SUBMIT" value="submit">submit</button>
+</form>
+</div>

@@ -1,0 +1,172 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/mediaboxAdv-1.2.4.js"></script>
+<link rel="stylesheet" href="<?php echo BASEPATH;?>/css/mediaboxAdvWhite.css" type="text/css" media="screen" />
+<script language="javascript">
+	<?php
+		if(isset($authUserNamespace->status_message) && $authUserNamespace->status_message!=""){
+	?>
+			window.onload = function(){
+				jAlert("<?php echo $authUserNamespace->status_message; ?>");
+			}
+	<?php
+			unset($authUserNamespace->status_message);
+		}
+	?>
+
+
+	function submitForm(){
+		var getValue = document.getElementById("shown").value;
+		var getText = document.getElementById("searchtext").value;
+		window.location="<?php echo BASEPATH; ?>/employee/index/searchtext/"+getText+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+	}
+
+	function checkEmptyBox(e){
+
+		var charCode;
+        var evt = e || window.event;
+
+        charCode = evt.charCode || evt.keyCode;
+        if(charCode==13){
+        	searchval = document.getElementById('searchtext').value;
+        	searchval = searchval.trim();
+        	if(searchval==""){
+
+				jAlert("Enter a keyword to search");
+				return false;
+        	}
+        	else{
+
+				window.location='<?php echo BASEPATH; ?>/employee/index/searchtext/'+document.getElementById('searchtext').value+'/sortby/<?php echo $this->sortBy;?>/ord/<?php if($this->ordVal=="asc")echo $this->ordVal="desc";else echo $this->ordVal="asc"; ?>/getPageValue/'+document.getElementById('shown').value;
+        	}
+	    }
+	};
+
+	function deletion1(cmd)
+	{
+		jConfirm('Are you sure you want to delete?', 'Delete Box', function(r) {
+		    if(r){
+		    	window.location.href = '<?php echo BASEPATH;?>/employee/delete1/id/'+cmd;
+		      return true;
+		    }
+		    else
+		    	//window.location.href = "<?php echo BASEPATH;?>/admin/merchantlist";
+		      return false;
+		  });
+		
+	}
+
+	function ed(cmd)
+	{
+		//alert(cmd);
+		//jConfirm('Are you sure you want to edit?', 'Edit Box', function(r) {
+		  //  if(r){
+		    	window.location.href = '<?php echo BASEPATH;?>/employee/add/id/'+cmd;
+		    //  return true;
+		   // }
+		  //  else
+		    	//window.location.href = "<?php echo BASEPATH;?>/admin/merchantlist";
+		    //  return false;
+		//  }
+		//  );
+		
+	}
+
+	function call_delete(id){
+
+		jConfirm('Are you sure?', 'Confirmation Dialog', function(r) {
+			if(r == true) window.location.href= '<?php echo BASEPATH; ?>/category/delete/id/'+id;
+			else return false;
+		});
+	}
+</script>
+	<div class="pageTopLinkWrapper">
+		<div class="pageTopLink"><a href="<?php echo BASEPATH; ?>/employee/add">Add Employee</a></div>
+	</div>
+	<form method="post" id="interviewForm" name="interviewForm" action="#">
+		<input type="hidden" name="getPageValue" id="getPageValue" value="1"/>
+		<div class='user-headrow'>
+			<div style='float:left'>
+				<input type='text' class="input" name='searchtext' value = "<?php if(isset($this->search_val)) echo $this->search_val;?>" id='searchtext'> &nbsp;
+				<input type='button' class="button" onclick="javascript:submitForm();" value="Search"> &nbsp;
+				<input type='button' class="button" onclick = "window.location = '<?php echo BASEPATH; ?>/employee/index'" value="Reset" name='reset'>
+			</div>
+			<div style="float:right;">Number of Records
+					<select onchange="javascript: submitForm();" name="shown" id="shown">
+						<option value="10" <?php if($this->records_per_page==1)echo "selected=selected"; ?>>10</option>
+						<option value="25" <?php if($this->records_per_page==2)echo "selected=selected"; ?>>25</option>
+						<option value="50" <?php if($this->records_per_page==50)echo "selected=selected"; ?>>50</option>
+						<option value="100" <?php if($this->records_per_page==100)echo "selected=selected"; ?>>100</option>
+					</select>
+			</div>
+			<div class="clearfix">&nbsp;</div>
+		</div>
+		<div class='user-headrow' style="text-align:right;">
+		
+		</div>
+		<div style="border:1px solid #ddd;margin-left:10px;width: 97%;">
+			<div class='grid-headrow' style="margin-left:0px;width: 100%;">
+
+				<div class='grid-column2' style="width:15%;">User Name</div>
+				<div class='grid-column2' style="width:15%;">Password</div>
+				<div class='grid-column2' style="width:10%;">Employee ID </div>
+				<div class='grid-column2' style="width:10%;">First Name</div>
+				<div class='grid-column2' style="width:10%;">Last Name</div>
+				<div class='grid-column2' style="width:10%;">Practice</div>
+				<div class='grid-column2' style="width:10%;">Designation</div>
+				<div class='grid-column2' style="width:10%;">Role</div>
+				<div class='grid-column2' style="width:10%;">Action</div>
+				<div class="clearfix">&nbsp;</div>
+			</div>
+		
+		<?php
+			
+			$i=0;
+			
+			if(isset($this->employeelist) && sizeof($this->employeelist)>0){
+				
+				foreach($this->employeelist as $employeelist){
+					
+				//print "<pre>";
+			//print_r($employeelist);exit;
+					
+		?>
+		
+		<div class='<?php if($i%2==0)echo "grid-row1"; else echo "grid-row2"; ?>' style="margin-left:0px;width: 100%;">
+	
+			<div class='grid-column1' style="width:15%;"><?php echo $employeelist->username; ?></div>
+			<div class='grid-column1' style="width:17%;"><?php echo $employeelist->password; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->employee_id; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->firstname; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->lastname; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->value2; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->value1; ?></div>
+			<div class='grid-column1' style="width:10%;"><?php echo $employeelist->value; ?></div>
+			
+			<div class='grid-column1' style="width:8%;height:auto;text-align: center;">
+					<a><img style="cursor:pointer;" src="<?php echo BASEPATH;?>/images/pencil_delete.png" onclick="ed(<?php echo $employeelist->id;?>)" title="Edit" alt="Edit"/></a>
+					<a><img style="cursor:pointer;" src="<?php echo BASEPATH;?>/images/cross.png" onclick="deletion1(<?php echo $employeelist->id;?>)" title="Delete" alt="Delete"/></a>
+					<div class="clearfix">&nbsp;</div>
+				</div>
+			<div class="clearfix">&nbsp;</div>
+		</div>
+		
+		<?php
+					$i+=1;
+				}
+				
+				// code for pagination in the phtml file
+				echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+			}
+			else{
+		?>
+		
+		<div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+		
+		<?php } ?>
+		</div>
+	</form>
+<br/>

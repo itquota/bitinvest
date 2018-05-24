@@ -1,0 +1,209 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group {
+	width: 418px;
+	float:left;
+}
+.clearfix {
+ 			 margin-top:35px;
+		}
+</style>
+
+<form method="post" enctype="multipart/form-data"
+	Action="<?php echo BASEPATH; ?>/Addbanner">
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+    <li class="active"><a href="<?php echo BASEPATH?>/managebanner">Manage Banner</a> > </li>
+	<li>Add Banner</li>
+
+</ol>
+
+<div class="clearfix"></div>
+<div class="panel panel-primary buynowbox col-lg-12">
+
+<div class="panel-heading buynowbox Titleheading faqtitlebg">Add Banner</div>
+
+<div class="panel-body revenuebg"><?php //$j=1;
+//foreach($this->result as $result){
+?>
+<div class="form-group err1" style="width: 100%; margin-bottom: 0px;"><label for="" class="lblTxt" style="color: red;"></label></div>
+
+<div class="form-group">
+<div id="err_div_cont" name="err_div_cont"></div>
+<div class="form-group"><label
+	style="width: 100%; margin-bottom: 0px; padding-top: 11px;" for=""
+	class="lblTxt">&nbsp;</label> <img name="image" id="image" value=""
+	style="width: 300px; height: 200px;" class="profile-pic"
+	src="images/no_image.png" /></div>
+<div style="width:100%;">
+<input class="file-upload" name="userImage" id="userImage" type="file" /></div>
+</div>
+<div class="form-group"><label for="" class="lblTxt">Description</label>
+
+<textarea style="width: 300px; height: 200px;" class="form-control CommonInputBox" id="description"
+	name="description" placeholder=""> </textarea></div>
+
+<div class="form-group" style="width:100%;">
+<input type="hidden" name='id' value=''> <input type="button" name="sub"
+	id="sub" value="Submit" onclick="getaddimage();"
+	class="btn btn-default Commonbtn"> <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+</div>
+<?php //$j++;}?>
+<form>
+
+</div>
+</div>
+
+
+
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper --></div>
+
+</form>
+<script>
+    
+    /*** upload image ******/
+    
+    $(document).ready(function(){   
+	    var readURL = function(input) {
+	        if (input.files && input.files[0]) {
+	            var reader = new FileReader();
+	
+	            reader.onload = function (e) {
+	                $('.profile-pic').attr('src', e.target.result);
+	            }
+	    
+	            reader.readAsDataURL(input.files[0]);
+	        }
+	    }
+	    
+	
+	    $(".file-upload").on('change', function(){
+	        readURL(this);
+	    });
+	    
+	    
+	});
+
+    function getaddimage()
+    {
+   				
+    	var informational=$('#description').val();
+    	var imgs=$('#userImage').val();
+    	var fileChooser = $("#userImage").prop("files")[0];
+    	var token = $('#token').val();
+		var form_data = new FormData();
+		form_data.append("imgs", fileChooser);
+		form_data.append("description", informational);
+		form_data.append("inputtoken", token);
+	//alert(fileChooser);return;
+        if(imgs==""){
+					$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please upload image.</label>');        
+	        		return false;	                 
+			    }
+     	if(imgs != ''){
+ 			//alert("inside");return;
+ 				var extdata=$("#userImage").prop("files")[0];
+ 				//alert(extdata);return;
+ 				var Extension = imgs.substring(imgs.lastIndexOf('.') + 1).toLowerCase();
+ 				//alert(Extension);return;
+ 			    if (Extension == "gif" || Extension == "png" || Extension == "jpeg" || Extension == "jpg") {
+ 			    	
+ 			            if (typeof($("#userImage")[0].files) != "undefined") {
+ 							//alert("size");
+ 							var size = parseFloat($("#userImage")[0].files[0].size / 1024).toFixed(2);
+ 			                //alert(size + " KB.");
+ 			               	
+ 			                if(size > 2048.00){
+ 				                //alert("size21");
+ 			                	/*$("#err_div").css("display", "block");
+ 			            		document.getElementById("err_div").innerHTML="";
+ 			            		document.getElementById("err_div").innerHTML="Maximum file size exceeds";
+ 			            		$('#err_div').css('display','block');
+ 			            		$('#err_div').css('color','red');*/
+ 							$(".err1").html('<label for="" class="lblTxt" style="color:red;">Maximum file size exceeds </label>');        
+ 				            		
+ 			            		//flag ==1;
+ 			            		return false;	                    
+ 			                }else{
+ 			                    var reader = new FileReader();
+ 			                    //alert("else part"+reader);	             
+ 			                    reader.onload = function (e) {
+ 			    	                $('.profile-pic').attr('src', e.target.result);
+ 			    	            }
+ 			    	            reader.readAsDataURL($("#userImage")[0].files[0]);
+ 			                }
+ 			            }
+ 			                
+ 			    } else {
+ 			    
+ 				       /* $("#err_div").css("display", "block");
+ 		        		document.getElementById("err_div").innerHTML="";
+ 		        		document.getElementById("err_div").innerHTML="Photo only allows file types of GIF, PNG, JPG and JPEG.";
+ 		        		$('#err_div').css('display','block');
+ 		        		$('#err_div').css('color','red');
+ 		        		flag ==1;*/
+ 						$(".err1").html('<label for="" class="lblTxt" style="color:red;">Photo only allows file types of GIF, PNG, JPG and JPEG.</label>');        
+ 		        		
+ 						   return false;          
+ 				    }
+ 			   
+ 				}
+ 		
+          if((informational).trim()=="")
+		{
+				$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Enter Description .</label>'); 
+				return false;       
+				
+		}
+		
+
+		
+          else{
+	    
+	$.ajax({
+			
+			url:"<?php echo BASEPATH;?>/Addbanner", 
+			type: "POST",    
+			  data: form_data,
+		      contentType: false,
+		      processData: false,
+			success:function(response)
+	  		{ 
+		  		
+				 var data=JSON.parse(response);
+				
+				 if(data['success']!='')
+				 {
+					  $(".err1").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+					  window.location = "<?php echo BASEPATH;?>/Managebanner";
+				 }
+				 else{
+					  $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						 
+				 }	
+			}
+				
+			
+		 });
+	return true;
+          }
+    	
+	    
+    }
+
+    </script>
+

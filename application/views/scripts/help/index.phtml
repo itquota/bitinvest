@@ -1,0 +1,103 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.lblTxt
+{
+float:left;
+}
+</style>
+<div id="page-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt">Help & Support</h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+	<li class="active"><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+	<li>Help & Support</li>
+
+</ol>
+
+
+
+
+<div class="col-lg-12">
+<p id="error" style="color: red; font-weight: bolder"></p>
+<p id="sucess"></p>
+<div class="row-fluid " id="form_sh">
+<form name="help_frm" id="help_frm"><input type="hidden" name="username"
+	value="<?php echo trim($username);?>" />
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<div class="form-group"><label for="" class="lblTxt">Your Name</label> <input
+	type="text" class="form-control CommonInputBox" name="fullName"
+	id="name" value="<?php if(!empty($this->result['name']) && $this->result['name']!='') { echo $this->result['name']; } else { echo ""; } ?>"></div>
+<div class="form-group"><label for="" class="lblTxt">Email address</label>
+<input type="email" class="form-control CommonInputBox" name="email"
+	id="exampleInputEmail1" value="<?php if(!empty($this->result['email_address']) && $this->result['email_address']!='') { echo $this->result['email_address']; } else { echo ""; } ?>"></div>
+
+<div class="form-group"><label for="" class="lblTxt">Contact Number</label>
+<input type="email" class="form-control CommonInputBox" name="mob"
+	id="exampleInputEmail1" value="<?php if(!empty($this->result['phone']) && $this->result['phone']!='') { echo $this->result['phone']; } else { echo ""; } ?>"></div>
+<div class="form-group"><label for="" class="lblTxt">Subject</label> <input
+	type="email" class="form-control CommonInputBox" name="subject"
+	id="exampleInputEmail1" placeholder="Enter Subject"></div>
+
+<div class="form-group"><label for="comment" class="lblTxt">Comment:</label>
+<textarea class="form-control CommonInputBox" name="message" rows="5"
+	id="comment"></textarea></div>
+
+
+<button type="button" class="btn btn-default Commonbtn" id="send">Send</button>
+
+<button type="reset" class="btn btn-default Commonbtn">Reset</button>
+</form>
+</div>
+<div class="clearfix">&nbsp;</div>
+
+</div>
+
+
+
+</div>
+</div>
+<script data-cfasync='false' type="text/javascript">
+    $(window).load(function () {
+    	var flag = true;		
+		$('#send').click(function () {
+			if(flag){
+				flag = false;
+				var passdata=$('#help_frm').serializeArray();
+				
+				$.ajax({
+					type: 'POST',
+					url: "<?php echo BASEPATH; ?>/Help",
+					data: passdata,
+
+					success: function (data) { 
+						if (data == 'false') {
+							$('#error').html('All field required');return false;
+						}
+
+						else {
+							$('#sucess').html('Your request has been submit successfully!.<br/><br/> Your Ticket No. is &nbsp;&nbsp;<b> '+data+'</b>.<br/>Please note the ticket no. for future reference.<br/>We will get back to you shortly.');
+							$('#form_sh').hide();
+							$('#help_frm')[0].reset();return false;
+							console.log(data["errMsg"]);
+						}
+
+					}
+				});
+			
+			}
+			
+		});
+	
+	});
+	
+    
+</script>

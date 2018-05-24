@@ -1,0 +1,807 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+ <script type="text/javascript">
+ var multiselectflag = 0;
+
+	<?php  if(isset($this->view1) && $this->view1!= "" )
+	 {?>
+		 multiselectflag = 1;
+		
+	<?php } ?> 
+	
+
+ </script>
+ <?php $adhocproject = $this->variable;
+ 
+ 
+ if($authUserNamespace->designation_id=="58")
+ {
+	 $adprojectObj= new Aranca_Model_DbTable_Adproject();
+	 $empObj = new Aranca_Model_DbTable_Emp();
+	 $practlead = $empObj->fetchRow("id='$adhocproject->practive_leader'");
+	 if(isset($practlead) && $practlead!="")
+	 {
+	 	$username =  $practlead->firstname." ".$practlead->lastname;
+	 	$userid = $practlead->id;
+	 }
+ }
+ 
+ if($authUserNamespace->designation_id=="58")
+ {
+	 $adprojectObj= new Aranca_Model_DbTable_Adproject();
+	 $empObj = new Aranca_Model_DbTable_Emp();
+	 $practman = $empObj->fetchRow("id='$adhocproject->pr_manager'");
+	 if(isset($practman) && $practman!="")
+	 {
+	 	$username_man =  $practman->firstname." ".$practman->lastname;
+	 	$userid_man = $practman->id;
+	 }
+ }
+	?>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/jquery-1.8.2.min.js" type="text/javascript"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/memberswap.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript">
+
+window.onload=function()
+{	
+	var pmid=document.getElementById('projectmanager').value;
+	countworking(pmid);	
+}
+
+function isNumber(evt)
+{
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+}
+function countworking(id)
+{
+	
+
+	var counter="0";
+	var adhoc="adhoc";
+	$.ajax({
+		url: "<?php echo BASEPATH; ?>/project/workingproject",
+		type: "POST",    
+	    data: "empid="+id+"&type="+adhoc,
+	    success: function(response)
+	    { 
+			j=0;
+			
+			if((response!="") && (response!=null))
+				 { 
+					
+				 var jsonObject = JSON.parse(response);
+				 for(m=0;m<jsonObject.length;m++)
+					{
+						
+							var occupacycount= jsonObject[m]['count'];
+							//alert(occupacycount);	
+							document.getElementById('occ').innerHTML="";	
+							if(occupacycount==1)
+							document.getElementById('occ').innerHTML=":working on " +occupacycount+" project";	
+							else
+								document.getElementById('occ').innerHTML=":working on " +occupacycount+" projects";			
+							
+							
+						}					
+				}
+			
+				
+		}
+	});
+}
+
+function view2(gg)
+{
+	document.getElementById('cat_loader1').style.display = 'block';
+	var arr1 = [];
+	document.getElementById('region1').selectedIndex = -1;
+	document.getElementById('country1').selectedIndex = -1;	
+	if(gg == 1)
+	{
+		document.getElementById('country1').selectedIndex = -1;	
+		$('#country1').show();
+		$('#region1').hide();		
+		$('#country1_error').show();
+		$('#region1_error').hide();
+		document.getElementById('cat_loader1').style.display = 'none';		
+	}
+	else if(gg == 2)
+	{
+		document.getElementById('region1').selectedIndex = -1;	
+		$('#region1').show();
+		$('#country1').hide();
+		$('#region1_error').show();
+		$('#country1_error').hide();
+		document.getElementById('cat_loader1').style.display = 'none';				
+	}
+		
+}
+
+
+
+
+function save1()
+{
+		saveForm('<?php echo BASEPATH;?>/project/addadhoc','addaddhoc_form','addaddhoc_form');
+}
+
+function save2()
+{
+	<?php if($authUserNamespace->designation_id=="14"){?>
+	 window.location.href = "<?php echo BASEPATH;?>/projectmanager/index";
+	 <?php } else if($authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="56") {?>
+	 window.location.href = "<?php echo BASEPATH;?>/project/index";
+	 <?php }else if($authUserNamespace->designation_id=="58"){?>
+	 window.location.href = "<?php echo BASEPATH;?>/analyst/projectindex";
+	 <?php }?>
+}
+function populate_sub_value(practice_type,check,id)
+{
+	if(practice_type=="")
+	{
+		document.getElementById('teammember').value="Empty";
+	}
+	//document.getElementById('cat_loader1').style.display = 'block';
+	$.ajax({
+		url:"<?php echo BASEPATH; ?>/project/practicesubvalue",
+		type: "POST",    
+	    data: "practice_type="+practice_type+"&check="+check+"&uid="+id+"&project_type=0",
+	    success: function(response)
+	    { 		  
+			j=0;k=0;l=0;
+			if((response!="") && (response!=null))
+			 { 
+			 	var jsonObject = JSON.parse(response);
+			 		var option_ele=document.getElementById('projectmanager');
+					for(k=option_ele.length;k>0;k--)
+					{						
+						option_ele.remove(k);
+					}				
+					for(m=0;m<jsonObject[0].length;m++)
+					{						
+						var option_element= new Option(jsonObject[0][m]['name'],jsonObject[0][m]['id']);
+						document.getElementById('projectmanager').options[++j]=option_element;	
+					
+						if(check=="1")
+						{
+							
+							<?php if(isset($adhocproject->pr_manager) && $adhocproject->pr_manager!=""){?>
+							
+								var pro_ID = '<?php echo $adhocproject->pr_manager?>';
+								
+									if(jsonObject[0][m]['id']==pro_ID)
+									{
+										document.getElementById('projectmanager').options[j].selected = "selected";
+									}
+							<?php }?>
+						}												
+					}
+					
+					var option_ele1=document.getElementById('practiceleader');
+					for(k=option_ele1.length;k>0;k--)
+					{						
+						option_ele1.remove(k);
+					}				
+					for(m=0;m<jsonObject[1].length;m++)
+					{						
+						var option_element1= new Option(jsonObject[1][m]['name'],jsonObject[1][m]['id']);
+						document.getElementById('practiceleader').options[++k]=option_element1;		
+						if(check=="1")
+						{
+							
+							<?php if(isset($adhocproject->practive_leader) && $adhocproject->practive_leader!=""){?>
+							
+								var pro_ID1 = '<?php echo $adhocproject->practive_leader?>';
+									if(jsonObject[1][m]['id']==pro_ID1)
+									{										
+										document.getElementById('practiceleader').options[k].selected = "selected";
+									}
+							<?php }?>
+						}													
+					}
+
+					var option_ele2=document.getElementById('group1');					
+					for(k=option_ele2.length;k>=0;k--)
+					{						
+						option_ele2.remove(k);
+					}	
+					
+					if(check=="0")
+					{							
+						var option_ele3=document.getElementById('group2');
+						for(p=option_ele3.length;p>=0;p--)
+						{											
+							option_ele3.remove(p);
+						}		
+					}								
+					for(m=0;m<jsonObject[2].length;m++)
+					{	
+						if(check==0)
+						{									
+							var option_element2= new Option(jsonObject[2][m]['name'],jsonObject[2][m]['id']);
+							document.getElementById('group1').options[l++]=option_element2;		
+						}
+						else if(check=="1")
+						{									
+							var option_element2= new Option(jsonObject[2][m]['name'],jsonObject[2][m]['id']);
+							document.getElementById('group1').options[l++]=option_element2;	
+						}																			
+					}
+					if(jsonObject[2].length>0)
+					{	
+						 checkEmpty();						
+						if(check=="0")
+						{								
+							$('#group1 .empty').remove();
+						}
+					}	
+			 }			
+			//document.getElementById('cat_loader1').style.display = 'none';	
+						
+		}
+	});
+}
+$(document).ready(function(){
+	var uid = '<?php echo $this->uid; ?>';
+	if(uid !="")
+	{
+		<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id=="56") {} else {?>
+		
+		$('#practice,#practiceleader,#clientname,#projecttype,#SelectedDate,#SelectedDate1,#projectmilestone1,#projectmilestone1,#projectmilestone2,#projectmilestone3,#projectmilestone4,#projectmilestone5,#SelectedDate3,#SelectedDate4,#SelectedDate5,#SelectedDate6,#SelectedDate7,#projectvalue,#budgetedhrs,#milestone1,#milestone2,#milestone3,#milestone4,#SelectedDate13,#SelectedDate14,#SelectedDate15,#date11').prop("disabled", true);
+		<?php }?>
+	}
+	
+});
+</script>
+<style>
+#holder
+{	
+	margin-bottom:0px;
+}
+
+#holder .dual select {
+    margin-right: -4px;
+    margin-top: 0;
+}
+</style>
+</head>
+
+<body>
+<form  action="" id="addaddhoc_form" name="addaddhoc_form" method="post" enctype="multipart/form-data">
+
+<?php 
+  
+ 
+
+//$adhocprojectgeo = $this->variablegeo;
+if(isset($this->variablegeo) && $this->variablegeo !="")
+{
+ foreach($this->variablegeo as $adhocprojectgeo)
+ { 
+ 	if(isset($adhocprojectgeo->region_id) && $adhocprojectgeo->region_id!=0)
+ 	{
+ 		//echo "hieee";exit;
+	$l_row[]= $adhocprojectgeo->region_id;
+ 	}
+ 	else 
+ 	{
+ 	$l_row[]= $adhocprojectgeo->country_id;	
+ 	}
+ }
+}
+//print_r($l_row);exit;
+if(isset($this->variableteam) && $this->variableteam !="")
+{
+  foreach($this->variableteam as $adhocprojectteam)
+ 	{ 
+
+ }
+}
+// print "<pre>";
+ //print_r($l_row);exit;
+?>
+<?php //exit;?>
+<div id="subheader">
+	<div class="wrapper">
+   	  <h5>Create New Project – Adhoc</h5>
+        <hr>
+		<br class="clear">
+        <div id="holder" style="width:700px;">
+        	<label>Project Title<em>*</em></label>
+            <input name="projecttitle" id="projecttitle" type="text" class="field" style="width:600px;" value="<?php if(isset($adhocproject->title) && $adhocproject->title !=""){ echo $adhocproject->title;}?>" errortag="Project Title" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+      <!--  <div class="message" id="projecttitle_error">&nbsp;</div> -->
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projecttitle_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+         <?php
+global $rand;
+
+ 
+ function RandNumber($e){
+ 
+ $rand="";
+ for($i=0;$i<$e;$i++){
+ $rand =  $rand .  rand(0, 9); 
+ }
+ return $rand;
+
+ }
+ 
+ ?>
+
+
+ 
+        
+  		<div id="holder" style="margin:0;width:140px;width:140px\9;"><strong>Project ID:</strong><input style="width:78px;float:right;" type="text" value='<?php if(isset($adhocproject->project_id) && $adhocproject->project_id !=""){ echo $adhocproject->project_id;} else {echo RandNumber(10);}?>' name="projectid" id="projectid" class="projectid" readonly/></div>
+        <br class="clear">
+        <div id="holder" style="width:275px;">
+        	<label style="width:93px;margin-left:-26px;">Practice<em>*</em></label>
+            <select name="practice"  id="practice" class="field med" <?php if($authUserNamespace->designation_id=="56"){ ?>onchange="populate_sub_value(this.value,'0','');" <?php }?> errortag="Practice" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value="">Select</option>
+            <?php	foreach ($this->practice_list as $practice_list){?>
+			<option  <?php if(isset($adhocproject->practice_id)) {if($practice_list->practiceid == $adhocproject->practice_id) {?> selected="selected" <?php }}elseif($authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="14" ){echo "selected";} ?>   value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid!=""){ echo $practice_list->practiceid;}?>"><?php echo $practice_list->value;?></option>
+			<?php } ?>
+              <!-- <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option>
+              <option>Option4</option> -->
+            </select>
+            <!--<div class="message" style="margin-left:100px;"  id="practice_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="practice_error">&nbsp;</span>
+        	
+        </div>
+  		<div id="holder" style="width:310px;">
+  			<span class="option">Practice Leader<em>*</em></span>
+              <select name="practiceleader"  id="practiceleader" class="field med" errortag="Practice Leader" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+              <option value="">Select</option>
+	            <?php	if(isset($this->practiceleader) && $this->practiceleader!="" && sizeof($this->practiceleader)>0 ){foreach ($this->practiceleader as $practiceleader){?>
+				<option <?php if(isset($adhocproject->practive_leader)) {if($practiceleader->id1 == $adhocproject->practive_leader) {?> selected="selected" <?php }}if($authUserNamespace->designation_id=="57"){echo "selected";} ?>   value="<?php  if(isset($practiceleader->id1) && $practiceleader->id1!=""){ echo $practiceleader->id1;}?>"><?php echo $practiceleader->name1;?></option>
+				<?php } }else if($practlead && $practlead!="" && sizeof($practlead)>0){ ?>
+					<option value="<?php  if(isset($userid) && $userid!=""){ echo $userid;}?>" selected=selected><?php if(isset($username) && $username!=""){echo $username ;}?></option>
+				<?php }?>
+              <!-- <option selected="selected"></option>
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option> -->
+            </select>
+            <!--<div class="message" style="margin-left:100px;"  id="practiceleader_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="practiceleader_error">&nbsp;</span>
+        	
+            
+        </div>
+        <div <?php if ($authUserNamespace->designation_id=="14"){?> style="display:none;"<?php } ?> id="holder" style="margin:0;width:320px;">
+        	<label>Project Manager<em>*</em></label>
+            <select name="projectmanager" id="projectmanager" class="field med" errortag="Project Manager" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?> onchange="countworking(this.value)">
+            <?php if($authUserNamespace->designation_id=="14"){ foreach ($this->projectmanager as $projectmanager)?><option selected="selected" value="<?php echo $projectmanager->id1;?>"><?php echo $projectmanager->name1;?></option><?php }else {?>
+            <option value="">Select</option>
+            <?php	if(isset($this->projectmanager) && $this->projectmanager!="")
+            		{
+            			foreach ($this->projectmanager as $projectmanager){?>
+						<option  <?php if(isset($adhocproject->pr_manager)) {if($projectmanager->id1 == $adhocproject->pr_manager) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($projectmanager->id1) && $projectmanager->id1!=""){ echo $projectmanager->id1;}?>"><?php echo $projectmanager->name1;?></option>
+					<?php }
+            		} elseif(isset($practman) && $practman!=""){?>
+            		<option value="<?php  if(isset($userid_man) && $userid_man!=""){ echo $userid_man;}?>" selected=selected><?php if(isset($username_man) && $username_man!="")echo $username_man;?></option>
+            		<?php } ?>
+            		<?php }?>
+             <!--  <option selected="selected">Abhijeet</option>
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option>--> 
+            </select>
+            <!--<div class="message" style="margin-left:100px;"  id="projectmanager_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmanager_error">&nbsp;</span>
+            <br>
+            <div class="small" style="margin:0 0 8px 106px;"><strong>Occupancy</strong><span id="occ">: Working on projects</span></div>
+        </div>
+        <br class="clear">
+        <div id="holder" style="margin-left:-22px;width:295px;">
+        	<label style="margin-left:15px;">Client Name<em>*</em></label>
+            <select name="clientname" id="clientname"  class="field med" errortag="Client Name" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value="">Select</option>
+            <?php	foreach ($this->client as $client){?>
+			<option <?php if(isset($adhocproject->client_id)) {if($client->id == $adhocproject->client_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($client->id) && $client->id!=""){ echo $client->id;}?>"><?php echo $client->name;?></option>
+			<?php } ?>
+              <!-- <option selected="selected">Please Select</option>
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option> -->
+            </select>
+             <!--<div class="message" style="margin-left:73px;" id="clientname_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientname_error">&nbsp;</span>
+        </div><!--
+        <div id="holder" style="margin-right:24px;width:310px;">
+        <label style="width:98px;">Project Type<em>*</em></label>
+            <select name="projecttype" id="projecttype" class="field med" errortag="Project Type" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value="">Select</option>
+            <?php	foreach ($this->project_type as $project_type){?>
+			<option <?php if(isset($adhocproject->projecttype_id)) {if($project_type->id == $adhocproject->projecttype_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($project_type->id) && $project_type->id!=""){ echo $project_type->id;}?>"><?php echo $project_type->value;?></option>
+			<?php } ?>
+               <option selected="selected">Please Select</option>
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option> 
+            </select>
+            <div class="message" style="margin-left:100px;" id="projecttype_error">&nbsp;</div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projecttype_error">&nbsp;</span>
+      </div>
+      --><div id="holder" style="width:303px;">
+        	<label>Study Geography<em>*</em></label>
+            <div class="dual">
+            	<label><input name="country" id="country" <?php if (isset($adhocprojectgeo) && $adhocprojectgeo['type'] == 'country' ){?>checked="checked"<?php }?> type="radio" checked="checked" value="country" class="unique" onclick="view2(1);" style="vertical-align:middle" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>/>Country</label>
+            	<label><input name="country" id="region" <?php if (isset($adhocprojectgeo) && $adhocprojectgeo['type'] == 'region' ){?>checked="checked"<?php }?> type="radio" value="region" class="unique" onclick="view2(2);" style="vertical-align:middle" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>/>Region</label>
+            	<div id="cat_loader1" style="display: none; float:left;">
+					<img src="<?php echo BASEPATH;?>/images/loading19.gif">
+				</div>
+            <select name="country1[]" id="country1" class="field med" <?php if (isset($adhocprojectgeo) && $adhocprojectgeo['type'] == 'region' ){?>style="display:none;"<?php }?> errortag="Country" multiple="multiple" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+	           <?php $i = 0;
+             	foreach ($this->country1 as $country1){
+             		$prgeoObj =  new Aranca_Model_DbTable_Adprgeo();
+				      $countryselectedvalue =$prgeoObj->fetchRow("adproject_id='$this->uid' && country_id='$country1->id'");
+				    	if(sizeof($countryselectedvalue) > 0){  
+                ?>
+				<option value="<?php  if(isset($country1->id) && $country1->id!=""){ echo $country1->id;}?>" selected="selected"><?php echo $country1->value;?></option>
+				<?php } 
+					else
+					{
+				?>
+				<option  value="<?php  if(isset($country1->id) && $country1->id!=""){ echo $country1->id;}?>"><?php echo $country1->value;?></option>
+				<?php
+				}
+				} 
+				?>
+            
+            
+            </select>
+            <!--<div  class="message" id="country1_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>      		
+            
+            <select name="region1[]" id="region1" <?php if (isset($adhocprojectgeo) && $adhocprojectgeo['type'] == 'region' ){ ?>style="display:block;"<?php } else{?>style="display:none;" <?php }?> style="display:none;" class="field med" errortag="Region" multiple="multiple" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+             <?php $i = 0;
+             
+             	foreach ($this->region1 as $region1){
+             		 $prgeoObj =  new Aranca_Model_DbTable_Adprgeo();
+				      $regionselectedvalue =$prgeoObj->fetchRow("adproject_id='$this->uid' && region_id='$region1->id'");
+				    	if(sizeof($regionselectedvalue) > 0){?>
+                  
+				<option value="<?php  if(isset($region1->id) && $region1->id!=""){ echo $region1->id;}?>" selected="selected"><?php echo $region1->value;?></option>
+				
+				<?php   } else {?>
+				
+				<option  value="<?php  if(isset($region1->id) && $region1->id!=""){ echo $region1->id;}?>"><?php echo $region1->value;?></option>
+				
+				<?php 	
+				}
+             	}   
+            	?>
+              <!-- <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option>
+              <option>Option4</option> -->
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="country1_error">&nbsp;</span>
+            <!--<div style="display:none;" class="message" style="display:none;" id="region1_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span style="display:none;" class="message" id="region1_error">&nbsp;</span>
+            </div>
+        </div>
+      <br class="clear">
+      <div id="holder" style="width:282px;">
+        	<label>Study Sector<em>*</em></label>
+            <select name="studysector"  id="studysector" class="field med" errortag="Project Type" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value="">Select</option>
+            <?php	foreach ($this->userdata3 as $userauth3){?>
+			<option <?php if(isset($adhocproject->study_sector)) {if($userauth3->id == $adhocproject->study_sector) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth3->id) && $userauth3->id !=""){ echo $userauth3->id;}?>"><?php echo $userauth3->value;?> </option>
+			<?php } ?>
+ 			</select>
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="studysector_error">&nbsp;</span>
+        </div>
+      <div id="holder" style="margin:0 50px 0 25px;width:271px;">
+        	<label>Start Date<em>*</em></label>
+            <input name="SelectedDate" type="text" class="field calendar" value="<?php if(isset($adhocproject->st_date) && $adhocproject->st_date !=""){ echo $adhocproject->st_date;}?>" id="SelectedDate" readonly onClick="GetDate(this);" errortag="Start Date" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>/>
+           <!--<div class="message" style="margin-left:89px;"  id="SelectedDate_error">&nbsp;</div>-->
+           <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate_error">&nbsp;</span>
+      </div>
+      <div id="holder" style="width:280px;">
+        	<label>End Date<em>*</em></label>
+            <input name="SelectedDate1" type="text" class="field calendar" value="<?php if(isset($adhocproject->end_date) && $adhocproject->end_date !=""){ echo $adhocproject->end_date;}?>" id="SelectedDate1" readonly onClick="GetDate(this);" errortag="End Date" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>/>
+      		<!--<div class="message" style="margin-left:89px;"id="SelectedDate1_error">&nbsp;</div>-->
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate1_error">&nbsp;</span>
+      </div>
+            <br class="clear">
+
+  		
+        
+        
+  	</div>
+    <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+          
+          <div class="block">
+              <span class="option">Keywords<em>*</em></span><br>
+              <div id="holder"><input name="keywords1" id="keywords1" type="text" class="field" onblur="if(this.value==''){this.value='Keywords1'};" onfocus="if(this.value=='Keywords1'){this.value=''};"  value="<?php if(isset($adhocproject->keywords1) && $adhocproject->keywords1 !=""){ echo $adhocproject->keywords1;} else {?>Keywords1<?php } ?>" errortag="Keywords1" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+             <!--<div class="message" id="keywords1_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="keywords1_error">&nbsp;</span>
+              </div>
+              <div id="holder"><input name="keywords2" id="keywords2" type="text" class="field" value="<?php if(isset($adhocproject->keywords2) && $adhocproject->keywords2 !=""){ echo $adhocproject->keywords2;} else {?>Keywords2<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>readonly <?php }?> errortag="Keywords2" onblur="if(this.value==''){this.value='Keywords2'};" onfocus="if(this.value=='Keywords2'){this.value=''};" />
+               <!--<div class="message" id="keywords2_error">&nbsp;</div>-->
+                <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="keywords2_error">&nbsp;</span>
+              </div>
+              <div id="holder" style="margin:0;"><input name="keywords3" id="keywords3"  type="text" class="field" value="<?php if(isset($adhocproject->keywords3) && $adhocproject->keywords3 !=""){ echo $adhocproject->keywords3;} else {?>Keywords3<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>readonly <?php }?> errortag="Keywords3" onblur="if(this.value==''){this.value='Keywords3'};" onfocus="if(this.value=='Keywords3'){this.value=''};" />
+              <!--<div class="message" id="keywords3_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="keywords3_error">&nbsp;</span>
+              </div>
+          <br class="clear">
+          <p class="small" style="margin-top:0px;">(<em>*</em>) First keyword is mandatory</p> 
+          </div>
+          
+          <div class="block">
+        <div id="holder"><span class="option">Team Member<em>*</em></span><br>
+              <select id="group1" name="group1[]" class="field"  style="min-height:100px;"  multiple="multiple">
+              <?php if(isset($this->uid) && $this->uid !=""){?>
+              <?php	foreach ($this->teamleadervaluess as $teamleadervaluess){
+              ?>
+				<option   value="<?php  if(isset($teamleadervaluess->id1) && $teamleadervaluess->id1!=""){ echo $teamleadervaluess->id1;}?>"><?php echo $teamleadervaluess->name1;?></option>
+				<?php }} else{?>
+              
+              <?php	foreach ($this->teamleader as $teamleader){
+              ?>
+				<option  value="<?php  if(isset($teamleader->id1) && $teamleader->id1!=""){ echo $teamleader->id1;}?>"><?php echo $teamleader->name1;?></option>
+				<?php } }?>
+              <!-- <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option>
+              <option>Option4</option> -->
+            </select>
+         </div>
+         <div id="holder" class="arrows" style="margin-top:40px;">
+			<input type="image" id="leftToright" onclick="javascript:return dontsubmit(this.form);"  src="<?php echo BASEPATH;?>/images/common/arrow-r.gif"  <?php if(isset($this->view1) && $this->view1!= "" ){ $flag = 0 ;}?>/>
+  			<input type="image"  onclick="javascript:return dontsubmit(this.form);" id="righttoleft" src="<?php echo BASEPATH;?>/images/common/arrow-l.gif"  <?php if(isset($this->view1) && $this->view1=="view"){$flag = 0 ;}?>/>
+		</div>
+         <div id="holder" style="width: 288px;">
+         <span class="option">&nbsp;</span><br>
+            <select id="group2" name="group2[]" class="field"  style="min-height:100px;" errortag="Team Leader" multiple="multiple">
+            <?php if(isset($this->uid) && $this->uid !=""){?>  
+            <?php	foreach ($this->variableteam as $variableteam){
+            	
+              ?>
+              <?php  if(isset($variableteam['id']) && $variableteam['id']!=""){ 
+              	$flag = 0;
+              ?>
+				<option   value="<?php  if(isset($variableteam['id']) && $variableteam['id']!="" && $variableteam['id']!=0){ echo $variableteam['id'];}?>"><?php  if(isset($variableteam['name']) && $variableteam['name']!=""){ echo $variableteam['name'];}?></option>
+				<?php }?>
+				<?php }} else{?>
+
+				<?php } ?>
+				
+				
+            </select>
+            <input type="hidden" value="" id="teammember" name="teammember"/>
+            <!--<div class="message" id="group2_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="group2_error">&nbsp;</span>
+        </div>
+        <br class="clear">
+           
+          </div>
+          
+          <div class="block div288">
+            <div id="holder"><span class="option">Project Milestone<em>*</em></span><br>
+              <input name="projectmilestone1" id="projectmilestone1" type="text"  errortag="Project Milestone1" class="field" onblur="if(this.value==''){this.value='Project Milestone1'};" onfocus="if(this.value=='Project Milestone1'){this.value=''};" value="<?php if(isset($adhocproject->milestone1) && $adhocproject->milestone1 !=""){ echo $adhocproject->milestone1;} else {?>Project Milestone1<?php } ?>" <?php if((isset($this->view1) && $this->view1!= "") ) {?> readonly <?php }?> />
+              <!--<div class="message" id="projectmilestone1_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmilestone1_error">&nbsp;</span>
+              <br class="clear">
+              <input name="projectmilestone2" id="projectmilestone2" type="text" errortag="Project Milestone2" class="field" onblur="if(this.value==''){this.value='Project Milestone2'};" onfocus="if(this.value=='Project Milestone2'){this.value=''};" value="<?php if(isset($adhocproject->milestone2) && $adhocproject->milestone2 !=""){ echo $adhocproject->milestone2;} else {?>Project Milestone2<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+              <!--<div class="message" id="projectmilestone2_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmilestone2_error">&nbsp;</span>
+              <br class="clear">
+              <input name="projectmilestone3" id="projectmilestone3" type="text" errortag="Project Milestone3" class="field" onblur="if(this.value==''){this.value='Project Milestone3'};" onfocus="if(this.value=='Project Milestone3'){this.value=''};" value="<?php if(isset($adhocproject->milestone3) && $adhocproject->milestone3 !=""){ echo $adhocproject->milestone3;} else {?>Project Milestone3<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+              <!--<div class="message" id="projectmilestone3_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmilestone3_error">&nbsp;</span>
+              <br class="clear">
+              <input name="projectmilestone4" id="projectmilestone4" type="text" errortag="Project Milestone4" class="field" onblur="if(this.value==''){this.value='Project Milestone4'};" onfocus="if(this.value=='Project Milestone4'){this.value=''};" value="<?php if(isset($adhocproject->milestone4) && $adhocproject->milestone4 !=""){ echo $adhocproject->milestone4;} else {?>Project Milestone4<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+              <!--<div class="message" id="projectmilestone4_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmilestone4_error">&nbsp;</span>
+              <br class="clear">
+              <input name="projectmilestone5" id="projectmilestone5" type="text" errortag="Project Milestone5" class="field" onblur="if(this.value==''){this.value='Project Milestone5'};" onfocus="if(this.value=='Project Milestone5'){this.value=''};" value="<?php if(isset($adhocproject->milestone5) && $adhocproject->milestone5 !=""){ echo $adhocproject->milestone5;} else {?>Project Milestone5<?php } ?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+            	<!--<div class="message" id="projectmilestone5_error">&nbsp;</div>-->
+            	<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmilestone5_error">&nbsp;</span>
+            </div>
+            <div id="holder"><span class="option">Target Date<em>*</em></span><br>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->target_date1) && $adhocproject->target_date1 !=""){ echo $adhocproject->target_date1;}?>"  errortag="Target Date1" id="SelectedDate3" name="SelectedDate3" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate3_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate3_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->target_date2) && $adhocproject->target_date2 !=""){ echo $adhocproject->target_date2;}?>" errortag="Target Date2" id="SelectedDate4" name="SelectedDate4" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+             <!--<div class="message" id="SelectedDate4_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate4_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->target_date3) && $adhocproject->target_date3 !=""){ echo $adhocproject->target_date3;}?>" errortag="Target Date3" id="SelectedDate5" name="SelectedDate5" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate5_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate5_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->target_date4) && $adhocproject->target_date4 !=""){ echo $adhocproject->target_date4;}?>" errortag="Target Date4" id="SelectedDate6" name="SelectedDate6" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate6_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate6_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->target_date5) && $adhocproject->target_date5 !=""){ echo $adhocproject->target_date5;}?>" errortag="Target Date5" id="SelectedDate7" name="SelectedDate7" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+           	 <!--<div class="message" id="SelectedDate7_error">&nbsp;</div>-->
+           	 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate7_error">&nbsp;</span>
+            </div>
+            <div id="holder" style="margin:0;"><span class="option">Date of Actual Delivery</span><br>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->act_del_date1) && $adhocproject->act_del_date1 !=""){ echo $adhocproject->act_del_date1;}?>"  errortag="Actual Delivery Date1" id="SelectedDate8" diabled name="SelectedDate8" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate8_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate8_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" errortag="Actual Delivery Date2" id="SelectedDate9" name="SelectedDate9" onClick="GetDate(this);" value="<?php if(isset($adhocproject->act_del_date2) && $adhocproject->act_del_date2 !=""){ echo $adhocproject->act_del_date2;}else{};?>" readonly <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate9_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate9_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" errortag="Actual Delivery Date3" id="SelectedDate10" name="SelectedDate10" onClick="GetDate(this);" value="<?php if(isset($adhocproject->act_del_date3) && $adhocproject->act_del_date3 !=""){ echo $adhocproject->act_del_date3;}else{};?>" readonly <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate10_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate10_error">&nbsp;</span>
+              <br class="clear">
+              <input type="text" class="field calendar" errortag="Actual Delivery Date4" id="SelectedDate11" name="SelectedDate11" onClick="GetDate(this);" value="<?php if(isset($adhocproject->act_del_date4) && $adhocproject->act_del_date4 !=""){ echo $adhocproject->act_del_date4;}else{};?>" readonly <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate11_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate11_error">&nbsp;</span>
+              <br class="clear">
+              <input  type="text" class="field calendar" errortag="Actual Delivery Date5" id="SelectedDate12" name="SelectedDate12" onClick="GetDate(this);" value="<?php if(isset($adhocproject->act_del_date5) && $adhocproject->act_del_date5 !=""){ echo $adhocproject->act_del_date5;}else{};?>" readonly <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+           <!--<div class="message" id="SelectedDate12_error">&nbsp;</div>-->
+           <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate12_error">&nbsp;</span>
+            </div>
+          <br class="clear">
+           <p class="small" style="margin-top:0px;">(<em>*</em>) All fields of first column are mandatory</p>  
+          </div>
+          
+         <div class="block">
+            <div id="holder"><span class="option">Project Value<em>*</em></span><br>
+              <input name="projectvalue" id="projectvalue" errortag="Project Value" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->value) && $adhocproject->value !=""){ echo $adhocproject->value;}?>" style="margin-right:5px;" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/><b class="small">US$</b>
+            <!--<div class="message" id="projectvalue_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectvalue_error">&nbsp;</span>
+            </div>
+            
+            <div id="holder"><span class="option">Budgeted Hrs<em>*</em></span><br>
+              <input name="budgetedhrs" id="budgetedhrs" errortag="Budgeted Hrs" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->budgeted_hrs) && $adhocproject->budgeted_hrs !=""){ echo $adhocproject->budgeted_hrs;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+              <!--<div class="message" id="budgetedhrs_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="budgetedhrs_error">&nbsp;</span>
+            </div>
+            <br class="clear">
+          </div>
+          
+          <div class="block div288">
+            <div id="holder"><span class="option">Payment Milestone<em>*</em></span><br>
+              <input name="milestone1" id="milestone1" errortag="Milestone1"  type="text" class="field" onblur="if(this.value==''){this.value='Milestone1'};" onfocus="if(this.value=='Milestone1'){this.value=''};" value="<?php if(isset($adhocproject->payment1) && $adhocproject->payment1 !=""){ echo $adhocproject->payment1;}else {?>Milestone1<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>  readonly <?php }?>/>
+              <!--<div class="message" id="milestone1_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="milestone1_error">&nbsp;</span>
+              <br class="clear"/>
+              <input name="milestone2" id="milestone2" errortag="Milestone2"  type="text" class="field" onblur="if(this.value==''){this.value='Milestone2'};" onfocus="if(this.value=='Milestone2'){this.value=''};" value="<?php if(isset($adhocproject->payment2) && $adhocproject->payment2 !=""){ echo $adhocproject->payment2;}else {?>Milestone2<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>  readonly <?php }?>/>
+              <!--<div class="message" id="milestone2_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="milestone2_error">&nbsp;</span>
+              <br class="clear"/>
+              <input name="milestone3" id="milestone3" errortag="Milestone3"  type="text" class="field" onblur="if(this.value==''){this.value='Milestone3'};" onfocus="if(this.value=='Milestone3'){this.value=''};" value="<?php if(isset($adhocproject->payment3) && $adhocproject->payment3 !=""){ echo $adhocproject->payment3;}else {?>Milestone3<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+              <!--<div class="message" id="milestone3_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="milestone3_error">&nbsp;</span>
+              <br class="clear"/>
+              <input name="milestone4" id="milestone4" errortag="Milestone4"  type="text" class="field" onblur="if(this.value==''){this.value='Milestone4'};" onfocus="if(this.value=='Milestone4'){this.value=''};" value="<?php if(isset($adhocproject->payment4) && $adhocproject->payment4 !=""){ echo $adhocproject->payment4;}else {?>Milestone4<?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+           		<!--<div class="message" id="milestone4_error">&nbsp;</div>-->
+           		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="milestone4_error">&nbsp;</span>
+            </div>
+            <div id="holder"><span class="option">Target Invoicing Date<em>*</em></span><br>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->invoice_date1) && $adhocproject->invoice_date1 !=""){ echo $adhocproject->invoice_date1;}?>"  errortag="Target Invoicing Date1"  id="SelectedDate13"  name="SelectedDate13" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+             <!--<div class="message" id="SelectedDate13_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate13_error">&nbsp;</span>
+              <br class="clear"/>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->invoice_date2) && $adhocproject->invoice_date2 !=""){ echo $adhocproject->invoice_date2;}?>" errortag="Target Invoicing Date2"  id="SelectedDate14"  name="SelectedDate14" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+             <!--<div class="message" id="SelectedDate14_error">&nbsp;</div>-->
+             <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate14_error">&nbsp;</span>
+              <br class="clear"/>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->invoice_date3) && $adhocproject->invoice_date3 !=""){ echo $adhocproject->invoice_date3;}?>" errortag="Target Invoicing Date3"  id="SelectedDate15"  name="SelectedDate15" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+              <!--<div class="message" id="SelectedDate15_error">&nbsp;</div>-->
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="SelectedDate15_error">&nbsp;</span>
+              <br class="clear"/>
+              <input  type="text" class="field calendar" value="<?php if(isset($adhocproject->invoice_date4) && $adhocproject->invoice_date4 !=""){ echo $adhocproject->invoice_date4;}?>" errortag="Target Invoicing Date4" id="date11" name="date11" readonly onClick="GetDate(this);" <?php if(isset($this->view1) && $this->view1!= "" ){?>  disabled="disabled" <?php }?>/>
+            <!--<div class="message" id="date11_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="date11_error">&nbsp;</span>
+            </div>
+            <div id="holder" style="margin:0;"><span class="option">Invoice Value<em>*</em> </span><br>
+           	  <input name="invoicevalue1" id="invoicevalue1" errortag="Invoice Value1"  type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->invoice_val1) && $adhocproject->invoice_val1 !=""){ echo $adhocproject->invoice_val1;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>  readonly <?php }?>/>
+                <!--<div class="message" id="invoicevalue1_error">&nbsp;</div>-->
+                <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="invoicevalue1_error">&nbsp;</span>
+                <br class="clear"/>
+              <input name="invoicevalue2" id="invoicevalue2" errortag="Invoice Value2" type="text" class="field"  onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->invoice_val2) && $adhocproject->invoice_val2 !=""){ echo $adhocproject->invoice_val2;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?>  readonly <?php }?>/>
+               <!--<div class="message" id="invoicevalue2_error">&nbsp;</div>-->
+               <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="invoicevalue2_error">&nbsp;</span>
+                <br class="clear"/>
+              <input name="invoicevalue3" id="invoicevalue3" errortag="Invoice Value3" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->invoice_val3) && $adhocproject->invoice_val3 !=""){ echo $adhocproject->invoice_val3;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+                <!--<div class="message" id="invoicevalue3_error">&nbsp;</div>-->
+                 <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="invoicevalue3_error">&nbsp;</span>
+                <br class="clear"/>
+              <input name="invoicevalue4" id="invoicevalue4" errortag="Invoice Value4" type="text" class="field" onkeypress="return isNumber(event)" value="<?php if(isset($adhocproject->invoice_val4) && $adhocproject->invoice_val4 !=""){ echo $adhocproject->invoice_val4;}?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+            <!--<div class="message" id="invoicevalue4_error">&nbsp;</div>-->
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="invoicevalue4_error">&nbsp;</span>
+            </div>
+            
+          <br class="clear"/>
+            <p class="small" style="margin-top:0px;">(<em>*</em>) All fields of first column are mandatory</p>  
+          </div>
+          <div class="flow_right"><input name="Submit" id="Submit" type="button" <?php if(isset($this->view1) && $this->view1!= "" ){ ?>value="Back" <?php }else{?>value="Submit"<?php }?>  <?php if(isset($this->view1) && $this->view1!= "" ){ ?>onclick="save2();"<?php } else {?> onclick="save1();" <?php }?> class="searchbg"/></div>
+          <br class="clear"/>
+        </div>
+        <!--Ends Here -->    
+    </div>    
+</div>
+</form>
+<script>
+var practice_type ='';
+var uid='';
+var checkflag=0;
+<?php if(isset($adhocproject->practice_id) && $adhocproject->practice_id!=""){?>
+practice_type='<?php echo $adhocproject->practice_id;?>';
+var uid='<?php echo $adhocproject->id ?>';
+var checkflag=1;
+<?php  } ?>
+<?php if($authUserNamespace->designation_id=="56"){?>
+	populate_sub_value(practice_type,checkflag,uid);
+<?php }?>
+</script>
+</body>

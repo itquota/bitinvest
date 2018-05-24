@@ -1,0 +1,823 @@
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+		if((!isset($authUserNamespace->user)) || (!isset($authUserNamespace->user_type)) || $authUserNamespace->user=="" || ($authUserNamespace->user_type!='admin' && $authUserNamespace->user_type!='subadmin'))$this->_redirect("/Login");
+		$misc_obj=new Gbc_Model_Custom_Miscellaneous();
+		?>
+
+<?php  
+	$comm_obj = new Gbc_Model_Custom_CommonFunc();
+	$result_row=$comm_obj->getGlobalVar("","");
+	$admin_obj=new Gbc_Model_DbTable_Adminsetting();
+	$sub_admin_obj=new Gbc_Model_DbTable_Subadminuser();
+	$username = $authUserNamespace->user;
+	if($authUserNamespace->user=='admin')
+	{
+		$user_row = $comm_obj->validateUserSessionAdmin($username);
+	
+		if(!isset($user_row)){
+		/*$username=$authUserNamespace->user;
+		$upd_arr=array('session_id'=>'');
+		$upd_qry=$admin_obj->update($upd_arr,"admin_user_name='".$username."'");*/
+		Zend_Session::destroy(true,true);
+			
+		header("Location:".BASEPATH."/Login");
+		die();
+		}
+	}
+if($authUserNamespace->user_type=='subadmin')
+{
+	$user_row = $comm_obj->validateUserSessionSubadmin($username);
+	
+		if(!isset($user_row)){
+		$username=$authUserNamespace->user;
+	/*	$upd_arr=array('session_id'=>'');
+		$upd_qry=$sub_admin_obj->update($upd_arr,"email='".$username."'");  */
+		Zend_Session::destroy(true,true);
+			
+		header("Location:".BASEPATH."/Login");
+		die();
+	}
+}
+
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+<title><?php echo $this->title; ?></title>
+
+<link rel='shortcut icon' href='<?php echo BASEPATH; ?>/images/favicon/favicon-32x32.png' type='image/x-icon' />
+
+
+
+  <!-- Bootstrap Core CSS -->
+  <link href="<?php echo BASEPATH; ?>/css1/bootstrap.min.css" rel="stylesheet">
+  <!-- MetisMenu CSS -->
+  <link href="<?php echo BASEPATH; ?>/css1/metisMenu.min.css" rel="stylesheet">
+  <!-- Timeline CSS -->
+  <link href="<?php echo BASEPATH; ?>/css1/timeline.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="<?php echo BASEPATH; ?>/css1/sb-admin-2.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css1/style.css" rel="stylesheet">
+  
+  <link href="<?php echo BASEPATH; ?>/css1/admin_style.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css1/jquery.dataTables.min.css" rel="stylesheet">
+<script src="<?php echo BASEPATH; ?>/js/jquery-1.12.3.js"></script>
+      <script src="<?php echo BASEPATH; ?>/js/d3.v3.min.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/bootstrap.min.js"></script>
+      <!-- Metis Menu Plugin JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/metisMenu.min.js"></script>
+	  
+	   <script src="<?php echo BASEPATH; ?>/js/metisMenu.js"></script>
+      <!-- Morris Charts JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/raphael-min.js"></script>
+      
+   
+<!-- <script src="js/morris.min.js"></script>
+  <script src="js/morris-data.js"></script>-->
+
+  <!-- Custom Theme JavaScript -->
+  <script src="<?php echo BASEPATH; ?>/js/sb-admin-2.js"></script> 
+  <script src="<?php echo BASEPATH;?>/js/custom.js" type="text/javascript"></script>
+  <!-- network Js-->
+
+		
+		<link href="<?php echo BASEPATH; ?>/css1/responsive.bootstrap.min.css" rel="stylesheet">
+		<link href="<?php echo BASEPATH; ?>/css1/dataTables.bootstrap.min.css" rel="stylesheet">
+		
+		<script src="<?php echo BASEPATH; ?>/js/jquery.dataTables.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/dataTables.bootstrap.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/dataTables.responsive.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/responsive.bootstrap.min.js"></script>  
+
+<script type="text/javascript" data-cfasync="false"
+	src="<?php echo BASEPATH; ?>/js/data-tables-script.js"></script>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-93894880-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+	
+<style>
+.adjustment{
+	width: 53.3333%;
+}
+
+
+@media only screen and (max-width: 767px){
+			
+			#mobileadjust{
+					float: right;
+			}
+			#submenuid{
+					display: block;
+					position: relative;
+					margin-top: 55px;
+			}
+		}
+
+.fntsze
+{
+	font-size:9px;
+	color: #ffbc00;
+   font-family: Roboto,sans-serif;
+  
+}
+
+
+</style>
+</head>
+<body >	
+				  
+
+  <div id="wrapper">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top headerbg" role="navigation" >
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="<?php echo BASEPATH; ?>/Admindashboard"><img src="<?php echo BASEPATH; ?>/images/logo.png" alt=""></a>
+    </div>
+    <!-- /.navbar-header -->
+
+    <div class="col-lg-7 visible-lg hidden-md hidden-sm hidden-xs adjustment">
+           <marquee class="headerTxt"> Pool Hashrates: SHA: <?php echo $result_row->hash_rate; ?> GHPS Hardware: <?php echo $result_row->hash_rate_hardware; ?> GHPS
+          </marquee>
+    </div>
+
+
+
+
+<div class="mob-nav">
+	<div id="google_translate_element" class="google-translate" style="display:none;"></div> 
+    <ul class="nav navbar-top-links navbar-right" id="mobileadjust">
+
+       <li>
+            <a href="<?php echo BASEPATH; ?>/Admindashboard/logout"><i class="is logout"></i> <!-- <img src="images/logout.png" alt=""> -->
+           </a> </li><br>
+           <li style="color: #fff;   margin-left: -40px;margin-right: 10px;"><label class="fntsze" style=" font-size: 12px;">USERNAME: <?php echo $authUserNamespace->user;?></label>
+	</li><br/>
+
+
+        </ul>
+        
+<div class="u-nav">
+
+<ul class="nav navbar-top-links navbar-right in" id="mobileadjust" style="margin-top:10px; margin-right:35px;">
+	
+	<li style="color: #fff;"><label class="fntsze" style=" font-size: 11px;">Last Successful Login: <?php echo $authUserNamespace->last_successful;?></label></li><br/>
+	<li style="color: #fff;"><label class="fntsze" style=" font-size: 11px;">Last Failed Login:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $authUserNamespace->last_failed;?></label></li>
+</ul>
+
+</div>    
+        
+        
+	 
+  </div>
+        <!-- /.navbar-top-links -->
+
+        <div class="navbar-default sidebar" id="submenuid">
+            <div class="sidebar-nav navbar-collapse">
+          <ul class="nav" id="side-menu">
+
+                    <li>
+                        <a href="<?php echo BASEPATH; ?>/Admindashboard"> 
+                            <i class="isp dashboard"></i><span>Home</span>
+                        </a>
+                    </li>
+			 <?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+                    <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>Setting</span>
+                             <p class="down"></p>
+                        </a>
+                       
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Setting">Settings</a>
+                                    <a href="<?php echo BASEPATH; ?>/Adminsetting">Admin Settings</a>                                  
+                                    <a href="<?php echo BASEPATH; ?>/Subadmin">Sub Admin User </a>
+                                	<a href="<?php echo BASEPATH; ?>/Enableauth">2 Factor Authentication</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+				<?php }
+				else {
+				?>	
+				  <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>Setting</span>
+                             <p class="down"></p>
+                        </a>
+                       
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Enableauth">2 Factor Authentication</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sub-menu">
+                            <ul>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Checkwallet">Validate Wallet</a>
+                                </li>
+                            </ul>
+                        </div>					  
+                    </li>
+				<?php 
+				}
+				?>
+					
+                    <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>Contract/Hardware</span>
+                             <p class="down"></p>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                            	<?php 	$user_id=$authUserNamespace->user_id;
+                            			$data1=$misc_obj->GetAccessRightByUserId('2',$user_id);
+										if((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin')
+										{?>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Allcontract">Contracts</a>
+                                  </li>
+                                  <?php }?>
+				  <?php 	$user_id=$authUserNamespace->user_id;
+                       			    $data37=$misc_obj->GetAccessRightByUserId('37',$user_id);
+									if((!empty($data37->view) && ($data37->view==1)) || $authUserNamespace->user=='admin')
+									{ ?>
+									<li>
+									<a href="<?php echo BASEPATH; ?>/Claimlist">Claimed Requests</a>
+									</li>	
+										<?php }?>
+								
+
+
+                                 <?php 	$user_id=$authUserNamespace->user_id;
+                       			    $data3=$misc_obj->GetAccessRightByUserId('40',$user_id);
+									if((!empty($data3->view) && ($data3->view==1)) || $authUserNamespace->user=='admin')
+									{ ?>
+									<li>
+								<a href="<?php echo BASEPATH; ?>/Refrequest">Refund Requests</a>
+                                 </li>	
+										<!--
+                                  <li> 
+                                    <a href="#">Edit Hardware</a>                                   
+                              
+                                </li>
+                                --><?php }?>
+                            </ul>
+                        </div>
+                    </li>
+                    <?php 	$user_id=$authUserNamespace->user_id;
+                            $data2=$misc_obj->GetAccessRightByUserId('32',$user_id);
+							if((!empty($data2->view) && ($data2->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+					 <li>
+                        <a href="<?php echo BASEPATH; ?>/Paymentdetail">
+                            <i class="isp purchage"></i>
+                            <span>Paid After Timeout</span>
+                        </a>
+                    </li>
+                    <?php }?>
+					    <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>Kits</span>
+                             <p class="down"></p>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+								  <?php $user_id=$authUserNamespace->user_id;
+                            		$data4=$misc_obj->GetAccessRightByUserId('5',$user_id);
+									if((!empty($data4->view) && ($data4->view==1)) || $authUserNamespace->user=='admin')
+								{?>
+                                 <li>  
+                                    <a href="<?php echo BASEPATH; ?>/Gb2kitinvoice">GB2 Kit Invoices</a>                                   
+                              
+                                </li>
+                                <?php }?>
+								
+                               <?php $data3=$misc_obj->GetAccessRightByUserId('35',$user_id);
+								  if((isset($data3->view) && $data3->view==1) || $authUserNamespace->user=='admin'){ ?>
+							   <li><a href="<?php echo BASEPATH; ?>/Kitaudit">Kit Audit</a></li>
+								  <?php } ?>
+                            
+                            <?php 	$user_id=$authUserNamespace->user_id;
+                           			 $data3=$misc_obj->GetAccessRightByUserId('6',$user_id);
+									if((!empty($data3->view) && ($data3->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Kitupdate">Kit Update</a>
+                                 </li>
+                                 <?php }?>
+                              <?php $user_id=$authUserNamespace->user_id;
+                            		$data4=$misc_obj->GetAccessRightByUserId('5',$user_id);
+									if((!empty($data4->view) && ($data4->view==1)) || $authUserNamespace->user=='admin')
+								{?>
+                                 <li>  
+                                    <a href="<?php echo BASEPATH; ?>/Kitinvoice">Kit Invoices</a>                                   
+                              
+                                </li>
+                                <?php }?>
+                                
+                                 <?php $data41=$misc_obj->GetAccessRightByUserId('33',$user_id);
+							  		if((isset($data41->view) && $data41->view==1) || $authUserNamespace->user=='admin'){ ?>
+							   <li><a href="<?php echo BASEPATH; ?>/Kitlimit">Kit limits</a></li>
+								  <?php } ?>
+								
+								<?php if($authUserNamespace->user=='admin'){ ?>
+							   <li><a href="<?php echo BASEPATH; ?>/Kitgeneration">Kit Generation</a></li>
+								  <?php } ?>
+                              <?php $user_id=$authUserNamespace->user_id;
+                            		$data4=$misc_obj->GetAccessRightByUserId('5',$user_id);
+									if((!empty($data4->view) && ($data4->view==1)) || $authUserNamespace->user=='admin')
+								{?>
+                                 <li>  
+                                    <a href="<?php echo BASEPATH; ?>/Paidsupportinvoice">Paid Support Invoices</a>                                   
+                              
+                                </li>
+                                <?php }?>								
+                            </ul>
+                        </div>
+                    </li>
+			  
+			  
+                    <?php 	$user_id=$authUserNamespace->user_id;
+                            $data24=$misc_obj->GetAccessRightByUserId('24',$user_id);
+							if((!empty($data24->view) && ($data24->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Viewreport">
+                            <i class="isp purchage"></i>
+                            <span>Reports</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+			  
+			    <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>Withdrawals</span>
+                             <p class="down"></p>
+                        </a>
+                        <div class="sub-menu">
+							<ul>
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data8=$misc_obj->GetAccessRightByUserId('8',$user_id);
+							if((!empty($data8->view) && ($data8->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Pendwithdrawals">Withdrawals</a>
+				</li>
+				<?php }?>
+								
+					<?php 	$user_id=$authUserNamespace->user_id;
+                            $dat42=$misc_obj->GetAccessRightByUserId('42',$user_id);
+							if((!empty($data42->view) && ($data42->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Manualwithdrawals">Manual Withdrawals</a>
+				</li>
+				<?php }?>
+								
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data50=$misc_obj->GetAccessRightByUserId('50',$user_id);
+							if((!empty($data50->view) && ($data50->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Dailywithdrawals">Daily Withdrawals</a>
+				</li>
+				<?php }?>
+				
+								
+								 </ul>
+                        </div>
+                    </li>
+			  
+			
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data7=$misc_obj->GetAccessRightByUserId('47',$user_id);
+							if((!empty($data7->view) && ($data7->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Updatewalletaddr">
+                            <i class="isp purchage"></i>
+                            <span>Wallet Update</span>
+                        </a>
+				</li>
+				<?php }?>	
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data7=$misc_obj->GetAccessRightByUserId('48',$user_id);
+							if((!empty($data7->view) && ($data7->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Auditwallet">
+                            <i class="isp purchage"></i>
+                            <span>Audit Wallet</span>
+                        </a>
+				</li>
+				<?php }?>			  
+				 <?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Adminpayout">
+                            <i class="isp purchage"></i>
+                            <span>Admin Payout</span>
+                        </a>
+				</li>
+			  							  
+			   <li class="has-sub-menu">
+					<a href="#">
+						<i class="isp purchage"></i>
+						<span>Upload CSV</span>
+						 <p class="down"></p>
+					</a>
+					<div class="sub-menu">
+						<ul>
+							<li><a href="<?php echo BASEPATH; ?>/Uploadmvpusers">Upload MVP Users</a></li>
+							<li><a href="<?php echo BASEPATH; ?>/Updaterefunds">Update Refunds</a></li>
+							<li><a href="<?php echo BASEPATH; ?>/Uploadwithdrawals">Upload GB2 Withdrawals</a></li>
+					   </ul>
+					</div>
+				</li>
+			  
+			  
+				<?php }?>
+
+ 
+			  
+				
+				 <?php
+					  $data1=$misc_obj->GetAccessRightByUserId('43',$user_id);
+				if((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin')
+				{
+			  
+			//  if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Crmdashboard">
+                            <i class="isp purchage"></i>
+                            <span>CRM Dashboard</span>
+                        </a>
+				</li>
+				<?php }?>			  
+			  
+				
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data7=$misc_obj->GetAccessRightByUserId('22',$user_id);
+							if((!empty($data7->view) && ($data7->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Binaryuser">
+                            <i class="isp purchage"></i>
+                            <span>Users</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+				<?php 	$user_id=$authUserNamespace->user_id;
+                            $data7=$misc_obj->GetAccessRightByUserId('23',$user_id);
+							if((!empty($data7->view) && ($data7->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Userdetails">
+                            <i class="isp purchage"></i>
+                            <span>Users Details</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+				<!--<?php 	$user_id=$authUserNamespace->user_id;
+                            $data9=$misc_obj->GetAccessRightByUserId('30',$user_id);
+							if((!empty($data9->view) && ($data9->view==1)) || $authUserNamespace->user=='admin' || $authUserNamespace->user_type=='subadmin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Queries">
+                            <i class="is purchage"></i>
+                            <span>Queries</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				-->
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")|| ($authUserNamespace->user_type=='subadmin')){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Ticketlist">
+                            <i class="isp purchage"></i>
+                            <span>Service Request</span> 
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+				
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Pendcontracts">
+                            <i class="isp purchage"></i>
+                            <span>Contract Invoices</span>
+                        </a>
+				</li>
+				 <li class="has-sub-menu">
+                        <a href="#">
+                            <i class="isp purchage"></i>
+                            <span>CMS Settings</span>
+                             <p class="down"></p>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                            <?php 	$user_id=$authUserNamespace->user_id;
+                           		 	$data11=$misc_obj->GetAccessRightByUserId('18',$user_id);
+									if((!empty($data11->view) && ($data11->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Trainingsetting">Training</a>
+                                    </li>
+                              <?php }?>
+                             
+                              <?php 	$user_id=$authUserNamespace->user_id;
+                           				 $data12=$misc_obj->GetAccessRightByUserId('19',$user_id);
+										if((!empty($data12->view) && ($data12->view==1)) || $authUserNamespace->user=='admin')
+								{?>
+                                   <li>
+                                    <a href="<?php echo BASEPATH; ?>/News">News</a>                                   
+									</li>
+								<?php }?>
+								
+								<?php 	$user_id=$authUserNamespace->user_id;
+                            			$data13=$misc_obj->GetAccessRightByUserId('20',$user_id);
+										if((!empty($data13->view) && ($data13->view==1)) || $authUserNamespace->user=='admin')
+								{?>	
+								<li>
+									 <a href="<?php echo BASEPATH; ?>/Findus">Find Us</a>  
+                                </li>
+                                <?php }?>
+                            </ul>
+                        </div>
+				</li>
+					<?php 	$user_id=$authUserNamespace->user_id;
+                            $data30=$misc_obj->GetAccessRightByUserId('29',$user_id);
+							if((!empty($data30->view) && ($data30->view==1)) || $authUserNamespace->user=='admin')
+							{?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Changepermission">
+                            <i class="isp purchage"></i>
+                            <span>Change Permission</span>
+                        </a>
+				</li>
+				<?php }?>
+				<!--
+				
+				   <?php 	$user_id=$authUserNamespace->user_id;
+                           $data3=$misc_obj->GetAccessRightByUserId('40',$user_id);
+					if((!empty($data3->view) && ($data3->view==1)) || $authUserNamespace->user=='admin')
+					{ ?>
+				<li class="has-sub-menu">
+                        <a href="#">
+                            <i class="is purchage"></i>
+                            <span>Request</span>
+                        </a>
+                        <div class="sub-menu">
+                            <ul>
+                         
+                                <li>
+									<a href="<?php echo BASEPATH; ?>/Refrequest">Refund Requests</a>
+                                 </li>
+                                 
+                       
+                            </ul>
+                        </div>
+                    </li>
+								
+					-->
+			  
+			  <?php }?>
+			  
+			  				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Managegallery">
+                            <i class="isp purchage"></i>
+                            <span>Manage Gallery</span> 
+                        </a>
+				</li>
+			  
+				<?php }?>	
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Reviewlist">
+                            <i class="isp purchage"></i>
+                            <span>Review comments</span> 
+                        </a>
+				</li>
+			  
+				<?php }?>	
+					<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Addachiever">
+                            <i class="isp purchage"></i>
+                            <span>Add Achievers</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+					<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Specialoffer">
+                            <i class="isp purchage"></i>
+                            <span>Special Offers</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Addevents">
+                            <i class="isp purchage"></i>
+                            <span>Add 	Events</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Sendnotification">
+                            <i class="isp purchage"></i>
+                            <span>Send Notification</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Sendmessage">
+                            <i class="isp purchage"></i>
+                            <span>Send Message</span>
+                        </a>
+				</li>
+				<?php }?>
+				
+				<?php //if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Changepassword">
+                            <i class="isp purchage"></i>
+                            <span>Change Password</span>
+                        </a>
+				</li>
+				<?php 
+				  	// }
+			  	?>
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Managelinks">
+                            <i class="isp purchage"></i>
+                            <span>Manage Navigation</span> 
+                        </a>
+				</li>
+				<?php }?>
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Membershiplist">
+                            <i class="isp purchage"></i>
+                            <span>Manage Membership</span> 
+                        </a>
+				</li>
+				<?php }?>
+				
+				<?php if(!empty($authUserNamespace->user) && ($authUserNamespace->user=="admin")){?>
+				<li>
+                        <a href="<?php echo BASEPATH; ?>/Managebanner">
+                            <i class="isp purchage"></i>
+                            <span>Manage Banner</span> 
+                        </a>
+				</li>
+				<?php }?>
+				
+				
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+
+
+
+
+<?php echo $this->layout()->content;?>
+
+ <footer class="footer" style=" position: relative;z-index: 9999;">
+      <div class="container copyrightSection center-text">
+       <div> <p class="pull-left offset-sm-float ">Copyright &#169; 2016 GAINBITCOIN All rights reserved.</p>
+
+          <ul class="list-inline pull-right  offset-sm-float">
+               <li>
+                   <a onclick="newtabfun1()" href="#"> <img src="<?php echo BASEPATH; ?>/images/facebook.png" alt=""></a>
+               </li>
+
+                <li>
+                   <a href="#" onclick="newtabfun1()">  <img src="<?php echo BASEPATH; ?>/images/googleplus.png" alt=""></a>
+               </li>
+
+                <li>
+                <a href="#" onclick="newtabfun1()"> <img src="<?php echo BASEPATH; ?>/images/twitter.png" alt="">
+                </a></li>
+                <a href="#">
+               
+              
+           	 	</a>
+          </ul>
+        </div>
+  
+      
+          
+      </div>
+    </footer>
+
+       <!-- /#Footer End-wrapper Here -->
+	
+ </div>
+</body>
+<script>
+function changepagination()
+{
+	if($("#data-table-simple_previous").length == 0) {
+
+	}
+	else{
+
+	/* var innerhtml='<img alt="" src="images/leftarw.png">';
+	$("#data-table-simple_previous").empty();
+	$("#data-table-simple_previous").append(innerhtml); */
+	//$('#data-table-simple_wrapper .row').append("<div class='clearfix' style='background-color: #FFFFFF! important; float: left; width: 100%; height: 24px;'> </div>");
+
+	/*$('#data-table-simple_filter').parents('.col-sm-6').append("<div class='clearfix' style='background-color: #FFFFFF! important; float: left; width: 100%; height: 24px;'> </div>");
+*/	} 
+	
+	/* if($("#data-table-simple_next").length == 0) { 
+	
+	}
+	else{
+
+	var innerhtml='<img alt="" src="images/rightarw.png">';
+	$("#data-table-simple_next").empty();
+	$("#data-table-simple_next").append(innerhtml);
+	}*/
+}
+
+
+
+
+
+
+</script>
+	   <script src="<?php echo BASEPATH; ?>/js/common.js"></script> 
+	   <script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'af,de,en,es,la,ml,ms,nl,ta,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script>
+function newtabfun1(){
+	window.open('https://www.facebook.com/thegainbitcoin');
+	}
+
+	function newtabfun2(){
+		window.open('https://plus.google.com/100191606886810566595/about');
+		}
+
+	function newtabfun3(){
+		window.open('https://twitter.com/thegainbitcoin');
+		}
+
+</script>
+
+</html>
+

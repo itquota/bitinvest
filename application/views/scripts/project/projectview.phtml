@@ -1,0 +1,141 @@
+<html>
+<head>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<style>
+.popMain
+{
+    width: 900px;
+    height: 300px;
+    padding:10px;
+}
+.popMain #rowbg
+{
+	height: auto !important;
+	height: 33px;
+	min-height: 33px;
+	padding: 15px 0;
+}
+.col
+{
+	margin:0 10px 0px 0px;
+}
+.popMain #rowbg .col
+{
+	margin:0 10px 0px 0px;
+}
+</style>
+</head>
+<body>
+    		<div class="popMain" style="height:300px;"> 
+    		<?php if(isset($this->listingdata) && $this->listingdata !=""){
+    		 $temp = $this->listingdata;?> 
+    		    
+            <h5><?php if(isset($temp) && sizeof($temp)>0 ){echo  $temp[0]['projecttitle']." ";} ?>(<?php if(isset($temp) && sizeof($temp)>0 ){echo $temp[0]['mainprojectid'] ;} ?>)</h5>
+            <?php }?>
+            <div id="tablebg" style="height: 40px;">
+                <span class="col" style="margin:0 0 0 10px;width:100px;">Task</span>
+                <span class="col" style="width:95px;">Allocated_by</span>
+                <span class="col" style="width:95px;">Owner</span>
+                <span class="col _l" style="width:80px;">Progress(%)</span>
+                <span class="col _l" style="width: 60px;">B_hrs</span>
+                <span class="col _l" style="width: 60px;">A_hrs</span>
+                <span class="col _l" style="width: 55px;">S_date</span>
+                <span class="col _l" style="width: 55px;">E_date</span>
+                <span class="col _l" style="width:70px;width:50px\9;text-align:center\9;">Status</span>
+                 <span class="col _l" style="width: 50px;">T_Brief download</span>
+                  <span class="col _l" style="width: 50px;word-wrap: break-word;">Task_doc_dn</span>
+                
+            </div>
+            <div class="scrollDiv">
+            <?php if(isset($this->listingdata) && sizeof($this->listingdata)>0){?>
+              <?php	foreach ($this->listingdata as $listingdata){?>
+	            <div id="rowbg">
+	            	 <span class="col" style="margin-left:10px;width:90px;"><?php  if(isset($listingdata->title1) && $listingdata->title1 !=""){ echo $listingdata->title1;}?></span>
+	            	 <span class="col" style="width:95px;"><?php  if(isset($listingdata->allocatedby) && $listingdata->allocatedby !=""){ echo $listingdata->allocatedby;}?></span>
+	                 <span class="col" style="width:95px;"><?php  if(isset($listingdata->name) && $listingdata->name !=""){ echo $listingdata->name;}?></span>
+	                 <span class="col" style="width: 80px;text-align: center;"><?php  if(isset($listingdata->value1) && $listingdata->value1 !=""){ echo $listingdata->value1;} else{echo "0%";}?></span>
+	                 <span class="col" style="width: 60px;text-align: center;"><?php  if(isset($listingdata->b_hrs) && $listingdata->b_hrs !=""){ echo $listingdata->b_hrs;}?></span>
+					 <?php 
+                $taskObj = new Aranca_Model_DbTable_Task();
+					$clientObj= new Aranca_Model_DbTable_Client();
+					$emp_taskObj = new Aranca_Model_DbTable_Emptask();
+					
+						$where = "  et.task_id = ' $listingdata->editid ' ";
+					
+	
+					$listing = $emp_taskObj->fetchAll($emp_taskObj->select()
+											->setIntegrityCheck(false)
+											->from(array('et'=>DATABASE_PREFIX."emp_task"),array('et.id as editid','et.task_id as task_id','et.st_time as st_time','et.end_time as end_time'))
+											->where($where)
+										);
+					$hours=0;
+					$totalhours=0;	
+					$totalminits=0;
+					$result="0.0";							
+					foreach ($listing as $list)
+					{	if(isset($list->st_time) && $list->st_time!="" && $list->st_time!="0000-00-00 00:00:00" && isset($list->end_time) && $list->end_time!="" && $list->end_time!="0000-00-00 00:00:00")
+					{								
+						$date_a = new DateTime($list['st_time']);
+						$date_b = new DateTime($list['end_time']);						
+						$diff=$date_b->diff($date_a);
+						$hours=$diff->h;
+						$minits=$diff->i;
+						$totalminits+=$minits;
+						$totalhours+=$hours+($diff->d*24);	
+					}				
+					} 
+        			if($totalminits>60)
+					 {
+					 	$hrs=$totalminits/60;
+					 	$hrs = floor($hrs); 
+					 	$minit=$totalminits%60;
+					 	$minit = floor($minit);
+					 	$totalhours+=$hrs;
+					 	$result=$totalhours.".".$minit;
+					 }
+					else
+					{
+					   $result=$totalhours.".".$totalminits;
+					}
+					
+					$actual_hour =$result;
+                ?>	                
+	                 <span class="col" style="width: 60px;text-align: center;"><?php  if(isset($actual_hour) && $actual_hour !=""){ echo $actual_hour;}else{echo"0";}?></span>
+	                 <span class="col" style="width: 55px;text-align: center;"><?php  if(isset($listingdata->startdate) && $listingdata->startdate !=""){ $newDate = date("d/m/y", strtotime($listingdata->startdate));echo $newDate;}?></span>
+	                 <span class="col" style="width: 55px;text-align: center;"><?php  if(isset($listingdata->enddate) && $listingdata->enddate !=""){ $newDate1 = date("d/m/y", strtotime($listingdata->enddate)); echo $newDate1;} else{echo "0%";}?></span>
+	                 <span class="col" style="text-align: center; margin-right: 0px; width: 70px;"><?php  if(isset($listingdata->value2) && $listingdata->value2 !=""){ echo $listingdata->value2;}?></span>
+	                 <span class="col" style="text-align: center; margin-right: 0px; width: 65px;width: 50px\9;"><?php  if(isset($listingdata->filepath1) && $listingdata->filepath1 !=""){ ?><a  href="<?php echo BASEPATH;?><?php echo $listingdata->filepath1;?>"  target="_blank" id="download" class="openskillbox"><img border="0" title="Download" src="<?php echo BASEPATH;?>/images/common/down.gif"></a><?php }?></span>
+	                 <span class="col" style="text-align: center; margin-right: 0px; width: 50px;"><?php  if(isset($listingdata->filepath) && $listingdata->filepath !=""){ ?> <a  href="<?php echo BASEPATH;?><?php echo $listingdata->filepath;?>"  target="_blank" id="download" class="openskillbox"><img border="0" title="Download" src="<?php echo BASEPATH;?>/images/common/down.gif"></a>  <?php }?></span>
+	                 
+	            </div>
+	            <?php } ?>
+	            <?php } else {?>
+	            	<div class='grid-row2'>
+					<div align='' style="width:95%;font-weight:bold;text-align:center;">No Records Found</div>
+					</div>
+	            <?php }?>
+	            <!-- <div id="rowbg">
+	            	 <span class="col">Task 2</span>
+	                 <span class="col" style="width:130px;">Alex Lobo</span>
+	                 <span class="col">50</span>
+	            </div>
+	            <div id="rowbg">
+	            	 <span class="col">Task 3</span>
+	                 <span class="col" style="width:130px;">Alex Lobo</span>
+	                 <span class="col">50</span>
+	            </div>
+	            <div id="rowbg">
+	            	 <span class="col">Task 4</span>
+	                 <span class="col" style="width:130px;">Alex Lobo</span>
+	                 <span class="col">50</span>
+	            </div> -->
+            </div>
+            <br class="clear">
+            <a href="#"  onclick="parent.skillclose();return false;" class="searchbg">Ok</a>
+		</div> 
+ </body>
+ </html>

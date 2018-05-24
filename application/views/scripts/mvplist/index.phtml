@@ -1,0 +1,158 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$DB = Zend_Db_Table_Abstract::getDefaultAdapter();
+
+
+  function addOrdinalNumberSuffix($num) {
+    if (!in_array(($num % 100),array(11,12,13))){
+      switch ($num % 10) {
+        // Handle 1st, 2nd, 3rd
+        case 1:  return $num.'st';
+        case 2:  return $num.'nd';
+        case 3:  return $num.'rd';
+      }
+    }
+    return $num.'th';
+  }
+
+?>
+<style>
+	@media (max-width:480px){
+		
+		.center-image{
+		padding:0px 20px;
+		}
+	
+	
+	}
+
+	.headerbg{
+		background-color:#1c2b36;
+		height:70px;
+
+	}
+	.footer{display:none;}
+	
+	.center-justified {
+  text-align: justify;
+  margin: 0 auto;
+  width: 20em;
+}
+
+	
+	.message-text{
+		margin-top:20px;
+		margin-right:5px;
+		/*border:1px solid #ccc;*/
+		background:#fff;
+		text-align:justify;
+		border-radius:5px;
+	}
+</style>
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">MVP Users</h4>
+		<h5 class="text-muted page-title-alt"></h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Selected MVP Users</b></h4>
+						</div>	
+						
+						<div class="card-box-content">
+					<?php 	foreach($this->events as $events){	
+								$ev_id = $events['event_id'];
+								$query = "select * from mvpusers where event_id = $ev_id"; 	
+								$replySummaryData=$DB->query($query);
+								$replySummaryResult = $replySummaryData->fetchAll();	
+							//	print_r($replySummaryResult);
+					
+							
+					?>
+						<h4 class="header-title"><b><?php echo addOrdinalNumberSuffix($events['event_id']);?>&nbsp;MVP Meet - <?php echo $events['place'];?>&nbsp; (<?php echo $events['duration']?>) </b></h4>	
+						<div class="row"  style="overflow-y:auto;height:360px;">
+							<div class="col-lg-6" style="padding-right:0px;padding-left:0px;">
+
+
+								<table class="table table-striped  table-bordered">
+								  <thead>
+									  <tr>
+										  <th>Username</th>
+										  <th>Qualified For Training</th>
+									  </tr>	
+								  </thead>	
+								  <tbody>
+									  <?php 
+										$this->result = $replySummaryResult;
+										$result= $this->result;
+										  $size= sizeof($this->result); 
+										  $k= round($size/2);
+
+											for($i=0;$i<$k;$i++){
+									  ?>	
+
+									<tr>
+									  <td style="text-align:left;padding-left:10%;"><?php echo $this->result[$i]['username']; ?></td>   
+									  <td><?php echo $this->result[$i]['qualified_status']; ?></td> 				  
+
+									  </tr>
+									<?php  }	 ?>
+								  </tbody>
+								</table>
+							</div>
+							<div class="col-lg-6"  style="padding-right:0px;padding-left:0px;margin-left:-1px;">
+								<table class="table table-striped  table-bordered">
+								  <thead>
+									  <tr>
+										  <th>Username</th>
+										  <th>Qualified For Training</th>
+									  </tr>	
+								  </thead>					
+								  <tbody>
+									  <?php 
+										for($i=$k;$i<$size;$i++)	  {
+									  ?>	
+
+									<tr>
+									  <td style="text-align:left;padding-left:10%;"><?php echo $this->result[$i]['username']; ?></td>
+									  <td><?php echo $this->result[$i]['qualified_status']; ?></td> 				  
+
+									</tr>
+									<?php 	} ?>
+								  </tbody>
+								</table>
+							</div>
+						</div>	
+							<br/><br/><br/><br/><br/>	
+					<?php }?>
+
+				<!--		<div class="row message-text">
+							<div class="col-lg-12" style="padding:20px;">
+								<p>Dear Friends & Esteemed Colleagues,</p>
+								<p>
+									With the MVPs initiative we will start a complete new chapter in all the GBC family members personal and professional lives.</p>
+								<p>
+									To kickstart the new tradition we are hereby arranging the first ever GB Leadership Training Program (GBLTP).
+									GBLTP will consist of 3 day rigourous training on sales and marketing skills, soft skills, bitcoin and altcoin trading, and lot more.
+									The training sessions will also be accompanied by meeting with veterans from bitcoin and share trading market.
+								</p>
+								<p>
+								To attend the training session the MVPs must complete 25 fresh pairs of sales in the cycle of 1st-15th May period; sales in power leg will not be counted & its unique 25 pair sales, downline MVPs sales pair will be discounted in your counts. 
+
+								</p>
+								<p>The qualified MVPs will be informed as and when they keep clearing the targets.The training dates are starting on 20th and will be once in lifetime opportunity and experience.
+									All the arrangements for travel & stay will be managed by the company. </p><br/>
+								<p>Come on & be part of the most amazing journey of your life, CHEERS !!!</p>
+							</div>
+						</div> -->
+	</div>
+</div>
+	
+

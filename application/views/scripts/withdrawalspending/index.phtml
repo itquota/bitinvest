@@ -1,0 +1,323 @@
+	<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.card-box-content {
+    padding:0px 20px;
+}	
+	.err_msg_style{
+		margin-top:20px;
+		margin-bottom:0px;
+		font-weight:600;
+		width:300px;
+	
+	}	
+</style>	
+
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Daily Withdrawals</h4>
+		<h5 class="text-muted page-title-alt"></h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Pending Requests</b></h4>
+						</div>
+						
+						<div class="card-box-content">
+							<div id = "err_msg"></div>
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>
+										<th>S.No. </th>
+										<th>Address </th>
+										<th>MCAP Address </th>
+										<th>Amount </th>
+										<th style="max-width:60px;">Status</th>
+										<th>Requested_on</th>
+										<th style="max-width:60px;">Action</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+
+									   <?php
+
+														$j=1;
+														foreach($this->requests as $result1) 
+
+														{	
+															
+															if($result1['status'] == 1){
+																$status = "Pending";
+															
+															}
+												?>				
+															<tr>
+																<td style="min-width:40px;"><?php echo $j; ?></td>
+																<td  style="min-width:150px;text-align:left;"><?php echo $result1['wallet_address']; ?></td>
+																<td  style="min-width:150px;text-align:left;"><?php echo $result1['mcap_address']; ?></td>
+																<td style="text-align:right;"><?php echo $result1['amount']; ?>&nbsp;BTC</td>
+																<td style="max-width:60px;"><?php echo $status; ?></td>
+																<td style="min-width:150px;"><?php echo date("jS F, Y  h:i A", strtotime($result1['request_date'])); ?></td>
+																<!--<td><a href="#" onclick="closerequest('<?php echo $result1['wallet_address']; ?>','<?php echo $result1['amount']; ?>')">Close</a></td>-->
+																<td style="max-width:60px;">
+																	<?php
+															
+															if($this->withdrawal_reject_disable['value'] == 0){
+																?>
+																	<div id = "reject_button">
+																	<a href="#" onclick="confirm('<?php echo $result1['wallet_address']; ?>','<?php echo $result1['amount']; ?>')">Reject</a></div>
+																<?php
+																	}
+																?>
+																</td>
+															</tr>
+												<?php
+														$j++;}	
+
+
+
+												?>
+
+									</tbody>
+								  </table>
+								 <br/>
+								<div style = "font-style:italics;font-size:11px;">**Please Note: Request rejection will be disabled around 11:30 PM IST everyday till payout completion.</div>
+							</div>
+			   <div class="clearfix">&nbsp;</div>
+							
+							
+            </div>
+          </div>
+        </div>  
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Processed Requests</b></h4>
+						</div>
+						<div class="card-box-content">
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple-2"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>
+										<th>S.No. </th>
+										<th>Address </th>
+										<th>Requested Amount </th>
+								<!--		<th>Fees</th>
+										<th>Paid Amount</th> -->
+										<th>MCAP Rate</th>
+										<th>MCAP Value</th>
+										<th>MCAP Address</th>
+										<th>Transaction ID</th>
+										<th style="min-width:150px;">Processed On</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+
+									   <?php
+//print_r(($this->processed));
+														$i=1;
+														foreach($this->processed as $result2) 
+
+														{	
+															if($result2['withdrawal_type'] == 2){
+															
+																$url = "https://etherscan.io/tx/";
+															}else{
+																
+																$url = "https://blockchain.info/tx/";
+															
+															}
+															
+												?>				
+															<tr>
+																<td style="min-width:40px;"><?php echo $i; ?></td>
+																<td style="min-width:150px;text-align:left;"><?php echo $result2['wallet_address']; ?></td>
+																<td style="text-align:right;min-width:150px;padding-right:20px;"><?php echo $result2['amount']; ?>&nbsp;BTC</td>
+															<!--	<td style="text-align:right;"><?php echo $result2['tx_fees']; ?>BTC</td>
+																<td style="text-align:right;min-width:150px;padding-right:20px;"><?php echo ($result2['amount']-$result2['tx_fees']); ?>BTC</td> -->
+																<td style="text-align:right;"><?php echo $result2['mcap_rate']; ?></td>
+																<td style="text-align:right;"><?php echo $result2['mcap_value']; ?></td>
+																<td style="text-align:left;"><?php echo $result2['mcap_address']; ?></td>
+																<td>
+																	<a href="<?php echo $url.$result2['txid']; ?>" target="_blank"><?php echo $result2['txid']; ?></a>
+																</td>
+																<td style="min-width:150px;"><?php echo date("jS F,Y  h:i A", strtotime($result2['updated_date'])); ?></td>
+															
+															</tr>
+												<?php
+														$i++;	
+														}
+
+
+												?>
+
+									</tbody>
+								  </table>
+								 <br/>
+							</div>
+			   <div class="clearfix">&nbsp;</div>
+							
+							
+            </div>
+          </div>
+        </div>  
+				
+				<!-- Rejected Requests Starts-->
+				
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Rejected Requests</b></h4>
+						</div>
+						
+						<div class="card-box-content">
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple-1"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>
+										<th>S.No. </th>
+										<th>Address </th>
+										<th>MCAP Address </th>
+										<th>Amount </th>
+										<th style="max-width:60px;">Status</th>
+										<th>Requested_on</th>
+										<th style="max-width:60px;">Comment</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+
+									   <?php
+
+														$j=1;
+														foreach($this->rejected as $result12) 
+
+														{	
+															
+															if($result12['status'] == 3){
+																$status = "Rejected";
+															
+															}
+												?>				
+															<tr>
+																<td style="min-width:40px;"><?php echo $j; ?></td>
+																<td  style="min-width:150px;text-align:left;"><?php echo $result12['wallet_address']; ?></td>
+																<td  style="min-width:150px;text-align:left;"><?php echo $result12['mcap_address']; ?></td>
+																<td style="text-align:right;"><?php echo $result12['amount']; ?>&nbsp;BTC</td>
+																<td style="max-width:60px;"><?php echo $status; ?></td>
+																<td style="min-width:150px;"><?php echo date("jS F, Y  h:i A", strtotime($result12['request_date'])); ?></td>
+																<td  style="min-width:150px;text-align:left;white-space: nowrap;"><p><?php echo $result12['comment']; ?></p></td>
+
+															</tr>
+												<?php
+														$j++;}	
+
+
+
+												?>
+
+									</tbody>
+								  </table>
+							</div>
+			   <div class="clearfix">&nbsp;</div>
+							
+							
+            </div>
+          </div>
+        </div>				
+				
+				
+				<!-- Rejected Requests Ends-->
+				
+				
+				
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+	<div class="modal bg-popup" id="myModal1" ></div>	
+    
+<script data-cfasync="false"  type="text/javascript">
+	
+function confirm(addr,amount){
+	var addr = addr;
+	var amount = amount;
+
+
+	var msg = "Are you sure?<br/> You want to cancel your withdrawal requset." ;
+			 $("#myModal1").addClass('openpop');
+			 $("#myModal1").html('<div class="modal-dialog height-popup big-pop-center2"><div class="modal-content no-padding">'
+				+'<div class="bg-pop-header"><span class="text-pop-header">CONFIRM</span><button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closePop();" ><i class="fa fa-close" style="color:#fff;"></i></button>'
+				+'</div>'
+				+'<div style="padding:25px;height:250px;overflow-y:auto;" >'
+				 +'<p style = "text-align:center;font-size:20px;padding:15px;">'+msg+'  </p>'
+				  +'<p style = "text-align:center;padding:10px;"> <a href ="#" class = "btn btn-primary btn-md" onclick = "closerequest(\''+addr+'\',\''+amount+'\')" style = "margin:10px;">Yes</a><a href = "#"  class = "btn btn-inverse btn-md" onclick = "closePop()"  style = "margin:10px;">No</a> </p>'
+				+'</div></div></div>');
+			 return false;	
+
+
+}	
+function closerequest(addr,amount){
+
+	var address=addr;
+	var amount=amount;
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/Withdrawalspending/changestatus", 
+			type: "POST",    
+		    data: 'wallet_addr='+address+'&amount='+amount,
+		    async:false,
+				success:function(response)
+				{
+				  var data=	JSON.parse(response);
+					if (data) {
+						if(data.failure != ''){
+							$("#err_msg").addClass('alert');
+							$("#err_msg").addClass('alert-danger');							
+							$("#err_msg").html(data.failure);
+						}else{
+							$("#reject_button").html("");
+							$("#err_msg").addClass('alert');
+							$("#err_msg").addClass('alert-success');
+							$("#err_msg").addClass('err_msg_style');
+							$("#err_msg").html(data.success);
+							setTimeout(function(){
+							 window.location.href=("<?php echo BASEPATH; ?>/Withdrawalspending");
+							},3000);							
+						}
+						closePop();
+					}					
+			
+				
+				}
+				
+		 });
+		
+	}
+
+  function closePop()
+	{
+
+		$("#myModal1").removeClass('openpop');
+		$("#myModal1").html('');
+
+	}	
+	</script>		

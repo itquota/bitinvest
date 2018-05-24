@@ -1,0 +1,286 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$user_id=$authUserNamespace->user_id;
+	$data1=$misc_obj->GetAccessRightByUserId('37',$user_id);
+
+	?>
+<style>
+.calculatebtn {
+    width: 42%;
+}
+#reports
+{
+width:11%;
+float:left;
+
+}
+ .form-group {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:300px;
+		}
+	.btn-group {
+    display: inline-block;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:100%;
+		}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+ <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            
+             <div class="row">
+             
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Kit Audit</li>
+  
+            	</ol>
+            <div class="err1"></div>	
+            <form method="POST" action="<?php echo BASEPATH; ?>/Kitaudit" id="report_form"/>
+                <div>
+                <?php if(!empty($authUserNamespace->msg)&& $authUserNamespace->msg!=""){?>
+                <label for="" class="lblTxt" style="color: red;"><?php echo $authUserNamespace->msg; ?></label>
+                <?php $authUserNamespace->msg="";}?>
+                </div>
+					  <div class="form-group">
+					  <label for="" class="lblTxt">Choose Date Type</label>
+					  <select name = "filter_by" class="form-control CommonInputBox" id = "filter_by" style="	border: 1px solid !important;border-radius: 5px !important;">
+								<option value = "">Choose Date Type</option>
+								<option value = "1">Created Date</option>
+								<option value = "2">Updated Date</option>
+					</select>
+						</div>
+	
+		<div class="form-group">
+  		<label for="" id="datetimepicker"  name="startdate" class="lblTxt">Start Date</label>
+        	<input id="datetimepicker" class="form-control CommonInputBox datepick"  type="text" name="start_date" name="start_date"  value="" class="form-control calculateSearchbox datepick"  placeholder="Start Date" />   
+
+		</div>
+		
+		
+		<div class="form-group">
+ 		 <label for="" id="datetimepicker" name="enddate" class="lblTxt">End Date</label>
+        <input id="datetimepicker1" class="form-control CommonInputBox datepick"  type="text" id = "end_date" name = "end_date"  value="" class="form-control calculateSearchbox datepick" placeholder="End Date" />     
+		</div>
+		
+		<div class="form-group">
+		<label for="" class="lblTxt">Username</label>
+		<input type="text" id= "user" class="form-control CommonInputBox" name = "user" placeholder = "Search User"/>
+		</div>
+		<div class="btn-group">
+		<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+		
+		<button class="btn btn-default Commonbtn" name="search_filter" id="search_filter" type="submit">Filter</button>
+		</div>
+
+      </form>      
+            
+            
+            
+            
+                    <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table" id="parentTable">
+					             
+                                       <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+        
+					<tr>
+							<th class="sortboth">Sr.</th>
+							<th class="sortboth">Username</th>
+							<th class="sortboth">Kit InvoiceId</th>
+							<th class="sortboth">Kit No.</th>
+							<th class="sortboth">Comment</th>
+							<th class="sortboth">Payment Type</th>
+							<th class="sortboth">Created Date</th>
+							<th class="sortboth">Updated</th>
+							<th class="sortboth">Used Date</th>
+							<th class="sortboth">Kit Used By</th>
+							<th class="sortboth">Kit Status</th>	
+							<th class="sortboth">Kit Audit Status</th>						
+							<th style="text-align:center;width: auto;">Action</th>
+							
+					</tr>
+
+                 </thead>
+                  <tbody id="parentdata"> 
+
+							<?php
+							try{
+// printArr($AllClaimedRequests);
+// exit;
+								if(!empty($this->kitDetails) && sizeof($this->kitDetails) > 0 ){ 
+
+									$sn = 1;
+//printArr($kitDetails);
+									if(!empty($get_parameters['page']) && $get_parameters['page'] >1){
+										$sn = ($get_parameters['page']-1)*$PaginateLimit +1;
+									}
+									foreach($this->kitDetails as $valueArray){
+
+									if($valueArray['status']!=='Deleted'){
+
+										$invoiceid = isset($valueArray['invoice_id']) ? $valueArray['invoice_id'] : '';
+										$username = isset($valueArray['username']) ? $valueArray['username'] : '';
+										$kitNo = isset($valueArray['kit_number']) ? $valueArray['kit_number'] : '';
+
+										$payment_mode = isset($valueArray['payment_mode']) ? $valueArray['payment_mode'] : 'auto';
+										$CreatedDate = isset($valueArray['created_on']) ? $valueArray['created_on'] : '';
+										$UpdatedDate = isset($valueArray['updated_on']) ? $valueArray['updated_on'] : '';
+										$UsedDate = isset($valueArray['kit_used_date']) ? $valueArray['kit_used_date'] : '';
+
+										$status = isset($valueArray['status']) ? $valueArray['status'] : '';
+										$comment=isset($valueArray['comment']) ? $valueArray['comment'] : '';
+										$kit_used_by=isset($valueArray['kit_used_by']) ? $valueArray['kit_used_by'] : '';
+										// $inv_sts=isset($valueArray['invoice_status']) ? $valueArray['invoice_status'] : '';
+										if($valueArray['audit_status']=='1')
+										{
+											$audit_status='Passed';
+										}
+										else if($valueArray['audit_status']=='2')
+										{
+											$audit_status='Failed';
+										}
+										else 
+										{
+											$audit_status='';
+										}
+										?>
+									
+							<tr>
+
+								<td style="text-align:center;"><?php echo $sn; ?></td>
+
+								<td><?php echo $username; ?></td>
+								
+								<td>
+								<?php echo $invoiceid;	?>
+								</td>
+								<td><?php echo $kitNo; ?></td>
+								<td><?php echo $comment; ?></td>
+								<td><?php echo $payment_mode; ?></td>
+								<td><?php echo !empty($valueArray['created_on']) ? date("jS M, Y H:m", strtotime($CreatedDate)):''; ?></td>
+								<td><?php echo !empty($valueArray['updated_on']) ? date("jS M, Y H:m", strtotime($UpdatedDate)):''; ?></td>
+								<td><?php echo !empty($valueArray['kit_used_date']) ? date("jS M, Y H:m", strtotime($UsedDate)):''; ?></td>
+								<td><?php echo $kit_used_by; ?></td>
+								<td>	<?php echo $status; ?></td>
+								<td>	<?php echo $audit_status; ?></td>
+								
+							
+										
+								<td>
+							<?php if(!empty($valueArray['audit_status']) && $valueArray['audit_status']=='1'){ ?>
+									
+									<a class = "btn" onclick="changeKitConfirmation('<?php echo $kitNo; ?>',2)" >fail</a>
+							<?php } else if(!empty($valueArray['audit_status']) && $valueArray['audit_status']=='2'){ ?>
+									<a class = "btn" onclick="changeKitConfirmation('<?php echo $kitNo; ?>',1)" >pass</a>
+									
+							<?php }else { ?>
+									<a class = "btn" onclick="changeKitConfirmation('<?php echo $kitNo; ?>',1)" >pass</a>
+									<a class = "btn" onclick="changeKitConfirmation('<?php echo $kitNo; ?>',2)" >fail</a>
+							<?php } ?>
+									
+								</td>
+							</tr>
+								<?php
+
+									$sn++;
+
+									}
+								}
+							}
+							}
+							catch(Exception $e)
+							{
+								echo $e->getMessage();
+							}
+								?>
+             
+                 </tbody>
+                  </table> 
+  
+              </div>
+
+        </div>
+		
+    </div>
+	<?php echo $this->SearchResult['Pagination']; ?>
+    
+    <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    
+             
+             </div>
+</div>
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+
+ 
+     
+     <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>
+		<script>
+		function changeKitConfirmation(kitNo,status)
+		{
+			var token = $('#token').val();
+			
+					
+			 $.ajax({
+					
+						url:"<?php echo BASEPATH; ?>/Kitaudit/changekitconfirmation", 
+						type: "POST",    
+						data: 'kitNo='+kitNo+'&status='+status+'&token='+token,			
+						success:function(response)
+						{	//alert(response);	
+							//
+							var data=JSON.parse(response);
+			 		  		
+			 				if(data['success']!="" && data['success']=='success')
+							   { 
+									//alert("User updated successfully");
+						         alert(data['data']);       
+						           window.location = "<?php echo BASEPATH; ?>/Kitaudit";	
+							   }
+						       else{
+						    	   alert(data['failure']);  
+						           //alert(data);return false;
+	
+						    	 //  $(".err1").html('<label for="" class="lblTxt" style="color:red; padding: 0 17px;">'+data['failure']+'</label>');				
+						}
+					}
+			 });
+		}
+		</script>
+		

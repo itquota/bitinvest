@@ -1,0 +1,797 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+
+<script type="text/javascript">
+var arr = [];
+<?php if(isset($this->geographyids) && $this->geographyids!="" ) { ?>
+var idlist='<?php echo $this->geographyids;?>';
+ arr=idlist.split(",");
+<?php }?>
+
+<?php if(isset($this->geocode) && $this->geocode=="region"){ ?> 
+window.onload=function(){populate_dropdown('region',1);}
+<?php } else if(isset($this->geocode) && $this->geocode=="country") {?>
+window.onload=function(){populate_dropdown('country',1);}
+<?php }?>
+
+	function search()
+	{	var getValue = '6';
+		var projecttype2=document.getElementById('projecttype2').value;
+		var projecttitle=document.getElementById('projecttitle').value;
+		var keywords=document.getElementById('keywords').value;
+		var projectid=document.getElementById('projectid').value;
+		var practice=document.getElementById('practice').value;
+		var clientname=document.getElementById('clientname').value;
+		var status=document.getElementById('status').value;
+		var projecttype=document.getElementById('projecttype').value;
+		var studysector=document.getElementById('studysector').value;
+		var projectmanager=document.getElementById('projectmanager').value;
+		var teammember=document.getElementById('teammember').value;
+		var allRadio =document.getElementsByName("geography");
+		<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>
+		var projectname =document.getElementById("projectname").value;
+		
+		<?php }?>
+		var radioflag="";
+		var geography="";
+	        for(var i = 0;i<allRadio.length; i++)
+		    {
+	            if(allRadio[i].checked == true)
+		        {
+	            	geography=allRadio[i].value;
+	            	radioflag="1";
+	           	}
+	         } 
+	         
+        var foo = []; 
+        $('#geography_list :selected').each(function(i, selected){ 
+          foo[i] = $(selected).val(); 
+        });
+
+        var geography_id="";
+        for(var i = 0;i<foo.length; i++)
+        {
+        	geography_id+=foo[i]+",";
+       	}  
+        geography_id=geography_id.substring(0, geography_id.length - 1);    
+		
+		
+		var startdate=document.getElementById('startdate').value;
+		if (startdate != "")
+		  {
+			var positionval  = startdate.split('/');
+			startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+			
+		  }
+		else
+		{
+			var startdate= "";
+		}
+		
+		var enddate=document.getElementById('enddate').value;
+		if (enddate != "")
+		  {
+			var positionval1  = enddate.split('/');
+			enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+		  }
+		else
+		{
+			enddate= "";
+		}
+		projecttitle=encodeURI(projecttitle);
+		keywords=encodeURI(keywords);
+		projectid=encodeURI(projectid);
+		practice=encodeURI(practice);
+		clientname=encodeURI(clientname);
+		status=encodeURI(status);
+		projecttype=encodeURI(projecttype);
+		studysector=encodeURI(studysector);
+		projectmanager=encodeURI(projectmanager);
+		teammember=encodeURI(teammember);
+		geography=encodeURI(geography);
+		
+//		if(projecttitle=="" && keywords=="" && projectid=="" && practice=="" && startdate=="" && enddate=="" && clientname==""  && status=="" && projecttype=="" && studysector=="" && projectmanager=="" && teammember=="" && radioflag=="")
+//		{
+//			alert("Please Enter Something To Search");
+//		}
+//		else
+//		{
+//			document.searchprojectform.submit();
+//			window.location="<?php //echo BASEPATH; ?>/project/index/searchadhock/"+searchadhock+"/projecttitle/"+projecttitle+"/keywords/"+keywords+"/projectid/"+projectid+"/practice/"+practice+"/startdate/"+startdate+"/enddate/"+enddate+"/clientname/"+clientname+"/status/"+status+"/projecttype/"+projecttype+"/studysector/"+studysector+"/projectmanager/"+projectmanager+"/teammember/"+teammember+"/geography_list/"+geography_id+"/geography/"+geography+"/getPageValue/"+getValue;
+//		}
+		<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>
+		window.location="<?php echo BASEPATH; ?>/project/index/projecttype2/"+projecttype2+"/projecttitle/"+projecttitle+"/keywords/"+keywords+"/projectid/"+projectid+"/practice/"+practice+"/startdate/"+startdate+"/enddate/"+enddate+"/clientname/"+clientname+"/status/"+status+"/projecttype/"+projecttype+"/studysector/"+studysector+"/projectmanager/"+projectmanager+"/teammember/"+teammember+"/projectname/"+projectname+"/geography_list/"+geography_id+"/geography/"+geography+"/getPageValue/"+getValue;
+		<?php } else {?>
+		window.location="<?php echo BASEPATH; ?>/project/index/projecttype2/"+projecttype2+"/projecttitle/"+projecttitle+"/keywords/"+keywords+"/projectid/"+projectid+"/practice/"+practice+"/startdate/"+startdate+"/enddate/"+enddate+"/clientname/"+clientname+"/status/"+status+"/projecttype/"+projecttype+"/studysector/"+studysector+"/projectmanager/"+projectmanager+"/teammember/"+teammember+"/geography_list/"+geography_id+"/geography/"+geography+"/getPageValue/"+getValue;
+		<?php }?>
+		}
+
+
+	function resetform()
+	{
+		$('#projecttitle').val('');
+		$('#keywords').val('');
+		$('#projectid').val('');
+		$('#practice').val('');
+		$('#startdate').val('');
+		$('#enddate').val('');
+		$('#clientname').val('');
+		$('#status').val('');
+		$('#projecttype').val('');
+		$('#studysector').val('');
+		$('#projectmanager').val('');
+		$('#teammember').val('');
+		$('#projecttype2').val('');
+		$('#projectname').val('');
+		$('#geography_list').html('');
+
+		window.location = '<?php echo BASEPATH; ?>/project/index';
+		
+		
+	}
+
+	function populate_dropdown1(tasktype,check)
+	{
+		var task=tasktype;
+		var counter="0";
+		document.getElementById('cat_loader2').style.display = 'block';
+		$.ajax({
+
+			url:"<?php echo BASEPATH; ?>/projectmanager/projectnamevalue",
+			type: "POST",    
+		    data: "tasktype="+tasktype,
+		    success: function(response)
+		    { 
+			   
+			  
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('projectname');
+						
+						for(k=option_ele.length;k>0;k--)
+						{
+							
+							option_ele.remove(k);
+						}
+					
+						for(m=0;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('projectname').options[++j]=option_element;
+
+								if(check=="1"){
+								<?php if(isset($this->project_type) && $this->project_type!="")
+								{?>
+								var pro_ID = '<?php echo $this->projectname;?>';
+								
+								if(jsonObject[m]['id']==pro_ID)
+								{
+									document.getElementById('projectname').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+								 
+							}
+							
+				}
+
+				document.getElementById('cat_loader2').style.display = 'none';	
+			}
+		});
+		
+	}
+	
+
+	function populate_dropdown(geocode,check)
+	{	
+		document.getElementById('cat_loader1').style.display = 'block';
+		var counter="0";
+		$.ajax({
+			url: "<?php echo BASEPATH; ?>/projectmanager/index",
+			type: "POST",    
+		    data: "geocode="+geocode,
+		    success: function(response)
+		    { 
+				j=0;
+				
+				if((response!="") && (response!=null))
+					 { 
+						
+					 var jsonObject = JSON.parse(response);
+						 
+						
+							var option_ele=document.getElementById('geography_list');
+							 
+							for(k=option_ele.length;k>0;k--)
+							{
+								option_ele.remove(k);
+							}
+						
+							for(m=0;m<jsonObject.length;m++)
+							{
+								
+									var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+									document.getElementById('geography_list').options[j++]=option_element;
+									if(check=="1")
+									{
+//										for (var n=0;n<arr.length;n++)
+//										{
+//											if(arr[n]==jsonObject[m]['id'])
+//											{
+//												document.getElementById('geography_list').options[j].selected = "selected";
+//											}
+//										}
+									}
+									
+								}
+					}
+				
+				document.getElementById('cat_loader1').style.display = 'none';	
+			}
+			
+		});
+		
+	}
+
+
+	function Sortbydate(sortby)
+	{
+			var getValue = '6';
+			document.getElementById('Sort').value = sortby;
+			var date =  document.getElementById('Sort').value ;
+			var projecttype2=document.getElementById('projecttype2').value;
+			var projecttitle=document.getElementById('projecttitle').value;
+			var keywords=document.getElementById('keywords').value;
+			var projectid=document.getElementById('projectid').value;
+			var practice=document.getElementById('practice').value;
+			var clientname=document.getElementById('clientname').value;
+			var status=document.getElementById('status').value;
+			var projecttype=document.getElementById('projecttype').value;
+			var studysector=document.getElementById('studysector').value;
+			var projectmanager=document.getElementById('projectmanager').value;
+			var teammember=document.getElementById('teammember').value;
+			var allRadio =document.getElementsByName("geography");
+			var radioflag="";
+			var geography="";
+		        for(var i = 0;i<allRadio.length; i++)
+			    {
+		            if(allRadio[i].checked == true)
+			        {
+		            	geography=allRadio[i].value;
+		            	radioflag="1";
+		           	}
+		         } 
+		         
+	        var foo = []; 
+	        $('#geography_list :selected').each(function(i, selected){ 
+	          foo[i] = $(selected).val(); 
+	        });
+
+	        var geography_id="";
+	        for(var i = 0;i<foo.length; i++)
+	        {
+	        	geography_id+=foo[i]+",";
+	       	}  
+	        geography_id=geography_id.substring(0, geography_id.length - 1);    
+			
+			
+			var startdate=document.getElementById('startdate').value;
+			if (startdate != "")
+			  {
+				var positionval  = startdate.split('/');
+				startdate = positionval[2]+"-"+positionval[0]+"-"+positionval[1];
+				
+			  }
+			else
+			{
+				var startdate= "";
+			}
+			
+			var enddate=document.getElementById('enddate').value;
+			if (enddate != "")
+			  {
+				var positionval1  = enddate.split('/');
+				enddate = positionval1[2]+"-"+positionval1[0]+"-"+positionval1[1];
+			  }
+			else
+			{
+				enddate= "";
+			}
+			projecttitle=encodeURI(projecttitle);
+			keywords=encodeURI(keywords);
+			projectid=encodeURI(projectid);
+			practice=encodeURI(practice);
+			clientname=encodeURI(clientname);
+			status=encodeURI(status);
+			projecttype=encodeURI(projecttype);
+			studysector=encodeURI(studysector);
+			projectmanager=encodeURI(projectmanager);
+			teammember=encodeURI(teammember);
+			geography=encodeURI(geography);
+		
+
+			window.location="<?php echo BASEPATH; ?>/project/index/projecttype2/"+projecttype2+"/projecttitle/"+projecttitle+"/keywords/"+keywords+"/projectid/"+projectid+"/practice/"+practice+"/startdate/"+startdate+"/enddate/"+enddate+"/clientname/"+clientname+"/status/"+status+"/projecttype/"+projecttype+"/studysector/"+studysector+"/projectmanager/"+projectmanager+"/teammember/"+teammember+"/geography_list/"+geography_id+"/geography/"+geography+"/getPageValue/"+getValue+"/date/"+date;
+
+	}
+
+	function del(cmd)
+	{
+		//alert(cmd);
+		var type="";
+		<?php if($this->annual_flag=="1"){?>
+		type = "annual";
+
+		<?php }?>
+
+		<?php if($this->adhoc_flag=="1"){?>
+		type = "adhoc";
+
+		<?php }?>
+		
+		
+		jConfirm('Are you sure you want to delete?', 'Delete Box', function(r) {
+		   if(r){
+		    	window.location.href = "<?php echo BASEPATH;?>/project/deleteact/projecttype/"+type+"/projectid/"+cmd;
+		     return true;
+		    }
+		    else
+		    
+		      return false;
+		  }
+		 );
+		
+	}
+	
+</script>
+
+
+<script>
+
+	
+</script>
+<style>
+.col-first {
+    width: 315px;
+}
+</style>
+
+</head>
+<body>
+<div id="subheader">
+	<form id="searchprojectform" name="searchprojectform" action="" method="post">
+	<div class="wrapper">
+	    <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project Title</label>
+            <input name="projecttitle" id="projecttitle" type="text" class="field" style="width:366px;" value="<?php if(isset($this->projecttitle)) echo $this->projecttitle;?>"/>
+        </div>
+  		<div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>" >
+        	<label>Keywords</label>
+            <input name="keywords" id="keywords" type="text" class="field" style="width:367px;" value="<?php if(isset($this->keywords)) echo $this->keywords;?>"/>
+        </div>
+        <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Project ID</label>
+            <input name="projectid" id="projectid" type="text" class="field" value="<?php if(isset($this->projectid)) echo $this->projectid;?>"/>
+        </div>
+  		<div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Practice</label>
+            <select name="practice" id="practice" class="field">
+              <option value="">Please Select</option>
+              	<?php	foreach ($this->practice_list as $practice_list){?>
+			<option value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid){echo "selected";}elseif($authUserNamespace->designation_id=="57"){echo "selected";}?>><?php echo $practice_list->value;?></option>
+			<?php } ?> 	
+
+            </select>
+        </div>
+        
+        <div id="holder" style="margin:0;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Date</label><?php //if(isset($this->enddate)) echo $this->enddate; exit;?>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($this->startdate)) echo $this->startdate;?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($this->enddate)) echo $this->enddate;?>" id="SelectedDate" readonly onClick="GetDate(this);"/>
+      </div>
+      <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none;"<?php }?>>
+        <div id="holder">
+        	<label <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="margin-left:10px;"<?php }?>>Client Name</label>
+            <select name="clientname" id="clientname" type="text" class="field">
+            <option value="">Please Select</option>
+            <?php	foreach ($this->clientname_list as $clientname_list){?>
+			<option value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>" <?php if($this->clientid==$clientname_list->id) echo "selected";?>><?php echo $clientname_list->name;?></option>
+			<?php } ?>
+            </select>
+        </div>
+  		<div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Status</label>
+            <select name="status" id="status" class="field">
+              <option value="">Please Select</option>
+              <?php	foreach ($this->status_list as $status_list){?>
+			<option value="<?php  if(isset($status_list->id) && $status_list->id !=""){ echo $status_list->id;}?>"<?php if($this->status==$status_list->id) echo "selected";?>><?php echo $status_list->value;?></option>
+			<?php } ?>
+
+            </select>
+        </div><!--
+        <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        	<label>Type</label>
+            <select name="projecttype" id="projecttype" class="field">
+              <option value="">Please Select</option>
+              <?php	foreach ($this->projecttype_list as $projecttype_list){?>
+			<option value="<?php  if(isset($projecttype_list->id) && $projecttype_list->id !=""){ echo $projecttype_list->id;}?>"<?php if($this->projecttype==$projecttype_list->id) echo "selected";?>><?php echo $projecttype_list->value;?></option>
+			<?php } ?>
+            </select>
+        </div>
+        -->
+         <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?><?php }else{?>style="margin-left: -8px;";<?php }?>>
+        	<label>Team Member</label>
+            <select name="teammember" id="teammember" class="field">
+              <option value="">Please Select</option>
+              <?php	foreach ($this->teammember_list as $teammember_list){?>
+			<option value="<?php  if(isset($teammember_list->e_id) && $teammember_list->e_id !=""){ echo $teammember_list->e_id;}?>"<?php if($this->teammember==$teammember_list->e_id) echo "selected";?>><?php echo $teammember_list->teammembername;?></option>
+			<?php } ?>
+              
+            </select>
+        </div>
+        <div id="holder" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }else{?>style="display:block;margin:0;"<?php }?>>
+        	<label>Study Sector</label>
+            <!--<input name="studysector" id="studysector" type="text" class="field" value="<?php if(isset($this->studysector)) echo $this->studysector;?>"/>
+        -->
+       	 <select name="studysector"  id="studysector" class="field" errortag="Project Type" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled"<?php }?>>
+            <option value="">Please Select</option>
+            <?php	foreach ($this->userdata3 as $userauth3){?>
+			<option <?php if(isset($this->studysector)) {if($userauth3->id == $this->studysector) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($userauth3->id) && $userauth3->id !=""){ echo $userauth3->id;}?>"><?php echo $userauth3->value;?> </option>
+			<?php } ?>
+ 			</select>
+        </div>
+        <br class="clear" <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>style="display:none";<?php }?>>
+        <div id="holder" style="margin:0 8px 0 -21px;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Project Manager</label>
+            <select name="projectmanager" id="projectmanager" type="text" class="field">
+            <option value="">Please Select</option>
+            <?php	foreach ($this->projectmanager_list as $projectmanager_list){?>
+			<option value="<?php  if(isset($projectmanager_list->m_id) && $projectmanager_list->m_id !=""){ echo $projectmanager_list->m_id;}?>"<?php if($this->projectmanager==$projectmanager_list->m_id) echo "selected";?>><?php echo $projectmanager_list->managername;?></option>
+			<?php } ?>
+            
+            </select>
+        </div>
+        
+       
+        <input type="hidden" name="projecttype" id="projecttype" />
+        <div id="holder" style="margin:auto auto 20px 15px;<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>display:none";<?php }?>">
+        	<label>Study Geography</label>
+            <div class="dual">
+            	<label><input <?php if(isset($this->geocode) && ($this->geocode=="country")){?> checked="checked"<?php }?> id="country" name="geography" type="radio" value="country" style="vertical-align:middle" onclick="populate_dropdown(this.value,'0');"/>Country</label>
+            	<label><input <?php if(isset($this->geocode) && ($this->geocode=="region")){?> checked="checked"<?php }?>id="region" name="geography" type="radio" value="region" style="vertical-align:middle" onclick="populate_dropdown(this.value,'0');" />Region</label>
+            	<div id="cat_loader1" style="display: none; float:left;">
+					<img src="<?php echo BASEPATH;?>/images/loading19.gif">
+				</div>
+            <select name="geography_list[]" id="geography_list" class="field med"  multiple="multiple">
+            </select>
+            </div>
+        </div>
+         <div id="holder">
+        	<label>Project Type</label>
+            <select name="projecttype2" id="projecttype2" class="field" onchange="populate_dropdown1(this.value,'0');">
+            <?php	foreach ($this->projecttype_list2 as $projecttype_list2){?>
+			<option value="<?php  if(isset($projecttype_list2->id) && $projecttype_list2->id !=""){ echo $projecttype_list2->id;}?>"<?php if($this->project_type==$projecttype_list2->id) echo "selected";?>><?php echo $projecttype_list2->value;?></option>
+			<?php } ?>
+
+            </select>
+        </div>
+        <div id="holder" class="reltiveClass" style="display:<?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==14 || $authUserNamespace->designation_id== 57){?>block<?php }else{?>none<?php }?>;">
+        	<label>Project Name</label>
+            <select name="projectname" id="projectname" class="field">
+            <option value="">Please Select</option>
+            </select>
+            <img id="cat_loader2" style="display: none;position: absolute;right: -20px;top: 5px;" src="<?php echo BASEPATH;?>/images/loading19.gif"/>
+        </div>
+        <br class="clear">
+       
+    
+        <br class="clear">
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="search();"><a href="javascript:void(0);" class="searchbg">Search</a></div>
+  		<div class="flow_right" style="margin:0 10px 0 0" onclick="resetform();"><a href="javascript:void(0);" class="searchbg">Reset</a></div>
+  	</div>
+    <br class="clear" />
+    </form>
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+        <div class="flow_right"><a href="<?php echo BASEPATH;?>/subproject/addsubproject" class="createbg">Create Sub Project</a></div>
+        <div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH;?>/project/addannualcontract" class="createbg">Create Annual Contract</a></div>
+        <div class="flow_right" style="margin:0 10px 0 0"><a href="<?php echo BASEPATH;?>/project/addadhoc" class="createbg">Create Adhoc Project</a></div>
+        <br class="clear">
+        <br class="clear">
+        
+        <div id="tablebg">
+        	<div class="col-first" style="width: 268px;">Project Title</div>
+            <div class="col" style="width:85px;margin: 0px;">&nbsp;</div>
+            <div class="col">Practice</div>
+          <div class="col _m" style="width:101px;">Project Manager</div>
+           <input type="hidden" name="Sort" id="Sort">
+           <div class="col" style="width:64px;margin-left:10px;">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1);" title="Sort" /></div></div></div>
+            <div class="col" style="width:64px;margin-left:9px">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0);" title="Sort" /></div></div></div>
+          <div class="col_l"  style="margin-left:13px; float: left; width: 134px;"><span style="float:left;width:100%;line-height:14px;margin-left: 15px;">Tasks</span><em style="float:none;width:94%; margin-left: 30px;line-height:12px;">(Open / Completed)</em></div>
+        </div>
+        
+        <?php  if(isset($this->common_list) && sizeof($this->common_list)>0){
+					
+        		foreach($this->common_list as $view_list){
+        			
+        			
+        		if($this->adhoc_flag=="1")
+        		{
+        			$adpr_id=$view_list['eid'];
+        			$adhocObj= new Aranca_Model_DbTable_Adprteam();
+					$empObj=new Aranca_Model_DbTable_Emp();
+					$scoresObj=new Aranca_Model_DbTable_Scores();
+					$emplist_id=$adhocObj->fetchRow($adhocObj->select()
+											 ->from(array('ad'=>DATABASE_PREFIX."adprteam"))
+											 ->where("adproject_id='$adpr_id'"));
+											
+				$i=0;
+				$emp_ids="0";
+				if(isset($emplist_id) && $emplist_id!="")
+				{
+					
+					if(isset($emplist_id->employee_id1) && $emplist_id->employee_id1!='0')
+					{
+						$emp_ids = $emplist_id->employee_id1;
+						
+						$noofemparray = explode(',',$emp_ids);
+						$noofemp = sizeof($noofemparray) ;
+						
+					}
+					
+				}
+				
+				$no_of_tm="";
+				$no_of_tm=$noofemp;
+				$counter=0;
+				//echo "size of sizeof(emp_ids)".sizeof($emp_ids);
+				
+				if(isset($emp_ids))
+				{
+					for($j=0;$j<=$no_of_tm;$j++)
+					{
+						if(isset($noofemparray[$j]))
+						{
+							$scorelist=$scoresObj->fetchAll($scoresObj->select()
+						    	                                 ->setIntegrityCheck(false)
+				 	    										 ->from(array('s'=>DATABASE_PREFIX."scores"))
+																 ->where("s.emp_id ='$noofemparray[$j]' && s.project_id='$adpr_id' && s.project_type='adhoc'"));
+							
+							if(isset($scorelist) && sizeof($scorelist)>0)
+							{
+								$counter++;
+							}
+						}
+						
+					}
+				}
+				
+				$enable_close="false";
+				//echo "value of counter=".$counter."\n";
+				//echo "value of no_of_tm=".$no_of_tm."\n";
+				if($counter==$no_of_tm)
+				{
+					
+					$enable_close="true";
+				}
+        			}
+        			
+        ?>
+        <div id="rowbg">
+        
+           	  	  <div class="col-first" style="width: 235px;"><a style="color:black;text-decoration:none;font-weight:normal;"
+   	  	  <?php if($this->annual_flag=="1"){?>href="<?php echo BASEPATH;?>/project/addannualcontract/id/<?php echo $view_list['eid'];?><?php if((($view_list['statusvalue']=="Completed")&& ($authUserNamespace->designation_id !="56"))){?>/view/<?php echo "view";}?>" 
+   	  	  <?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH;?>/project/addadhoc/id/<?php echo $view_list['eid'];?><?php if((($view_list['statusvalue']=="Completed")&& ($authUserNamespace->designation_id !="56"))){?>/view/<?php echo "view";}?>" 
+   	  	  <?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH;?>/project/addadhoc/id/<?php echo $view_list['eid'];?>" <?php }?>><?php echo $view_list['title'] ;?> 
+   	  	  <?php if($this->annual_flag=="1"){?><?php }else{?>(A)<?php }?></a> <a href="#" style="color:black;text-decoration:none;font-weight:normal;">|</a> <div style="color:black;text-decoration:none;font-weight:normal;display:inline;"> 
+   	  	  <?php echo $view_list['name'] ;?></div><br>Budgeted Hrs: <?php echo $view_list['budgeted_hrs'];?>  |  Status:<?php echo $view_list['statusvalue'];?></div>
+        
+        
+   	  	  <!--<div class="col-first" style="width: 235px;"><a style="color:black;text-decoration:none;font-weight:normal;"<?php if($this->annual_flag=="1"){?>href="<?php echo BASEPATH;?>/project/addannualcontract/id/<?php echo $view_list['eid'];?>" <?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH;?>/project/addadhoc/id/<?php echo $view_list['eid'];?>" <?php }?>><?php echo $view_list['title'] ;?> <?php if($this->annual_flag=="1"){?><?php }else{?>(A)<?php }?></a> <a href="#" style="color:black;text-decoration:none;font-weight:normal;">|</a> <div style="color:black;text-decoration:none;font-weight:normal;display:inline;"> <?php echo $view_list['name'] ;?></div><br>Budgeted Hrs: <?php echo $view_list['budgeted_hrs'];?>  |  Status:<?php echo $view_list['statusvalue'];?></div>-->
+           
+            <div class="col" <?php if($this->annual_flag=="1"){?> style="width: 130px;margin:0;"<?php }else{?>style="width: 124px;margin:0;"<?php }?>>
+            	<?php if ((($view_list['statusvalue']!="Completed") && ($authUserNamespace->designation_id !="56")) || ($authUserNamespace->designation_id =="56")){?>
+	            <a <?php if($this->annual_flag=="1"){?>href="<?php echo BASEPATH;?>/project/addannualcontract/id/<?php echo $view_list['eid'];?>" <?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH;?>/project/addadhoc/id/<?php echo $view_list['eid'];?>"<?php }?> >
+	            	<img src="<?php echo BASEPATH;?>/images/common/edit.gif" border="0" />
+	            </a> &nbsp;  
+	            <?php }?>
+	            
+	            <a <?php if($this->annual_flag=="1"){?>href="<?php echo BASEPATH;?>/project/addannualcontract/id/<?php echo $view_list['eid'];?>/view/<?php echo "view";?>" <?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH;?>/project/addadhoc/id/<?php echo $view_list['eid'];?>/view/<?php echo "view";?>"<?php }?>>
+	            	            	<img src="<?php echo BASEPATH;?>/images/common/view.gif" style="margin-right:5px;" border="0" /></a>
+                     <?php if ((($view_list['statusvalue']!="Completed") && ($authUserNamespace->designation_id !="56")) || ($authUserNamespace->designation_id =="56")){?>
+						<img style="margin-right:20px; cursor:pointer;" src="<?php echo BASEPATH;?>/images/cross.png"  border="0" onclick="del(<?php echo $view_list['eid'];?>)">
+	            	<?php }?>
+	            	
+	            	<a href="<?php echo BASEPATH;?>/subproject/index/<?php echo $view_list['eid'];?>"/>
+	            </a>
+	           
+	         <?php if($this->annual_flag=="1"){?>   <a class="viewbg viewprojbg icons" href="<?php echo BASEPATH;?>/subproject/index/id/<?php echo $view_list['eid'];?>"><img title="View Sub Projects" src="<?php echo BASEPATH; ?>/images/common/viewSubproject25.gif"/></a> <?php }?>
+            </div>
+            <div class="col"><?php echo $view_list['practice'];?></div>
+          <div class="col _m" style="width:107px;"><?php echo $view_list['firstname'];?>&nbsp;<?php echo $view_list['lastname'];?></div>
+            <div class="col" style="width:78px;"><?php echo $view_list['st_date'];?></div>
+            <div class="col" style="width:64px;"><?php echo $view_list['end_date'];?></div>
+          <div class="col _l" style="margin: 0px; float: left; width: 135px;">
+          <div style="float:right;width:80;">
+          
+           <?php  if ($this->adhoc_flag=="1"){
+           if($enable_close=="true"){ 
+          if(isset($view_list['file_path']) && $view_list['file_path']!=""){?> 
+          <a class="viewbg icons" target="_blank" href="<?php echo BASEPATH;?><?php echo $view_list['file_path'];?>"><img src="<?php echo BASEPATH?>/images/common/down.gif" style="background-color:white"; title="Final Download Deliverable"></a> 
+         <?php } else{?>
+         	<a style="display: none;" class="viewbg icons" href="javascript:norecord();"><img src="<?php echo BASEPATH?>/images/common/down-disable.gif" style="background-color:white" title="Final Download Deliverable"></a>
+         <?php } } }?>
+                  
+                 
+          <?php  if ($this->adhoc_flag=="1"){?>
+<!--          <a <?php if($this->annual_flag==""){?> href="" <?php }else if ($this->adhoc_flag=="1"){?>  href="<?php echo BASEPATH;?> <?php echo $view_list['file_path'];?>" target="_blank" class="viewbg icons"><img title="Download" src="<?php echo BASEPATH; ?>/images/common/down.gif"/><?php }?></a>-->
+          <!--<?php if($enable_close=="true"){ ?><a href="<?php echo BASEPATH;?>/project/plpmclosure/id/<?php echo $view_list['eid'];?>/type/adhoc" class="viewbg icons"><img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a> <?php }?> -->
+          
+         <?php if($enable_close=="true"){ 
+          ?>
+          <?php if ($view_list['statusvalue']!="Completed") {?>
+          <a href="<?php echo BASEPATH;?>/project/plpmclosure/id/<?php echo $view_list['eid'];?>/type/adhoc" class="viewbg icons">
+          <img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a> 
+          <?php }?>
+          <?php }?>
+          
+          
+          <a <?php if($authUserNamespace->designation_id == "56"){?>href="<?php echo BASEPATH;?>/project/plscoreinsert/id/<?php echo $view_list['eid']; ?>/type/adhoc"<?php }else if($authUserNamespace->designation_id == "57") {?>href="<?php echo BASEPATH;?>/project/plscoreinsert/id/<?php echo $view_list['eid']; ?>/type/adhoc" <?php }?> class="viewbg icons"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a>
+          <?php }?>
+<!--          <a <?php if($this->annual_flag=="1"){?> href="<?php echo BASEPATH ;?>/project/projectview/aid/<?php echo $view_list['eid'];?>"<?php }else if ($this->adhoc_flag=="1"){?> href="<?php echo BASEPATH ;?>/project/projectview/adid/<?php echo $view_list['eid'];?>"<?php }?> rel="lightbox[external 604 304]" class="viewbg">View</a>-->
+          		<a <?php if($this->annual_flag=="1"){?> rel="<?php echo BASEPATH ;?>/project/projectview/aid/<?php echo $view_list['eid'];?>"<?php }else if ($this->adhoc_flag=="1"){?> rel="<?php echo BASEPATH ;?>/project/projectview/adid/<?php echo $view_list['eid'];?>"<?php }?> href="javascript:void(0);" class="viewbg openskillbox icons"><img title="View Project" src="<?php echo BASEPATH; ?>/images/common/view25.gif"/></a>
+          		 <?php if($this->adhoc_flag=="1"){?>
+          <?php if(isset($authUserNamespace->designation_id) && $authUserNamespace->designation_id==57){
+          		if(isset($view_list['statusvalue']) && $view_list['statusvalue'] != 'Completed'){?>
+          	<a href="<?php echo BASEPATH?>/taskpl/allocatetask/pid/<?php echo $view_list['eid']; ?>/type/<?php if($this->annual_flag=="1"){?>annual<?php }else{?>adhoc<?php } ?>" class="viewbg icons" <?php if(isset($view_list)|| ($authUserNamespace->id == $view_list['pr_manager'] || $view_list['practive_leader'] == $authUserNamespace->id) &&  sizeof($view_list)>0){?>style="visibility:visible;" <?php }else{?>style="visibility:hidden;"<?php }?>><img title="Allocate Task" src="<?php echo BASEPATH; ?>/images/common/allocatetask25.gif"/></a>
+          <?php }}else if($authUserNamespace->designation_id== 56){
+          	if(isset($view_list['statusvalue']) && $view_list['statusvalue'] != 'Completed'){?>
+          	<a href="<?php echo BASEPATH?>/taskpl/allocatetask/pid/<?php echo $view_list['eid']; ?>/type/<?php if($this->annual_flag=="1"){?>annual<?php }else{?>adhoc<?php }?>" class="viewbg icons"><img title="Allocate Task" src="<?php echo BASEPATH; ?>/images/common/allocatetask25.gif"/></a>
+          <?php }}} ?>
+ 
+          </div>
+          <div style="float:left; margin-left:10px;">		
+          <?php 
+          $eid=$view_list['eid'];
+          if($this->annual_flag=="1") 
+          { $annprojectObj= new Aranca_Model_DbTable_Annproject();
+          	$opencount="0";
+			$openlist =$annprojectObj->fetchAll($annprojectObj->select()
+											->setIntegrityCheck(false)
+											->from(array('ap'=>DATABASE_PREFIX."annproject"))
+											->joinLeft(array('ans'=>DATABASE_PREFIX."annsubproject"),"ap.id = ans.annproject_id ")
+											->joinLeft(array('t'=>DATABASE_PREFIX.'task'),"t.project_id = ans.id")
+											->where("ans.annproject_id ='$eid' && t.project_type='contract' && t.status_id='22'"));
+			if(isset($openlist) && sizeof($openlist)!="")
+			{								
+				$opencount= sizeof($openlist);
+			}
+          	echo $opencount;
+			
+          }else if($this->adhoc_flag=="1")
+          {
+          	$projectObj= new Aranca_Model_DbTable_Adproject();
+          	$opencount="0";
+			$openlist =$projectObj->fetchAll($projectObj->select()
+											->setIntegrityCheck(false)
+											->from(array('ad'=>DATABASE_PREFIX."adproject"))
+											->joinLeft(array('t'=>DATABASE_PREFIX.'task'),"t.project_id = ad.id")
+											->where("ad.id='$eid' && t.project_type='adhoc' && t.status_id='22' "));
+			if(isset($openlist) && sizeof($openlist)!="")
+			{								
+				$opencount= sizeof($openlist);
+			}
+          	echo $opencount;								
+          	
+          } ?>
+           /<?php 
+           $eid=$view_list['eid'];
+           if($this->annual_flag=="1")
+           { 
+           	 $completedcount="0";
+           	 $annprojectObj= new Aranca_Model_DbTable_Annproject();
+			 $complitedlist =$annprojectObj->fetchAll($annprojectObj->select()
+											->setIntegrityCheck(false)
+											->from(array('ap'=>DATABASE_PREFIX."annproject"))
+											->joinLeft(array('ans'=>DATABASE_PREFIX."annsubproject"),"ap.id = ans.annproject_id ")
+											->joinLeft(array('t'=>DATABASE_PREFIX.'task'),"t.project_id = ans.id")
+											->where("ans.annproject_id ='$eid' && t.project_type='contract' && t.status_id='23'"));
+			if(isset($complitedlist) && sizeof($complitedlist)!="")
+			{								
+				$completedcount= sizeof($complitedlist);
+			}
+          	echo $completedcount;	
+           }
+           else if($this->adhoc_flag=="1")
+          {
+          	$completedcount="0";
+          	$projectObj= new Aranca_Model_DbTable_Adproject();
+			$complitedlist = $projectObj->fetchAll($projectObj->select()
+											->setIntegrityCheck(false)
+											->from(array('ad'=>DATABASE_PREFIX."adproject"))
+											->joinLeft(array('t'=>DATABASE_PREFIX.'task'),"t.project_id = ad.id")
+											->where("ad.id='$eid' && t.project_type='adhoc' && t.status_id='23' "));
+			if(isset($complitedlist) && sizeof($complitedlist)!="")
+			{								
+				$completedcount= sizeof($complitedlist);
+			}
+          	echo $completedcount;								
+          	
+          }
+           ?>
+            </div>  
+           </div>
+        </div>
+        <?php
+					
+				}
+				// code for pagination in the phtml file
+				echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+
+			}
+			else{
+		?>
+		<div class='grid-row2'>
+			<div align='' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+		<?php } ?>
+       
+<!--        <div class="pagination"><a href="#" class="active">1</a> <a href="#">2</a> <a href="#">3</a> <a href="#">4</a> <a href="#">Next</a></div>-->
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</body>
+<script>
+$( document ).ready(function() {
+	var type=document.getElementById('projecttype2').value;
+	if(type=="54")
+	{
+		populate_dropdown1(54,'1');
+	}
+	else if(type=="55")
+	{
+		populate_dropdown1(55,'1');
+	}	
+	
+});
+
+<?php 
+	      if(isset($authUserNamespace->status_message)){
+	?>
+	   jAlert("<?php echo $authUserNamespace->status_message; ?>");
+	<?php
+	  unset($authUserNamespace->status_message);
+	}
+	?>
+</script>
+</html>

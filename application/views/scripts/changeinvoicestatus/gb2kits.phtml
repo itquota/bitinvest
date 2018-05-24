@@ -1,0 +1,227 @@
+  
+  <?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+	//echo "<pre>";
+	//print_r($this->resultkit['invoice_id']);exit;
+// print_r($this->invoiceid);exit;
+//print_r($this->invoiceid."".$this->username);exit;
+
+  ?>
+  <style>
+	 .form-group {
+	display: inline-block;
+	width: 300px;
+	padding:15px;
+	margin-top:-30px;
+	float:left;
+}
+
+ </style>
+  
+  
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Kits > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/Kitinvoice">kit invoice</a> > </li>
+                  <li >Change kitinvoce status</li>
+  
+            </ol>
+           
+ <div class="col-lg-12 ">
+      
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                    <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">Kit number</th> 
+                        <th class="sortboth">Created on</th>
+                         <th class="sortboth">Used by</th> 
+                          <th class="sortboth">Status</th> 
+                       
+             		</tr> 
+                 </thead>
+                  <tbody>
+                    <?php 
+        		$j=1;
+       for($i=0;$i<sizeof($this->resultkit);$i++){?> 
+                   <!--   <tr>
+                     <td scope="row">1</td> 
+                     <td>&nbsp;</td>
+                      <td>No data available in table</td> 
+                      <td>&nbsp;</td>-->
+                    <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                    <td><?php echo $this->resultkit[$i]['kit_number']; ?></td> 
+                        <td><?php echo $this->resultkit[$i]['created_on'];?></td>
+                         <td><?php echo $this->resultkit[$i]['kit_used_by'];?></td> 
+                          <td><?php echo $this->resultkit[$i]['status'];?></td> 
+                  </tr> 
+
+               
+
+                
+
+                  
+
+
+               
+             <?php $j++;} ?>
+             
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+		
+    </div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             Change kitinvoce status
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form method="POST" action="<?php echo BASEPATH;?>/Changeinvoicestatus" id="changeinvoicestatus">
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+   
+    <div class="err1">
+     <?php
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+     if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+    <label style="color:red;"><?php echo $authUserNamespace->msg; ?></label>
+    <?php $authUserNamespace->msg=""; }?> 
+          <label style="color:red" for="" class="lblTxt"> </label>
+          <?php 
+          $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+          if(!empty($authUserNamespace->errormsg) && $authUserNamespace->errormsg!=""){?>
+    <label style="color:red;"><?php echo $authUserNamespace->errormsg; ?></label>
+    <?php $authUserNamespace->errormsg=""; }?> 
+         </div>
+    
+    <div>
+    <label for="" class="lblTxt">It Will active the Inactive kits as well</label>
+    </div>
+
+   
+  
+ 
+  <div class="form-group">
+    <label for="" class="lblTxt">Password</label>
+
+     <input type="password" name="address" id="address" class="form-control CommonInputBox" placeholder="password" value="">
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Comments*</label>
+
+		<textarea style="height:35px"  class="form-control CommonInputBox" id="comment" name="comment" rows="15" cols="80" placeholder="" value=""> </textarea>
+		
+
+      
+  </div>
+  <div class="form-group" style="width:100%;">
+		  	    <input type="hidden" name="id" id="id" value="<?php echo $this->invoiceid; ?>"/>
+             <input type="hidden" name="user" value="<?php echo $this->username; ?>"/>	
+          
+  <button type="button" class="btn btn-default Commonbtn" onclick="return validateForm()" >SUBMIT</button>
+</div>
+
+  
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+    function validateForm(){
+  
+       // var password=$("#address").val();
+       var address=$("#address").val();
+        var comment=$("#comment").val();
+		var id=$("#id").val();
+		var token=$("#token").val();
+		
+		if(address.trim()=="")
+		{
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Password.</label>');
+			return false;
+		}
+		else if(comment.trim()=="")
+		{
+			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Comments.</label>');
+			return false;
+		}
+		
+		
+		else{
+
+   		var dataString ='address='+address+'&comment='+comment+'&id='+id+'&token='+token;
+   		
+		$.ajax({
+			
+			url:"<?php echo BASEPATH;?>/Changeinvoicestatus/updategb2invoice", 
+			type: "POST",    
+		    data: dataString,
+		
+	  		success:function(response)
+	  		{
+				 var data=JSON.parse(response);
+			
+				 if(data['success']!='')
+				 {
+					/*$(".err1").css("display","block");
+						document.getElementById("err1").innerHTML="Data inserted successfully.";
+						$('.err1').css('color','green');*/
+				         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+						window.location = "<?php echo BASEPATH;?>/Gb2kitinvoice";
+				 }
+				 else
+				 {
+					  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+				 }
+				
+				
+			}
+				
+			
+		 });
+   		
+        
+           //document.form.submit();
+           return true;
+       }
+    }
+    
+    
+    </script>

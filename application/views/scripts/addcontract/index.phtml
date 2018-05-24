@@ -1,0 +1,319 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+	
+	/*echo "<pre>";
+	print_r($this->contracttype[0]['contracttype']);exit;*/
+?>
+<style>
+.form-group {
+    float:left;
+    margin-right: 25px;
+    width: 300px;
+}
+.form{
+    float:right;
+    width: 100%;
+}
+
+</style>
+<div id="innerpage-wrapper">
+			 <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+                <div class="row">
+                
+              
+   
+                 <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Admindashboard">Home</a> > </li>
+                  <li>Contract/Hardware > </li>
+                  <li class="active"><a href="<?php echo BASEPATH; ?>/Allcontract">Contracts</a> > </li>
+                 <li>Add Contract </li>
+                 </ol>
+                
+                  <div class="clearfix">&nbsp;</div>
+                  <div class="panel panel-primary buynowbox col-lg-12">
+                  <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             				 Add Contract
+          		   </div>
+                    <div class="panel-body revenuebg">
+                    
+                       <div>
+         
+         						<!--  <label for="" class="lblTxt" style="color:red;">-->
+         					<p id="errortext" style="color: red; font-weight: bolder"></p>
+         					<p id="sucess"></p>
+         		
+         			   </div>
+                    
+                    <form action="" method="post" action="" enctype="multipart/form-data">
+                    	<div class="err1">
+                    			<label class="lblTxt" for="" style="color:green;">
+                    	</div>
+                    
+                    
+                    
+                       <div class="form-group">
+   
+   							 <label for="" class="lblTxt">Contract Name</label>
+
+    						 <input type="text" name="contract_name" id="contract_name" class="form-control CommonInputBox" placeholder="Contract Name" value="">
+					  </div>
+                     <div class="form-group">
+    						<label for="" class="lblTxt">Contract QTY</label>
+
+     						<input type="text" class="form-control CommonInputBox isnumber" placeholder="Contract Qty" name="contract_qty" id="contract_qty" value="">
+					</div>
+                     <div class="form-group">
+   							 <label for="" class="lblTxt">Description</label>
+
+     						<input type="text" class="form-control CommonInputBox" placeholder="Description" name="desc" id="desc" value="">
+
+					</div>
+					<div class="form-group">
+   							 <label for="" class="lblTxt">Contract Description</label>
+
+     						<input type="text" class="form-control CommonInputBox" placeholder="Contract Description" name="Contract_description" id="Contract_description" value="">
+
+					</div>
+                     <div class="form-group">
+   
+   							 <label for="" class="lblTxt">Total Rate(BTC)</label>
+   							 <input type="text" class="form-control CommonInputBox isnumber" placeholder="Total Rate" name="total_price" id="total_price" value="">
+					</div>
+					<div class="form-group">
+   
+   							 <label for="" class="lblTxt">Direct Sales Incentive</label>
+    
+					<div>
+    					<input type="text" class="form-control CommonInputBox isnumber" placeholder="Direct Sales Incentive" name="dsi" id="dsi" value="">
+					</div>
+ 					 </div>
+                        <div class="form-group">
+   
+  							  <label for="" class="lblTxt">Contract Type</label>
+    							
+								<select id="myclass"   class="form-control CommonInputBox">
+											<option value="">Select Contract Type</option>
+							     <?php   if(!empty($this->contracttype) && sizeof($this->contracttype)>0)
+								{
+							for($i=0;$i<sizeof($this->contracttype);$i++)
+							{
+							
+								?>
+							
+								
+							  	<option  name='contracttype'  value="<?php echo $this->contracttype[$i]['contracttype'];?>" ><?php echo $this->contracttype[$i]['contracttype'];?></option>
+							  	
+							  	
+							 	 <?php }
+							}?>
+								</select>
+		
+
+      
+ 					 </div>
+ 					  <div class="form-group">
+    					<label for="" class="lblTxt">Status</label>
+
+        						<div class="col-lg-4 form-group" style="float:left;padding-left:5px;">
+                                            <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:292px;">
+                                             <option value="select">Select</option>
+                                                <option value="1">Active</option>
+                                                <option value="0">Inactive</option>
+                                            </select>
+                                    </div>
+
+
+      
+  						</div>
+ 					 
+                    
+                      <div class="form">
+                      <button type="button" class="btn btn-default Commonbtn"  onclick="getadddata()" name="submit" id="submit" value="">SUBMIT</button>
+                    </div>
+                    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+                    </form>
+                    </div>
+                  
+                  
+          </div>
+                  
+                  
+                  </div>
+
+</div>
+
+     <script type="text/javascript">
+     function getadddata()
+     {
+    	
+    	 var contrctname=$("#contract_name").val();
+    	 var Contrctqty=$("#contract_qty").val();
+    	 var Desc=$("#desc").val();
+    	 var contrctdesc=$("#Contract_description").val();
+
+    	
+    	 var rte=$("#total_price").val();
+    	 var cID = document.getElementById("myclass"); 
+    	 var cVal = cID.options[cID.selectedIndex].value; 
+    	 var dsi=$("#dsi").val();
+    	 var tkn=$("#token").val();
+    	 var contractstatus=$("#status").val();
+    	
+    	 if((contrctname).trim()==''){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Contract Name.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please 	Enter Contract Name');
+				$('#errortext').css("display","block");
+				return false;
+			}	
+
+	    	//if(!namefunc(contrctname)){
+			//	$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Contract name should be Characters only.</label>');
+			//	return false;
+			//}
+	    	if((Contrctqty).trim()==''){
+			//	$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Contrct QTY.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please Enter Contract QTY');
+				$('#errortext').css("display","block");
+				return false;
+			}		
+	    	/*if(isNaN(Contrctqty)){
+		    	
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;"> Contrct QTY should be Numbers only.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Contrct QTY should be Numbers only.');
+				$('#errortext').css("display","block");
+				return false;
+			}*/
+	    	if((Desc).trim()==''){
+		    	
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Description.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please Enter Description');
+				$('#errortext').css("display","block");
+				return false;
+			}	
+	    	if((contrctdesc).trim()==''){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Contract Description.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please Enter Contract Description.');
+				$('#errortext').css("display","block");
+				return false;
+			}
+	    	if((rte).trim()==''){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Total Rate.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please Enter Total Rate');
+				$('#errortext').css("display","block");
+				return false;
+			}	
+	    	/*if(isNaN(rte)){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;"> Total Rate should be Numbers only.</label>');
+					$('#errortext').empty();
+				$('#errortext').append('Total Rate should be Numbers only');
+				$('#errortext').css("display","block");
+				return false;
+			}*/
+	    	if((dsi).trim()==''){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Direct Sales Incentive.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Please Enter Direct Sales Incentive');
+				$('#errortext').css("display","block");
+				return false;
+			}
+	    	/*if(isNaN(dsi)){
+				//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Direct Sales Incentive should be Numbers only.</label>');
+				$('#errortext').empty();
+				$('#errortext').append('Direct Sales Incentive should be Numbers only');
+				$('#errortext').css("display","block");
+				return false;
+			}*/
+	    	 if(!cVal || cVal=='select'){
+	  			
+	   			
+	   			//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Direct Sales Incentive should be Numbers only.</label>');
+	   	
+	   			$('#errortext').empty();
+	   			$('#errortext').append('Please Select Contracttype');
+	   			$('#errortext').css("display","block");
+	   			return false;
+	   		 }
+	   		if(contractstatus=='select'){
+	   			
+	    			
+	    			//$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Direct Sales Incentive should be Numbers only.</label>');
+	    	
+	    			$('#errortext').empty();
+	    			$('#errortext').append('Please Select Status');
+	    			$('#errortext').css("display","block");
+	    			return false;
+	    		}
+
+
+	    	else
+	    	{
+	    		var dataString ='contrctname='+contrctname+'&Contrctqty='+Contrctqty+'&Desc='+Desc+'&rte='+rte+'&cVal='+cVal+'&tkn='+tkn+'&contrctdesc='+contrctdesc+'&dsi='+dsi+'&contractstatus='+contractstatus;
+				
+	    		$.ajax({
+	    			
+					url:"<?php echo BASEPATH;?>/Addcontract/dataedit", 
+					type: "POST",    
+				    data: dataString,
+				
+						success:function(response)
+						{
+						
+						 var data=JSON.parse(response);
+							
+						 if(data['success']!='')
+						 {
+						        $("#errortext").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+								
+								window.location = "<?php echo BASEPATH;?>/Allcontract";
+						 }
+						 else
+						 {
+							  $("#errortext").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+							 // window.location = "<?php echo BASEPATH;?>/Allcontract";
+						 }
+		
+								
+						}
+								
+							
+						 });
+	    	}
+	    		
+					
+
+    	 
+     }
+
+    	
+	    	function namefunc(name)
+
+			{
+				var pattern12 = new RegExp(/^[a-zA-Z ]+$/);
+				return pattern12.test(name);
+			}
+	    	 
+    	
+	    	function phone_number(MobileNumber)
+			{
+			    var patte1 = new RegExp(/^[0-9]+$/);
+				return patte1.test(MobileNumber);
+			}			
+    	 
+    	          
+    
+
+     </script>

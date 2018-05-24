@@ -1,0 +1,159 @@
+<?php 
+
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	$user_id=$authUserNamespace->user_id;
+	$data1=$misc_obj->GetAccessRightByUserId('37',$user_id);
+	$misc_obj->generateToken();
+	
+?>
+<style>
+.calculatebtn {
+    width: 42%;
+}
+#reports
+{
+width:11%;
+float:left;
+
+}
+ .form-group {
+    display: inline-block;
+    float: left;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:300px;
+		}
+	.btn-group {
+    display: inline-block;
+    margin-right: 25px;
+    padding: 1px 16px;
+    width:100%;
+		}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+ <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            
+            
+             <div class="row">
+             
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Kit Limit</li>
+  
+            	</ol>
+           <div class="form-group" style="width:100%;">
+            	
+            <?php 
+            if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+            {
+            ?>
+		  			<?php echo $authUserNamespace->msg;
+					
+		  			?>
+		        	   
+		
+				
+            <?php
+            $authUserNamespace->msg = '';
+            }
+            ?>
+            </div>
+            <form method="POST" action="<?php echo BASEPATH; ?>/Kitlimit" id="report_form"/>
+					 <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+					  <div class="form-group">
+					  <label for="" class="lblTxt">Kit Type</label>
+					  <select name = "kit_type" class="form-control CommonInputBox" id = "kit_type" style="	border: 1px solid !important;border-radius: 5px !important;">
+								<option value = "">Select Kit by Price</option>
+							<?php  
+								foreach($this->allContracts as $allContract){
+										echo "<option value = '".$allContract['contract_id']."'>".$allContract['total_price']."</option>";
+								}
+							
+							?>
+					</select>
+						</div>
+	
+		<div class="form-group">
+  		<label for=""  class="lblTxt">Max Limit</label>
+        	<input id="max_limit" class="form-control CommonInputBox datepick"  type="text" name="max_limit"  value="" class="form-control calculateSearchbox datepick" />   
+
+		</div>
+		
+		
+		<div class="form-group">
+ 		 <label for=""  class="lblTxt">Admin Limit</label>
+        <input id="admin_limit" class="form-control CommonInputBox datepick"  type="text"  name = "admin_limit"  value="" class="form-control calculateSearchbox datepick"  />     
+		</div>
+		
+		<div class="form-group">
+		<label for="" class="lblTxt">Available Kits</label>
+		<input type="text" id= "available_kits" class="form-control CommonInputBox" name = "available_kits" />
+		</div>
+		<div class="btn-group">
+			<button class="btn btn-default Commonbtn" name="set_kit_limit" id="set_kit_limit" type="submit">Submit</button>
+			<button class="btn btn-default Commonbtn" name="reset" id="reset" type="submit">Reset</button>
+					<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+			
+		</div>
+
+      </form>      
+            
+             
+ </div>
+</div>
+
+  
+
+ 
+<script  data-cfasync='false' type="text/javascript">
+
+
+
+		$('#kit_type').on('change', function () {
+			var kit = $(this).val();
+			// alert(kit);
+			$.ajax({
+				type: "POST",
+				url:"<?php echo BASEPATH; ?>/Kitlimit/kitdata", 
+				data: {'kit':kit,'token':$('#token').val()},
+				success: function(response){ 
+					var data =	JSON.parse(response);
+					if(data['success'] && data['success']!='')
+					{
+					
+						  $('#max_limit').val('');
+						  $('#max_limit').val(data['data'][0]['max_limit']);
+
+						  $('#admin_limit').val('');
+						  $('#admin_limit').val(data['data'][0]['admin_limit']);
+
+						  $('#available_kits').val('');
+						  $('#available_kits').val(data['data'][0]['available_limit']);
+					}
+					else
+					{
+						if(data['failure'] && data['failure']!='')
+						{
+							alert(data['data']);
+						}
+						else
+						{
+							alert("Something error. Please try again");
+						}
+					}
+				 
+				}
+			 });  
+		});
+		</script>
+		

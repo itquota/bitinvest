@@ -1,0 +1,140 @@
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+ 
+ 
+ 
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Queries</li>
+  
+            </ol>
+           
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+       
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                   <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">Ticket No</th> 
+                        <th class="sortboth">Name</th>
+                         <th class="sortboth">Email</th> 
+                         <th class="sortboth">Mob</th> 
+                          <th class="sortboth">Query</th>
+                          <th class="sortboth">Username</th>
+                           <th class="sortboth">Date/Time</th> 
+                            <th class="sortboth">Reply Status</th> 
+                             <th class="sortboth">Action</th> 
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                  
+                   <?php $j=1;
+                   foreach($this->result as $result){
+                   ?>
+                   <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php echo $result['ticket_id']; ?></td>
+                      <td><?php echo $result['name']; ?></td> 
+                      <td><?php echo $result['email']; ?></td>
+                      <td><?php echo $result['mob']; ?></td> 
+                      <td><?php echo $result['query']; ?></td> 
+                      <td><?php echo $result['username']; ?></td> 
+                       <td><?php echo $result['created_on']; ?></td> 
+					   <td><?php echo ($result["reply_status"]==1) ? "YES":"NO";?></td>
+                        <td><a href="<?php echo BASEPATH;?>/Reply?id=<?php echo $result['id'];?>&email=<?php echo $result['email'];?>" onclick="return reply('<?php echo $result["email"];?>','<?php echo $result["id"];?>','<?php echo addslashes($result["subject"]);?>');">Reply</a></td> 
+                     
+                     
+                  </tr> 
+
+               
+
+                
+
+                  
+
+               
+             
+             <?php $j++;}  ?>  
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+
+    </div>
+
+  
+	 
+       <!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+       
+ <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+			//	echo "<div>&nbsp;</div>";?>
+  
+   				<!--  <div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>-->
+   
+      
+    </div>
+         
+      
+    
+
+   
+
+ 
+     
+
+
+
+
+               
+             
+                
+          
+          </div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+<div id="inline1" style="width:800px;display:none"></div>

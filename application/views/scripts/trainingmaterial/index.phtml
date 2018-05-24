@@ -1,0 +1,87 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+	
+	.video-width{
+		height:240px;
+		width:350px;
+		
+	}
+	
+	@media (max-width:480px){
+	.video-width{
+		height:100%;
+		width:100%;
+		
+	}
+		
+	
+	}	
+	.sorting_1{
+		border:none !important;
+	}
+	table{
+		border: none !important;
+	}
+	
+		.dataTables_length{
+		display:none !important;
+	}
+	.dataTables_filter{
+		display:none !important;
+	}
+.dataTables_info{
+	margin-left:25px;
+	display:none;
+}	
+
+.dataTables_paginate{
+	margin-right:25px;
+}
+</style>
+
+  <div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Video Guides</h4>
+		<h5 class="text-muted page-title-alt">Videos</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">	
+				<div class="col-lg-12">
+					 <div class="bs-example table-responsive">
+					   <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+							 <thead style="display:none;">
+								<tr>
+								   <th class="sortdesc">S.No.   </th>
+
+								 </tr> 
+							</thead>
+							<tbody> 
+								<tr style="padding:10px;">
+										<td style="text-align:left;">
+										<?php foreach($this->result as $videos ){?>
+											
+											<div class="col-lg-6">
+												<div class="panel panel-primary ">
+												  <div class="panel-heading  Titleheading faqtitlebg"><h4 class="panel-title"><?php echo $videos['video_title'];?></h4></div>
+												  <div class="panel-body text-center revenuebg">
+													 <iframe class="video-width" src="<?php echo $videos['video_links'];?>" frameborder="0"  allowfullscreen=""></iframe>
+												  </div>
+												</div>
+											</div>
+											<?php }?>
+										</td>
+								</tr>	
+							</tbody>
+						 </table>
+					</div>	 
+				</div>
+			</div>		
+		</div>	
+	</div>
+ </div>	  
+           

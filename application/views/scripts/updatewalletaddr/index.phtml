@@ -1,0 +1,140 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+	 .form-group {
+	    width: 300px;
+	}
+	.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+		}
+	.clearfix {
+ 			 margin-top:35px;
+		}
+ </style>
+ 
+ 
+
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li >Change Wallet Address</li>
+  
+            </ol>
+           
+			<div class="clearfix"></div>
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               Change Wallet Address
+              </div>
+
+              <div class="panel-body revenuebg">
+<form action="<?php echo BASEPATH; ?>/Updatewalletaddr" method="post" id="chng" role="form">
+<div id="msg1" style="color:green; font-family: robotoregular; font-weight: normal;">
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   
+    <?php echo $this->msg;?>
+ 	 
+ 
+ <?php } ?>
+  </div>
+   <div id="msg2">
+   <?php if(!empty($this->messag) && $this->messag!='')
+{
+?>
+    <label for="" class="Txt" style="color:red; font-family: robotoregular; font-weight: normal;"><?php echo $this->messag;?></label>
+ 	 
+ 	  <?php } ?>
+ 	   <label style="color:red" for="" class="lblTxt"> </label>
+  </div>
+ 
+ 
+ 
+ 
+<div class="err1" >
+	<label for="" class="lblTxt" style="color:red;"></label>
+</div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Old Wallet Address</label>
+
+     <input type="text"  id="old_wallet" name="old_wallet" class="form-control CommonInputBox" placeholder="Old Wallet Address">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Coinbank Wallet Address</label>
+
+     <input type="text" class="form-control CommonInputBox" id="new_wallet" name="new_wallet" placeholder="Coinbank Wallet Address">
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Comment</label>
+
+     <textarea type="textarea" class="form-control CommonInputBox" name="comment" id="comment" placeholder="" value="" ></textarea>
+
+
+      
+  </div>	
+  <div>
+  <button type="submit" name="chng" id="chng" class="btn btn-default Commonbtn" onclick="return validateForm()">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn">RESET</button>
+	</div>
+  
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+    function validateForm(){
+
+        $("#msg1").empty();
+        $("#msg2").empty();
+        
+   		var old_wallet=$("#old_wallet").val();
+        var new_wallet=$("#new_wallet").val();
+		var comment=$("#comment").val();
+
+				if((old_wallet).trim()=='' || (new_wallet).trim()=='' || (comment).trim()==''){
+					$(".err1").html('<label for="" class="lblTxt" style="color:red;">All fields required</label>');
+					return false;
+				}
+				
+		       else  {
+		           //document.form.submit();
+		           return true;
+		       }
+		    		 
+		
+ }
+    </script>

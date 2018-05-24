@@ -1,0 +1,78 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+?>
+<script>
+jQuery(document).ready(function($) {
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+});	
+
+</script>
+  <div class="content">
+	<div class="page-title-group">
+		<h4 class="page-title">Gallery</h4>
+		<h5 class="text-muted page-title-alt">Images & Videos</h5>
+	</div>
+	<div class="cb-page-content">
+	<!-- section 1 starts -->		
+	
+		<div class="row" id="mainDiv">
+		<?php for($i=0;$i<sizeof($this->resultmanagebanner);$i++){
+			//$url = preg_replace("/[^0-9a-zA-Z ]/", "", $this->resultmanagebanner[$i]['title']);
+			//$url = BASEPATH.'/Gallery/detail/'.$this->resultmanagebanner[$i]['id'].'/'.$this->resultmanagebanner[$i]['title'];
+			$url = BASEPATH.'/Gallery/detail/'.$this->resultmanagebanner[$i]['id'];
+		?>
+			<!-- Activity app -->
+			
+												
+			
+			<div class="col-lg-4 clickable-row" data-href='<?php echo $url; ?>' id="main<?php echo $this->resultmanagebanner[$i]['id']; ?>" style="cursor:pointer;">
+				<div class="card-box">
+
+					<div class="card-box-content p-l-0 p-r-0" style="min-height:220px;">
+						<div class="contact-list  nicescroll">
+							<img
+								name="image"
+								id="image"
+								value=""
+								class="img-thumbnail img-fluid"
+								src="data:image/jpeg;base64,<?php echo base64_encode($this->resultmanagebanner[$i]['title_image']);?>"
+							style="width:100%;height:200px;"/>
+						</div>
+					</div>
+					<div class="card-box-head">
+						<h4 class="header-title text-center"><b><?php 
+						echo str_replace("_"," ",$this->resultmanagebanner[$i]['title']); 
+							?></b></h4>
+					</div>					
+				</div>
+			</div>
+		<?php }?>	
+		</div>			
+	</div>
+  </div>
+										
+<script data-cfasync="false"  type="text/javascript">
+	$("#main1").on('click', function() {
+	$("#mainDiv").hide();
+	$("#mainDiv-one-related").show();
+  });
+	$("#main2").on('click', function() {
+	$("#mainDiv").hide();
+	$("#mainDiv-one-related").show();
+  });
+	$("#main3").on('click', function() {
+	$("#mainDiv").hide();
+	$("#mainDiv-one-related").show();
+  });	
+	$("#close").on('click', function() {
+	$("#mainDiv-one-related").hide();
+	$("#mainDiv").show();
+  });	
+
+</script>					
+					
+					
+					

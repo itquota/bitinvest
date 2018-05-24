@@ -1,0 +1,460 @@
+<?php 
+
+//print_r($this->country_data);exit;
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+try{
+//echo "inde heml";exit;
+//print_r(sizeof($this->resultprofile));exit;
+?>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script>
+window.onload = function()
+{
+	document.getElementById("save").onclick = function()
+	{		
+
+		 var fd = new FormData();
+		 var other_data = $('form').serializeArray();
+
+			$.ajax({					
+					url: '<?php echo BASEPATH; ?>/Edituser/editchange',
+					data: other_data,
+					type: "post",
+					async: 'false',
+					success: function(response){
+						 var jsonObject = JSON.parse(response);
+//						alert(jsonObject);
+						if(jsonObject=="success"){
+					        $(".errortext").html('<label class="lblTxt" for="" style="color:green;"> Updated successfully</label>');
+							
+							window.location = "<?php echo BASEPATH;?>/Binaryuser";
+						}else if(jsonObject=="notupdated"){
+							$(".errortext").html('<label class="lblTxt" for="" style="color:red;"> User Not Updated</label>');
+						}else if(jsonObject=="nochange"){
+							$(".errortext").html('<label class="lblTxt" for="" style="color:red;"> No Change to submit data</label>');
+						}else{
+							$(".errortext").html('<label class="lblTxt" for="" style="color:red;"> Invalid Request Found</label>');
+						}
+					}
+			});
+	}
+	
+				
+}
+
+/* JS Changes functions added to Open/Close Pop-UP*/
+ function changeauth(status)
+ {
+	 
+	$('#status').val(status);
+	$('#changestatus').addClass('openpop');
+ }
+	
+ function closeStatusPop()
+ {
+	 $('#changestatus').removeClass('openpop');
+ }
+
+function chageAuth(status)
+{
+	$('#changestatus').removeClass('openpop');
+	var status = $('#status').val();
+	var comment = $('#comment').val();
+	
+//	var r = confirm("Are you sure??");
+
+//  if(r==true)
+	//	 {
+			var token = $('#token').val();
+			var	username = $('#username').val();
+				$.ajax({					
+					url: '<?php echo BASEPATH; ?>/Edituser/changeauth',
+					data: "status="+status+"&token="+token+"&username="+username+"&comment="+comment,   // Changes Here For Parameters Pass
+					type: "post",
+					async: 'false',
+					success: function(response){
+						 var jsonObject = JSON.parse(response);
+						 if(jsonObject['success']!='')
+						 {
+							if(status==1)
+							{
+								alert(jsonObject['data']);
+								html='<label for="inputCName" class="lblTxt">Google 2FA Status</label><br><span>Disabled</span>';
+							}
+							else
+							{
+								alert(jsonObject['data']);
+								html='<label for="inputCName" class="lblTxt">Google 2FA Status</label><br><span>Enabled &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="chageAuth(1);">Disable 2FA</a></span>'
+							}
+							$('#2fastatus').empty();
+							$('#2fastatus').append(html);
+						
+						 }
+					}
+				});
+		// }
+
+		 
+
+		 
+
+}
+</script>
+<style>
+			.form-group {
+   float:left;
+    margin-right: 25px;
+    width: 300px;
+}
+		.form {
+		 float:right;
+    margin-right: 0px;
+    width: 100%;
+
+		}
+.drpdwn{
+		border:1px solid;
+		border: 1px solid #ddd !important;
+		border-radius: 5px !important;
+		
+		
+}
+	
+	
+/* CSS Changes Starts*/
+	
+.inputhodler input{
+	border: 1px solid #dadada;
+    box-shadow: none !important;
+    padding: 6px 8px;
+    text-align: center;
+    vertical-align: top;
+    width: 28%;
+    font-weight:bold;
+}
+.modal-body.g-auth-body {
+    background: #e6e7e8 none repeat scroll 0 0;
+    padding: 20px;
+}
+.inputhodler{
+	 margin: 0 0 10px;
+}
+.inputhodler .formsubmit {
+    background: #34495e none repeat scroll 0 0;
+    border: medium none;
+    box-shadow: none;
+    color: #fff;
+    font-size: 20px;
+    padding: 6px 8px;
+    text-align: center !important;
+    width: 80%;
+}
+.inputhodler textarea {
+    border: 1px solid #dadada;
+    box-shadow: none !important;
+    padding: 6px 8px;
+    resize: none;
+    text-align: left;
+    vertical-align: top;
+    width: 80%;
+}
+.popupwidth{
+	width:75%;
+}
+	
+	.modal-header {
+	color: #fff;
+	font: 20px "robotobold";
+}
+	
+	
+/* CSS Changes Ends*/	
+			
+</style>
+
+<!-- HTML Changes for pop-up starts-->
+	<div class="modal changestatus"	id="changestatus">	
+		<div class="modal-dialog popup" >
+			<div class="modal-content">
+				<div class="modal-header">
+				Disable 2FA
+				<button
+					type="button"
+					class="close"
+					data-dismiss="modal"
+					aria-hidden="true" onclick="closeStatusPop();"
+				><i class="is close-btn"></i></button>
+				</div>
+				<div class="modal-body g-auth-body">
+					<form name="formkit" id="" action='' method="post">
+						<div class="inputhodler" id="kit_err" style="display:none;">
+
+						</div>
+						<div class="err1"></div>	          
+						<div class="inputhodler">
+							<p> Comment:</p> <textarea type="textarea" name="comment" id="comment" placeholder="" value="" ></textarea>
+						</div>	
+						<div class="inputhodler btncls" >
+							<input style="width:30%;" type="button" value="Submit" name="sharekt" onclick="chageAuth()" class="formsubmit inputcls">
+						</div>	
+					</form>	
+				</div>
+			</div>
+		
+		
+		<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+<!-- HTML Changes for pop-up ends--> 
+
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+
+                  <li class="active"><a href="<?php echo BASEPATH?>/Binaryuser">Users</a> > </li>
+                  <li >Edit User</li>
+  
+            </ol>
+           
+
+         
+
+         <div class="col-lg-12">
+         
+         
+
+
+<div class="clearfix">&nbsp;</div>
+
+           <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+            Edit User
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="" method="post"  name="edituser" id="edituser" enctype="multipart/form-data" >
+          
+          <div class="errortext">
+          		
+          </div>
+          
+          
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg;  
+    ?></label>
+ 
+  </div>
+ <?php } ?>
+ 
+ 
+ <?php if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->msg;  
+    ?>
+    <?php $authUserNamespace->msg = ''; ?></label>
+ 
+  </div>
+ <?php } ?>
+ 
+ 
+ 
+
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Username</label>
+
+     <input type="text" class="form-control CommonInputBox" readonly="" name="username" id="username"  value="<?php  echo $this->result['username'];?>" placeholder="username"/>
+
+
+      
+  </div>
+
+<!--<div class="form-group">
+    <label for="inputCName" class="lblTxt">Password</label>
+
+     <input type="text" class="form-control CommonInputBox"   name="password"   id="password"  value="<?php echo $this->result['password'];?>" placeholder="password">
+     </div>
+  -->
+  
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Register Email</label>
+
+     <input type="text"  name="email" id="email" class="form-control CommonInputBox"  value="<?php echo $this->result['email_address'];?>" placeholder="Email" readonly>
+
+
+      
+  </div>
+  
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">User Sponsor</label>
+
+     <input type="text" readonly=""  class="form-control CommonInputBox"  value="<?php echo $this->result['sponsor_id'];?>" placeholder="">
+
+
+      
+  </div>
+  
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Referrer Sponsor</label>
+
+     <input type="text"  readonly=""  class="form-control CommonInputBox"  value="<?php echo $this->result['ref_sponsor_id'];?>" placeholder="">
+
+
+      
+  </div>
+  
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Full Name</label>
+
+     <input type="text" class="form-control CommonInputBox"  name="full_name" id="full_name" value="<?php echo $this->result['name'];?>" placeholder="Full Name">
+
+
+      
+  </div>
+  
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Profile Email</label>
+
+     <input type="text"  name="profile_email" id="profile_email" class="form-control CommonInputBox"  value="<?php echo $this->result['comm_email'];?>" placeholder="Profile Email" >
+     
+  </div>
+
+  
+
+
+
+  
+<!-- <div class="form-group">-->
+<!--    <label for="inputCName" class="lblTxt">Profile Email</label>-->
+<!---->
+<!--     <input type="text" class="form-control CommonInputBox" name="profile_email" id="profile_email" value="<?php echo $this->result['email_address'];?>" placeholder="Profile Email">-->
+<!---->
+<!---->
+<!--      -->
+<!--  </div>-->
+<div class="form-group">
+  
+    <label for="inputCName" class="lblTxt">Country Code</label>
+   
+	 <select name="ccode" id=""ccode"" class="drpdwn" >
+	 <option value="0">Select</option>
+	<?php 
+
+
+
+		for($cd=0;$cd<sizeof($this->country_data);$cd++) { 
+				?>
+				<option
+				<?php if($this->country_data[$cd]['ccode']==$this->result['country']) { ?>
+					selected="true"
+					<?php } ?>
+				><?php echo $this->country_data[$cd]['ccode']; ?></option>
+				<?php
+				}
+			 ?>
+			
+ </select>
+
+      
+  </div>
+
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Phone</label>
+
+     <input type="text"  name="phone" id="phone"class="form-control CommonInputBox"  value="<?php echo $this->result['phone'];?>" maxlength="10" placeholder="Phone">
+
+
+      
+  </div>
+  
+  <div class="form-group">
+  
+    <label for="inputCName" class="lblTxt">Status</label>
+	 <select name="status" id="status" class="drpdwn" >
+		<option value="1">Active</option>
+     <option value="0" <?php if($this->result["isActiveId"]==0){ echo 'selected';} ?>>Inactive</option>
+ </select>
+
+      
+  </div>
+  
+  <div class="form-group" id="2fastatus">
+    <label for="inputCName" class="lblTxt">Google 2FA Status</label><br>
+		<?php if(!empty($this->result["authentication_type"]==2)){ ?>
+		<span>Enabled &nbsp;&nbsp;&nbsp;<a href="javascript:void(0)" onclick="changeauth(1);">Disable 2FA</a></span>
+		<?php } else {  ?>
+				<span>Disabled</span> 
+      	<?php } ?>
+  </div>
+  
+  
+  <div class="form-group">
+    <label for="inputCName" class="lblTxt">Flag Status</label><br>
+    <input type = "checkbox" name = "payment_status" value = "1" <?php if($this->result["payment_status_hold"]==1){ echo 'checked';} ?> id = "hold"/><label for = "hold">Hold</label>
+    <input type = "checkbox" name = "b2_status" value = "1" <?php if($this->result["b2_status"]==1){ echo 'checked';} ?> id = "B2"/><label for = "B2">B2</label>
+
+      
+  </div>
+  
+  
+   <div class="form-group">
+    <label for="inputCName" class="lblTxt">Comment</label>
+
+     <input type="text" class="form-control CommonInputBox"  name="comment"  id="comment"  value="<?php echo $this->result['comment'];?>" placeholder="" rows="3" cols="30">
+
+
+      
+  </div>
+
+ 
+
+  
+
+  
+  
+    <div class="form">
+  <button type="button"  name="save" id="save" class="btn btn-default Commonbtn" id="send_message" name="send_message">SUBMIT</button>
+  <button type="reset" class="btn btn-default Commonbtn" id="send_message" name="send_message">RESET</button>
+</div>
+  
+</form>
+  </div>
+          </div>
+
+
+
+         </div>
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+	<?php 
+	}
+	catch(Exception $e)
+	{
+	echo $e->getMessage();exit;
+	}
+	?>

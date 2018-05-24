@@ -1,0 +1,591 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+ .chooseopt{
+ 		width:120px !important;
+ }
+ select {
+
+    width: auto !important;
+}
+ </style>
+ <div class="modal req-admin" id="cat_alt">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"  onclick="closealt();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                       <div id="cont_hold"><b> Password Successfully Changed!!</b></div>                                          
+                                    </table>
+            
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Users</li>
+  
+            </ol>
+
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+        
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+		{
+		?>
+    <label for="" class="lblTxt" style="color:green;"><?php echo $authUserNamespace->msg; ?></label>
+   
+<?php $authUserNamespace->msg=""; }?> 
+        
+  <?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:green;"><?php echo $this->msg; ?></label>
+ 
+  </div>
+ <?php } ?>
+ <?php if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!='')
+{
+?>
+<div><label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->errmsg; ?></label></div>
+<?php $authUserNamespace->errmsg="";}?>
+ 
+ 		 <form method = "POST">
+ <label for="" class="lblTxt">Search</label>
+      <input type="search" class="form-control CommonInputBox"  name="search" id = "search"   placeholder="Search" style="width:250px;">
+					<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+					</form><br>
+        
+      
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+				
+             
+                    <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">SR.<br>NO </th>
+                        <th class="sortboth">USERNAME</th> 
+                        <th class="sortboth">PROFILE EMAIL</th> 
+                        <th class="sortboth">PHONE</th> 
+                        <th class="sortboth">PAYMENT STATUS</th>
+                         <th class="sortboth">B2 STATUS</th> 
+                         <th class="sortboth">PAYOUT STATUS</th> 
+                         <th class="sortboth">EMAIL</th> 
+  						   <th class="sortboth">WALLET ADDRESS</th>
+  						   <th class="sortboth">Daily Payout for 110 Days</th>
+  						   <th class="sortboth">PAYOUT OPTION</th>
+  						   <th class="sortboth">CREATED ON</th>
+
+							<th class="sortboth">SPONSOR ID</th>
+                          <th class="sortboth">REF ID</th>
+                           <th class="sortboth chooseopt" >ACTION</th> 
+                           
+                     </tr> 
+                 </thead>
+                  <tbody> 
+                   <?php 
+                   $j=1;
+                   foreach($this->result as $result)
+                   {
+                   ?>
+                   <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php 
+                     
+                     
+                    echo isset($result['username']) ? "".$result['username']:"";
+                    // echo $result['username']; ?></td>
+					   
+					   <td>
+						   <?php 
+					   			echo isset($result['comm_email']) ? "".$result['comm_email']:"";
+							?>
+					   </td>
+					   
+					     <td>
+						   <?php 
+					   			echo isset($result['phone']) ? "".$result['phone']:"";
+							?>
+					   </td>
+					   
+                      <td style = "color:red;" ><?php 
+                      
+                      echo !empty($result['payment_status_hold']) ? "Hold":"";
+                     // echo $result['payment_status']; ?></td> 
+                      <td style = "color:red;"><?php
+
+                      
+                     echo !empty($result['b2_status']) ? "B2":"";
+                      
+                     // echo $result['b2_status']; ?></td>
+                      <td><?php
+
+                      
+                     if($result['daily_payout_hold'] == 1){ 
+					 
+					 	echo "Hold";
+					 }
+                      
+                     // echo $result['b2_status']; ?></td>
+                      <td>						  
+						  
+						  <?php 
+                      
+                      
+                       echo isset($result['email_address']) ? "".$result['email_address']:"";
+                      
+                      
+                     // echo $result['email_address']; ?></td> 
+                      <td>						  
+						  
+						  <?php 
+                      
+                      
+                       echo isset($result['wallet_addr']) ? "".$result['wallet_addr']:"";
+                      
+                      
+                     // echo $result['email_address']; ?></td>	
+					   
+					   <td><?php                      
+                   			  echo isset($result['daily_payout_value_for_110_days']) ? $result['daily_payout_value_for_110_days']:"";
+						   ?>
+					   </td>		
+					   
+					   
+                      <td><?php
+
+                      
+                     if($result['payout_option'] == 1){ 
+					 
+					 	echo "BTC";
+					 }
+                      else{
+					  
+					  	echo "MCAP";
+					  }
+                     // echo $result['b2_status']; ?></td>					   
+					   
+                      <td style="width:20%;"><?php 
+                      
+                      
+                       echo isset($result['created_on']) ? "".$result['created_on']:"";
+                      
+                      
+                     // echo $result['email_address']; ?></td> 						   
+					   
+                      <td><?php 
+                      
+                      
+                       echo isset($result['sponsor_id'])? "".$result['sponsor_id']:"";
+                      
+                      
+                      
+                     // echo $result['sponsor_id']; ?></td> 
+                      <td><?php 
+                      
+                      
+                      
+                      echo isset($result['ref_sponsor_id']) ? "".$result['ref_sponsor_id']:"";
+                      
+                      
+                      //echo $result['ref_sponsor_id']; ?></td> 
+                      
+                      <td>
+						  
+						  <?php 
+
+						  if( isset($result['lock_status']) && ($result['lock_status'] == "lock")){
+							  echo "Locked ";
+							  $user_id=$authUserNamespace->user_id;
+							$data1=$misc_obj->GetAccessRightByUserId('49',$user_id);
+		
+							if((!empty($data1->view) && ($data1->view==1)) || $authUserNamespace->user=='admin')
+							{
+
+							  echo ' <select  onchange="run(this.options[this.selectedIndex].getAttribute(\'name\'),this.value);" name="myname"  name="myname" class="myclass" style="border: 1px solid #ddd !important;border-radius: 5px !important;">
+							   <option value = "">Choose Option</option>
+								<option value = "unlock" name="'.$result['username'].'">Unlock</option>
+						   </select>';
+							  }
+						  }else{
+						  ?>
+						  <select  onchange="run(this.options[this.selectedIndex].getAttribute('name'),this.value);" name="myname"  name="myname" class="myclass" style="border: 1px solid #ddd !important;border-radius: 5px !important;">
+						   <option value = "">Choose Option</option>
+
+
+
+					<?php if( isset($result['lock_status']) && ($result['lock_status'] == "lock")){ ?>
+							  
+							  <option value = "unlock" name="<?php echo $result['username'];?>">Unlock</option>
+							  
+							  <?php } ?>
+							 <option value = "rename" name="<?php echo $result['username'];?>"> Rename User</option>
+							 <option value = "reset" name="<?php echo $result['username'];?>">Reset Password</option>
+							 <option value = "edit" name="<?php echo $result['username'];?>">Edit</option>
+
+
+
+
+							  <option value = "network" name="<?php  echo $result['username']; ?>"> Network</option>
+							  <option value = "view_output" name="<?php echo $result['username']; ?>"> View Outputs</option>
+							   <option value = "payout" name="<?php echo $result['username']; ?>">Pay Out</option>
+							  <option value = "logs" name="<?php echo $result['username']; ?>">Logs</option>
+							  <option value = "hold" name="<?php echo $result['username']; ?>">Payout Hold</option>
+						   </select>
+						   
+						  <?php 
+					  			}                      
+						  ?>
+						  
+                      <form method="post" action="" id="form" >
+                       <input type="hidden" name="username" id="username" value="">
+                    	 <input type="hidden" name="token" value="<?php echo $authUserNamespace->token;?>">
+                       </form>
+                       
+                       
+                      </td>
+                     <!--  <td>
+                        <a class="btn btn-default Commonbtn text-uppercase" href="#" role="button">CHECK MINING OUTPUTS</a>
+
+                      </td>-->
+
+                     
+                  </tr> 
+
+               
+
+                
+
+                  
+
+               
+             
+             <?php $j++;}?>
+             
+                 </tbody>
+                  </table> 
+      <ul class="pagination">
+		 <?php 
+		
+		 if(!empty($_GET['page']))
+		 {
+			$StartPage=$_GET['page'];
+		 }
+		 else
+		 {
+			$StartPage=1;
+		 }
+		if($this->pages <= 5){
+			  $StartPage = 1;
+		 }else if(!empty($_GET['page']) && $_GET['page'] < $this->pages-6){
+			 // $pageDiff = $pages - $_GET['page'];
+			// $StartPage = $pages - $pageDiff;
+			 $StartPage = $_GET['page'];
+		 }else if(!empty($_GET['page']) && $_GET['page'] >= $this->pages-6){
+			 $StartPage = $this->pages - 5;
+		 }
+			// $limitPage = $StartPage + 4;
+			 if($this->pages > 5){
+				 $limitPage = $StartPage + 4;
+			 }else{
+				 $limitPage = $this->pages;
+			 }
+			 
+		 if(!empty($_GET['page']) && $_GET['page'] > 1){
+		 
+		 ?>
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Binaryuser?page=1"></a></li>
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Binaryuser?page=<?php echo $_GET['page']-1; ?>"><i class="mdi-navigation-chevron-left"></i></a></li>
+			 <?php 
+				}
+			 ?>
+			
+			<?php 
+			
+			for($j=$StartPage;$j<=$limitPage;$j++){
+                    ?>
+			<li class="active"><a href="<?php echo BASEPATH; ?>/Binaryuser?page=<?php echo $j; ?>"><?php echo $j; ?></a></li>
+			<?php }
+			
+			 if( $_GET['page'] < $this->pages-1){
+				 
+                    ?>
+			
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Binaryuser?page=<?php echo $_GET['page']+1; ?>"><i class="mdi-navigation-chevron-right"></i></a></li>
+			<li class="waves-effect"><a href="<?php echo BASEPATH; ?>/Binaryuser?page=<?php echo $this->pages-1; ?>"></a></li>
+			<?php }
+			
+                    ?>
+		 </ul>
+              </div>
+
+        </div>
+
+    </div>
+
+  
+	 
+       <!--   <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+       
+ <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+			//	echo "<div>&nbsp;</div>";?>
+				
+
+  
+   				<!--  <div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>-->
+   
+      
+    </div>
+         
+              
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+
+<script>
+function closealt()
+{
+	$('#cat_alt').removeClass('openpop');
+	
+		location.reload(); 
+
+}
+function unlock(user){
+	alert("unlock");
+	$.ajax({
+		type:"POST",
+		url:"<?php echo BASEPATH;?>/Binaryuser/unlockuser", 
+		data:{username:username},
+		success:function(data){
+			
+			if(data ==1){
+
+				 $("#response").html(data);
+				//alert("User unlocked successfully");
+				var innerdata='<b>User unlocked successfully</b>';
+				$('#cont_hold').empty();
+				$('#cont_hold').append(innerdata);	
+				$('#cat_alt').addClass('openpop');
+			}
+		}
+		
+	});
+	setTimeout(function(){
+		 $('#cat_alt').removeClass('openpop');
+		 window.location.href=("<?php echo BASEPATH; ?>/Binaryuser");
+		},5000);
+}
+
+function run(username,selected){
+
+//alert(selected);
+
+    var token = $('#token').val();		
+	if(selected=="unlock"){
+	
+		$.ajax({
+			type:"POST",
+			url:"<?php echo BASEPATH;?>/Binaryuser/unlock", 
+			data:{username:username},
+			
+			success:function(data){
+			//		alert(data.Success);
+				if(data.Success!=""){
+					
+					//alert("User unlocked successfully");
+					 var innerdata='<b>User unlocked successfully</b>';
+					$('#cont_hold').empty();
+					$('#cont_hold').append(innerdata);	
+					$('#cat_alt').addClass('openpop');
+				}
+				else
+				{
+				//	alert("Failed to unlock");
+					var innerdata='<b style="color:red;">Failed to unlock</b>';
+					$('#cont_hold').empty();
+					$('#cont_hold').append(innerdata);	
+					$('#cat_alt').addClass('openpop');
+				}
+			}
+			
+		});
+		setTimeout(function(){
+			 $('#cat_alt').removeClass('openpop');
+			 window.location.href=("<?php echo BASEPATH; ?>/Binaryuser");
+			},5000);
+
+	}		
+	else if(selected=="hold"){
+		var r = confirm("Are you sure??");
+
+		if(r==true)
+		 {
+		$.ajax({
+			type:"POST",
+			url:"<?php echo BASEPATH;?>/Binaryuser/payouthold", 
+			data:{username:username},
+			
+			success:function(data){
+					
+				if(data.Success!=""){
+					var innerdata='<b>Payout hold status changed successfully</b>';
+					$('#cont_hold').empty();
+					$('#cont_hold').append(innerdata);	
+					$('#cat_alt').addClass('openpop');
+				}
+				else
+				{
+					var innerdata='<b style="color:red;">Failed to hold payout</b>';
+					$('#cont_hold').empty();
+					$('#cont_hold').append(innerdata);	
+					$('#cat_alt').addClass('openpop');
+				}
+			}
+			
+		});
+		setTimeout(function(){
+			 $('#cat_alt').removeClass('openpop');
+			 window.location.href=("<?php echo BASEPATH; ?>/Binaryuser");
+			},5000);
+	}
+
+	}
+	else if(selected=="rename"){
+		//window.location="<?php echo BASEPATH;?>/Renameuser?username="+username+"&token="+token;
+
+		$('#form').attr('action', '<?php echo BASEPATH;?>/Renameuser');
+		//$("#form").attr("name",username);
+		$('#username').val(username);
+		
+		document.getElementById("form").submit();
+		
+		
+	} else if(selected=="logs"){
+
+		$('#form').attr('action', '<?php echo BASEPATH;?>/Userlogs');
+		$('#username').val(username);
+		
+		document.getElementById("form").submit();
+	}
+	else if(selected=="reset"){
+		
+		var r = confirm("Are you sure??");
+
+		if(r==true)
+		 {
+		 
+		//window.location = "<?php //echo BASEPATH; ?>///Changepass?usr="+user;
+		$.ajax({
+		     type: 'POST',
+		    url: "<?php echo BASEPATH;?>/Changepass",
+			//data:"offerId="+id+"&status_value="+status,
+			data:{username:username,token:token},
+			
+		      success: function(data){
+		       //alert(data);return false;
+			   if(data.Success!="")
+			   { 
+					//alert("Status Of the password has been changed  succesfully. You will now be navigated back to Special offers page.");
+					$('#cat_alt').addClass('openpop');
+		                      //  window.location ="<?php echo BASEPATH ?>/Binaryuser";
+				//location.reload();
+			   }
+		       else{
+		           //alert(data);return false;
+
+		           //alert("error while updating password please try again");
+		           var innerdata='<b style="color:red;">error while updating password please try again</b>';
+		           $('#cont_hold').empty();
+					$('#cont_hold').append(innerdata);	
+					$('#cat_alt').addClass('openpop');
+		       }
+		       
+		    }
+
+		   
+		   
+			});
+		setTimeout(function(){
+			 $('#cat_alt').removeClass('openpop');
+			 window.location.href=("<?php echo BASEPATH; ?>/Binaryuser");
+			},5000);
+		 	}
+		 }
+	else if(selected=="edit"){
+		
+		 //window.location = "<?php echo BASEPATH;?>/Edituser?username="+username+"&token="+token;
+		$('#form').attr('action', '<?php echo BASEPATH;?>/Edituser');
+		//$("#form").attr("name",username);
+		$('#username').val(username);
+		
+		document.getElementById("form").submit();
+		
+		//window.location = "</?php echo BASEPATH; ?>/Edituser?usr="+user;
+	}else if(selected=="network"){
+		window.location = "<?php echo BASEPATH; ?>/Network?usr="+username;
+	}else if(selected=="view_output"){
+		//window.location = "<?php echo BASEPATH; ?>/Binaryuserearning?username="+username;
+		$('#form').attr('action', '<?php echo BASEPATH;?>/Binaryuserearning');
+		//$("#form").attr("name",username);
+		$('#username').val(username);
+		
+		document.getElementById("form").submit();
+	}else if(selected=="payout"){
+		//window.location = "<?php echo BASEPATH; ?>/Paytouser?usr="+username+"&token="+token;
+		$('#form').attr('action', '<?php echo BASEPATH;?>/Paytouser');
+		//$("#form").attr("name",username);
+		$('#username').val(username);
+		
+		document.getElementById("form").submit();
+	}
+  
+}
+
+
+
+</script>
+
+

@@ -1,0 +1,415 @@
+<?php
+$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+$misc_obj->generateToken();
+?>
+
+<style>
+	
+	table {
+		border: 1px solid #ccc;
+	}
+	/*
+	tr td, th{
+		border: 1px solid #ccc !important;
+		padding:10px;
+	
+	}
+	.right{
+		text-align:right;	
+	}
+	
+	.left{
+		text-align:left;	
+	}
+	.center{
+		text-align:center;
+	}
+	*/
+	.cycle{
+		display:block;	
+	}
+	@media (max-width:414px){
+		.mtop30{
+			margin-top:30px!important;
+		}
+	}
+	
+</style>
+
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Output</h4>
+		<h5 class="text-muted page-title-alt">Business Details</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						
+						<div class="card-box-content form-compoenent">
+
+							<div class="row">
+								<div class="col-lg-12 bus_con">
+									<?php if (isset($authUserNamespace->msg) && $authUserNamespace->msg != '') { ?>
+										<p id="error" style="color: red; font-weight: bolder"><?php echo $authUserNamespace->msg; ?></p>
+										<?php $authUserNamespace->msg = '';
+									} ?>
+									<form method="POST"
+										  action="<?php echo BASEPATH; ?>/Businessdetails">
+										<input type="hidden" value="<?php echo $authUserNamespace->token; ?>" id="token" name="token">
+										<div class="lightgraybg paddCommon">
+											<div class="row" style="padding:20px;">
+												<div class="col-md-3 col-sm-6">
+													<select name =  "year" class="form-control">
+														<option value ="">Select Year</option>
+														<?php 
+															$year = date('Y');
+															//	echo $year;
+															for($i = $year; $i >= 2015; $i --){
+																if($i == $_POST['year']){
+																	$selected = "selected";
+																}else{
+																	$selected = "";
+																}
+																echo '<option value ="'.$i.'" '.$selected.'>'.$i.'</option>';
+															}
+														?>
+
+													</select>							
+												</div>
+												<div class="col-md-3 col-sm-6" style="text-align:center;">
+													<button class="btn btn-primary btn-md mtop30" name="search" type="submit">Search</button>							
+												</div>
+
+											</div>	
+											<div class="row">
+												<div class="col-md-12">
+													<span class="note" style="font-size:11px;padding:0px 20px !important;">**Please Note: Displayed business data is updated till <?php echo date('jS F, Y', strtotime($this->business_cycle_date['end']))?>.</span>				
+												</div>
+											</div>
+										</div>
+									</form>
+							</div>	
+						</div>	
+			<?php
+	
+			//print_r($this->business_cycle_date);
+			$year = $this->result[0]['year'];
+		$CurrentYear  =  date('Y');
+		if($year == $CurrentYear){
+			$lastMonth  = date('m',strtotime($year));
+		}else{
+			$lastMonth  = 12;
+		}
+		//	$lastMonth  = 12;
+		//	echo $lastMonth;
+		
+			if(!empty($this->result)){
+				$result = $this->result;
+				for ($month = 1; $month <= $lastMonth;$month++){
+					$Data = "";
+					$date = $year.'-'.$month;
+					
+				//	echo "month $month ".date('F',strtotime($date))."<br>";
+				/*	echo "<div style = 'float:left;height:400px;width:450px;padding:20px;margin:20px;background-color:#fff;box-shadow: 0 0 5px #ccc;'>
+						<h4 style = 'text-align:center;'>".date('F',strtotime($date))."</h4>
+						<table>
+						";
+					*/
+				/*
+					echo "<div class = 'col-lg-6 col-md-6 col-sm-12' style = 'margin-bottom:30px;'>
+						<h4 style = 'text-align:center;color: #fff;background-color: #23527c;margin: 0;height: 50px;padding: 15px;'>".date('F',strtotime($date))."</h4>
+						<table>
+						";
+						*/
+					$firstCycle = "Cycle(1-15)";
+							$secondCycledate = date('t',strtotime($date));
+							$secondCycle = "Cycle(16-$secondCycledate)";
+						/*	echo "<tr>
+										<th> </th>
+										<th  class = 'center'>$firstCycle</th>
+										<th class = 'center'>$secondCycle</th>
+									</tr>";
+					*/
+					
+						echo '<div class="col-lg-6">
+									<div class="card-box">
+										<div class="card-box-head border-b m-t-0">
+											<h4 class="header-title">'.date('F',strtotime($date)).'</h4>
+											
+										</div>
+										<div class="card-box-content">
+											<div class="row">
+												<div class="col-md-12 col-sm-12">
+
+													<div class="table-responsive data-table">
+														<table class="table table-bordred table-striped">
+															<thead>
+																<div class="m-t-19"></div>
+																
+																<tr>
+																	<th ></th>
+																	<th ><b>Business</b></th>
+																	<th ><b>Active Users</b></th>
+																	<th ><b>Inactive Users</b></th>
+																</tr>
+															</thead>
+															<tbody>';
+					foreach($result as $details){
+						if(!empty($details)){
+							
+							if($details['month']  ==  $month){
+							//	var_dump($details);
+								if($details['cycle']==1){
+									$Data[1] = $details;
+								}else{
+									$Data[2] = $details;
+								}
+								
+							}
+							
+							
+							
+						}
+					}
+					
+					
+									echo '					<tr>
+																	<td style=""><b>Left</b><span class = "cycle">'.$firstCycle.'</span></td>
+																	<td style="text-align: center;">'.$Data[1]['left_business'].'</td>
+																	<td style="text-align: center;">'.$Data[1]['left_active_users'].'</td>
+																	<td style="text-align: center;">'.$Data[1]['left_inactive_users'].'</td>
+															</tr>
+															
+																
+															<tr>
+																<td style=""><b>Right</b><span class = "cycle">'.$firstCycle.'</span></td>
+																<td style="text-align: center;">'.$Data[1]['right_business'].'</td>
+																<td style="text-align: center;">'.$Data[1]['right_active_users'].'</td>
+																<td style="text-align: center;">'.$Data[1]['right_inactive_users'].'</td>
+															</tr>
+															
+															<tr>
+																<td style=""><b>Left</b><span class = "cycle">'.$secondCycle.'</span></td>
+																<td style="text-align: center;">'.$Data[2]['left_business'].'</td>
+																<td style="text-align: center;">'.$Data[2]['left_active_users'].'</td>
+																<td style="text-align: center;">'.$Data[2]['left_inactive_users'].'</td>
+															</tr>
+															
+																
+															<tr>
+																<td style=""><b>Right</b><span class = "cycle">'.$secondCycle.'</span></td>
+																<td style="text-align: center;">'.$Data[2]['right_business'].'</td>
+																<td style="text-align: center;">'.$Data[2]['right_active_users'].'</td>
+																<td style="text-align: center;">'.$Data[2]['right_inactive_users'].'</td>
+															</tr>
+															
+															
+															
+																';
+							
+							
+									
+
+											echo '				</tbody>
+														</table>
+													</div>			
+														
+													
+												</div>
+
+											</div>
+										</div>
+									</div>
+									<div style="margin-bottom:50px;"></div>
+								</div>';		
+					
+					
+					
+					
+					
+				//	var_dump($Data[1]['left_business']);
+				//	echo $Data[1]['right_inactive_users'];
+				//	echo $Data[2]['right_inactive_users'];
+				//	var_dump($secondData);
+					//if(!empty($Data)){
+					
+					
+				/*	
+				$keys = array("left_business" =>  "Left Business",
+								  "left_active_users" =>  "Left Active Users",
+								  "left_inactive_users" =>   "Left Inactive Users",
+								  "right_business" =>  "Right Business",
+								  "right_active_users" =>  "Right Active Users",
+								  "right_inactive_users" =>  "Right Inactive Users"); 
+					
+					
+				
+					
+					
+					
+					foreach($keys as $k => $key){
+						$firstValue = !empty($Data[1][$k])?$Data[1][$k]:0;
+						$secondValue = !empty($Data[2][$k])?$Data[2][$k]:0;
+						echo "<tr>
+						<td class = 'left'>$key</td>
+						<td class = 'right'>".$firstValue."</td>
+						<td class = 'right'>".$secondValue."</td>
+						
+						</tr>";
+					}
+				//	}
+					echo "	</table>
+						</div> ";
+						
+						*/
+					
+				}
+			}else if(!empty($_POST)){
+				echo "<div style = 'text-align:center;font-size:20px;padding:50px;'>No data to display</div>";
+			}
+
+		
+		
+            if (!empty($this->result['data']['userDetails'])) {
+                ?>
+
+                <div class="col-lg-12 ">
+                    <div class="clearfix lightgraybg">
+                        <?php if($this->result['data']['userDetails']['LeftBusiness'] == 0 && $this->result['data']['userDetails']['RightBusiness'] == 0 && $this->result['data']['userDetails']['totalUsers'] == 0){?>
+                        <p><strong>If your numbers are 0 (user count or contract). Then it may be possible that data is still being processed by our servers and will be presented shortly.</strong></p>
+                        <?php }?>
+
+                        <div class="bs-example table-responsive" data-example-id="bordered-table">
+
+
+                            <table id="data-table-simple1" class="table table-bordered innertbl display"
+                                   cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th class="sortdesc">username</th>
+                                    <th class="sortboth">Total <br> user</th>
+                                    <th class="sortboth">Total left users</th>
+                                    <th class="sortboth">Total right user</th>
+                                    <th class="sortboth">left business</th>
+                                    <th class="sortboth">right business</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <tr>
+
+                                    <td scope="row"><?php echo $this->result['data']['userDetails']['username']; ?></td>
+                                    <td><?php echo $this->result['data']['userDetails']['totalUsers']; ?></td>
+                                    <td><?php echo $this->result['data']['userDetails']['LeftActive']; ?></td>
+                                    <td><?php echo $this->result['data']['userDetails']['RightActive']; ?></td>
+                                    <td><?php echo $this->result['data']['userDetails']['LeftBusiness']; ?></td>
+                                    <td><?php echo $this->result['data']['userDetails']['RightBusiness']; ?></td>
+
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                            <div class="clearfix">&nbsp;</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            <?php } ?>
+            <?php if (!empty($this->result['data']['pairDetails'])) {
+                ?>
+                <div class="col-lg-12 ">
+                    <div class="clearfix lightgraybg">
+
+                        <div class="bs-example table-responsive" data-example-id="bordered-table">
+
+
+                            <table id="data-table-simple" class="table table-bordered innertbl display" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th class="sortdesc">Sr. No</th>
+                                    <th class="sortboth">Username</th>
+                                    <th class="sortboth">Contract</th>
+                                    <th class="sortboth">Parent</th>
+                                    <th class="sortboth">Status</th>
+                                    <th class="sortboth">Position</th>
+                                    <th class="sortboth">Created</th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <?php
+                                $i = 1;
+                                foreach ($this->result['data']['pairDetails'] as $pairPositions) {
+                                    // var_dump($pairPositions);
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $i; ?></td>
+                                        <td><?php echo $pairPositions['name']; ?></td>
+                                        <td><?php echo $pairPositions['ContractPrice']; ?></td>
+                                        <td><?php echo $pairPositions['parent']; ?></td>
+                                        <td><?php echo $pairPositions['IsActive']; ?></td>
+                                        <td><?php echo strtoupper($pairPositions['child_position']); ?></td>
+                                        <td><?php echo $pairPositions['created_on']; ?></td>
+                                    </tr>
+                                    <?php
+                                    $i++;
+                                }
+                                ?>
+
+
+                                </tbody>
+                            </table>
+                            <div class="clearfix">&nbsp;</div>
+                        </div>
+
+                    </div>
+
+                </div>
+            <?php }
+            if ($this->result['userDetails'] == "" && $this->result['pairDetails'] == "") {
+                ?>
+                <div>
+                </div>
+            <?php } ?>
+
+
+        </div>
+
+        <!-- /.row -->
+
+        <!-- /.row -->
+    </div>
+    <!-- /#page-wrapper -->
+ <div class="clearfix">&nbsp;</div> <div class="clearfix">&nbsp;</div>
+</div>
+<link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+<script data-cfasync='false' type="text/javascript">
+    jQuery('.start_date').datetimepicker({
+        format: 'd-m-Y',
+        maxDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
+        defaultDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
+    });
+    jQuery('.end_date').datetimepicker({
+        format: 'd-m-Y',
+        maxDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000)),
+        defaultDate: new Date(new Date().getTime() - (24 * 60 * 60 * 1000))
+    });
+    jQuery(document).ready(function () {
+        jQuery(".start_date").val("<?php echo $this->result['data']['userDetails']['start_date']?>");
+        jQuery(".end_date").val("<?php echo $this->result['data']['userDetails']['end_date']?>");
+    });
+</script>

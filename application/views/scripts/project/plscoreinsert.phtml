@@ -1,0 +1,408 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/jquery-1.8.2.min.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet">
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript">
+
+function actualhrs(emp)
+{
+	var type = $('#type').val();
+	var uid = $('#uid').val();
+	
+	var counter="0";
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/project/workingactualhrs",
+			type: "POST",    
+		    data: "&empid="+emp+"&type="+type+"&uid="+uid,
+		    success: function(response)
+		    { 		
+				if((response!="") && (response!=null))
+				{
+					var jsonObject = JSON.parse(response);
+					document.getElementById('hrs').innerHTML="";
+					document.getElementById('hrs').innerHTML=jsonObject+" Hrs";
+				}
+			}
+	});
+}
+
+function save1()
+{		
+			saveForm('<?php echo BASEPATH;?>/project/plscoreinsert','scoreinsertform','scoreinsertform');
+}
+
+function get_score_data(empid)
+{
+	
+	var counter="0";
+	<?php if(isset($this->type) && $this->type!="") {?>
+	var type='<?php echo $this->type; ?>'
+	<?php }?>
+	<?php if(isset($this->uid) && $this->uid!="") {?>
+	var projectid='<?php echo $this->uid; ?>'
+	<?php }?>
+	document.getElementById('scoreid1').value="";
+	document.getElementById('scoreid2').value="";
+	document.getElementById('scoreid3').value="";
+	document.getElementById('scoreid4').value="";
+	document.getElementById('comments1').value="";
+	document.getElementById('comments2').value="";
+	document.getElementById('comments3').value="";
+	document.getElementById('comments4').value="";
+	document.getElementById('score1').value="";
+	document.getElementById('score2').value="";
+	document.getElementById('score3').value="";
+	document.getElementById('score4').value="";
+	document.getElementById('active').innerHTML="";
+	
+	
+	
+	$.ajax({
+		url:"<?php echo BASEPATH; ?>/project/scoreajax",
+		type: "POST",    
+	    data: "type="+type+"&empid="+empid+"&projectid="+projectid,
+	    success: function(response)
+	    { 
+		   
+			j=0;
+			if((response!="") && (response!=null))
+			 { 
+			 	var jsonObject = JSON.parse(response);
+			 
+			 	
+				var	counter=1;				
+					for(m=0;m<jsonObject.length;m++)
+						{
+						
+							document.getElementById('scoreid'+counter).value=jsonObject[m]['id'];
+							document.getElementById('comments'+counter).value=jsonObject[m]['comments'];
+							document.getElementById('score'+counter).value=jsonObject[m]['score'];
+							counter++;
+						}
+					
+					total_score();
+					
+			}
+			
+			
+				
+		}
+	});
+	
+}
+
+	function total_score()
+	{
+		var score1=document.getElementById('score1').value;
+		var score2=document.getElementById('score2').value;
+		var score3=document.getElementById('score3').value;
+		var score4=document.getElementById('score4').value;
+
+		var scr1=$("#score1 option[value='"+score1+"']").text();
+		var scr2=$("#score2 option[value='"+score2+"']").text();
+		var scr3=$("#score3 option[value='"+score3+"']").text();
+		var scr4=$("#score4 option[value='"+score4+"']").text();
+
+		if(scr1=='Please Select')
+		{
+			scr1=0;
+		}
+		if(scr2=='Please Select')
+		{
+			scr2=0;
+		}
+		if(scr3=='Please Select')
+		{
+			scr3=0;
+		}
+		if(scr4=='Please Select')
+		{
+			scr4=0;
+		}
+		//alert("score1="+scr1);
+		//alert("score2="+scr2);
+		//alert("score3="+scr3);
+		//alert("score4="+scr4);
+		var total_score=((scr1*30)+(scr2*50)+(scr3*10)+(scr4*10))/100;
+		//alert("total score="+total_score);
+		
+		document.getElementById('active').innerHTML=total_score;
+		
+		
+	}
+
+
+</script>
+<style>
+.message
+{
+	 font-size: 9px;
+}
+.newWidth
+{
+	margin-left:5px;width:140px;margin-right: 0;
+}
+.newWidth select
+{
+	width:139px;margin:0;margin-right: 0;
+}
+.newWidthL
+{
+	width:375px;margin-right: 0;
+}
+.newWidthL input
+{
+	width:350px !important;
+}
+.newWidthM
+{
+	float:right;margin-left:5px;width:122px;margin-right: 0;
+}
+.newWidthM input
+{
+	width:90px;
+}
+#holder
+{
+	margin: 0 10px 0px 0;
+}
+.readfix {
+    width: 222px;
+}
+#holder .readonly
+{
+	text-align: left;
+}
+</style>
+<style>
+.readfix
+{
+	width:214px;
+}
+.newWidth ul
+{
+	margin:0;
+}
+</style>
+</head>
+<body>
+<?php $scorelist = $this->score_list ;
+//print "<pre>";
+//print_r($scorelist);exit;
+?>
+<form action="" name="scoreinsertform" id="scoreinsertform" method="post" enctype="multipart/form-data">
+<input type="hidden" name="annprojectid" id="annprojectid" value="<?php if(isset($this->common_list->annproject_id) && $this->common_list->annproject_id != "") {echo $this->common_list->annproject_id;}?>">
+<div id="subheader">
+	<div class="wrapper">
+  		<div id="holder" class="readfix">
+        	<label>Project Name:</label>
+            <span class="readonly"><?php if(isset($this->common_list->title) && $this->common_list->title != "") {echo $this->common_list->title;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">Start Date:</label>
+            <span class="readonly"><?php if(isset($this->common_list->st_date) && $this->common_list->st_date !=""){ echo $this->common_list->st_date;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">End Date:</label>
+            <span class="readonly"><?php if(isset($this->common_list->end_date) && $this->common_list->end_date !=""){ echo $this->common_list->end_date;}?></span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label class="left">Manager:</label>
+            <span class="readonly"><?php if(isset($this->common_list->name) && $this->common_list->name !=""){ echo $this->common_list->name;}?></span>
+        </div>
+        <div id="holder" class="readfix" style="width:213px;">
+        	<label>Analyst Budgeted Hrs:</label>
+            <span class="readonly" style="float: left; width: 80px; min-width: 80px;"><?php if(isset($this->common_list->budgeted_hrs) && $this->common_list->budgeted_hrs !=""){ echo $this->common_list->budgeted_hrs;}?></span>
+        </div>
+        
+        <div id="holder" class="readfix" style="width:215px;">
+        	<label>Actual Analyst Hrs:</label>
+            <span id="hrs" class="readonly"> 0.0 Hrs</span>
+        </div>
+        <div id="holder" class="readfix">
+        	<label>Team Member:</label>
+            <span class="readonly">
+            <select style="width: 115px;" name="analyst"  id="analyst" class="field med" onchange="actualhrs(this.value);get_score_data(this.value);" errortag="Team Leader">
+            <option value="">Please Select</option>
+            <?php	foreach ($this->analyst as $analyst){?>
+			<option  value="<?php  if(isset($analyst->id1) && $analyst->id1!=""){ echo $analyst->id1;}?>"><?php echo $analyst->name1;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" style="position:absolute;margin-left:-93px;margin-top:29px;" id="analyst_error">&nbsp;</span>
+      		<div class="clearBoth">&nbsp;</div>
+            </span>
+        </div>
+  	</div>
+  <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+   	    
+      	<div id="tablebg">
+        	<div class="col-first _m" style="width: 109px;">Criteria</div>
+          	<div class="col _prj" style="width: 303px;">Parameters</div>
+            <div class="col _prj" style="width: 70px;">Weightage</div>
+          	<div class="col _l" style="width: 236px;text-align:left;">Comments</div>
+            <div class="col _prj" style="margin:0;">Scores(1-4)</div>
+        </div>
+        <div id="rowbg" style="width:944px;  height: 87px;">
+       	  	<div class="col _prj newWidth" style="width: 109px;">
+	       	  	Project planning and Execution
+	       	  	<input id="criteria1" name="criteria1" type="hidden" value="<?php if(isset($this->criteria[0]['id']) && $this->criteria[0]['id']!="") echo $this->criteria[0]['id']; ?>">
+       	  	</div>
+            <div class="col _prj newWidth" style="width: 325px;" >
+	            <ul>
+				<li>Understand research objectives</li>
+				<li>Problem structuring, defining suitable approaches for research execution</li>
+				<li>Development /adherence to the plan</li>
+				<li>Client communications & management</li>  
+				</ul> 
+				<input id="parameter1" name="parameter1" type="hidden" value="<?php if(isset($this->parameter[0]['id']) && $this->parameter[0]['id']!="") echo $this->parameter[0]['id']; ?>">
+            </div>
+             <div class="col _prj newWidth" style="width: 98px;text-align: center;">
+	           30%
+	           <input id="weightage1" name="weightage1" type="hidden" value="<?php if(isset($this->weightage[0]['id']) && $this->weightage[0]['id']!="") echo $this->weightage[0]['id']; ?>">
+            </div>
+            <div class="col _prj newWidth" style="width: 240px;">
+	           <textarea class="field" id="comments1" name="comments1" type="text" style="width: 220px !important;height:70px;resize:none;" errortag="Comments"></textarea>
+	           <span class="message" id="comments1_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" style="width:140px;text-align:left;">
+	          <span class="readonly">
+				  <select class="field med" style="width: 120px;" id="score1" name="score1" onchange="total_score();" errortag="Scores">
+	              <option selected="selected" value="">Please Select</option>
+				  <?php	foreach ($this->score_ids as $score_ids){?>
+					<option  value="<?php  if(isset($score_ids->id) && $score_ids->id!=""){ echo $score_ids->id;}?>"><?php echo $score_ids->value;?></option>
+					<?php } ?>
+				  </select>
+				  <input type="hidden" name="scoreid1" id="scoreid1" value="" />
+				  <span class="message" id="score1_error">&nbsp;</span>
+			  </span>
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;  height: 87px;">
+       	  	<div class="col _prj newWidth" style="width: 109px;">
+	       	  	Research Quality
+	       	  	<input id="criteria2" name="criteria2" type="hidden" value="<?php if(isset($this->criteria[1]['id']) && $this->criteria[1]['id']!="") echo $this->criteria[1]['id']; ?>">
+       	  	</div>
+            <div class="col _prj newWidth" style="width: 325px;" >
+	            <ul>
+				<li>Data quality, data validation/ triangulation</li>
+				<li>Synthesis skills i.e drawing effective conclusion</li>
+				<li>Report structure /quality (story-boarding)</li>
+				</ul>
+				<input id="parameter2" name="parameter2" type="hidden" value="<?php if(isset($this->parameter[1]['id']) && $this->parameter[1]['id']!="") echo $this->parameter[1]['id']; ?>">
+            </div>
+             <div class="col _prj newWidth" style="width: 98px;text-align: center;">
+	           50%
+	           <input id="weightage2" name="weightage2" type="hidden" value="<?php if(isset($this->weightage[1]['id']) && $this->weightage[1]['id']!="") echo $this->weightage[1]['id']; ?>">
+            </div>
+            <div class="col _prj newWidth" style="width: 240px;">
+	           <textarea class="field" id="comments2" name="comments2" type="text" style="width: 220px !important;height:70px;resize:none;" errortag="Comments"></textarea>
+	           <span class="message" id="comments2_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" style="width:140px;text-align:left;">
+	            <span class="readonly">
+				  <select class="field med" style="width: 120px;" id="score2" name="score2" onchange="total_score();" errortag="Scores">
+	              <option selected="selected" value="">Please Select</option>
+				  <?php	foreach ($this->score_ids as $score_ids){?>
+					<option  value="<?php  if(isset($score_ids->id) && $score_ids->id!=""){ echo $score_ids->id;}?>"><?php echo $score_ids->value;?></option>
+					<?php } ?>
+				  </select>
+				  <input type="hidden" name="scoreid2" id="scoreid2" value="" />
+				  <span class="message" id="score2_error">&nbsp;</span>
+			  </span>
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;  height: 87px;">
+       	  	<div class="col _prj newWidth" style="width: 109px;">
+	       	  	Process Adherence
+	       	  	<input id="criteria3" name="criteria3" type="hidden" value="<?php if(isset($this->criteria[2]['id']) && $this->criteria[2]['id']!="") echo $this->criteria[2]['id']; ?>">
+       	  	</div>
+            <div class="col _prj newWidth" style="width: 325px;" >
+	            <ul>
+				<li>Adherence to standard Aranca guidelines(templates, file storage, report writing, etc)</li>
+				<li>Optimum utilization of databases, Aranca internal knowledgebase</li> 
+				</ul>
+				<input id="parameter3" name="parameter3" type="hidden" value="<?php if(isset($this->parameter[2]['id']) && $this->parameter[2]['id']!="") echo $this->parameter[2]['id']; ?>">
+            </div>
+             <div class="col _prj newWidth" style="width: 98px;text-align: center;">
+	          10%
+	          <input id="weightage3" name="weightage3" type="hidden" value="<?php if(isset($this->weightage[2]['id']) && $this->weightage[2]['id']!="") echo $this->weightage[2]['id']; ?>">
+            </div>
+            <div class="col _prj newWidth" style="width: 240px;">
+	           <textarea class="field" id="comments3" name="comments3" type="text" style="width: 220px !important;height:70px;resize:none;" errortag="Comments"></textarea>
+	           <span class="message" id="comments3_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" style="width:140px;text-align:left;">
+	            <span class="readonly">
+				  <select  class="field med" style="width: 120px;" id="score3" name="score3" onchange="total_score();" errortag="Scores">
+	              <option selected="selected" value="">Please Select</option>
+				  <?php	foreach ($this->score_ids as $score_ids){?>
+					<option  value="<?php  if(isset($score_ids->id) && $score_ids->id!=""){ echo $score_ids->id;}?>"><?php echo $score_ids->value;?></option>
+					<?php } ?>
+				  </select>
+				  <input type="hidden" name="scoreid3" id="scoreid3" value="" />
+				  <span class="message" id="score3_error">&nbsp;</span>
+			  </span>
+            </div>
+        </div>
+        <div id="rowbg" style="width:944px;  height: 87px;">
+       	  	<div class="col _prj newWidth" style="width: 109px;">
+	       	  	Work Ethics
+	       	  	<input id="criteria4" name="criteria4" type="hidden" value="<?php if(isset($this->criteria[3]['id']) && $this->criteria[3]['id']!="") echo $this->criteria[3]['id']; ?>">
+       	  	</div>
+            <div class="col _prj newWidth" style="width: 325px;" >
+	            <ul>
+				<li>Showing initiative to go the extra mile</li>
+				<li>Taking ownership & accountability of project deliverables</li> 
+				</ul> 
+				<input id="parameter4" name="parameter4" type="hidden" value="<?php if(isset($this->parameter[3]['id']) && $this->parameter[3]['id']!="") echo $this->parameter[3]['id']; ?>">
+            </div>
+             <div class="col _prj newWidth" style="width: 98px;text-align: center;">
+	           10%
+	           <input id="weightage4" name="weightage4" type="hidden" value="<?php if(isset($this->weightage[3]['id']) && $this->weightage[3]['id']!="") echo $this->weightage[3]['id']; ?>">
+            </div>
+            <div class="col _prj newWidth" style="width: 240px;">
+	           <textarea class="field" id="comments4" name="comments4" type="text" style="width: 220px !important;height:70px;resize:none;" errortag="Comments"></textarea>
+	           <span class="message" id="comments4_error">&nbsp;</span>
+            </div>
+            <div class="col _prj newWidthL" style="width:140px;text-align:left;">
+	            <span class="readonly">
+				  <select class="field med" style="width: 120px;" id="score4" name="score4" onchange="total_score();" errortag="Scores">
+	              <option selected="selected" value="">Please Select</option>
+				  <<?php	foreach ($this->score_ids as $score_ids){?>
+					<option  value="<?php  if(isset($score_ids->id) && $score_ids->id!=""){ echo $score_ids->id;}?>"><?php echo $score_ids->value;?></option>
+					<?php } ?>
+				  </select>
+				  <input type="hidden" name="scoreid4" id="scoreid4" value="" />
+				  <span class="message" id="score4_error">&nbsp;</span>
+			  </span>
+            </div>
+        </div>
+        <input type="hidden" name="type" id="type" value="<?php if(isset($this->type) && $this->type != ""){echo $this->type;}?>" />
+      	<input type="hidden" name="uid" id="uid" value="<?php if(isset($this->uid) && $this->uid != ""){echo $this->uid;}?>" />
+    
+        <div class="pagination" style="float:right;margin-left: 20px;margin-top:14px; margin-right: 16px;">Overall Score: <a class="active" id="active">0</a></div>
+        <p><input style="float:right;" name="Submit" type="button" value="Submit" onclick="save1();" class="searchbg"/></p>
+        <br class="clear">
+      </div>
+        <!--Ends Here -->
+    </div>
+</div>
+</form>
+</body>
+</html>

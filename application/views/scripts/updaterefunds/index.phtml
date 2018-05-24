@@ -1,0 +1,63 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+<style>
+.form-group {
+	width: 300px;
+}
+.clearfix {
+  margin-top:-7px;
+}
+.cls{
+	margin-top:-46px;
+}
+</style>
+
+<div id="innerpage-wrapper">
+	<div class="row lightgraybg">
+		<div class="col-lg-12">
+			<h1 class="page-header gain-bit-Titletxt"></h1>
+		</div>
+	<!-- /.col-lg-12 -->
+	</div>
+	<!-- /.row -->
+	<div class="row">
+		<ol class="breadcrumb">
+			<li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+			<li>Update Refunds</li>
+		</ol>
+		<div class="col-lg-12">
+			<div class="clearfix">&nbsp;</div>
+			<div class="panel panel-primary buynowbox col-lg-12">
+				<div class="panel-heading buynowbox Titleheading faqtitlebg">Upload CSV File for Update Refund Requests</div>
+					<div class="panel-body revenuebg">
+						<form action="<?php echo BASEPATH; ?>/Updaterefunds" method="post" enctype="multipart/form-data"> 
+
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+						<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+						if(!empty($authUserNamespace->msg1) && $authUserNamespace->msg1!='')
+						{
+						?>
+
+							<label for="" class="lblTxt alert alert-success"><?php echo $authUserNamespace->msg1; ?></label>
+
+						 <?php $authUserNamespace->msg1=""; }?>
+						<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+						if(!empty($authUserNamespace->msg2) && $authUserNamespace->msg2!='')
+						{
+						?>
+
+							<label for="" class="lblTxt alert alert-danger"><?php echo $authUserNamespace->msg2; ?></label>
+
+						 <?php $authUserNamespace->msg2=""; }?>
+						<div class="form-group"><label for="inputCName" class="lblTxt">Upload CSV File </label> <input type="file" name="file" id="file" placeholder="upload file"></div>
+						<input type="submit" class="btn btn-default Commonbtn" id="submit" name="submit" value="SUBMIT"/>
+						</form>
+					</div>
+				</div>
+			</div>
+<!-- /.row --> <!-- /.row -->
+	</div>
+<!-- /#page-wrapper -->
+</div>

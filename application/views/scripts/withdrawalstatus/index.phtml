@@ -1,0 +1,114 @@
+	<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+<style>
+.card-box-content {
+    padding:0px 20px;
+}	
+	
+</style>	
+
+ <!-- Start right Content here --> 
+	<!-- ============================================================== -->
+	<!-- Start content -->
+<div class="content">
+	<!-- Page-Title -->
+	<div class="page-title-group">
+		<h4 class="page-title">Withdrawals</h4>
+		<h5 class="text-muted page-title-alt">History</h5>
+	</div>
+	<div class="cb-page-content">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card-box">
+						<div class="card-box-head  border-b m-t-0">
+							<h4 class="header-title"><b>Withdrawals History</b></h4>
+						</div>
+						<div class="card-box-content">
+							<div class="col-lg-12 " style = "width:100%; overflow:auto;">
+								<table id="data-table-simple"  class="table-bordered table-responsive display" cellspacing="0">
+									<thead>
+									  <tr>
+										<th  class="sortdesc">S.No. </th>
+										<th class="sortboth">Amount </th>
+									<!--	<th class="sortboth">User To</th> -->
+										<th class="sortboth">Address </th>
+										<th class="sortboth">Transaction Id</th>
+										<th class="sortboth">Withdrawal Type</th>
+										<th class="sortboth">Time stamp</th>
+										<th class="sortboth">Status</th>
+
+									  </tr>
+									</thead>
+									<tbody>
+ 
+									   <?php
+
+															$i=1;
+														foreach($this->result1 as $result1) 
+
+														{								
+												?>				
+															<tr>
+																<td style="min-width:40px;"><?php echo $i; ?></td>
+																<td style="text-align:right;"><?php echo $result1['btc_amt']."". $result1['chosen_coin']; ?></td>
+																<!-- <td style="min-width:60px;"><?php echo $result1['user_to']; ?></td> -->
+																<td style="text-align:left;"><?php echo $result1['addr']; ?></td>
+																<td style="text-align:left;"><?php echo $result1['transaction_id']; ?></td>
+																<td style="min-width:150px;"><?php 
+																if( $result1['withdrawal_type'] == "auto_withdrawal"){
+																	echo "Auto Withdrawal"; 
+																}else if($result1['withdrawal_type'] == "fund_transfer" || $result1['withdrawal_type'] == "manual_fund_transfer"){
+																	echo "Fund Transfer"; 
+																}else  if($result1['withdrawal_type'] == "kit_generation"){
+																	echo "Kit Purchase"; 
+																}else  if($result1['withdrawal_type'] == "counter_settlement"){
+																	echo "Counter Settlement"; 
+																}else  if($result1['withdrawal_type'] == "daily_payout_btc"){
+																	echo "Daily Payout Withdrawal Request"; 
+																}
+
+																?></td>
+																<td style="min-width:150px;"><?php echo date("jS F, Y ", strtotime($result1['timestamp'])); ?></td>
+																<td>
+																	<?php 
+																		if($result1['status']==0)
+																			echo '<span class="badge badge_inpage" style="background-color:#ffc700;"> Pending </span>';
+																		else if($result1['status']==1)
+																			echo '<span class="badge badge_inpage"  style="background-color:#39b54a;"> Closed </span>';
+																		else 
+																			echo '<span class="badge badge_inpage" style="background-color:#ed7161;"> Cancelled</span>'; 
+																	?>
+																</td>
+															</tr>
+												<?php
+														$i++;}	
+
+
+
+												?>
+
+									</tbody>
+								  </table>
+								 <br/>
+							</div>
+			   <div class="clearfix">&nbsp;</div>
+            </div>
+          </div>
+        </div>  
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

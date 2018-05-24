@@ -1,0 +1,171 @@
+ <?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+	
+	//print_r($this->result['status']);exit;
+ ?>
+ 
+ <style>
+  .form-group {
+    display: inline-block;
+	width: 300px;
+	padding:15px;
+	float:left;
+	
+}
+
+ 
+ </style>
+ 
+ 
+  <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                 <li>CMS Settings > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/News">News</a> > </li>                 
+                  <li >Edit News</li>
+  
+            </ol>
+           </div>
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+             Edit News
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="" id="chng" role="form">
+        
+		<div class="form-group err1" style="width:100%;margin-bottom: 0px;">
+		<label for="" class="lblTxt" style="color:red;"></label>
+		</div>
+<?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group">
+    <label for="" class="lblTxt" style="color:red;"><?php echo $this->msg ?></label>
+ 
+  </div>
+ <?php } ?>
+
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Headline</label>
+
+     <input type="text"  name="headline" id="headline" class="form-control CommonInputBox" placeholder="" value="<?php echo $this->result['headline'];?>">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Details</label>
+
+	<textarea style="height:35px;" class="form-control CommonInputBox" id="informational_desc" name="informational_desc" placeholder="" value=""><?php echo strip_tags($this->result['news_details']);?></textarea>
+
+
+      
+  </div>
+ <div class="form-group">
+    <label for="" class="lblTxt">Links</label>
+
+     <input type="text" class="form-control CommonInputBox" name="link" id="link"  placeholder="" value="<?php echo $this->result['link']; ?>">
+
+
+      
+  </div>
+  <div class="form-group" style="float:none;display: block;">
+    <label for="" class="lblTxt">Status</label>
+
+        <div>
+	            <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:275px;">
+	                          <option value="1" <?php if($this->result['status']==1){echo 'selected';}?>>Active</option>
+	                           <option value="0" <?php if($this->result['status']==0){echo 'selected';}?>>Inactive</option>
+	             </select>
+	    </div>
+
+
+      
+  </div>
+  <div class="form-group" style="width:100%;">
+   <input type="hidden" name="user_id" value="<?php echo $this->result['id'];?>" id="user_id">
+     <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+  <button type="button" name="chng" id="chng" class="btn btn-default Commonbtn" onclick="redirectfn()">SUBMIT</button>
+ <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+</div>
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+    
+    </div>
+    
+    <script>
+    function redirectfn()
+    {
+    	 var form_data = new FormData();
+  		var headline = document.getElementById('headline').value;
+  		var informational_desc = document.getElementById('informational_desc').value;
+  		var link = document.getElementById('link').value;
+  		var user_id= document.getElementById('user_id').value;
+  		var tokn = document.getElementById('token').value;
+		var status=document.getElementById('status').value;
+  		
+  		form_data.append("headline", headline);
+ 		form_data.append("informational_desc", informational_desc);
+ 		form_data.append("link", link);
+ 		form_data.append("user_id", user_id);
+		form_data.append("tokn", tokn);
+		form_data.append("status", status);
+
+		
+ 		if((headline).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Enter Headline.</label>');
+ 			return false;
+ 		}
+
+ 		if((informational_desc).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please Enter Details.</label>');
+ 			return false;
+ 		}
+
+
+ 		
+  $.ajax({
+ 			url:"<?php echo BASEPATH;?>/Editnew/newsedit",
+ 			type: "POST",    
+ 			 data: form_data,
+ 			 contentType: false,
+ 		      processData: false,
+ 	  	success: function(response)
+  		{
+ 				var data=JSON.parse(response);
+ 				
+ 				if(data['success']!='')
+				   { 
+						//alert("User updated successfully");
+			           $(".err1").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+						window.location = "<?php echo BASEPATH;?>/News";
+				   }
+			       else{
+			           //alert(data);return false;
+
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						//window.location = "<?php echo BASEPATH;?>/News";
+			       }
+ 				
+  		}
+ 		});
+ 	  
+ 	  }
+    </script>

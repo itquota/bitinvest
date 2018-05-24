@@ -1,0 +1,219 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+
+<style>
+
+	*{outline: none;}
+	img {border: 0;}
+	
+	.folio_block {
+	/*position: absolute;
+	left: 50%; top: 50%;*/
+	margin: 10px 0 0 0px;
+	_margin: 10px 0 0 0px;
+	}
+	
+	/*--Main Container--*/
+	.main_view {
+		float: left;
+		position: relative;
+	}
+	/*--Window/Masking Styles--*/
+	.window {
+		height:326px;	width: 950px;
+		overflow: hidden; /*--Hides anything outside of the set width/height--*/
+		position: relative;
+	}
+	.image_reel {
+		position: absolute;
+		top: 0; left: 0;
+	}
+	.image_reel img {float: left;}
+	
+	/*--Paging Styles--*/
+	.paging {
+		position: absolute;
+		bottom: 40px; right: -7px;
+		width: 130px; height:2px;
+		z-index: 100; /*--Assures the paging stays on the top layer--*/
+		text-align: center;
+		line-height: 40px;
+		display: none; /*--Hidden by default, will be later shown with jQuery--*/
+	}
+	.paging a {
+		padding: 5px;
+		text-decoration: none;
+		color: #818181;
+	}
+	.paging a.active {
+		font-weight: bold;
+		background: none repeat scroll 0 0 #EEEEEE;
+		/*border: 1px solid #610000;*/
+		font-family: Arial,Helvetica,sans-serif;
+		font-size:	12px;
+		font-weight:	bold;
+		height:	15px;
+		color: black;
+		text-decoration: none;
+		-moz-border-radius: 3px;
+		-khtml-border-radius: 3px;
+		-webkit-border-radius: 3px;
+		
+	}
+	/*.paging a:hover {font-weight: bold;}*/
+	
+	
+</style>
+<!--[if IE 6]>
+<style>
+
+#imageslider .content
+{
+	width: 900px;*/
+	
+}
+</style>
+<![endif]-->
+<div id="home_top">
+	
+	<div class="flashhomearea">
+		
+		<div class="folio_block">
+    	
+	        <div class="main_view">
+	
+	            <div class="window">
+	                <div class="image_reel">
+
+	                    <?php if(isset($slider_row) && ($slider_row->link1!="" || $slider_row->link2!="" || $slider_row->link3!="")){?>
+	                    
+		                    <a href="<?php echo $slider_row->link1;?>" onClick="recordOutboundLink(this, 'Outbound Links', 'Home_Page-Top_Slider-Image1-<?php echo $this->card_display_name;?>');return false;"><img src="<?php echo BASEPATH;?>/index/readsliderimages/column/image1" alt="" /></a>
+		                    <a href="<?php echo $slider_row->link2;?>" onClick="recordOutboundLink(this, 'Outbound Links', 'Home_Page-Top_Slider-Image2-<?php echo $this->card_display_name;?>');return false;"><img src="<?php echo BASEPATH;?>/index/readsliderimages/column/image2" alt="" /></a>
+		                    <a href="<?php echo $slider_row->link3;?>" onClick="recordOutboundLink(this, 'Outbound Links', 'Home_Page-Top_Slider-Image3-<?php echo $this->card_display_name;?>');return false;"><img src="<?php echo BASEPATH;?>/index/readsliderimages/column/image3" alt="" /></a>
+	                    
+	                    <?php }?>
+	                    
+	                </div>
+	            </div>
+	             <div class="paging">
+	                <a <?php  if(!isset($authUserNamespace->card_id) || $authUserNamespace->card_id =="" || $authUserNamespace->card_id==null) {?> href="javascript:checkCardStatus();" <?php }?> style="background-color: #EEEEEE;font-size:12px;height: 15px;font-weight:bold;cursor:pointer;" rel="1">1</a>
+	                <a <?php  if(!isset($authUserNamespace->card_id) || $authUserNamespace->card_id =="" || $authUserNamespace->card_id==null) { ?> href="javascript:checkCardStatus();" <?php }?> style="background-color: #EEEEEE;font-size:12px;height: 15px;font-weight:bold;cursor:pointer;" rel="2">2</a>
+	                <a <?php  if(!isset($authUserNamespace->card_id) || $authUserNamespace->card_id =="" || $authUserNamespace->card_id==null) { ?> href="javascript:checkCardStatus();" <?php }?> style="background-color: #EEEEEE;font-size:12px;height: 15px;font-weight:bold;cursor:pointer;" rel="3">3</a>
+	            </div>
+	        </div>
+	        
+	    </div>
+ 	</div>
+	<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+	<div class="flashphotogalleryarea">
+  		
+  		<div id="imageslider">
+		<div class="left">
+			<span class="btn-slide-left"></span>
+		</div>
+		<div class="content">
+        	<ul style="margin-left: 0px;">
+            <?php
+            	
+				if(isset($this->merchant_rows) && sizeof($this->merchant_rows)){
+                        
+					foreach($this->merchant_rows as $merchant_rows){
+						
+						$bonuspointObject = new Bankoffercms_Model_DbTable_SpecialOffers();
+						$bonuspoint_rows = $bonuspointObject->fetchRow($bonuspointObject->select()
+																						->from(array("s"=>DATABASE_PREFIX."specialoffers"),array("id"))
+																						->where("merchant_id='$merchant_rows->id;'"));
+			?>
+				<li>
+					<a href="<?php echo BASEPATH;?>/index/merchantdetails/merchant_id/<?php echo $merchant_rows->id;?>/offer/<?php if(sizeof($bonuspoint_rows)>0) echo "y";?>" onClick="recordOutboundLink(this, 'Outbound Links', 'Home_Page-Bottom_Slider-Merchant_id<?php echo $merchant_rows->id;?>');return false;">
+						<img border="0" id="card-1" alt="" src="<?php echo BASEPATH;?>/index/readmerchantbanner/id/<?php echo $merchant_rows->id;?>">
+					</a>
+					<div style="width: 190px;"><?php echo $merchant_rows->homepagebannertext;?></div>
+				</li>
+			<?php
+					}
+				}
+			?>
+			</ul>
+		</div>
+		<div class="right">
+			<span class="btn-slide-right"></span>
+		</div>
+	</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	//Set Default State of each portfolio piece
+	$(".paging").show();
+	$(".paging a:first").addClass("active");
+		
+	//Get size of images, how many there are, then determin the size of the image reel.
+	var imageWidth = $(".window").width();
+	var imageSum = $(".image_reel img").size();
+	var imageReelWidth = imageWidth * imageSum;
+	
+	//Adjust the image reel to its new size
+	$(".image_reel").css({'width' : imageReelWidth});
+	
+	//Paging + Slider Function
+	rotate = function(){
+		var triggerID = $active.attr("rel") - 1; //Get number of times to slide
+		var image_reelPosition = triggerID * imageWidth; //Determines the distance the image reel needs to slide
+
+		$(".paging a").removeClass('active'); //Remove all active class
+		$active.addClass('active'); //Add active class (the $active is declared in the rotateSwitch function)
+		
+		//Slider Animation
+		$(".image_reel").animate({
+			left: -image_reelPosition
+		}, 1000 );
+		
+	};
+	
+	//Rotation + Timing Event
+	rotateSwitch = function(){
+		play = setInterval(function(){ //Set timer - this will repeat itself every 3 seconds
+			$active = $('.paging a.active').next();
+			if ( $active.length === 0) { //If paging reaches the end...
+				$active = $('.paging a:first'); //go back to first
+			}
+			rotate(); //Trigger the paging and slider function
+		}, 6000); //Timer speed in milliseconds (3 seconds)
+	};
+	
+	rotateSwitch(); //Run function on launch
+	
+	//On Hover
+	$(".image_reel a").hover(function() {
+		clearInterval(play); //Stop the rotation
+	}, function() {
+		rotateSwitch(); //Resume rotation
+	});
+	
+	//On Click
+	$(".paging a").click(function() {
+		$active = $(this); //Activate the clicked paging
+		//Reset Timer
+		clearInterval(play); //Stop the rotation
+		rotate(); //Trigger rotation immediately
+		rotateSwitch(); // Resume rotation
+		return false; //Prevent browser jump to link anchor
+	});
+	
+});
+</script>
+
+<div style="clear:both;height:27px;">&nbsp;</div>
+
+<?php
+	/*echo "<pre>";
+	print_r($slider_row);
+	exit;*/
+?>
+

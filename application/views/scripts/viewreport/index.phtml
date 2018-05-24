@@ -1,0 +1,201 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+	?>
+<style>
+	.calculatebtn {
+		width: 42%;
+	}
+	
+	 .form-group {
+		display: inline-block;
+		margin-right: 25px;
+		width: 342px;
+		float: left;
+		padding:1px 16px;
+	}
+	.clsbtn {
+		float:right;
+		margin-right:210px;
+		margin-top:27px;
+	}
+</style>
+
+
+
+<div id="innerpage-wrapper">
+ 	<div class="row lightgraybg">
+	   <div class="col-lg-12 offset-1">
+			<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+		</div>
+		<!-- /.col-lg-12 -->
+	</div>
+            
+            
+	 <div class="row">
+		<ol class="breadcrumb">
+		  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+		  <li>Reports</li>
+		</ol>
+
+		<div style="padding-left:12px;">
+		
+			<?php 
+				$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+
+				if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!=""){?>
+
+		  	  <label for="" class="lblTxt" style="color:red;width:100%;"><?php echo $authUserNamespace->msg;?></label>
+		
+			<?php $authUserNamespace->msg=""; } ?>
+		
+    				<form id = "report_form" method = "POST" action = "<?php echo BASEPATH; ?>/Viewreport">
+						<div class="col-lg-12" >	
+							<div class="col-lg-6" >
+								<label for="" class="lblTxt" >Report Type</label>
+								<select class="form-control CommonInputBox" name = "reports" id = "reports" style="	border: 1px solid !important;border-radius: 5px !important;">
+									<option value = "">Select Report</option>
+									<option value = "1">ROI Earnings</option>
+									<option value = "2">DSI Earnings</option>
+									<option value = "3">RSI Earnings</option>
+									<option value = "4">Daily Earnings</option>
+									<option value = "5">Final Earnings</option>
+									<option value = "6">Final Balance</option>
+									<option value = "7">Kits</option>
+									<option value = "8">Kits Contract</option>
+									<option value = "9">Contracts</option>
+									<option value = "10">Withdrawals</option>
+									<option value = "11">Queries</option>
+									<option value = "12">Payment Details</option>
+									<option value = "13">Daily Withdrawals</option>
+									<option value = "14">Paid Support Payments</option>
+									<option value = "15">Wallet address on users</option>
+									<option value = "16">Balance on wallet</option>									
+									<option value = "17">Daily Payout data</option>									
+									
+								</select>
+							</div>
+						
+							<div class="col-lg-6" >
+								 <label for="" id="datetimepicker"  name="startdate" class="lblTxt">Start Date</label>     
+								<input id="datetimepicker" class="datepick input form-control CommonInputBox"  type="text" name="start_date"  value="" class="form-control calculateSearchbox" placeholder="Start Date" autocomplete="off" />   
+							</div>
+						</div>    
+						<div class="col-lg-12" >
+							<div class="col-lg-6" >
+								<label for="inputEmail3" id="datetimepicker" name="enddate" class="col-sm-4 control-label lblTxt offset-1">End Date</label>
+								<input id="datetimepicker" class="datepick input form-control CommonInputBox"  type="text" name="end_date"  value="" class="form-control calculateSearchbox" placeholder="End Date" autocomplete="off" />     
+							</div>
+							<?php
+							// print_r($_POST);
+							if($_POST['reports'] == 13 || $_POST['reports'] == 15 || $_POST['reports'] == 16 || $_POST['reports'] == 17){
+								echo '
+									<div class="col-lg-6"  id = "search_user">
+										<label for="" class="lblTxt">Wallet Address</label>
+										<input type="text" class="form-control CommonInputBox " id= "wallet_addr" name = "wallet_addr" placeholder = "Search Wallet Address"/>
+									</div>';
+							}else{
+							?>
+							<div class="col-lg-6" id = "search_user">
+								<label for="" class="lblTxt">Search Username</label>
+								<input type="text" class="form-control CommonInputBox " id= "user" name = "user" placeholder = "Search User"/>
+							</div>
+							<?php
+							}
+							?>
+						</div>  
+						<div class="form-group" style="width:100%;">
+							<button class="btn btn-default Commonbtn" name="search_filter" id="" type="submit">Search</button>
+							<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+						</div>
+	   				</form>
+			 
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+           <?php  echo $this->data['data']; ?>
+			<?php 
+				if(!empty( $this->data['data'])){
+						echo $this->data['Pagination'];
+				}
+			?>
+    
+  		</div>
+	</div>
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">    
+
+  <div style = "clear:both;"></div>
+<div id="export_report" class="mdi-action-get-app" style="padding:20px;cursor:pointer;" >Export Report</div>
+ 
+     </div>
+     
+      <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>
+		
+<script>
+$("#export_report").click(function(){
+	window.location="<?php echo BASEPATH;?>/Viewreport?export=report";
+}); 
+
+$("#reports").on('change',function(){
+	//alert("here");
+	var reports = $("#reports").val();
+	if(reports == 13 || reports == 15 || reports == 16 || reports == 17){
+		$("#search_user").html('<label for="" class="lblTxt">Wallet Address</label><input type="text" class="form-control CommonInputBox " id= "wallet_addr" name = "wallet_addr" placeholder = "Search Wallet Address"/>');
+	}else{
+		$("#search_user").html('<label for="" class="lblTxt">Search Username</label><input type="text" class="form-control CommonInputBox " id= "user" name = "user" placeholder = "Search user"/>');
+	}
+});
+
+$("#search_filter").click(function(){
+	
+	$.ajax({
+		type: 'POST',
+		url: "<?php echo BASEPATH; ?>/Viewreport" ,
+		data:$('#report_form').serializeArray(),
+		success:function(data) {
+		
+		
+			var innerhtml='';	
+				
+		innerhtml+='<div>'+
+			 '<td>'+ data+'</td>'+
+			 '<td>'+ data+'</td>'+
+			 '<td>'+ data+'</td>'+
+			 '<td>'+ data+'</td>'+
+			 '<td>'+ data+'</td>'+
+			 '<td>'+ data+'</td>'+
+			 
+							   
+		 '</div>';
+		 //alert(innerhtml);
+		 $('#parentdata').empty();
+		 $('#parentdata').append(innerhtml);
+
+
+
+	
+		/*  $("#table-datatables").html(data);
+		   return false;
+		   if(data=='true')
+		   {
+		   $.fancybox.close('#inline');
+			location.reload();
+		   }else{
+			   alert(data); return false;
+		   }*/
+			
+		
+
+		}
+	});
+});
+</script>
+  

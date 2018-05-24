@@ -1,0 +1,287 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); 
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<link href="<?php echo BASEPATH;?>/shared/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet"/>
+<script type="text/javascript">
+
+<?php if(isset($this->project_id)) {?>
+var id='<?php echo $this->project_id; ?>';
+<?php }else{ ?>
+var id='';
+<?php } ?>
+	function ed(cmd,annprid)
+	{
+		    	window.location.href = '<?php echo BASEPATH;?>/subproject/addsubproject/id/'+cmd+'/annualprojectid/'+annprid;
+		
+	}
+
+	function view(cmd,view,annprid)
+	{
+		    	window.location.href = '<?php echo BASEPATH;?>/subproject/addsubproject/id/'+cmd+'/annualprojectid/'+annprid+'/view/'+view;
+	}
+
+
+	function populate_dropdown1(tasktype,check)
+	{
+		
+		var counter="0";
+		//document.getElementById('cat_loader1').style.display = 'block';
+		$('#projectname').width(125);
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/analyst/subprojectindex",
+			type: "POST",    
+		    data: "tasktype="+tasktype,
+		    success: function(response)
+		    { 
+				j=0;
+				if((response!="") && (response!=null))
+					 { 
+					 var jsonObject = JSON.parse(response);
+						
+							var option_ele=document.getElementById('projectname');
+							 
+							for(k=option_ele.length;k>0;k--)
+							{
+								option_ele.remove(k);
+							}
+
+							for(m=0;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('projectname').options[++j]=option_element;
+								if(check=="1"){
+								<?php if(isset($this->assigntl) && $this->assigntl!="")
+								{?>
+								var pro_ID = '<?php echo $this->assigntl;?>';
+								
+								if(jsonObject[m]['id']==pro_ID)
+								{
+									document.getElementById('projectname').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+							}
+						
+//							for(key in jsonObject)
+//								{
+//									var option_element= new Option(jsonObject[key]['name'],jsonObject[key]['id']);
+//									document.getElementById('projectname').options[j++]=option_element;
+//									
+//								}
+							
+					}
+				
+				//document.getElementById('cat_loader1').style.display = 'none';
+				$('#projectname').width(141);
+			}
+		});
+		
+		
+	}
+	function submitForm()
+	{
+		//alert('inside search');
+		var getValue = '6';
+		
+		var assigntitle = document.getElementById("projectname").value;
+		var projecttype = document.getElementById("projecttype").value;
+		var clientname = document.getElementById("clientname").value;
+	
+		window.location="<?php echo BASEPATH; ?>/analyst/subprojectindex/id/"+id+"/assigntl/"+assigntitle+"/projecttype/"+projecttype+"/cname/"+clientname+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+		
+	}
+
+	function resetForm()
+	{
+		
+		document.getElementById("projectname").value="";
+		document.getElementById("projecttype").value="";
+		document.getElementById("clientname").value="";
+	
+		window.location="<?php echo BASEPATH; ?>/analyst/subprojectindex";
+		
+	}
+
+	function Sortbydate(sortby)
+	{
+		var getValue = '6';
+		document.getElementById('Sort').value = sortby;
+		var date =  document.getElementById('Sort').value ;
+		var assigntitle = document.getElementById("projectname").value;
+		var projecttype = document.getElementById("projecttype").value;
+		var clientname = document.getElementById("clientname").value;
+
+		window.location="<?php echo BASEPATH; ?>/analyst/subprojectindex/id/"+id+"/assigntl/"+assigntitle+"/projecttype/"+projecttype+"/cname/"+clientname+"/date/"+date+"/sortby/<?php echo $this->sortBy;?>/ord/<?php echo $this->ordVal;?>/getPageValue/"+getValue;
+		
+	}
+	
+</script>
+</head>
+<body>
+<div id="subheader">
+	<div class="wrapper">
+	  <input type="hidden" name="Sort" id="Sort">
+	    <!--<div id="holder">
+        	<label style="margin-left:-23px;">Assignment Title</label>       	
+            <input type="text" style="width:367px;" class="field" name="project" id="assigntitle" value="<?php if(isset($this->assigntl)) echo $this->assigntl;?>"/>
+        </div>
+        <div id="holder">
+        	<label>Project ID</label>
+            <input type="text" class="field" name="projectid" id="projectid" value="<?php if(isset($this->pid)) echo $this->pid;?>">
+        </div>
+  		<div style="margin:0;" id="holder">
+        	<label>Practice</label>
+            <select class="field" name="practice" id="practice">
+              <option selected="selected" value="">Please Select</option>
+               <?php	foreach ($this->practice_list as $practice_list){?>
+			  <option value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid){echo "selected";}elseif($authUserNamespace->designation_id=="57"){echo "selected";}elseif($authUserNamespace->designation_id=="14"){echo "selected";}?>><?php echo $practice_list->value;?></option>
+			  <?php } ?> 
+              <option>Option1</option>
+              <option>Option2</option>
+              <option>Option3</option>
+            </select>
+        </div>
+        <br class="clear">
+        <div id="holder">
+        	<label>Date</label>
+            <input type="text" onclick="GetDate(this);" readonly="" id="SelectedDate1"  class="field calendar" name="project" onClick="GetDate(this);" value="<?php if(isset($this->startdate)) echo $this->startdate;?>">
+            <input type="text" onclick="GetDate(this);" readonly="" id="SelectedDate2"  class="field calendar" name="project" onClick="GetDate(this);" value="<?php if(isset($this->enddate)) echo $this->enddate;?>">
+      </div>
+      <div id="holder">
+        	<label>Status</label>
+            <select class="field" name="status" id="status">
+              <option selected="selected" value="">Please Select</option>
+              <?php	foreach ($this->status_list as $status_list){?>
+			  <option value="<?php  if(isset($status_list->id) && $status_list->id !=""){ echo $status_list->id;}?>"<?php if($this->status==$status_list->id) echo "selected";?>><?php echo $status_list->value;?></option>
+			  <?php } ?>
+              <option>Open</option>
+              <option>Completed</option>
+            </select>
+        </div>
+        -->
+        <div style="margin:0" id="holder">
+        	<label>Client Name</label>
+            <select name="clientname" id="clientname" type="text" class="field">
+	            <option selected="selected" value="" >Please Select</option>
+	            <?php	foreach ($this->clientname_list as $clientname_list){?>
+				<option value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>" <?php if($this->clientid==$clientname_list->id) echo "selected";?>><?php echo $clientname_list->name;?></option>
+				<?php } ?>
+            </select>
+        </div>
+      <!--<br class="clear">
+        <div id="holder">
+        	<label style="margin-left:-8px;">Team Member</label>
+            <select class="field" name="teammember" id="teammember">
+              <option selected="selected" value="">Please Select</option>
+              <?php	foreach ($this->teammember_list as $teammember_list){?>
+			  <option value="<?php  if(isset($teammember_list->e_id) && $teammember_list->e_id !=""){ echo $teammember_list->e_id;}?>"<?php if($this->teammember==$teammember_list->e_id) echo "selected";?>><?php echo $teammember_list->teammembername;?></option>
+			  <?php } ?>
+              <option>Option1</option>
+              <option>Option2</option>
+            </select>
+        </div>
+       
+            --><div style="margin-left:15px;" id="holder">
+        	<label>Project Type</label>
+               <select  name="projecttype" value="<?php if(isset($this->projecttype)) echo $this->projecttype;?>" id="projecttype" class="field" errortag="Project Type" onchange="populate_dropdown1(this.value,'0');" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+             <option value="contract" <?php if($this->projecttype=='contract') echo "selected";?>>Sub Project</option>
+            </select>
+         </div>
+         <div id="holder" style="margin-right:0px;">
+        	<label style="margin-left:0px;">Project Name</label>
+            <select style="width:125px;" name="projectname" id="projectname" class="field" errortag="Project Name" value="<?php if(isset($this->searchText2)) echo $this->searchText2;?>">
+			<option value="">Please select</option>
+			 </select>
+        </div>
+        <br class="clear">
+  		<div class="flow_right"><a class="searchbg" href="#" onclick="javascript:submitForm();">Search</a></div>
+  		<div class="flow_right"><a class="searchbg" href="#" onclick="javascript:resetForm();" style="margin-right:22px;">Reset</a></div>
+  	</div>
+    <br class="clear">
+  
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  <div class="wrapper">
+<!--   	    <div class="flow_right"><a class="createbg" href="<?php echo BASEPATH; ?>/subproject/addsubproject/annualprojectid/<?php if(isset($authUserNamespace->projectid) && $authUserNamespace->projectid !=""){echo $authUserNamespace->projectid;}?>">Create Sub Project</a></div>-->
+        <br>
+        <br class="clear">
+        <div id="tablebg">
+        	<div style="width:379px;" class="col-first">Project Title</div>
+            <div class="col">&nbsp;</div>
+            <div class="col">&nbsp;</div>
+            <div class="col"style="margin-left:-50px;">Practice</div>
+          	<div class="col _m" >Project Manager</div>
+ 			<div class="col" style="width:64px;margin-left:15px">Start Date<div style="float:left; margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(2);" title="Sort" /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(1);" title="Sort" /></div></div></div>
+            <div class="col" style="width:64px;margin-left:9px"">End Date<div style="float:left;margin-left: 64px;margin-top: -13px; cursor:pointer; width:30px;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date1.gif" border="1" onclick="Sortbydate(3);" title="Sort"  /><div style="float:left; margin-left: 0px; cursor:pointer;"><img  src="<?php echo BASEPATH;?>/images/common/sorting_date.gif" border="1" onclick="Sortbydate(0);" title="Sort" /></div></div></div>
+        </div>
+            <?php  if(isset($this->listing) && sizeof($this->listing)>0){
+					
+        		foreach($this->listing as $view_list){
+       		 ?>
+          <div id="rowbg">
+   	  	  <div class="col-first" style="width: 330px;"><a style="color:black;font-weight:normal;text-decoration:none;" onclick="view(<?php echo $view_list->editid;?>,'view',<?php echo $view_list->annproject_id;?>)" href="javascript:void(0)"><?php echo $view_list->title ;?> (S)</a><span style="color:black;font-weight:normal;text-decoration:none;"><?php if (isset($view_list->name) &&  $view_list->name !=""){?> | <?php echo $view_list->name ;?><?php }?></span> <br>Budgeted Hrs: <?php echo $view_list->budgeted_hrs;?>  |      Status: <?php echo $view_list->statusvalue;?></div>
+            <div class="col _sp" style="width: 135px;">
+<!--            <a href="#"><img border="0" src="<?php echo BASEPATH;?>/images/common/edit.gif" onclick="ed(<?php echo $view_list->editid;?>,<?php echo $view_list->annproject_id;?>)"></a>-->
+             &nbsp; 
+            <a href="#"><img border="0" src="<?php echo BASEPATH;?>/images/common/view.gif" onclick="view(<?php echo $view_list->editid;?>,'view',<?php echo $view_list->annproject_id;?>)"></a> 
+           <?php if(isset($authUserNamespace->designation_id) && ($authUserNamespace->designation_id=="14" || $authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="56")) {?><a class="viewbg icons" href="<?php echo BASEPATH;?>/project/closure/id/<?php echo $view_list->editid;?>/type/subproject"><img title="Close Project" src="<?php echo BASEPATH; ?>/images/common/close25.gif"/></a> <?php }?>
+<!--           <?php if(isset($authUserNamespace->designation_id) && ($authUserNamespace->designation_id=="14" || $authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="56")) {?><a class="viewbg icons" href="<?php echo BASEPATH;?>/project/scoreinsert/id/<?php echo $view_list->editid;?>/type/subproject"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a> <?php } else if(isset($authUserNamespace->designation_id) && ($authUserNamespace->designation_id=="58")) {?><a class="viewbg icons" href="<?php echo BASEPATH;?>/project/score/id/<?php echo $view_list->editid;?>/type/annual"><img title="Score Project" src="<?php echo BASEPATH; ?>/images/common/score25.gif"/></a> <?php } ?>-->
+            </div>
+          <div class="col"><?php echo $view_list->practice;?></div>
+          	<div class="col _m" style="width:119px"><?php echo $view_list->firstname;?>&nbsp;<?php echo $view_list->lastname;?></div>
+            <div class="col" style="width:70px;"><?php echo $view_list->st_date;?></div>
+            <div class="col" style="width:70px;"><?php echo $view_list->end_date;?></div>
+         </div> <?php }
+        
+      
+        echo "<div class='pagination'>".$this->pagination($this->pagination_config)."</div>";
+				//echo "<div>&nbsp;</div>";
+        }
+        else{
+		?>
+		
+		<div class='grid-row2'>
+			<div align='center' style="width:95%;font-weight:bold;">No Records Found</div>
+		</div>
+		
+		<?php } ?>
+      </div>
+      <!--Ends Here -->
+    </div>
+</div>
+</body>
+<script>
+
+$( document ).ready(function() {
+	
+	populate_dropdown1('contract','1');
+	});
+
+
+<?php 
+	      if(isset($authUserNamespace->status_message)){
+	      	
+	?>
+	   jAlert("<?php echo $authUserNamespace->status_message; ?>");
+	      
+	<?php
+	  unset($authUserNamespace->status_message);
+	}
+	?>
+</script>
+</html>

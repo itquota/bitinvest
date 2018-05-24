@@ -1,0 +1,177 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); 
+	$misc_obj->generateToken();
+	
+	
+?>
+
+  <style>
+	 .form-group {
+    display: inline-block;
+	width: 300px;
+	padding:15px;
+	float:left;
+	
+}
+ </style>
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12">
+                    <h1 class="page-header gain-bit-Titletxt"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+            
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>CMS Settings > </li>
+                  <li class="active"><a href="<?php echo BASEPATH?>/News">News</a> > </li>
+                  <li >Add News</li>
+  
+            </ol>
+           
+
+          <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+              Add News
+              </div>
+
+              <div class="panel-body revenuebg">
+          <form action="" method="post" id="chng" role="form">
+							<div class="err1"></div>
+							<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<?php //$j=1;
+//foreach($this->result as $result){
+?>
+ <?php if(!empty($this->msg) && $this->msg!='')
+{
+?>
+   <div class="form-group" style="width:100%;">
+    	<label for="" class="lblTxt" style="color:green;"><?php echo $this->msg ?></label> 
+  		<?php header('Location:'.BASEPATH.'/News');?>
+  </div>
+ <?php } ?>
+   <div class="form-group">
+    <label for="" class="lblTxt">Headline</label>
+
+     <input type="text"  name="headline" id="headline" class="form-control CommonInputBox" placeholder="" value="">
+
+
+      
+  </div>
+  <div class="form-group">
+    <label for="" class="lblTxt">Details</label>
+
+     <textarea style="height:35px;"  class="form-control CommonInputBox" id="informational_desc" name="informational_desc" placeholder="" value=""> </textarea>
+      
+  </div>
+ <div class="form-group">
+    <label for="" class="lblTxt">Links</label>
+
+     <input type="text" class="form-control CommonInputBox" name="link" id="link"  placeholder="" value="">
+
+
+      
+  </div>
+   <div class="form-group" style="float:none;display: block;">
+    <label for="" class="lblTxt">Status</label>
+
+        <div>
+	            <select class="form-control CommonInputBox"  name="status" id="status" style="	border: 1px solid !important;border-radius: 5px !important; width:275px;">
+	            	                          <option value="select">Select</option>
+	            							  <option value="1">Active</option>
+	                           				  <option value="0">Inactive</option>
+	             </select>
+	    </div>
+
+
+      
+  </div>
+  
+  <div class="form-group" style="width:100%;">
+  <input type="hidden" name="content_id" value="<?php echo isset($this->result['id'])?$this->result['id']:'' ?>" />
+  <button type="button" name="chng" id="chng" class="btn btn-default Commonbtn" onclick="addnewsfn()">SUBMIT</button>
+ <!-- <button type="reset" class="btn btn-default Commonbtn">RESET</button>-->
+</div>
+  <?php //$j++;}?>
+</form>
+  </div>
+          </div>
+
+        
+
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    
+    <script>
+    function addnewsfn()
+    {
+    	 var form_data = new FormData();
+  		var headline = document.getElementById('headline').value;
+  		var informational_desc = document.getElementById('informational_desc').value;
+  		var link = document.getElementById('link').value;
+  		var status = document.getElementById('status').value;
+  		
+  		var token = document.getElementById('token').value;
+  		form_data.append("headline", headline);
+ 		form_data.append("informational_desc", informational_desc);
+ 		form_data.append("link", link);
+ 		form_data.append("status", status);
+ 		form_data.append("token", token);
+		
+ 		if((headline).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Headline.</label>');
+ 			return false;
+ 		}
+
+ 		if((informational_desc).trim()==''){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Description.</label>');
+ 			return false;
+ 		}
+ 		if(status=='select'){
+ 			$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please select Status.</label>');
+ 			return false;
+ 		}
+ 
+ 		else{
+ 		
+  $.ajax({
+ 			url:"<?php echo BASEPATH;?>/Addnews",
+ 			type: "POST",    
+ 			 data: form_data,
+ 			 contentType: false,
+ 		      processData: false,
+ 	  	success: function(response)
+  		{
+ 				var data=JSON.parse(response);
+ 		  		
+ 				if(data['success']!="")
+				   { 
+						//alert("User updated successfully");
+			           $(".err1").html('<label for="" class="lblTxt" style="color:green;">'+data['success']+'</label>');        
+						window.location = "<?php echo BASEPATH; ?>/News";
+				   }
+			       else{
+			           //alert(data);return false;
+
+			    	   $(".err1").html('<label for="" class="lblTxt" style="color:red;">'+data['failure']+'</label>');        
+						
+			       }
+				   
+ 				
+  		}
+ 		});
+
+ 		}
+ 	  }
+    </script>
+   

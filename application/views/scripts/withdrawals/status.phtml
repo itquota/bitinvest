@@ -1,0 +1,182 @@
+	<?php print_r($this->result);  ?>
+	<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+	
+	
+			 <!-- START WRAPPER -->
+    <div class="wrapper"><!-- //////////////////////////////////////////////////////////////////////////// -->
+
+      <!-- START CONTENT -->
+      <section id="content">
+        
+        <!--breadcrumbs start-->
+        <div id="breadcrumbs-wrapper" class=" grey lighten-3">
+            <!-- Search for small screen -->
+            <div class="header-search-wrapper grey hide-on-large-only">
+                <i class="mdi-action-search active"></i>
+                <input type="text" name="Search" class="header-search-input z-depth-2" placeholder="Explore Gainbitcoin">
+            </div>
+          <div class="container">
+            <div class="row">
+              <div class="col s12 m12 l12">
+                <h5 class="breadcrumbs-title"></h5>
+                <ul class="breadcrumb">
+					<li>
+						<i class="icon-home home-icon"></i>
+						<a href="dashboard.php">Dashboard</a>
+
+						<span class="divider">
+							<i class="icon-angle-right arrow-icon"></i>
+						</span>
+					</li>
+					<li>
+						<i class="icon-home home-icon"></i>
+							<a href="#">Withdrawals</a>
+
+						<span class="divider">
+							<i class="icon-angle-right arrow-icon"></i>
+						</span>
+					</li>
+					<li class="active">Withdrawal Status</li>
+				</ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--breadcrumbs end-->
+        
+
+         <!--start container-->
+        <div class="container">
+          <div class="section">
+
+            <div class="col s12">
+			<ul class="tabs tab-demo-active z-depth-1 cyan">
+			  <li class="tab col s3 width"><a class="white-text waves-effect waves-light " href="<?php echo $rootURL; ?>/view/withdrawals.php"> Withdrawal Request </a>
+			  </li>
+			  <li class="tab col s3 width"><a class="white-text waves-effect waves-light " href="<?php echo $rootURL; ?>/view/withdrawalStatus.php"> Withdrawal Status </a></a>
+			  </li>
+			  
+			</ul>
+		  </div>
+          </div>
+		  <div class="page-header position-relative">
+					<h4 class = "header">
+							Withdrawal Status
+						</h4>
+					</div>
+        </div>
+		
+		 <!--end container-->
+		
+		
+					
+								 <!--DataTables example-->
+           <div id="table-datatables" style = "padding:10px;margin-top:40px;">
+              
+	
+              <div class="row">
+                <!-- <div class="col s12 m4 l3">
+                  <p>DataTables has most features enabled by default, so all you need to do to use it with your own tables is to call the construction function.</p>
+
+                  <p>Searching, ordering, paging etc goodness will be immediately added to the table, as shown in this example.</p>
+                </div> -->
+                <div class="col s12 m8 l9" style = "width:100%; overflow:auto;">
+                  <table id="data-table-simple" class="responsive-table display" cellspacing="0">
+                    <thead>
+                        <tr>
+                           <th style="text-align:center;width: 5%;">Sr.</th>
+			
+							<th style="text-align:center;width: 5%;">Amount</th>
+							<th style="text-align:center;width: 5%;">User To</th>
+
+							<th style="text-align:center;">Address</th>
+							<th style="text-align:center;">Withdrawal Type</th>
+
+							<th style="text-align:center;">Timestamp</th>
+
+							<th style="text-align:center;">Status</th>
+			
+                        </tr>
+                    </thead>
+                 
+                    <tfoot>
+                        <tr>
+							<th style="text-align:center;width: 5%;">Sr.</th>
+			
+							<th style="text-align:center;width: 5%;">Amount</th>
+							<th style="text-align:center;width: 5%;">User To</th>
+							<th style="text-align:center;">Address</th>
+							<th style="text-align:center;">Withdrawal Type</th>
+
+							<th style="text-align:center;">Timestamp</th>
+
+							<th style="text-align:center;">Status</th>
+
+						</tr>
+                    </tfoot>
+               
+                    <tbody>
+					   <?php
+									$i=1;
+									foreach($allWithdrawals as $num=>$withdrawalDetails){										
+							?>
+                            			<tr>
+                                        	<td><?php echo $i++; ?></td>
+                                            <td><?php echo $withdrawalDetails["btc_amt"]." ".$withdrawalDetails["chosen_coin"]; ?></td>
+                                            <td><?php echo $withdrawalDetails["user_to"]; ?></td>
+											<td><?php echo $withdrawalDetails["addr"]; ?></td>
+											<td><?php 
+											if($withdrawalDetails["withdrawal_type"] == "auto_withdrawal"){
+												echo "Auto Withdrawal"; 
+											}else if($withdrawalDetails["withdrawal_type"] == "fund_transfer" || $withdrawalDetails["withdrawal_type"] == "manual_fund_transfer"){
+												echo "Fund Transfer"; 
+											}else  if($withdrawalDetails["withdrawal_type"] == "kit_generation"){
+												echo "Kit Purchase"; 
+											}else  if($withdrawalDetails["withdrawal_type"] == "counter_settlement"){
+												echo "Counter Settlement"; 
+											}
+											
+											?></td>
+                                            <td><?php echo date("jS M, Y", strtotime($withdrawalDetails["timestamp"])); ?></td>
+                                            <td>
+												<?php 
+													if($withdrawalDetails["status"]==0)
+														echo "Pending";
+													else if($withdrawalDetails["status"]==1)
+														echo "Closed";
+													else 
+														echo "Cancelled"; 
+												?>
+                                            </td>
+                                        </tr>
+                            <?php
+									}	
+							?>
+						</tbody>
+						
+                  </table>
+				   <?php
+								} else {
+									printArr("Error fetching withdrawals");	
+								}
+							?>
+                </div>
+              </div>
+            </div> 
+            <br>
+		
+		
+				
+				
+      </section>
+      <!-- END CONTENT -->
+
+
+    </div>
+    
+    <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">

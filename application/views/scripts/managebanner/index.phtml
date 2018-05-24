@@ -1,0 +1,180 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+<style>
+		.clearfix {
+ 			 margin-top:-1px;
+		}
+
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12 offset-1">
+<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+<ol class="breadcrumb">
+    <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+	<li>Manage Banner</li>
+</ol>
+<div class="clearfix">&nbsp;</div>
+<div
+	class="col-lg-12"
+	align="right"
+><a href="<?php echo BASEPATH; ?>/Addbanner">
+<button
+	style="float: right; margin-right: 2%;"
+	class="btn btn-default Commonbtn"
+	type="submit"
+>ADD NEW</button>
+</a></div>
+<div class="clearfix">&nbsp;</div>
+<div class="col-lg-12 ">
+<div class="clearfix lightgraybg">
+<div
+	class="bs-example table-responsive"
+	data-example-id="bordered-table"
+>
+<table
+	id="data-table-simple"
+	class="table table-bordered innertbl display"
+	cellspacing="0"
+>
+	<thead>
+		<tr>
+			<th class="sortdesc">Sr. No</th>
+			<th class="sortboth">Banner Image</th>
+			<th class="sortboth">Description</th>
+			<th class="sortboth">Status</th>
+			<th class="sortboth">Action</th>
+		</tr>
+	</thead>
+	<tbody>
+	<?php
+
+
+	$j=1;
+
+	for($i=0;$i<sizeof($this->resultmanagebanner);$i++){
+		
+			/*if($this->resultmanagebanner[$i]['status']=='1')
+			{
+				$status='active';
+			}
+			else 
+			{
+				$status='Inactive';
+			}*/
+		?>
+		<tr>
+			<td scope="row"><?php echo $j;  ?></td>
+			<td><img
+				name="image"
+				id="image"
+				value=""
+				style="width: 50px; height: 50px;"
+				class="profile-pic"
+				src="data:image/jpeg;base64,<?php echo base64_encode($this->resultmanagebanner[$i]['banner_image']);?>"
+			/></td>
+			<td><?php echo $this->resultmanagebanner[$i]['description']; ?></td>
+			 <td>
+                         <?php if($this->resultmanagebanner[$i]['status']=='1'){?>
+			             <a href='#'
+			             id="link<?php echo $this->resultmanagebanner[$i]['id'];?>"
+			             name="<?php echo  $this->resultmanagebanner[$i]['status'];?>"
+			             onclick="getmembership('<?php echo $this->resultmanagebanner[$i]['id']; ?>','<?php echo $this->resultmanagebanner[$i]['status'];?>');">Active</a>   
+                        <?php }else{?>
+                        <a href='#'
+                        id="link<?php echo $this->resultmanagebanner[$i]['id'];?>"
+                        name="<?php echo $this->resultmanagebanner[$i]['status'];?>"
+                         onclick="getmembership('<?php echo $this->resultmanagebanner[$i]['id']; ?>','<?php echo $this->resultmanagebanner[$i]['status'];?>');">Inactive</a>
+                        <?php }?>
+                        </td>
+			<td><form method="post" action="<?php echo BASEPATH; ?>/Editbanner" name="form" id="form<?php echo $this->resultmanagebanner[$i]['id'];?>">
+			
+			
+			<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+			
+			<input type="hidden" value="<?php echo $this->resultmanagebanner[$i]['id'];?>" id="<?php echo $this->resultmanagebanner[$i]['id'];?>" name="id">
+			
+			<a href="#" onclick="document.getElementById('form<?php echo $this->resultmanagebanner[$i]['id'];?>').submit()">Edit</a>
+			
+			</form></td>
+		</tr>
+		<?php $j++;} ?>
+	</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<!-- /.row -->
+<!-- /.row -->
+<script>
+function getmembership(id,status){
+	
+
+	var memberid=id;
+	var memberstatus=status;
+	var token = $('#token').val();
+	$.ajax({
+			
+			url:"<?php echo BASEPATH; ?>/Changebanner", 
+			type: "POST",    
+		    data: 'memberid='+memberid+'&memberstatus='+memberstatus+'&token='+token,
+		    async:false,
+				success:function(response)
+				{
+				 var data=JSON.parse(response);
+				
+		
+				
+					 if(data['success']=='1')
+					{
+					//alert("Updated Successfully");
+					//alert(data['success']);
+					// alert("inside if");
+					// alert('#link'+id);
+					$('a#link'+id).attr('onclick','getmembership('+id+','+1+')').text('Active');
+					// $("a#link"+id).text('active');
+					
+					
+	  
+						
+					}
+					 else
+					{
+						 //alert("Updated Successfully");
+					//	alert(data['success']);
+						// alert("inside else if");
+						//alert('#link'+id);
+					$('a#link'+id).attr('onclick','getmembership('+id+','+0+')').text('Inactive');
+						
+						// $("a#link"+id).text('inactive');
+					
+						 				}
+					 
+				}
+			
+				
+				
+				
+		 });
+		
+	}
+	            
+</script>
+	      
+
+
+
+

@@ -1,0 +1,458 @@
+<?php 
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); $misc_obj->generateToken();
+?>
+ <style>
+.form-group {
+    display: inline-block;
+    margin-right: 35px;
+    width: 250px;
+}
+
+.clearfix {
+  margin-top:-12px;
+}
+
+	 
+	 
+	 
+	 
+</style>
+ 
+ 
+ 
+ <div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>CRM Dashboard </li>
+                  
+  
+            </ol>
+            
+
+          <div class="clearfix">&nbsp;</div>
+
+        <div class="clearfix">
+       
+        <div class="col-lg-12">
+
+ 
+
+<div class="clearfix">&nbsp;</div>
+
+
+              
+
+             
+              
+        </div>
+
+      
+
+     
+<div class="clearfix">&nbsp;</div>
+
+        
+           <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               CRM Dashboard
+              </div>
+
+              <div class="panel-body ">
+              <?php 
+              
+ //foreach($this->result as $result){?>
+      <!--   <form  method="post" action="<?php echo BASEPATH; ?>/Crmdashboard" name="chng" id="chng" enctype="multipart/form-data">  -->
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+
+ <?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!="")
+		{
+		?>
+	<div>
+    <label for="" class="lblTxt" style="color:green;"><?php echo $authUserNamespace->msg ;?></label>
+    </div>
+     <?php $authUserNamespace->msg=""; }
+     if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg!="")
+     {
+     ?> 
+     <div>
+     <label for="" class="lblTxt" style="color:red;"><?php echo $authUserNamespace->errmsg ;?></label>
+     </div>
+     <?php $authUserNamespace->errmsg=""; }?>
+
+				  
+<!-- filter form starts-->	  
+
+	<form id = "filter_form1" method = "POST" action = "<?php echo BASEPATH; ?>/Crmdashboard">
+		 <div class="form-group">
+				<label for="" class="lblTxt">Start Date:</label>
+				<input id="datetimepicker1" class="datepick form-control CommonInputBox input" type="text" placeholder="Start Date" value="" name="startdate">
+		 </div>
+		 <div class="form-group">
+				<label for="" class="lblTxt">End Date:</label>
+				<input id="datetimepicker" placeholder="End Date" class="datepick form-control CommonInputBox input" name="enddate" >
+		 </div>
+		 <div class="form-group" >
+			  <button type="submit" name = "search" value = "Search" class=" btn btn-default Commonbtn" style="border-radius:5px;">FILTER</button>			
+		 </div>		
+	 </form>
+
+<!-- filter form ends-->	  
+				
+<!-- Grid View Starts-->
+			<?php	$statusArray = array("Response Sent","Open","Input Required from User","Sent to Technical Team","Sent to Senior Support","Sent to Admin","Resolved","Closed");
+
+
+			$statusOptions 	= '';
+			foreach($statusArray as $key => $status){
+				$key += 1; 
+				$statusOptions 	.= '<option value = "'.$key.'">'.$status.'</option>';
+
+			}	
+				  
+				  ?>
+				  
+				  
+		  <div class="row new-row " style="border:3px solid #c2c2c2;">
+			  <div class="col-lg-12">
+				  <div class="row new-row">
+						<div class="panel-heading faqtitlebg text-uppercase Title">
+							<div class="row">
+							<div class="col-lg-3">Overall</div>
+							<?php if(isset($this->overalldata["start"])){?>	
+								<div class="col-lg-6 col-lg-offset-2" style="text-align:right;"><span style="font-size:13px;"><b>**from : <?php echo date("d-m-Y", strtotime($this->overalldata["start"]));?> to : <?php echo date("d-m-Y", strtotime($this->overalldata["end"]));?></b></span></div>
+							<?php }?>
+
+							</div>
+						</div>
+					  
+				  </div>
+				  <div class="row new-row">
+					  <div class="col-lg-12">
+							  <div class="row new-row">
+								  <div class="col-lg-6"><h4>Total</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['total'];?></h4></div>
+
+							  </div>
+							  <div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Open</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['open'];?></h4></div>
+
+							  </div>				 
+							  <div class="row new-row">
+								  <div class="col-lg-6"><h4>Closed</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['closed'];?></h4></div>
+
+							  </div>
+							  <div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Resolved</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['resolved'];?></h4></div>
+
+							  </div>	
+							  <div class="row new-row" >
+								  <div class="col-lg-6"><h4>Pending Kit Activation</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['pending_kit_activation'];?></h4></div>
+
+							  </div>	
+						  	<div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Pending Refund Requests </h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['pending_refund'];?></h4></div>
+
+							  </div>
+						  	<div class="row new-row" >
+								  <div class="col-lg-6"><h4>Pending others </h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->overalldata['0']['pending_others'];?></h4></div>
+
+							  </div>							  
+					  </div>
+
+					  <div class="col-lg-6">
+
+
+					  </div>
+
+				  </div>
+			  </div>  
+
+		  </div>				  
+	
+				  
+	<!-- overall ends -->	
+				  
+<div class="clearfix">&nbsp;</div>    
+			  
+	<!-- today starts -->			  
+		  <div class="row new-row " style="border:3px solid #c2c2c2;">
+			  <div class="col-lg-12">
+				  <div class="row new-row">
+						<div class="panel-heading faqtitlebg text-uppercase Title">
+							<div class="row">
+							<div class="col-lg-3">Today</div>
+
+
+							</div>
+						</div>
+					  
+				  </div>
+				  <div class="row new-row">
+					  <div class="col-lg-12">
+				  
+						  
+							  <div class="row new-row">
+								  <div class="col-lg-6"><h4>Total</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['total'];?></h4></div>
+
+							  </div>
+							  <div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Open</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['open'];?></h4></div>
+
+							  </div>				 
+							  <div class="row new-row">
+								  <div class="col-lg-6"><h4>Closed</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['closed'];?></h4></div>
+
+							  </div>
+							  <div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Resolved</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['resolved'];?></h4></div>
+
+							  </div>	
+							  <div class="row new-row" >
+								  <div class="col-lg-6"><h4>Pending Kit Activation</h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['pending_kit_activation'];?></h4></div>
+
+							  </div>	
+						  	<div class="row new-row" style="background-color:#f2f2f2;">
+								  <div class="col-lg-6"><h4>Pending Refund Requests </h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['pending_refund'];?></h4></div>
+
+							  </div>
+						  	<div class="row new-row" >
+								  <div class="col-lg-6"><h4>Pending others </h4></div>
+								  <div class="col-lg-6"><h4><?php echo $this->todaydata['0']['pending_others'];?></h4></div>
+
+							  </div>							  
+					  </div>
+
+					  <div class="col-lg-6">
+
+
+					  </div>
+
+				  </div>
+			  </div>  
+
+		  </div>		
+				  
+<!-- today ends -->
+				  
+<div class="clearfix">&nbsp;</div>    
+<!-- Agent summary overall starts -->
+		  <div class="row new-row "  style="border:3px solid #c2c2c2;"	 >
+			  <div class="col-lg-12">
+				  <div class="row new-row">
+						<div class="panel-heading faqtitlebg text-uppercase Title">
+							<div class="row">
+							<div class="col-lg-3">Agent Summary</div>
+							<?php if(isset($this->overalldata["start"])){?>	
+								<div class="col-lg-6 col-lg-offset-2" style="text-align:right;"><span style="font-size:13px;"><b>**from : <?php echo date("d-m-Y", strtotime($this->overalldata["start"]));?> to : <?php echo date("d-m-Y", strtotime($this->overalldata["end"]));?></b></span></div>
+							<?php }?>
+
+							</div>
+						</div>
+					  
+				  </div>
+<div class="clearfix">&nbsp;</div>    
+<div class="clearfix">&nbsp;</div>    
+
+                <div class="col s12 m12 l12" style = "width:100%; overflow:auto;">
+                  <table id="data-table-simple" class="responsive-table display" cellspacing="0">
+                    <thead>
+                        <tr>
+                        <tr>
+							<th style="text-align:center;">Sr.</th>
+			
+							<th style="text-align:center;">Name</th>
+							<th style="text-align:center;">Total</th>
+							<th style="text-align:center;">Open</th>
+							
+							<th style="text-align:center;">Resolved</th>
+							<th style="text-align:center;">Closed</th>
+
+							<th style="text-align:center;">Pending Kit</th>
+
+							<th style="text-align:center;">Pending Refund</th>
+							<th style="text-align:center;">Pending Others</th>
+			
+                        </tr>
+                    </thead>
+                 
+                    <tfoot>
+                        <tr>
+							<th style="text-align:center;">Sr.</th>
+			
+							<th style="text-align:center;">Name</th>
+							<th style="text-align:center;">Total</th>
+							<th style="text-align:center;">Open</th>
+							<th style="text-align:center;">Resolved</th>
+							<th style="text-align:center;">Closed</th>
+
+							<th style="text-align:center;">Pending Kit</th>
+
+							<th style="text-align:center;">Pending Refund</th>
+							<th style="text-align:center;">Pending Others</th>
+
+
+						</tr>
+                    </tfoot>
+               
+                    <tbody>
+						
+						<?php 
+							$j=1;
+							if(!empty($this->summarydata) && sizeof($this->summarydata)>0){
+							   for($i=0;$i<sizeof($this->summarydata);$i++){                  	
+					?>
+                            			<tr>
+                                        	<td style="text-align:center;"><?php echo $j;?></td>
+                                        	<td ><?php echo $this->summarydata[$i]['email'];?></td>
+                                            <td style="text-align:center;"><?php echo $this->summarydata[$i]['total'];?></td>
+                                            <td style="text-align:center;"><?php echo $this->summarydata[$i]['open'];?></td>
+											<td style="text-align:center;"><?php echo $this->summarydata[$i]['close'];?></td>
+											<td style="text-align:center;"><?php echo $this->summarydata[$i]['resolved'];?></td>
+                                            <td style="text-align:center;"><?php echo $this->summarydata[$i]['pending_kit_activation'];?></td>
+                                            <td style="text-align:center;"><?php echo $this->summarydata[$i]['pending_refund_related'];?></td>
+											<td style="text-align:center;"><?php echo $this->summarydata[$i]['pending_others'];?></td>
+                                        </tr>
+                        <?php
+								   $j++;
+							   }	   
+							}
+						?>   
+						</tbody>
+						
+                  </table>
+                </div>							  						  
+					  
+			  </div>  
+
+		  </div>					  
+				  
+
+	<div class="clearfix">&nbsp;</div>    
+			  
+		  <div class="row new-row "  style="border:3px solid #c2c2c2;"	 >
+			  <div class="col-lg-12">
+				  <div class="row new-row">
+						<div class="panel-heading faqtitlebg text-uppercase Title">
+							<div class="row">
+							<div class="col-lg-3">Agent Query Counts</div>
+							<?php if(isset($this->overalldata["start"])){?>	
+								<div class="col-lg-6 col-lg-offset-2" style="text-align:right;"><span style="font-size:13px;"><b>**from : <?php echo date("d-m-Y", strtotime($this->overalldata["start"]));?> to : <?php echo date("d-m-Y", strtotime($this->overalldata["end"]));?></b></span></div>
+							<?php }?>
+
+							</div>
+						</div>
+					  
+				  </div>
+<div class="clearfix">&nbsp;</div>    
+<div class="clearfix">&nbsp;</div>    
+
+                <div class="col s12 m12 l12" style = "width:100%; overflow:auto;">
+                  <table id="data-table-simple1" class="responsive-table display" cellspacing="0">
+                    <thead>
+                        <tr>
+                        <tr>
+							<th style="text-align:center;" style="width:5%">Sr. No.</th>
+							<th >Email</th>
+							<th style="text-align:center;">Total</th>
+			
+                        </tr>
+                    </thead>						  
+                    <tfoot>
+                        <tr>
+                        <tr>
+							<th style="text-align:center;" style="width:5%">Sr. No.</th>
+							<th >Email</th>
+							<th style="text-align:center;">Total</th>
+			
+                        </tr>
+                    </tfoot>	
+					<tbody>
+						
+							<?php 
+								$j=1;
+								if(!empty($this->replycount) && sizeof($this->replycount)>0){
+								   for($i=0;$i<sizeof($this->replycount);$i++){                  	
+							?>
+						               <tr>
+										    <td style="width:5%;text-align:center;"><?php echo $j;?></td>
+                                        	<td ><?php echo $this->replycount[$i]['email'];?></td>
+                                            <td style="text-align:center;"><?php echo $this->replycount[$i]['total_replied'];?></td>
+                                        </tr>
+					  		<?php
+						  			$j++;
+							   }	   
+							}
+						  	
+						  	?>
+					</tbody>
+						  </table>
+					  </div>
+
+				  </div>
+			  </div>  
+
+		  </div>				  
+					  
+				  
+				  
+				  
+				  
+<!-- Grid View Ends --> 
+
+<?php // }?>
+<!-- </form> -->
+  </div>
+
+       
+  
+      
+    </div>
+         
+
+          
+          </div>
+      
+            <!-- /.row -->
+            
+            <!-- /.row -->
+        </div>
+        <!-- /#page-wrapper -->
+
+
+
+    </div>
+
+      <link rel="stylesheet" type="text/css" href="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.css"/ >
+<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/datetimepicker/jquery.datetimepicker.js"></script>
+
+		<script  data-cfasync='false' type="text/javascript">
+			jQuery('.datepick').datetimepicker({
+			 format:'d-m-Y',
+			});
+		</script>
+		
+<script>

@@ -1,0 +1,83 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+    
+    
+    <div id="wrapper" class="loginPadd">
+
+      <div class="logincontanier lightgraybg ">
+
+      <div class="panel-heading faqtitlebg text-center  text-uppercase loginTitleTxt brdright">
+                        <a href="#">  Home </a>
+                           
+                        </div>
+    <form role="form" class="paddAll">
+ <div class="form-group">
+       <img src="images/login-logo.png" alt="" class="img-responsive">
+  </div>
+ <div class="form-group text-center">
+ <h3> Retrieve Password </h3>
+</div>
+<div class="form-group">
+ <h3 class="text-center loginTitleTxt"> Enter your username to receive instructions to your registered email</h3>
+</div>
+ 
+<div class="form-group">
+    <label for="username" class="lblTxt">Forgot Password:</label>
+
+    <div class="input-group">
+       <span class="input-group-btn ">
+        <img src="images/passwordicon.png" alt="">
+     </span>
+  <input type="text" name="forgot_pass_username" id="forgot_pass_username" class="form-control CommonInputBox usericons" placeholder="Username">
+ 
+</div><!-- /input-group -->
+   
+  </div>
+  <br/>
+
+  <div class="form-group"><button type="button" class="btn btn-default calculatebtn" onclick="forgotPass();">SEND ME!</button></div>
+ 
+
+</form>
+
+      <div class="panel-heading faqtitlebg text-center  text-uppercase loginTitleTxt brdright">
+                         <a href="#"> Back to login</a//>
+                           
+                        </div>
+</div>
+  
+
+
+
+    </div>
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token"> 
+<script type="text/javascript">
+function forgotPass()
+{
+	var forgot_pass_username=$('#forgot_pass_username').val();
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Login/forgotpassword",
+			type: "POST",    
+		    data: 'forgot_pass_username='+forgot_pass_username,
+	  		success: function(response)
+   		{
+			 var data=	JSON.parse(response);
+			
+			 if(data['success']!='' && data['success']=='success')
+			 {
+				alert(data['data'])
+			 }
+			 else
+			 {
+					$("#err_div").css("display", "block");
+					document.getElementById("err_div").innerHTML=data['failure'];
+					
+			 }		
+   			
+   		}
+	});
+}
+</script>

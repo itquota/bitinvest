@@ -1,0 +1,1433 @@
+ <?php  
+	$unique = rand(1111, 9999);
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+?> 
+
+        <script data-cfasync='false'>
+
+			
+    		function ValidationEvent(event)
+			{
+                var kit_no=$('#kit_number').val();
+                var con_type=$('#contract_type1').val();
+                var total_amount=$('#total_amount1').val();
+                var full_name=$('#full_name').val();
+                var email=$('#email').val();
+                var mobile=$('#mobile').val();
+                var address1=$('textarea#address1').val();
+                var address2=$('textarea#address2').val();
+                var city=$('#city').val();
+                var state=$('#state').val();
+                var country=$('#country').val();
+                var pincode=$('#pincode').val();
+                var kt_type=$('#kt_type').val();
+				if(kt_type =='hardware' && email!='')
+				{
+					 var atpos = email.indexOf("@");
+					 var dotpos = email.lastIndexOf(".");
+				}
+               // alert("full name="+full_name+" email="+email+" mobile="+mobile+" address1="+address1+" address2="+address2+" city="+city+" state="+state+" country="+country+" pincode="+pincode+" kt_type="+kt_type);
+//document.getElementById("purchase_kit").addEventListener("click",function(event){ event.preventDefault() });
+				 if(kt_type =='hardware' && (!full_name || full_name==''))
+                    {
+						//alert("inside");
+                    	$("#err_purch").css("display", "block");
+						document.getElementById("err_purch").innerHTML='';
+						document.getElementById("err_purch").innerHTML="Please enter Full Name.";
+						event.preventDefault();
+						return false;
+                    } 
+                    else 
+                    	if(kt_type =='hardware' &&  (!email || email==''))
+                        {
+							//alert("in email");
+                        	$("#err_purch").css("display", "block");
+							document.getElementById("err_purch").innerHTML='';
+							document.getElementById("err_purch").innerHTML="Please enter Email Id.";
+							event.preventDefault();
+							return false;
+                        } 
+                   else 
+						if(atpos<1 || dotpos<atpos+2 || dotpos+2>=email)
+                		{			//alert("dsfsdf");			
+                		    	$("#err_div").css("display", "block");
+                				document.getElementById("err_div").innerHTML="";
+                				document.getElementById("err_div").innerHTML="Please provide valid Email.";
+                				$('#err_div').css('display','block');
+                				$('#err_div').css('color','red');
+                				flag ==1;
+								event.preventDefault();
+                				return false;               		                		    
+                		}
+                  else 
+                       if(kt_type =='hardware' && (!mobile || mobile==''))
+                                {
+                                	$("#err_purch").css("display", "block");
+									document.getElementById("err_purch").innerHTML='';
+									document.getElementById("err_purch").innerHTML="Please enter Phone.";
+									event.preventDefault();
+									return false;
+                                }
+                    else 
+                       if(kt_type =='hardware' && (!address1 || address1==''))
+                         {
+                           // alert("insdif");
+							$("#err_purch").css("display", "block");
+								document.getElementById("err_purch").innerHTML='';
+								document.getElementById("err_purch").innerHTML="Please enter Address Line1.";								
+								$("#err_purch").empty();
+								$("#err_purch").append("Please enter Address Line1.");								
+								return false;
+                         }
+                       else 
+                         if(kt_type =='hardware' && (!address2 || address2==''))
+                         {
+                            $("#err_purch").css("display", "block");
+  							document.getElementById("err_purch").innerHTML='';
+  							document.getElementById("err_purch").innerHTML="Please enter Address Line2.";
+  							event.preventDefault();
+							return false;
+                         }
+
+                         else 
+                             if(kt_type =='hardware' && (!pincode || pincode==''))
+                               {
+                                  $("#err_purch").css("display", "block");
+    								document.getElementById("err_purch").innerHTML='';
+    								document.getElementById("err_purch").innerHTML="Please enter Pincode.";
+    								event.preventDefault();
+									return false;
+                              }
+        		
+                    else
+                    {
+                    var token = $('#token1').val();
+                    $.ajax({
+                            type: "POST",
+                            url: '<?php echo BASEPATH; ?>/Checkleg/checkkitstatus',
+                            data: {'kit_number':kit_no,'kit_type':con_type,'total_amount':total_amount,'token':token},
+                            async:false,
+                            success: function(res)
+                            {   //alert(res);return false;
+                                if(res ==='false'){
+										$("#err_purch").css("display", "block");
+										document.getElementById("err_purch").innerHTML="This kit is not available or already used, pls try with another kit!!";
+								}
+                                else{ 
+                                	 token = $('#token1').val();
+                                			var token = $('#token1').val();
+									        $.ajax({
+												type: "POST",
+												url: '<?php echo BASEPATH; ?>/Purchasecontract/purchasekit',
+												data: 'buy_now='+$('#buy_now').val()+'&contract_type='+$('#contract_type1').val()+'&hiddencontractId='+$('#hiddencontractId').val()+'&kit_number='+$('#kit_number').val()+'&total_amount='+$('#total_amount1').val()+'&type='+$('#type').val()+'&full_name='+full_name+'&email='+email+'&mobile='+mobile+'&address1='+address1+'&address2='+address2+'&city='+city+'&state='+state+'&country='+country+'&pincode='+pincode+'&kt_type='+kt_type+'&token='+token,
+												dataType: "json",
+											    async:false,
+												success: function(res)
+												{  
+												
+													if(res.success=='success')
+													{
+														if(res.tran_flag!=0)
+														{
+															$("#buycontract").css("display","none");
+															$("#select_kit").css("display","none");
+															$("#payment_details").css("display","none");
+															$("#contractlist").css("display","none");
+															$("#contractlist1").css("display","none");
+															$("#confirmation").css("display","block");
+															$('#kitselectid').removeClass('active');
+															$('#buycontractid').removeClass('active');
+															$('#confirmid').addClass('active');									
+															$('#confirmationPartial').css("display","none");
+															
+														}
+														else
+														{
+															$("#buycontract").css("display","none");
+															$("#select_kit").css("display","none");
+															$("#payment_details").css("display","none");
+															$("#contractlist").css("display","none");
+															$("#contractlist1").css("display","none");
+															$("#confirmation").css("display","none");
+															$('#confirmationPartial').css("display","block");
+															$('#kitselectid').removeClass('active');
+															$('#buycontractid').removeClass('active');
+															$('#confirmid').addClass('active');
+															$('#amntpaid').empty();
+															$('#amntpaid').append(res.kitprice);
+															$('#amntdue').empty();
+															$('#amntdue').append(res.amount);
+															
+														}						
+														
+													}
+													else if (res.failure!='')
+													{
+														$("#err_purch").css("display", "block");
+														document.getElementById("err_purch").innerHTML=res.failure;
+														
+													}
+													else
+													{
+														$("#err_purch").css("display", "block");
+														document.getElementById("err_purch").innerHTML="This kit is not available or already used, pls try with another kit!!";
+														
+													}
+												}
+											});
+                                     
+                                   }
+                            }
+                        });
+                     }
+				return false;
+			}
+        </script> 
+ <style>
+	#menu, #sample .footer ,  #sample p,.breadcrumb>li+li:before {
+	  display: none;
+	}
+	li a:hover, a li:focus {
+	  background: transparent;
+	  color: #364a5e;
+	} 
+	.req-table {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.req-admin .modal-body {
+  background: none repeat scroll 0 0 #e6e7e8;
+}
+.req-admin .modal-header {
+  color: #fff;
+  font: 20px "robotobold";
+}
+.req-table > tbody > tr > td, .req-table > thead > tr > th {
+  font-family: "robotobold";
+  font-size: 16px;
+  padding: 5px 0;
+  text-align: center;
+  text-transform: uppercase;
+}
+.req-table > tbody > tr > td {
+  font-family: "robotoregular";
+  text-transform: none;
+}
+.search-con input {
+  border: medium none;
+  border-radius: 0;
+  margin-bottom: 10px;
+}
+.req-btn, .req-btn:hover {
+  background: none repeat scroll 0 0 #34495e;
+  color: #fff;
+}  
+.sizecls {
+    display: inline-block;
+    float: left;
+    margin-right: 3%;
+    text-align: left;
+    width: 45%;
+} 
+.margincls{
+	margin-left: -3%;
+    width: 32%;
+	display:inline-block;
+}
+.col-lg-2 {
+    width: 9.667%;
+}
+textarea {
+   resize: none;
+}
+#ship_addr
+{
+display:none;
+}
+.form-group {
+ 	text-align: left;
+ }
+textarea.form-control {
+    height: 34px;
+}
+.col-xs-3,.col-xs-9,.col-xs-6{
+	padding:0 5px !important;
+}
+.shippingadd{
+	float:left;
+	width:100%;
+
+}
+@media (min-width: 768px) and (max-width:870px){
+ 	.form-group {
+	 	width:100%;
+	 }
+ }
+ @media (max-width:570px){
+ 	.form-group {
+	 	width:100%;
+	 }
+ }
+</style>
+ <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token1"  name="token1">
+<div class="modal req-admin" id="req-admin-payment">
+                        <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">Request Admin to Activate
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="closeReqAdmin();">
+                                    <i class="is close-btn"></i></button>
+                                </div>
+                                <input type="hidden" id="pmode" name="pmode" value="<?php if(isset($this->result['payment_mode'])) { echo $this->result['payment_mode'];  } ?>">
+                                <div class="modal-body g-auth-body">
+                                   <table class="req-table" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Invoice Id</th>
+                                                <th>Kits Quantity</th>
+                                                <th>Price in BTC</th>
+                                            </tr>
+                                        </thead>                                       
+                                        <tbody>
+                                             <tr>
+                                                <td id="td1"><?php if(isset($this->result['invoiceId'])) { echo $this->result['invoiceId'];  } ?></td>
+                                                <td id="td2"><?php if(isset($this->result['no_of_kits'])) { echo $this->result['no_of_kits'];  } ?></td>
+                                                <td id="td3"><?php if(isset($this->result['price'])) { echo $this->result['price'];  } ?></td>
+                                            </tr>
+                                        </tbody>                                        
+                                    </table>
+                                    <div class="search-con">
+                                    	<div class="errortext">
+                                    	 <label for="" class="lblTxt" style="color:red;">
+                                    	 </div>
+                                        <input type="text" placeholder="Enter Transaction id" id="txid" name="txid" class="form-control">
+                                        <button class="btn btn-default text-uppercase req-btn" id="request_admin" onclick="requestPayment();">Request to Admin</button>
+                                    </div>
+                                </div>
+
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div>
+	
+	<div id="innerpage-wrapper">
+      <div class="row lightgraybg">
+        <div class="col-lg-12 offset-1">
+          <h1 class="page-header gain-bit-Titletxt innpercontentPad">Buy Contract</h1>
+        </div>
+        <!-- /.col-lg-12 -->
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <ol class="breadcrumb">
+   <!--  <a href="javascript:void(0)">-->
+          <li><a href="<?php echo BASEPATH; ?>/Dashboard">Dashboard ></a></li>
+          <!--  <a href="javascript:void(0)">-->
+          <li>Contracts ></li>
+          <li class="active">Buy Contract</li>
+        </ol>
+        <?php 
+	        $spec_obj = new Gbc_Model_DbTable_SpecialPermission();
+	        $available_kits_qry = $spec_obj->fetchRow($spec_obj->select()
+			);
+			 $available_kits = $available_kits_qry->available_kits;
+			if(in_array(date('d'),range(1,15))){
+				// echo date('d');
+				$start = "1st";
+				$end = "15th";
+				$nextCycle = "16th ".date('F');
+			}else{
+				$start = "16th";
+				$end = new DateTime("last day of last month");
+				$end = $end->format('d');
+				
+				$date = new DateTime();
+				$date->modify('+1 month');
+				$nextMonth =  $date->format('F');
+				$nextCycle = "1st ".$nextMonth;
+			}
+			if(!empty($available_kits) && ($available_kits)>0)
+			{
+				$daterange='Contracts Available from '.$start.' '.date('F').' to '.$end.' '.date('F').' : '.$available_kits.' BTC only!!!';				
+			}
+			else{
+				$daterange='Contracts Available from '.$start.' '.date('F').' to '.$end.' '.date('F').' : 0 BTC only!!! <br/><br/>No new sales will be accepted for this cycle. Please wait for '.$nextCycle.'';	
+			}
+        ?>
+        <div class="err1">
+        <?php if(!empty($authUserNamespace->errmsg) && $authUserNamespace->errmsg != ""){
+        ?>
+        <label style="color:red; padding: 0 11px;"><?php echo $authUserNamespace->errmsg;?></label>
+        <?php $authUserNamespace->errmsg="";}?>
+        </div>
+        <div class="accordion">
+        
+          <dl class="active" id="kitselectid">
+       
+		
+            <dt class="kit" id="click_advance" onclick="clickme('select_kit')">Selection of Kit</dt>
+            <dd style="display: none;" id="select_kit">
+              <div style="font-weight:bold;"><?php echo $daterange; ?></div>
+			  <?php if(!empty($available_kits) && ($available_kits)>0) {
+			?>
+			<form action="<?php echo BASEPATH; ?>/Invoice" method="post" id="kit_form">
+			 <input type = "hidden" name = "unique" value = "<?php echo $unique; ?>">
+			 <input type="hidden" value="<?php echo $authUserNamespace->token;?>"  name="token">
+              <div class="sel-wrapper"> 
+
+			  
+			  <div class="tbl-con"> 
+			          <ul>
+                  <li>
+                    <div class="sel-head">
+                      <ul>
+                        <li>Name</li>
+                        <li>power</li>
+                        <li>price</li>
+                        <li class="amt-pay">amount to pay</li>
+                        <li>dsi</li>
+                        <li>kit type</li>
+                        <li>&nbsp</li>
+                      </ul>
+                    </div>
+                  </li>
+                  <?php 
+                
+                  for($cn=0;$cn<sizeof($this->contract['data']);$cn++) { 
+                  	$AvailableKits=$this->contract['data'][$cn]['available_limit'];
+                      	$ExpiryDate = date("Y-m-d h:i:s",strtotime("2017-03-31 23:59:59"));
+								$currentDateTime = date("Y-m-d h:i:s");
+								$contractArray= array(11,10,9,8);
+								
+					if($this->contract['data'][$cn]['max_limit'] >0 && $AvailableKits==0)
+					{
+				
+						$disabled=0;
+					}
+					else
+					{
+						$disabled=0;
+					}
+                  	?>
+                  
+            
+                  <li>
+                    <div class="sel-user">
+                      <input <?php echo ($this->contract['data'][$cn]['contract_id'] == 1)?"checked":""; ?> type="radio"  name="kit_type"  class="css-radio" <?php if(!empty($disabled) && $disabled==1) { ?> disabled <?php } ?> value="<?php echo $this->contract['data'][$cn]['contract_id']?>" id = "<?php echo $this->contract['data'][$cn]['contract_name']; ?><?php echo $this->contract['data'][$cn]['contract_id']?>" onclick="$('#no_of_kits').val('');">
+                      <label for="<?php echo $this->contract['data'][$cn]['contract_name']; ?><?php echo $this->contract['data'][$cn]['contract_id']?>" class="css-label">
+                        <ul>
+                          <li><?php echo $this->contract['data'][$cn]['contract_name']; ?></li>
+                          <li><?php echo $this->contract['data'][$cn]['contract_qty']; ?></li>
+                          <li><?php echo $this->contract['data'][$cn]['total_price']; ?></li>
+                          <li class="amt-pay"><?php echo $this->contract['data'][$cn]['price_paid']; ?></li>
+                          <li><?php echo $this->contract['data'][$cn]['direct_earning']; ?></li>
+                          <li><?php echo $this->contract['data'][$cn]['contract_type']; ?></li>
+                          <li><?php 
+                          		if($this->contract['data'][$cn]['max_limit'] >0){
+									if( $AvailableKits > 0 || $AvailableKits=='max_limit'){
+											
+											if(!$available_kits){
+												echo "Available $AvailableKits Kits Only ";	
+											}
+											if(($this->contract['data'][$cn]['contract_id'] == 8) ||($this->contract['data'][$cn]['contract_id'] == 9)||($this->contract['data'][$cn]['contract_id'] == 10)||($this->contract['data'][$cn]['contract_id'] == 11)){
+												echo "(** Limited offer till 31 January Only)";
+											}
+										}else{
+											echo "Out of stock";
+										}
+									}else if($this->contract['data'][$cn]['total_price']>1){
+										echo "(** Limited offer till 31 January Only)";
+									}
+                          ?></li>
+                         
+                        </ul>
+                      </label>
+                    </div>
+                  </li>
+
+               <?php } ?>
+        
+       
+				  
+				 <!--  <li>
+                    <div class="sel-user">
+                      <input id="user06" type="radio" name="kit_type" class="css-radio" value="2" onclick="$('#no_of_kits').val('');">
+                      <label for="user05" class="css-label">
+                        <ul>
+                          <li>Amaze (Micro)</li>
+                          <li>200 THS</li>
+                          <li>25</li>
+                          <li class="amt-pay">1</li>
+                          <li>0.005</li>
+                          <li>&nbsp</li>
+                        </ul>
+                      </label>
+                    </div>
+                  </li> -->
+                </ul>
+			    </div>
+			  
+			  
+			  
+                <div class="clearfix"></div>
+                <div class="sel-info">
+                <div style="font-size:14px;font-family:robotoregular;color:red;" id = "selectkits"></div>
+                  <div class="col-lg-4">
+                    <div class="input-type-select">
+					  
+                      <select name="no_of_kits" id="no_of_kits" >
+                        <option value="">Select No of Kits</option>
+     		<?php
+								for($i=1;$i<=15;$i++){
+									echo "<option value='$i'>$i</option>";
+								}
+			?>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-8">
+                    <label for="">Total Amount (BTC)</label>
+                    <input type="text" value="" id="total_amount" name="total_amount" readonly="readonly">
+					<input type="hidden" id="real_total_amount" name="real_total_amount">
+					<input type="hidden" name="buy_now" value="sha">
+					<div class="btn_container"><input type="button" value="PURCHASE" class="btn_" id="purchase" name="action"></div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </div>
+			  </form>
+			  <?php 
+			  }
+			  ?>
+            </dd>
+          </dl>
+		    <?php if(isset($_POST['invoice_id']) && $_POST['invoice_id']!='') { ?>
+          <dl id="detailpaymentid">
+            <dt class="pay">Payment Details</dt>
+            <dd id="payment_details" class="openpop">
+              <div class="pay-container" id="pay-container">
+                <div class="pay-note">
+                  <div class="pay-n">
+                    Note: Kit activation may take upto 1 Hour to 24 Hours
+                  </div>
+                  <div class="pay-btn">
+				   <form method="post" action="<?php echo BASEPATH; ?>/Invoicestatus" name="form">
+					  <input type="hidden" value="<?php echo $authUserNamespace->token;?>"  name="token">
+					   <input type="hidden" value="<?php echo $this->result['invoiceId']; ?>" id="invoice_id" name="invoice_id">						
+                    <input type="submit" style="cursor:pointer;" value="CHECK KIT STATUS AFTER PAYMENT" class="btn_"> 
+                  </form>
+				  </div>
+                </div>
+				<?php if(!empty($this->result['price']) && $this->result['price']>15) { ?>
+				    <div  class = "message cyan">Please click on "SUBMIT AFTER PAYMENT" button or send transaction id regarding payment via contact form or send it through mail on mail id: thegainbitcoinhelp@gmail.com</div>
+                <div class="row-fluid" style = "padding:20px;">
+
+                  <div class="span12"> 
+                    <div class="row-fluid">
+                      <div>
+                        <p>Please send <?php echo $this->result['price']; ?> BTC to</p> 
+                        <span>1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz</span>
+                        <img src = "https://blockchain.info/qr?data=1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz&size=200" />
+                       <div class="btn_container"><input type="button" id="submit_payment" onclick="openReqAdmin();" class="btn_" value="SUBMIT AFTER PAYMENT"></div>
+                       </div>
+                      </div>
+                    </div>
+                  </div>
+				<?php }else if(!empty($this->result['payment_url']) && $this->result['payment_url']!='') { ?>
+                <iframe width="100%" height="100%" src="<?php echo $this->result['payment_url']; ?>" style="visibility:visible;border:0px;min-height:950px;" id="if1"></iframe>
+				<?php } else {?>
+					<div class = "center" style="text-align: center;">
+						<img src = '<?php echo BASEPATH; ?>/res/images/oops.png'> 
+					</div>
+				<?php } ?>
+
+                </div>  
+
+              </dd>
+            </dl>
+		<?php } else { ?>
+		  
+		   <dl id="detailpaymentid">
+            <dt class="pay" onclick="clickme('payment_details')">Make Payment</dt>
+            <dd id="payment_details">
+              <div class="pay-container" id="pay-container">
+                <div class="pay-note">
+                  <div class="pay-n">
+                    Note: Kit activation may take upto 1 Hour to 24 Hours
+                  </div>
+                  <div class="pay-btn">
+                    <input type="button" value="CHECK KIT STATUS AFTER PAYMENT" class="btn_">
+                  </div>
+                </div>
+                <div class="wait-info">
+                  <div class="wait-msg">Waiting for your payment<span>04m 35s</span></div>
+                  <div class="wait-btn"><input type="button" value="CANCEL" class="btn_ cancel-btn"></div>
+
+                </div>
+                <iframe width="100%" height="100%" src="https://bitcoinpay.com/en/sci/invoice/btc/bBAhOierlHu9ArGj/" style="visibility:visible;border:0px;min-height:950px;" id="if1"></iframe>
+                <div  class = "message cyan">Please click on "SUBMIT AFTER PAYMENT" button or send transaction id regarding payment via contact form or send it through mail on mail id: thegainbitcoinhelp@gmail.com</div>
+                <div class="row-fluid" style = "padding:20px;">
+
+                  <div class="span12">
+                    <div class="row-fluid">
+                      <div>
+                        <p>Please send <?php echo $price_in_btc ?> BTC to</p> 
+                        <span>1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz</span>
+                        <img src = "https://blockchain.info/qr?data=1EYSiRC2nUi2xLMTuwkWhHtpTTVVZ6KNrz&size=200" />
+                       <div class="btn_container"><input type="button" class="btn_" value="SUBMIT AFTER PAYMENT"></div>
+                       </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>  
+
+              </dd>
+            </dl>
+		  
+		  <?php } ?>
+            <dl id="contractid">
+              <dt class="contract"id="list_of_contracts" onclick="show('list_of_contracts');" >List Of Contracts</dt>
+              <dd id="contractlist">
+              		<div class="form-group"><label for="" class="lblTxt"><span style="font-family:robotoregular;font-size:20px;font-weight: bold;padding:7px;">SHA Mining Contracts</span><br />
+						</label> 
+					</div>
+                <div class="con-container">
+				<?php
+			
+			
+					$i=0;
+					foreach($this->sha_contract as $getCotracts)
+					{
+						
+							
+					/*	if($i == 0){
+							$type = "Gold";
+						}else if($i == 1){
+							$type = "Silver";
+						}else if($i == 2 || $i == 3){
+							$type = "Referral";
+						}else{
+							$type = "ROI";
+						}*/
+						
+					 if($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7){
+							$type = "ROI";
+					}else if($getCotracts['contract_id'] == 4){
+							$type = "Silver";
+					}else{
+							$type = "Referral";
+					}
+
+					
+
+				?>
+				
+			<?php if($i%3==0) { ?>
+				
+                  <div class="con-content">
+               
+			<?php } ?>	
+			<form method="POST" id="mining<?php echo $i ?>" >
+					<div class="col-lg-4"> 
+                      <div class="c-con">
+                        <h2><?php echo ($getCotracts['contract_type'])?>(BITCOIN) Mining Contract</h2>
+                        <span><?php echo $getCotracts['contract_qty']?> THS <?php echo ($getCotracts['total_price'])?> BTC</span>
+						<input type="hidden" name="sha_hashrate_qty" id="sha_hashrate_qty" value="<?php echo $getCotracts['contract_id'];?>" /> 
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>"  name="token">
+						<input type="hidden" value="<?php echo ($getCotracts['total_price']); ?>" id="hid_btc_value" name="hid_btc_value" />
+						<input type="hidden" value="<?php echo ($getCotracts['contract_type']); ?>" id="k_type" name="k_type" /> 
+						<input type="hidden" value="<?php echo $type ?>" id="contract_type" name="contract_type" /> 
+                        <div class="btn_container"><input type="button" value="BUY NOW" class="btn_" onclick="purchase('mining<?php echo $i ?>');"></div>
+                      </div>
+                    </div>
+			</form>
+				<?php if($i==2 || $i==5 || $i== 8 || $i==11 || $i==14 || $i==(sizeof($this->sha_contract)-1)) { ?>
+					<?php if($i!=0) {?>
+						<div class="clearfix"></div>
+						</div>
+					<?php } ?>	
+					
+				<?php } ?>	
+				
+			<?php $i++; 
+					}
+				
+			?>	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+                </div>
+                <div class="err" style="text-align:center;color:red;display:none;"> </div>
+              </dd>
+                <?php if(!empty($this->hardware_contract) && sizeof($this->hardware_contract)>0) { ?>
+              <dd id="contractlist1" <?php 
+              $antixss = new Gbc_Model_Custom_StringLimit();
+              
+                if(isset($_POST['flag']) && ($_POST['flag'])!= ""){
+					$antixss->setEncoding($_POST['flag'], "UTF-8");
+					if ($antixss->setFilter($_POST['flag'], "black", "string") == "invalidInput"){
+
+						$data=array('success'=>'','failure'=>'Invalid Input.');
+						//echo json_encode($data);exit;
+						   header('Location:'.BASEPATH.'/Profileerror/errormsg');
+
+					}
+
+				}
+              
+              if(isset($_POST['flag']) && $_POST['flag']!='') 
+              {
+              	?>class="openpop" <?php } ?>>
+               		<div class="form-group"><label for="" class="lblTxt"><span style="font-family:robotoregular;font-size:20px;font-weight: bold;padding:7px;">Bitcoin Hardware Wallet</span><br />
+						</label> 
+					</div>
+                <div class="con-container">
+				<?php
+			
+			
+					$j=0;
+					foreach($this->hardware_contract as $getCotracts)
+					{													
+					/*	if($i == 0){
+							$type = "Gold";
+						}else if($i == 1){
+							$type = "Silver";
+						}else if($i == 2 || $i == 3){
+							$type = "Referral";
+						}else{
+							$type = "ROI";
+						}*/						
+					 if($getCotracts['contract_id'] == 2 || $getCotracts['contract_id'] == 7){
+							$type = "ROI";
+					}else if($getCotracts['contract_id'] == 4){
+							$type = "Silver";
+					}else{
+							$type = "Referral";
+					}
+
+					
+
+				?>
+				
+			<?php if($j%3==0) { ?>
+				
+                  <div class="con-content">
+               
+			<?php } ?>	
+			<form method="POST" action="" id="mining<?php echo $i ?>" >
+					<div class="col-lg-4"> 
+                      <div class="c-con">
+                        <h2><?php echo ($getCotracts['contract_name'])?></h2>
+                        <span><?php echo $getCotracts['contract_qty']?> THS <?php echo ($getCotracts['total_price'])?> BTC</span>
+						<input type="hidden" name="sha_hashrate_qty" id="sha_hashrate_qty" value="<?php echo $getCotracts['contract_id'];?>" /> 
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>"  name="token">
+						<input type="hidden" value="<?php echo ($getCotracts['total_price']); ?>" id="hid_btc_value" name="hid_btc_value" />
+						<input type="hidden" value="<?php echo ($getCotracts['contract_type']); ?>" id="k_type" name="k_type" /> 
+						<input type="hidden" value="<?php echo $type ?>" id="contract_type" name="contract_type" /> 
+                        <div class="btn_container"><input type="button" value="BUY NOW" class="btn_" onclick="purchase('mining<?php echo $i ?>');"></div>
+                      </div>
+                    </div>
+			</form>
+				<?php if($j==2 || $j==5 || $j== 8 || $j==11 || $j==14 || $j==(sizeof($this->hardware_contract)-1)) { ?>
+					<?php if($i!=0) {?>
+						<div class="clearfix"></div>
+						</div>
+					<?php } ?>	
+					
+				<?php } ?>	
+				
+			<?php $i++; 
+			$j++;
+					}
+				
+			?>	
+			
+			
+			
+			
+			
+			
+			
+			
+			
+                </div>
+                <div class="err" style="text-align:center;color:red;display:none;"> </div>
+              </dd>
+              <?php } ?>
+            </dl>
+			
+		<dl id="buycontractid">
+              <dt class="invoicestatus">Buy New Contract</dt>
+              <dd id="buycontract">
+				<div class="con-content" style="text-align:center;">
+					<div class="clearfix"></div>
+					<form action="" method="post" id="purchase_kit"  >
+                    <div class="col-lg-12 shippingadd" > 
+					<div class="form-group sizecls" ><label for="" class="lblTxt"><span style="font-family:robotoregular;font-size:14px;font-weight: bold;">Total Amount </span><br />
+					<span id="contractamount"></span></label> 
+					</div>
+					<div class="form-group sizecls"><label for="" class="lblTxt" style="font-family:robotoregular;font-size:14px;font-weight: bold;">Kit No.</label> <input
+						type="text" class="form-control CommonInputBox" name="kit_number" id="kit_number" value=""></div>
+					</div>
+					<div class="col-lg-12 shippingadd" id="ship_addr">
+					<div class="form-group"><label for="" class="lblTxt"><span style="font-family:robotoregular;font-size:14px;font-weight: bold;">Shipping Address</span><br />
+					</label> 
+					</div>	
+					<div class="form-group sizecls">
+						<div class="col-xs-6">
+						    <label for="" class="lblTxt">Full Name</label>
+						    <input type="text" name="full_name" id="full_name" class="form-control CommonInputBox" value="<?php echo $this->user_cat['users_data'][0]['name']; ?>">
+					  	</div>
+				  		<div class="col-xs-6">
+						    <label for="" class="lblTxt">Email</label>
+						    <input type="text" name="email" id="email" class="form-control CommonInputBox" value="<?php echo $this->user_cat['users_data'][0]['email_address']; ?>">
+					    </div>
+				  	</div>
+				  	<div class="form-group sizecls">
+					  	<div class="col-xs-3">
+							    <label for="" class="lblTxt">Phone</label>						
+							    <select id="int_ph" name="int_ph" class="form-control CommonInputBox">														
+						 <?php   if(!empty($this->user_cat['countries_data']) && sizeof($this->user_cat['countries_data'])>0)
+										{
+											for($i=0;$i<sizeof($this->user_cat['countries_data']);$i++)
+											{?>
+												
+												<option <?php if($this->user_cat['countries_data'][$i]['ccode']=='91') { ?> selected="true" <?php } ?>><?php echo $this->user_cat['countries_data'][$i]['ccode']; ?></option>
+												  	
+											<?php }
+										}?>
+								</select>				
+						</div>
+							<div class="col-xs-9">
+								 <label for="" class="lblTxt" style="">&nbsp;</label>
+								<input type="phonr" name="mobile" id="mobile" class="form-control CommonInputBox" value="<?php echo $this->user_cat['users_data'][0]['phone']; ?>" />
+						</div> 
+					</div>
+				  	
+				  	<div class="form-group sizecls">
+					    <label for="" class="lblTxt">Address Line 1</label>
+					    <textarea type="textarea" name="address1" id="address1" class="form-control CommonInputBox" value=""></textarea>
+				  	</div>	
+				  	<div class="form-group sizecls">
+					    <label for="" class="lblTxt">Address Line 2</label>
+					    <textarea type="textarea" name="address2" id="address2" class="form-control CommonInputBox" value=""></textarea>
+				  	</div>				  	
+				  	<div class="form-group sizecls">
+					   <div class="col-xs-6">
+					    <label for="" class="lblTxt">City</label>
+					    <select id="city" name="city" class="form-control CommonInputBox">														
+							
+									<?php   if(!empty($this->user_cat['cities_data']) && sizeof($this->user_cat['cities_data'])>0)
+										{
+											for($i=0;$i<sizeof($this->user_cat['cities_data']);$i++)
+											{?>
+												
+												<option><?php echo $this->user_cat['cities_data'][$i]['name']; ?></option>
+  	
+											<?php }
+										}?>
+						</select>
+						</div>
+				  		<div class="col-xs-6">
+					    <label for="" class="lblTxt">State</label>
+					   <select id="state" name="state" class="form-control CommonInputBox">														
+							
+							
+
+												<?php   if(!empty($this->user_cat['states_data']) && sizeof($this->user_cat['states_data'])>0)
+										{
+											for($i=0;$i<sizeof($this->user_cat['states_data']);$i++)
+											{?>
+												
+												<option><?php echo $this->user_cat['states_data'][$i]['name']; ?></option>
+  	
+											<?php }
+										}?>	
+						</select>
+						</div>
+				  	</div>
+				  				  
+				  	<div class="form-group sizecls">
+				  		<div class="col-xs-6">
+					    <label for="" class="lblTxt">Country</label>
+					    <select id="country" name="country" class="form-control CommonInputBox">														
+							
+							
+								<?php   if(!empty($this->user_cat['countries_data']) && sizeof($this->user_cat['countries_data'])>0)
+										{
+											for($i=0;$i<sizeof($this->user_cat['countries_data']);$i++)
+											{?>
+												
+												<option><?php echo $this->user_cat['countries_data'][$i]['country']; ?></option>
+  	
+											<?php }
+										}?>	
+						</select>
+				  	</div>
+				  	<div class="col-xs-6">
+					    <label for="" class="lblTxt">Postal Code</label>
+					    <input type="text" name="pincode" id="pincode" class="form-control CommonInputBox" value="" maxlength="20">
+					    
+				  	</div>
+				  	</div>
+				  	</div>
+				  	<div class="col-lg-12 shippingadd">				  	
+						<input type="hidden" value="" class="form-control" name="total_amount" id="total_amount1"> 
+						<input type="hidden" value="" class="form-control" name="type" id="type"> 
+						<input type="hidden" value="" class="form-control" name="kt_type" id="kt_type"> 
+						<input type="hidden" value="" id="contract_type1" name="contract_type" /> 
+						<input type="hidden" value="" class="form-control" name="hiddencontractId" id="hiddencontractId">
+						<input type="hidden" value="sha" name="buy_now"  style="height:30px; width:220px;"/>
+						<div class="form-group" style="font-family:robotoregular;color:red; display:none;" id="err_purch"> </div>
+					<div class="clearfix">&nbsp;</div>
+					<button type="button" onclick="ValidationEvent()" class="btn btn-default Commonbtn">Purchase</button>
+                   
+                    </div>
+					</form>
+                
+                    <div class="clearfix"></div>
+                </div>
+					
+              </dd>
+            </dl>
+            <dl id="confirmid">
+              <dt class="confirmation">Confirmation</dt>
+              <dd id="confirmation">
+                <div class="confirm-content">
+                  <h2>Congratulations!</h2>
+                  <p>Your contract has been activated.</p>
+                  <p class="n-content">You wil be able to see your contract details under the Order History section of your user dashboard.</p>
+                  <p>Contract Invoice is sent to your registered e-mail id.</p>
+              <!-- <div class="btn_container"><input type="button" value="VIEW INVOICE" class="btn_"></div>  -->    
+                </div>
+              </dd>
+              <dd id="confirmationPartial">
+                <div class="confirm-content">
+                 <h2></h2> 
+                  <p>The amount paid (<span id="amntpaid"></span>) is not the same as the amount due (<span id="amntdue"></span>). </p>
+                  <p> This invoice is not activated automatically. Please manually activate this invoice from the admin panel.</p>                 
+                  <p>Please contact us for further assistance.</p>
+              <!-- <div class="btn_container"><input type="button" value="VIEW INVOICE" class="btn_"></div>  -->    
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+	  
+	 	<script  data-cfasync='false' src="<?php echo BASEPATH; ?>/js/jquery.validate.min.js"></script>
+		<script data-cfasync='false'>
+		$(document).ready(function () {
+			  	$('.stage-paid').on('show', function () {
+                  window.location.href = './order_status.php?invoice_id=<?php echo $invoiceId; ?>';
+              });
+			
+	         $('input[type=radio][name=kit_type]').change(function() {
+					if (this.value == '1') {
+						// alert("Out of stock");
+						// this.checked = false;
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="15">15</option>');
+					}else if (this.value == '6') {
+						// alert("Out of stock");
+						// this.checked = false;
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="30">30</option>');
+					}else if (this.value == '7') {
+						// alert("Out of stock");
+						// this.checked = false;
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="75">75</option>');
+					}else if (this.value == '2') {
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="5">5</option><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="150">150</option>');
+					}else if (this.value == '12') {
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option><option value="2">2</option><option value="3">3</option>');
+					}else{
+						// alert("Out of stock");
+						// this.checked = false;
+						$("#no_of_kits").html('<option selected="selected" value="">Select No of Kits</option><option value="1">1</option>');
+					}
+				});
+					
+                    $('#kit_form').validate({
+					// Rules for form validation
+						rules : {
+							kit_type : {
+								required : true
+							},
+							no_of_kits : {
+								required : true,
+							},
+							
+						},
+			
+						// Messages for form validation
+						messages : {
+							kit_type : {
+								required : 'Please Select Kit type',
+							},
+							
+							no_of_kits : {
+								   required: "Please enter a number of kits."
+							}								
+						},
+			
+						// Do not change code below
+						errorPlacement : function(error, element) {
+							error.insertAfter(element.parent());
+						}
+					});
+					$("#purchase").click(function(){
+						
+						if($('#no_of_kits').val() == ''){
+							$('#selectkits').empty();
+							$('#selectkits').append('<em for="no_of_kits" class="invalid">Please enter a number of kits.</em>');
+							return false;
+						}
+						else if($('#total_amount').val() == ''){
+							$('#selectkits').empty();
+							$('#selectkits').append('<em for="no_of_kits" class="invalid">Amount should not be blank.</em>');
+							return false;
+						}
+						else
+						{
+								$.ajax({
+	
+								url: "<?php echo BASEPATH; ?>/Invoice",  
+				
+								type: 'POST',
+								
+								data: $("#kit_form").serialize(),
+				
+								dataType: "json",
+				
+								success: function (data) {
+								if(data.success!='')
+								{
+								$('#preloader').hide();
+								var innerhtml='<div class="pay-note">'+
+												  '<div class="pay-n">Note: Kit activation may take upto 1 Hour to 24 Hours'+
+													
+												  '</div>'+
+												  '<div class="pay-btn">'+
+													//'<a href="<?php echo BASEPATH; ?>/Invoicestatus?invoice-id='+data.invoiceId+'"> <input type="button"  style="cursor:pointer;" value="CHECK KIT STATUS AFTER PAYMENT" class="btn_"></a>'+
+													'<form method="post" action="<?php echo BASEPATH; ?>/Invoicestatus" name="form">'+
+													'<input type="hidden" value="<?php echo $authUserNamespace->token;?>" name="token">'+
+													'<input type="hidden" value="'+data.invoiceId+'" id="invoice_id" name="invoice_id">'+
+													'<input type="submit" style="cursor:pointer;" value="CHECK KIT STATUS AFTER PAYMENT" class="btn_">'+
+													'</form>'+
+												  '</div>'+
+												'</div>';
+								if((data.payment_mode == "static") || (data.price_in_btc >15)){
+									 innerhtml+=   '<div  class = "message cyan">Please click on SUBMIT AFTER PAYMENT button or send transaction id regarding payment via contact form or send it through mail on mail id: thegainbitcoinhelp@gmail.com</div>'+
+														'<div class="row-fluid" style = "padding:20px;">'+
+
+														 ' <div class="span12">'+
+															'<div class="row-fluid">'+
+															 ' <div>'+
+																'<p>Please send '+data.price_in_btc+' BTC to</p> '+
+																'<span>1C7WvgjqDH3z82cWUS8MQt9L6mgf8sXtc2</span>'+
+																'<img src = "https://blockchain.info/qr?data=1C7WvgjqDH3z82cWUS8MQt9L6mgf8sXtc2&size=200" />'+
+															   '<div class="btn_container"><input  type="button" class="btn_" id="submit_payment" value="SUBMIT AFTER PAYMENT" onclick="openReqAdmin();"></div>'+
+															   '</div>'+
+															  '</div>'+
+															'</div>'+
+														  '</div>';
+
+										$('#td1').empty();
+										$('#td1').append(data.invoiceId);
+										$('#td2').empty();
+										$('#td2').append(data.noOfKits);
+										$('#td3').empty();
+										$('#td3').append(data.price_in_btc);
+										$('#pmode').val=data.payment_mode;
+									
+									  
+								}
+								else if(data.payment_url && data.payment_url!=null && data.payment_url!='')
+								{
+											
+								 var millis = data.remaining;
+
+									function displaytimer(){
+										var hours = Math.floor(millis / 36e2),
+									 mins = Math.floor((millis % 36e2)/60),
+									 secs = Math.floor((millis % 6e1));
+									 //Here, the DOM that the timer will appear using jQuery
+										  hours = hours < 10 ? '0'+hours : hours;
+										  mins = mins < 10 ? '0'+mins : mins;
+										  secs = secs < 10 ? '0'+secs : secs;
+										if(millis >0){
+										  $('.count').html('<span style ="display:inline;margin-left:10px;">Waiting for payment    </span>'+hours+':'+mins+':'+secs+' <span style = "display:inline;margin-left:10px;">  hours remaining  </span><hr/>');  
+										}else{
+										  $('#payment_block').html('<div style = "padding:40px 20px;"><h4 class = "center">Timeout</h4><p>This invoice has expired. Do not pay to the address of this invoice. Please purchase new kit and make payment</p></div>');  
+										}
+									}
+
+									setInterval(function(){
+										millis -= 1;
+										displaytimer();
+									}, 1000);
+									
+									
+									innerhtml+='<div id = "payment_block" style = "padding:10px;min-height:450px;">'+
+										'<div id ="result" class = "count center" style = "color:#ffa900;" > </div>'+
+										'<h4>Invoice #'+data.invoiceId+'</h4>'+	
+										'<div style = "float:right;padding:20px;margin-right:120px;"><p>Please send '+data.price_in_btc+' bitcoin to this bitcoin address</p>'+
+										'<p style = "text-decoration:underline dashed grey">'+data.input_address+'</p>'+
+										'</div>'+
+										'<div style = "float:right;">'+
+										'<iframe id="if1" style="visibility:visible;border:0px;min-height:300px;" src="'+data.payment_url+'"></iframe>'+
+										'</div>'+
+										'</div>';
+							
+								}
+								else
+								{
+									innerhtml+='<div class = "center" style="text-align: center;">'+
+										'<img src = "<?php echo BASEPATH; ?>/images/oops.png">'+ 
+										'</div>';
+								}
+							
+								$("#select_kit").css("display","none");
+								$("#contractlist").css("display","none");
+								$("#contractlist1").css("display","none");
+								$("#buycontract").css("display","none");
+								$("#confirmation").css("display","none");
+								$("#payment_details").css("display","block");
+								
+								$('#pay-container').empty();
+								$('#pay-container').append(innerhtml);
+								$('#kitselectid').removeClass('active');
+								$('#detailpaymentid').addClass('active');
+							
+								//$('.btn-cancel').attr('href','<?php echo BASEPATH; ?>/Invoicestatus');
+								//$('.arrow-right').attr('href','<?php echo BASEPATH; ?>/Invstatus?bitcoinpay-status=false&invoice-id='+data.invoiceId);
+				
+								}
+								else
+								{
+									$('#preloader').hide();
+									$('#selectkits').empty();
+									$('#selectkits').append('<em for="no_of_kits" class="invalid">'+data.failure+'</em>');
+									return false;
+								}
+								}
+							
+				
+							});
+							return false;
+						}
+					});
+			$("#err_msg").hide();
+	
+			$('#no_of_kits').on('change', function () {
+	
+				var kitNo = $('#no_of_kits option:selected').val();
+                                var cont_id=$('input:radio[name=kit_type]:checked').val();
+                               	$("#err_msg").hide();
+	
+				$("#tot_amnt").hide();
+	
+				$("#submit_button").hide();
+
+				var token = $('#token1').val();
+				$.ajax({
+	
+					url: "<?php echo BASEPATH; ?>/Checkleg/checkkitvalue",
+	
+					type: 'POST',
+	
+					data: {'kitNo':kitNo,'contract_id':cont_id,'token':token},
+	
+					success: function(data) { 
+                                                var obj = JSON.parse(data);
+												
+                                               	if (obj.success!='') {
+
+							$("#submit_button").show(); 
+							$("#tot_amnt").show();
+	
+							$("#total_amount").val(obj.data);
+	
+							$("#real_total_amount").val(obj.data);
+	
+							$('#digit_show').hide();
+	
+							$('#phy_show').hide();
+	
+							$('#physical').prop('checked', false);
+	
+							$('#digital').prop('checked', false);
+                                                    } else {
+	
+							alert(obj.failure);
+							alert(obj.failure);	
+							//$(this).closest("li").attr('id','');
+	
+							console.log(obj.failure);
+	
+							$("#err_msg").show();
+	
+							$("#submit_button").hide();
+	
+							$("#display-err").html(obj.failure);
+	
+						}
+	
+	
+	
+					}
+	
+				});
+				
+				
+	
+			});
+	
+		});
+		function checkValue(value) {
+
+			var kitValue = $('#total_amount').val();
+	
+			if (value == 0) {
+	
+				$.ajax({
+	
+					url: "../controller/kits.php?m=checkShipValue&kitAmount=" + kitValue,
+	
+					type: 'GET',
+	
+					dataType: "json",
+	
+					success: function (data) {
+	
+						console.log(data);
+	
+						console.log(data["errCode"]);
+	
+						//data["errCode"] =parseInt(data["errCode"]);submit_button
+	
+						if (data["errCode"] == -1) {
+	
+							$("#total_amount").val(data["errMsg"]);
+	
+						} else {
+	
+							alert(data["errMsg"]);
+	
+							//$(this).closest("li").attr('id','');
+	
+							console.log(data["errMsg"]);
+	
+							$("#err_msg").show();
+	
+							$("#submit_button").hide();
+	
+							$("#display-err").html(data["errMsg"]);
+	
+						}
+	
+	
+	
+					}
+	
+				});
+	
+			} else {
+	
+				var kitValue1 = $('#real_total_amount').val();
+	
+				$("#total_amount").val(kitValue1);
+	
+			}
+	
+		}
+		
+		 $(window).load(function () {
+
+			$('#physical').click(function () {
+	
+				$('#phy_show').show();
+	
+				$('#digit_show').hide();
+	
+			});
+	
+			$('#digital').click(function () {
+	
+				$('#digit_show').show();
+	
+				$('#phy_show').hide();
+	
+			});
+	
+		});
+		
+
+		</script>
+		
+		<script data-cfasync='false'>
+			function purchase(formid)
+			{
+				
+						$.ajax({
+	
+								url: "<?php echo BASEPATH; ?>/Kitadd/buycontract",
+				
+								type: 'POST',
+								
+								data: $("#"+formid).serialize(),
+				
+								dataType: "json",
+				
+								success: function (data){
+									if(data.failure && data.failure!='')
+									{
+										$('.err').show();
+										$('.err').empty();
+										$('.err').append(data.failure);
+									}
+									else
+									{
+											if(data && data.amount!=null && data.amount!='')
+											{
+												$("#contractlist").css("display","none");
+												$("#contractlist1").css("display","none");
+												$("#select_kit").css("display","none");
+												$("#payment_details").css("display","none");
+												$("#confirmation").css("display","none");
+												$("#buycontract").css("display","block");
+												
+												$("#contractamount").text(data.amount); 
+												$("#total_amount1").val(data.value);
+												$("#type").val(data.type);
+												$("#kt_type").val(data.k_type);
+												$("#contract_type1").val(data.contract_type);
+												$("#hiddencontractId").val(data.contract_id);
+												$('#kitselectid').removeClass('active');
+												$('#contractid').removeClass('active');
+												$('#buycontractid').addClass('active');
+												if(data.k_type=='hardware')
+												{
+													$('#ship_addr').addClass('openpop');
+												}
+												else
+												{
+													$('#ship_addr').removeClass('openpop');
+												}
+										
+											}
+									}
+								}
+				
+							});
+				
+			}
+			function show(id)
+			{
+			
+				//$("#contractlist").css("display","block");
+				//$("#contractlist1").css("display","block");
+					if($('#contractlist').css('display') == 'block')
+					{
+						$('#contractlist').slideToggle('swing');
+						$('#contractid').removeClass('active');
+					}
+					if($('#contractlist').css('display') == 'none')
+					{
+						$('#contractlist').slideToggle('swing');
+						$('#contractid').addClass('active');
+					 }
+					 if($('#contractlist1').css('display') == 'block')
+					{
+						$('#contractlist1').slideToggle('swing');
+						$('#contractid').removeClass('active');
+					}
+					 if($('#contractlist1').css('display') == 'none')
+					 {
+						$('#contractlist1').slideToggle('swing');
+						$('#contractid').addClass('active');
+					 }			$("#select_kit").css("display","none");
+									$("#payment_details").css("display","none");
+									$("#confirmation").css("display","none");
+									$("#buycontract").css("display","none");
+									$('#kitselectid').removeClass('active');
+									$('#detailpaymentid').removeClass('active');
+									//$('#contractid').addClass('active');
+			}
+		
+			
+			 function clickme(id){
+				/*//var trigger = $(this);
+				//var target = trigger.next('dd');
+				alert($('#'+id).css('display'));
+				if ($('#'+id).css('display') == 'none')
+				{
+					alert("inside if");
+				  ($('#'+id).removeClass('active'));
+				  ($('#'+id).children('dd').slideUp());
+				  target.slideDown(function(){
+					  var elemPos = $(this).offset(); 
+					  if($(window).width() < 768)
+					  { 
+						$('body,html').animate({ scrollTop: elemPos.top-60 }, 1000)
+					  }
+					  else
+					  {
+						$('body,html').animate({ scrollTop: elemPos.top-60 }, 1000)
+					  }
+				  });
+
+				  trigger.parent('dl').addClass('active');
+				}
+				else
+				{
+				alert("inside else");
+				  trigger.parent('dl').parent('.accordion').children('dl').removeClass('active');
+				  trigger.parent('dl').parent('.accordion').children('dl').children('dd').slideUp();
+				}*/
+
+			  }
+
+				function openReqAdmin()
+				{
+					
+					$('#req-admin-payment').addClass('openpop');
+				}
+				function closeReqAdmin()
+				{
+					$('#req-admin-payment').removeClass('openpop');
+				}
+				function requestPayment()
+				{
+					var username = "<?php echo $authUserNamespace->user ?>";
+					var invoiceId = $('#td1').html();
+					var noOfKits = $('#td2').html();
+					var payment_mode = $('#pmode').val();
+					if(payment_mode=='')
+					{
+						payment_mode='static';
+					}
+					//var payment_mode = "<?php echo !empty($payment_mode)?$payment_mode:"static"; ?>";
+					var txid = $("#txid").val();
+					if((txid).trim()==''){
+						$(".errortext").html('<label for="" class="lblTxt" style="color:red;">Please enter Transaction ID.</label>');
+						return false;
+					}
+					$.ajax({
+						url: "<?php echo BASEPATH; ?>/Checkleg/requestpayment",
+						type: 'POST',
+						data: {username:username,invoiceId:invoiceId,noOfKits:noOfKits,payment_mode:payment_mode,txid:txid},
+						success: function (data) {
+							if(data = "success"){
+								//window.location = "<?php echo BASEPATH; ?>/Orderhistory";
+							}
+						}
+					
+					}); 
+				}
+		</script>

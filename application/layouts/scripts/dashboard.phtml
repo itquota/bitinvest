@@ -1,0 +1,499 @@
+<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth'); ?>
+
+<?php  
+	$cms_obj = new Gbc_Model_DbTable_Cms();
+	$Gbc_Model_Custom_func_obj=new Gbc_Model_Custom_CommonFunc();
+	$cmsNews=$cms_obj->fetchRow($cms_obj->select()
+			->where("handler='news' AND status='Active'")); 
+
+if (isset($authUserNamespace->user) && isset($authUserNamespace->user_type) && ($authUserNamespace->user_type=='binary'))
+{		$user = new Gbc_Model_DbTable_Userinfo();
+		$ver_row = $user->fetchRow($user->select()
+											 ->where("username='".$authUserNamespace->user."'"));
+											 
+		if($ver_row->isVerified!=1)
+		{
+			$desc=$cms_obj->fetchRow($cms_obj->select()
+			->where("handler='require_terms'")); 
+						 
+		}
+		
+}
+
+	$seminar_obj = new Gbc_Model_DbTable_SpecialPermission();
+	$Permissions=$seminar_obj->fetchRow($seminar_obj->select()
+		); 
+		//echo $ver_row->isVerified;exit;
+		
+	$country_obj=new Gbc_Model_DbTable_Countries();
+	$country_data=$country_obj->fetchAll($country_obj->select()
+											); 
+	$manage_link_obj=new Gbc_Model_DbTable_Managelinks();	
+
+	$manage_data=array();
+	if(!empty($ver_row) && sizeof($ver_row)>0 && !empty($ver_row->country))
+	{			
+
+		$manage_data=$manage_link_obj->fetchAll($manage_link_obj->select()
+										->setIntegrityCheck(false)
+										->from(array('m'=>"manage_links"),array('m.id','m.parent'))
+										->join(array('n'=>'navigation_master'),"n.id = m.nav_id",array('n.nav_link','n.nav_controller'))
+										->where("m.country_id='".$ver_row->country."' and m.status=1 and m.nav_id=m.parent")
+										->order("n.id asc"));
+									 
+	}
+	
+	$user_category_obj = new Gbc_Model_DbTable_Usercategory();
+	$user_category_data1=array();								
+	$user_category_data1=$user_category_obj->fetchAll($user_category_obj->select()
+										->setIntegrityCheck(false)
+										->from(array('u'=>"user_category"),array('u.id'))
+										->joinLeft(array('l'=>'lov'),"l.id = u.category_id",array('l.value'))
+										->where("u.username='".$authUserNamespace->user."' and l.name='category' and l.status='1'")
+										  );
+										  
+		$lov_obj = new Gbc_Model_DbTable_Lov();
+			$cat_count_query = $lov_obj->fetchRow($lov_obj->select()
+									->from(array('lov'),array('count(name) as cat_count'))
+									->where("name='category' and status='1'"));
+									
+	if(!empty($cat_count_query) && sizeof($cat_count_query)>0)
+	{
+		$category_count=$cat_count_query->cat_count;
+	}
+	else 
+	{
+		$category_count=0;
+	}
+	
+try {
+	$user_category_data=array();								
+	/*$user_category_data=$user_category_obj->fetchAll($user_category_obj->select()
+										->setIntegrityCheck(false)
+										->from(array('u'=>"user_category"),array('u.id'))
+										->joinLeft(array('l'=>'lov'),"l.id = u.category_id",array('l.value'))
+										->where("u.username='".$authUserNamespace->user."' and l.name='category' and l.status='1'")
+										  ); */
+	$user_category_data=$user_category_data1;
+
+}catch(Exception $e)	
+{
+	echo $e->getMessage();exit;
+}
+$category='';
+if(!empty($user_category_data))	
+{					 
+	if($category_count!=sizeof($user_category_data))
+	{
+		$enablePop=1;									  
+		if(!empty($user_category_data) && sizeof($user_category_data)>0)
+		{
+			
+			for($uc=0;$uc<sizeof($user_category_data);$uc++)
+			{
+				if($uc==0)
+				{
+					$category=$category.$user_category_data[$uc]['value'];
+				}
+				else 
+				{
+					$category=$category."and ". $user_category_data[$uc]['value'];
+				}
+			}
+		}
+	}
+	else 
+	{
+		$enablePop=0;	
+	}
+}
+else 
+{
+	$enablePop=0;	
+}
+	
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+<title><?php echo $this->title; ?></title>
+
+	<link rel='shortcut icon' href='images/favicon/favicon-32x32.png' type='image/x-icon' />
+
+
+<?php echo !empty($SharingTag)?$SharingTag:''; ?>
+<?php
+if(!empty($FacebookMetaTags)){
+	echo $FacebookMetaTags;
+}else{
+	echo '<meta name="description" content="overview &amp; stats" />';
+}
+
+?>
+
+  <!-- Bootstrap Core CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/bootstrap.min.css" rel="stylesheet">
+  <!-- MetisMenu CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/metisMenu.min.css" rel="stylesheet">
+  <!-- Timeline CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/timeline.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="<?php echo BASEPATH; ?>/css/sb-admin-2.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css/style.css" rel="stylesheet">
+  <link href="<?php echo BASEPATH; ?>/css/jquery.dataTables.min.css" rel="stylesheet">
+
+  	 
+  	  	  <script src="<?php echo BASEPATH; ?>/js/jquery-1.11.2.min.js"></script>
+ <script src="<?php echo BASEPATH; ?>/js/d3.v3.min.js"></script>
+      <!-- Bootstrap Core JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/bootstrap.min.js"></script>
+      <!-- Metis Menu Plugin JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/metisMenu.min.js"></script>
+	  
+	   <script src="<?php echo BASEPATH; ?>/js/metisMenu.js"></script>
+      <!-- Morris Charts JavaScript -->
+      <script src="<?php echo BASEPATH; ?>/js/raphael-min.js"></script>
+
+<!-- <script src="js/morris.min.js"></script>
+  <script src="js/morris-data.js"></script>-->
+
+  <!-- Custom Theme JavaScript -->
+  <script src="<?php echo BASEPATH; ?>/js/sb-admin-2.js"></script> 
+  <!-- network Js-->
+
+		
+		<link href="<?php echo BASEPATH; ?>/css/responsive.bootstrap.min.css" rel="stylesheet">
+		<link href="<?php echo BASEPATH; ?>/css/dataTables.bootstrap.min.css" rel="stylesheet">
+		<script src="<?php echo BASEPATH; ?>/js/jquery-1.12.3.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/jquery.dataTables.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/dataTables.bootstrap.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/dataTables.responsive.min.js"></script>
+		<script src="<?php echo BASEPATH; ?>/js/responsive.bootstrap.min.js"></script>  
+
+<script type="text/javascript" data-cfasync="false"
+	src="<?php echo BASEPATH; ?>/js/data-tables-script.js"></script>
+	
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','<?php echo BASEPATH; ?>/js/analytics.js','ga');
+
+  ga('create', 'UA-73459138-1', 'auto');
+  ga('send', 'pageview');
+
+</script>	
+
+<style>
+.adjustment{
+	width: 53.3333%;
+}
+ .popup_container
+{
+	background-image:url("images/popup-bg.png");
+	background: #fff none repeat scroll 0 0;
+	width:100%;
+	z-index:9999;
+	position:fixed;
+	width: 57% !important;
+	top: 8%;
+	display:block;
+	left: 16% !important;
+
+} 
+
+#innerpage-wrapper
+{
+	   margin: 0 !important;
+}
+
+
+@media only screen and (max-width: 767px){
+			
+			#mobileadjust{
+					float: right;
+			}
+
+		}
+	
+				
+			
+        
+
+</style>
+</head>
+<body oncontextmenu="return false">
+
+  <div id="wrapper">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-static-top headerbg" role="navigation" >
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        
+        <a class="navbar-brand" href="<?php echo BASEPATH; ?>/Dashboard"><img src="<?php echo BASEPATH; ?>/images/logo.png" alt=""></a>
+        
+    </div>
+    <!-- /.navbar-header -->
+
+    <div class="col-lg-7 visible-lg hidden-md hidden-sm hidden-xs adjustment">
+        <marquee class="headerTxt"> <?php echo isset($cmsNews->description)? $cmsNews->description:'';?>
+        </marquee>
+    </div>
+
+
+<div class="mob-nav">
+	<div id="google_translate_element" class="google-translate"></div> 
+    <ul class="nav navbar-top-links navbar-right" id="mobileadjust">
+        <li>
+     
+        </li>
+
+        <li>
+            <a data-toggle="modal" href="<?php echo BASEPATH; ?>/Dashboard/logout"><i class="is logout"></i> <!-- <img src="images/logout.png" alt=""> -->
+           </a> </li>
+
+
+        </ul>
+	 
+    </div>
+
+
+        </nav>
+   
+
+
+
+
+<?php echo $this->layout()->content;?>
+
+ <footer class="footer">
+      <div class="container copyrightSection center-text">
+       <div> <p class="pull-left offset-sm-float ">Copyright &#169; 2015 GAINBITCOIN All rights reserved.</p>
+
+          <ul class="list-inline pull-right  offset-sm-float">
+               <li>
+                   <a href="https://www.facebook.com/thegainbitcoin"> <img src="<?php echo BASEPATH; ?>/images/facebook.png" alt=""></a>
+               </li>
+
+                <li>
+                   <a href="#">  <img src="<?php echo BASEPATH; ?>/images/googleplus.png" alt=""></a>
+               </li>
+
+                <li>
+                    <a href="https://twitter.com/thegainbitcoin"> <img src="<?php echo BASEPATH; ?>/images/twitter.png" alt="">
+               </a></li><a href="#">
+               
+              
+            </a></ul>
+        </div>
+  
+      
+          
+      </div>
+    </footer>
+
+       <!-- /#Footer End-wrapper Here -->
+	
+ </div>
+</body>
+<script>
+function changepagination()
+{
+	if($("#data-table-simple_previous").length == 0) {
+
+	}
+	else{
+
+	/* var innerhtml='<img alt="" src="images/leftarw.png">';
+	$("#data-table-simple_previous").empty();
+	$("#data-table-simple_previous").append(innerhtml); */
+	
+	} 
+	
+	/* if($("#data-table-simple_next").length == 0) { 
+	
+	}
+	else{
+
+	var innerhtml='<img alt="" src="images/rightarw.png">';
+	$("#data-table-simple_next").empty();
+	$("#data-table-simple_next").append(innerhtml);
+	}*/
+}
+
+function closeoffer()
+{
+	$('#myModal').removeClass('openpop');
+}
+
+function showmyoffer()
+{
+	$('#myModaloffer').addClass('openpop');
+}
+function hidemyoffer() 
+{
+	$('#myModaloffer').removeClass('openpop');
+}
+
+function contactDetails()
+{
+			var fullname=$('#name').val();
+			var username=$('#username').val();
+			var email_address=$('#email_address').val();
+			var mobile=$('#mobile').val();
+			var captcha=$('#captcha').val();
+			var ol_captcha=$('#ol_captcha').val();
+			var country=($('#countryCode :selected').val());
+			var country_name=$('#country_name').val();
+			
+	if(email_address!='')
+	{
+	    var atpos = email_address.indexOf("@");
+	    var dotpos = email_address.lastIndexOf(".");
+	}
+
+	if(!fullname || fullname=='' )
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide Full name.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+
+	else if(!email_address || email_address=='')
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide Email.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	else if(atpos<1 || dotpos<atpos+2 || dotpos+2>=email_address.length)
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide valid Email.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	else if(!mobile || mobile=='' )
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide Mobile.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	else if(!country_name || country_name=='' )
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide Country.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	else if(!captcha || captcha=='' )
+	{
+		$("#err_div").css("display", "block");
+		document.getElementById("err_div").innerHTML="";
+		document.getElementById("err_div").innerHTML="Please provide Captcha.";
+		$('#err_div').css('display','block');
+		$('#err_div').css('color','red');
+		return false;
+	}
+	else
+	{
+		var datastring = $("#contactdet").serialize();
+				 $.ajax({
+						url:"<?php echo BASEPATH; ?>/Login/savecontact",
+						type: "POST",    
+					    data: dataString,
+				  		success: function(response)
+			      		{
+						 $("#err_div").css("display", "block");
+						document.getElementById("err_div").innerHTML=response;
+						$('#notify_popup_container ').removeClass('openpop');
+						
+			      			
+			      		}
+					});
+	
+	}
+}
+function closeCatPopup()
+{
+	$('#req-admin').removeClass('openpop');
+}
+
+function selectCountry(opt)
+{
+	alert(opt.value);
+	var code=opt.value;
+	//var name=$("#country_name option[value="+ccode+"]").text();
+	//alert(name);
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Login/getcountry",
+			type: "POST",    
+		    data: "code="+code+"&type=ccode",
+	  		success: function(response)
+   		{
+			 if(response!='fail')
+			 {
+				alert(response);
+				//$('#country_name option[value="response"]');
+				$("#country_name").val(response);
+			 }
+			
+   			
+   		}
+		});
+	
+}
+function selectCcode(opt)
+{
+	var code=opt.value;
+
+
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Login/getcountry",
+			type: "POST",    
+		    data: "code="+code+"&type=country", 
+	  		success: function(response)
+		{
+			 if(response!='fail')
+			 {
+				alert(response);
+				//$('#country_name option[value="response"]');
+				$("#countryCode").val(response);
+			 }
+			
+			
+		}
+		});
+}
+</script>
+	   <script src="<?php echo BASEPATH; ?>/js/common.js"></script> 
+	   <script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'af,de,en,es,la,ml,ms,nl,ta,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</html>
+

@@ -1,0 +1,447 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+<?php //echo $authUserNamespace->id;exit; ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mootools-1.2.4-core-yc.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/js/mediaboxAdv-1.2.4.js"></script>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/css/mediaboxAdvWhite.css" rel="stylesheet"/>
+<link media="screen" type="text/css" href="<?php echo BASEPATH ;?>/shared/skillboxaranca.css" rel="stylesheet"/>
+<script type="text/javascript" src="<?php echo BASEPATH; ?>/shared/skillslideraranca.js"></script>
+<?php 
+if(isset($this->task) && sizeof($this->task) > 0)
+{
+$taskresult = $this->task;
+}
+?>
+<?php if(isset($this->teammember)) foreach($this->teammember as $tm) ?>
+
+
+<script type="text/javascript">
+	
+
+	function save1()
+	{		
+			saveForm('<?php echo BASEPATH;?>/task/addselftask','addcselftask_form','addcselftask_form');
+	}
+
+	function save2()
+	{
+		<?php if($authUserNamespace->designation_id=="56" || $authUserNamespace->designation_id=="57") {?>
+		window.location.href = "<?php echo BASEPATH;?>/task/index";
+		<?php } else if($authUserNamespace->designation_id=="58" || $authUserNamespace->designation_id=="14"){?>
+		window.location.href = "<?php echo BASEPATH;?>/analyst/index";
+		<?php }?>
+	}
+	function isNumber(evt) 
+	{
+	    evt = (evt) ? evt : window.event;
+	    var charCode = (evt.which) ? evt.which : evt.keyCode;
+	    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+	        return false;
+	    }
+	    return true;
+	}
+	
+
+
+	function inputfile(file)
+	{
+		jAlert("File Uploaded Successfully");
+		var upload = $('#upload').val(file);
+	}
+
+
+	function download123()
+	{
+		link = $('#upload').val();
+		if(link !="")
+		{
+		var url = "<?php echo BASEPATH;?>"+link;
+		window.open(url,'_blank');
+		}
+		else
+		{
+			alert('Please Upload a file for download');
+		}	
+	}
+	
+	function populate_dropdown(tasktype,check)
+	{
+		var task=tasktype;
+		
+		var counter="0";
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/task/addselftask",
+			type: "POST",    
+		    data: "tasktype="+tasktype,
+		    success: function(response)
+		    { 
+			   
+			  
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('projectname');
+						
+						for(k=option_ele.length;k>0;k--)
+						{
+							
+							option_ele.remove(k);
+						}
+					
+						for(m=0;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('projectname').options[++j]=option_element;
+
+								if(check=="1"){
+								<?php if(isset($taskresult->project_id) && $taskresult->project_id!="")
+								{?>
+								var pro_ID = '<?php echo $taskresult->project_id;?>';
+								if(jsonObject[m]['id']==pro_ID)
+								{
+									document.getElementById('projectname').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+								 
+							}
+						
+				}
+				
+					
+			}
+		});
+		
+	}
+
+	function getteammember(projecttype,projectid,check)
+	{ 
+		if(projecttype=="")
+			{
+					var ptype=document.getElementById('projecttype').value;
+			}
+		else
+			{
+			var ptype=projecttype;
+			}
+		
+		//alert(projectid);
+		//alert(ptype);
+		var counter="0";
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/task/getteammember",
+			type: "POST",    
+		    data: "ptype="+ptype+"&pid="+projectid,
+		    success: function(response)
+		    { 
+			   
+			  
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('teammember');
+						if (jsonObject[0]['managername']!="")
+						{
+							document.getElementById('mname').innerHTML=jsonObject[0]['managername'];
+						}
+						
+						for(k=option_ele.length;k>0;k--)
+						{
+							
+							option_ele.remove(k);
+						}
+					
+						for(m=1;m<jsonObject.length;m++)
+							{
+							
+								var option_element= new Option(jsonObject[m]['name'],jsonObject[m]['id']);
+								document.getElementById('teammember').options[++j]=option_element;
+
+								if(check=="1"){
+								<?php if(isset($taskresult->member_id) && $taskresult->member_id!="")
+								{?>
+								var member_ID = '<?php echo $taskresult->member_id;?>';
+								if(jsonObject[m]['id']==member_ID)
+								{
+									document.getElementById('teammember').options[j].selected = "selected";
+								}
+								<?php
+								 }?>
+								}
+								 
+							}
+						
+				}
+				
+					
+			}
+		});
+		
+	}
+	function getprojectmanagername(projecttype,projectid)
+	{
+		if(projecttype=="")
+		{
+				var ptype=document.getElementById('projecttype').value;
+		}
+	else
+		{
+		var ptype=projecttype;
+		}
+		if(projectid=="")
+		{
+			document.getElementById('mname').innerHTML="";
+		}
+
+		$.ajax({
+			url:"<?php echo BASEPATH; ?>/task/getmanagername",
+			type: "POST",    
+		    data: "ptype="+ptype+"&pid="+projectid,
+		    success: function(response)
+		    { 
+				j=0;
+				if((response!="") && (response!=null))
+				 { 
+				 	var jsonObject = JSON.parse(response);
+						var option_ele=document.getElementById('teammember');
+						if (jsonObject[0]['projectstartdate']!="")
+						{
+							document.getElementById('projectstartdate').value =jsonObject[0]['projectstartdate'];
+						}
+						
+						if (jsonObject[0]['managername']!="")
+						{
+							document.getElementById('mname').innerHTML=jsonObject[0]['managername'];
+						}
+				}
+				
+			}
+		});
+	}
+
+
+</script>
+<style>
+#holder
+{	
+	margin-bottom:0px;
+}
+
+
+#contentbg .frame
+{
+	background: none repeat scroll 0 0 rgb(255, 255, 255);
+    border-bottom: 1px solid rgb(206, 209, 212);
+    border-left: 1px solid rgb(214, 214, 214);
+    border-right: 1px solid rgb(214, 214, 214);
+    height: auto;
+    margin: 0 auto;
+    padding: 0 0 20px;
+    width: 980px;
+	min-height: 0;
+}
+</style>
+</head>
+<body>
+
+<?php $authUserNamespace = new Zend_Session_Namespace('Aranca_Auth');?>
+<?php 
+$username="";
+$designation="";
+if(isset($authUserNamespace->id) && $authUserNamespace->id!=""){
+	
+	$user = new Aranca_Model_DbTable_Emp();
+			$user_row = $user->fetchRow($user->select()
+							 ->setIntegrityCheck(false)
+							 ->from(array('m'=>DATABASE_PREFIX."emp"),array("m.firstname as teammembername",'m.designation_id as d_id'))
+							 ->joinLeft(array('u'=>DATABASE_PREFIX.'lov'),"m.designation_id = u.id",array('u.value as value1'))
+							 ->where("m.id=($authUserNamespace->id)"));
+							 
+$username=$user_row->teammembername;
+$designation=$user_row->value1;
+	
+}
+?>
+
+<form  action="" id="addcselftask_form" name="addcselftask_form" method="post" enctype="multipart/form-data">
+<div id="subheader">
+	<div class="wrapper">
+	<input name="task" id="task" type="hidden" value="task"></input>
+	<input name="projectstartdate" id="projectstartdate" type="hidden" errortag="Task Start Date" value=""></input>
+    	<div style="float:right"><strong>Project Manager</strong>:<span id="mname" name="mname" ></span></div>
+  	  <h5 style="font-size: 20px;">Create Self Task</h5>
+        <hr />
+        <br class="clear">
+        <div id="holder">
+        	<label>Task Title<em>*</em></label>
+            <input name="tasktitle"  id="tasktitle" type="text" value="<?php if(isset($taskresult->title) && $taskresult->title !=""){ echo $taskresult->title;}?>" class="field" style="width:660px;" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly<?php }?> errortag="Task Title"/>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="tasktitle_error">&nbsp;</span>
+        </div>
+ <?php
+global $rand;
+function RandNumber($e)
+{
+ $rand="";
+ for($i=0;$i<$e;$i++){
+ $rand =  $rand .  rand(0, 9); 
+ }
+ return $rand;
+
+ }
+ 
+ ?>        
+        <?php $newtaskid = RandNumber(10); ?>
+  		<div id="holder" style="margin:0;width: 130px;"><strong>Task ID:</strong> <input class="disabledInput" style="width:78px;float:right;" type="text" value='<?php if(isset($taskresult->task_id) && $taskresult->task_id !=""){ echo $newtaskid;}else{ echo RandNumber(10); }?>'  name="taskid" id="taskid" readonly/></div>
+        
+        <div id="holder" style="width:223px;">
+        	<label style="margin-left:-14px;">Task Category<em>*</em></label>
+          <select name="taskcategory" id="taskcategory" class="field" errortag="Task Category" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+          <option value="">Please Select</option>
+          <?php	foreach ($this->tasktype as $tasktype){?>
+          <option  <?php if(isset($taskresult->task_type)) {if($tasktype->id == $taskresult->task_type) {?> selected="selected" <?php }} ?>  value="<?php  if(isset($tasktype->id) && $tasktype->id!=""){ echo $tasktype->id;}?>"><?php echo $tasktype->value;?></option>
+		  <?php } ?>
+          </select>
+           <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="taskcategory_error">&nbsp;</span>
+        </div>
+        <div id="holder" style="margin:0;width:231px;">
+        	<label style="width:80px;">Project Type<em>*</em></label>
+        <select  name="projecttype" id="projecttype" class="field" errortag="Project Type" onchange="populate_dropdown(this.value,'0');" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+            <option value="">Please Select</option>
+          
+          	<option  <?php if(isset($taskresult->project_type)) {if('adhoc' == $taskresult->project_type) {?> selected="selected" <?php }} ?> value="adhoc">Adhoc Project</option>
+          	<option  <?php if(isset($taskresult->project_type)) {if('contract' == $taskresult->project_type) {?> selected="selected" <?php }} ?> value="contract">Sub Project</option>
+        </select>
+         <div class="clearBoth">&nbsp;</div>
+      	<span class="message" id="projecttype_error">&nbsp;</span>
+      </div>
+	  <div id="holder" style="margin:0;width:277px;">
+        	<label style="width:127px;">Project Name<em>*</em></label>
+        <select  name="projectname" id="projectname" class="field" errortag="Project Name" <?php if($authUserNamespace->designation_id=="57" || $authUserNamespace->designation_id=="56" || $authUserNamespace->designation_id=="14"){?>onchange="getteammember('',this.value,'0')" <?php }else {?> onchange="getprojectmanagername('',this.value)"<?php }?> <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+		<option value="">Please select</option>
+            
+        </select>
+         <div class="clearBoth">&nbsp;</div>
+      	<span class="message" id="projectname_error">&nbsp;</span>
+      </div><!--
+        <div id="holder" style="margin:0;width:222px;">
+        	<label>Priority<em>*</em></label>
+          <select name="priority" id="priority" class="field" errortag="Priority" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>>
+              <option value="">Please Select</option>
+              <?php	foreach ($this->priority as $priority){?>
+          	  <option <?php if(isset($taskresult->priority_id)) {if($priority->id == $taskresult->priority_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($priority->id) && $priority->id!=""){ echo $priority->id;}?>"><?php echo $priority->value;?></option>
+		  	  <?php } ?>
+          </select>
+          <div class="clearBoth">&nbsp;</div>
+      	<span class="message" id="priority_error">&nbsp;</span>
+      </div>-->
+        
+        
+        <div <?php if($authUserNamespace->designation_id=="58"){ ?> style="display:none;" <?php } ?> id="holder" style="margin:0 16px 0 -14px;width:237px;">
+        	<label>Team Member<em>*</em></label>
+            <select name="teammember" id="teammember" class="field"  errortag="Team Member" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>  >
+              <?php if($authUserNamespace->designation_id=="58"){?><option value="<?php echo $tm->id1;?>"><?php echo $tm->name1;?></option><?php } else {?>
+              <option value="">Please Select</option> <?php }?>
+              <!--<?php	foreach ($this->teammember as $teammember){?>
+          	  <option   <?php if(isset($taskresult->member_id)) {if($teammember->id1 == $taskresult->member_id) {?> selected="selected" <?php }} ?> <?php if($authUserNamespace->id==$teammember->id1){?> selected="selected" <?php } ?> value="<?php  if(isset($teammember->id1) && $teammember->id1!=""){ echo $teammember->id1;}?>"><?php echo $teammember->name1;?></option>
+		  	  <?php } ?>
+            --></select>
+            <!--<input type="hidden" name="teammember" value="<?php echo $authUserNamespace->id; ?>" />
+            --><div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="teammember_error">&nbsp;</span>
+        </div>
+        
+        <div id="holder" style="margin:0px;width:234px;">
+        	<label <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin-left:-9px;" <?php } ?>>Budgeted Hrs<em>*</em></label>
+            <input name="budgetedhrs" id="budgetedhrs" type="text" onkeypress="return isNumber(event)" value="<?php if(isset($taskresult->budgeted_hrs) && $taskresult->budgeted_hrs !=""){ echo $taskresult->budgeted_hrs;}?>" class="field" errortag="Budgeted Hrs" <?php if(isset($this->view1) && $this->view1!= "" ){?> readonly <?php }?>/>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="budgetedhrs_error">&nbsp;</span>
+        </div>
+        <?php if($authUserNamespace->designation_id=="58"){ ?>
+        <div id="holder" <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin:0px;width:560px;" <?php }else{ ?>style="margin:0px;width:452px;"<?php }?>>
+        	<label <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin-left: 15px;" <?php }?>>Start Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($taskresult->st_date) && $taskresult->st_date !=""){ echo $taskresult->st_date;}else{?><?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>  errortag="Start Date" readonly onClick="GetDate(this);" style="width:167px"/>
+            <label <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin-left: 15px;" <?php }?>>End Date<em>*</em></label><input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($taskresult->end_date) && $taskresult->end_date !=""){ echo $taskresult->end_date;}else{?><?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?> errortag="End Date" readonly onClick="GetDate(this);" style="width:167px"/>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="enddate_error" style="width:41%;">&nbsp;</span>
+      		<span class="message" id="startdate_error" style="width:41%;margin-right:51px;">&nbsp;</span>
+      </div>
+      <?php }else{?>
+      		 <div id="holder" <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin:0px;width:560px;" <?php }else{ ?>style="margin:0px;width:452px;"<?php }?>>
+        	<label <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin-left: 15px;" <?php }?>>Start Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($taskresult->st_date) && $taskresult->st_date !=""){ echo $taskresult->st_date;}else{?><?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>  errortag="Start Date" readonly onClick="GetDate(this);" style="width:130px"/>
+            <label <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin-left: 15px;" <?php }?>>End Date<em>*</em></label><input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($taskresult->end_date) && $taskresult->end_date !=""){ echo $taskresult->end_date;}else{?><?php }?>" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?> errortag="End Date" readonly onClick="GetDate(this);" style="width:130px"/>
+            <div class="clearBoth">&nbsp;</div>
+            <span class="message" id="enddate_error" style="width:41%;">&nbsp;</span>
+      		<span class="message" id="startdate_error" style="width:49%;">&nbsp;</span>
+      </div>
+      
+      <?php }?>
+      <div id="holder" <?php if($authUserNamespace->designation_id=="58"){ ?> style="margin:10px 0px 0px 0px;" <?php }else{ ?>style="margin: 0px 0px 0px -244px;"<?php }?>>
+        	<label>Comments </label>
+        	<textarea class="field" name="comments" style="height:50px;width:300px;resize:none;" id="comments" errortag="Comments" <?php if(isset($this->view1) && $this->view1!= "" ){?> disabled="disabled" <?php }?>><?php if(isset($taskresult->comments) && $taskresult->comments !=""){ echo $taskresult->comments;}?></textarea>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="comments_error">&nbsp;</span>
+       </div>
+  </div>
+	<br class="clear" />
+</div>
+ <!-- </form>
+<form action="" id="upload_form" name="upload_form" method="post" enctype="multipart/form-data"> -->
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+   	  	  <div id="flow_left" class="flow_left" style="text-align:left;margin-top:-11px;">
+
+
+   	  	  <input name="upload" id="upload" type="hidden" value="<?php if(isset($taskresult->file_path) && $taskresult->file_path !=""){ echo $taskresult->file_path;}?>" ></input>
+<!--   	  	  <a href="#" class="createbg" onclick="download123();" <?php if(isset($this->view1) && $this->view1!= "" ){?>style="display:none";<?php }?>>Download</a>-->
+<!--   	  	  	<a href="<?php echo BASEPATH ;?>/task/uploadfile" rel="lightbox[external 604 185]" class="createbg" <?php if(isset($this->view1) && $this->view1!= "" ){?>style="display:none";<?php }?>>Upload</a>-->
+   	 			<a rel="<?php echo BASEPATH ;?>/task/uploadfile/newtaskid/<?php echo $newtaskid;?>/editid/<?php if(isset($this->uid) && $this->uid!= "" ){echo $this->uid; }?> " href="javascript:void(0);" class="createbg openskillbox" <?php if(isset($this->view1) && $this->view1!= "" ){?>style="display:none";<?php }?>>Upload</a> 	  	  	
+			<div style="color:#666666;font-style:italic; <?php if(isset($this->view1) && $this->view1!= "" ){?>display:none";<?php }?>">(Upload Supporting file for the task, if any)</div>
+   	  	  </div>
+
+          <div class="flow_right"><input name="Submit" type="button" <?php if(isset($this->view1) && $this->view1!= "" ){?> value="Back" <?php }else{?>value="Submit"<?php }?> class="searchbg" <?php if(isset($this->view1) && $this->view1!= "" ){?>onclick="save2();"<?php }else{?>onclick="save1();"<?php }?>/>
+          <?php if(!isset($this->view1) && $this->view1== "" ){?>
+          &nbsp;<input name="Back" type="button" value="Back" class="searchbg" onclick="save2();"/>
+          <?php }?>
+          </div>
+          <br class="clear">
+        </div>
+        <!--Ends Here -->   
+    </div>    
+</div>
+</div>
+</form>
+</body>
+<script>
+
+<?php if(isset($taskresult->project_type) && $taskresult->project_type!=""){?>
+project_type='<?php echo $taskresult->project_type;?>';
+projectid='<?php echo $taskresult->project_id;?>';
+
+populate_dropdown(project_type,1);
+getteammember(project_type,projectid,1);
+getprojectmanagername(project_type,projectid)
+<?php } ?>
+</script>
+</html>

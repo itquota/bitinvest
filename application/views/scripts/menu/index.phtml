@@ -1,0 +1,220 @@
+<?php 
+
+$country_id=$_POST['country'];
+
+?>
+
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+<style>
+.box{
+ 	float: right;
+    margin: 0 auto;
+    width: auto;
+    dispaly:block;
+    
+
+}
+.form-group{
+		background:#C0C0C0;
+		padding-left: 9px;
+		 margin-left:2%;
+		 width: 252px;
+		 height: 34px;
+}
+</style>
+
+<div id="innerpage-wrapper">
+<div class="row lightgraybg">
+<div class="col-lg-12">
+<h1 class="page-header gain-bit-Titletxt"></h1>
+</div>
+<!-- /.col-lg-12 --></div>
+<!-- /.row -->
+<div class="row">
+
+<ol class="breadcrumb">
+	 <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+     <li class="active"><a href="<?php echo BASEPATH?>/Managelinks">Manage Navigation</a> > </li>	
+	<li>Menu</li>
+
+</ol>
+
+
+
+
+<div class="col-lg-12">
+
+
+
+<div class="clearfix">&nbsp;</div>
+
+<div class="panel panel-primary buynowbox col-lg-12">
+
+<div class="panel-heading buynowbox Titleheading faqtitlebg">Menu</div>
+
+
+
+ 
+<div class="panel-body revenuebg">
+<?php if(!empty($this->country_name) && sizeof($this->country_name)>0) {?>
+	<span style="font-weight:bold;">Country Name</span><input name="country_name" id="country_name" value="<?php echo $this->country_name['country']; ?>" type="textbox" class="form-group CommonInputBox" readonly>
+	
+<?php }?>
+<div class="clearfix">&nbsp;</div>
+<div style="width:100%;font-weight:bold;">
+<?php if(!empty($this->masterlink) && !empty($this->selectlink) && sizeof($this->masterlink)== sizeof($this->selectlink)){ ?>
+<span>Select All</span><input style="margin-left:2%" name="parent" id="selectall" value="" checked="true" class="checkparent" type="checkbox" onchange="allChangestatus(this.id);"/>
+<?php } else { ?>
+	<span>Select All</span><input style="margin-left:2%"  name="parent" id="selectall" value="" type="checkbox" class="checkparent" onchange="allChangestatus(this.id);"/>
+<?php } ?>	
+	
+</div>
+
+
+</br>
+
+
+<?php if(!empty($this->masterlink) && sizeof($this->masterlink)){ ?>
+<?php foreach($this->masterlink as $links){ 	
+$val=0; ?>
+	<div style="width:40%;">
+<?php
+if(!empty($this->selectlink) && sizeof($this->selectlink)>0)
+{
+	for($i=0;$i<sizeof($this->selectlink);$i++)
+	{ 
+	
+		if($links['id']==$this->selectlink[$i]['nav_id'])
+		{
+			$val=1;
+ 		}
+
+	}
+}
+if($links['nav_link']!='Mining Outputs' && $links['nav_link']!='Referral Sales Incentive' && $links['nav_link']!='Business Details' && $links['nav_link']!='Direct Sales Incentive' && $links['nav_link']!='Withdrawals Request' && $links['nav_link']!='Withdrawals Status' && $links['nav_link']!='Binary Tree' && $links['nav_link']!='Tabular Form' && $links['nav_link']!='Buy Contract' && $links['nav_link']!='Order History' && $links['nav_link']!='' && $links['nav_link']!='Log Service Request' && $links['nav_link']!='My Service Request' && $links['nav_link']!='FAQS' && $links['nav_link']!='' && $links['nav_link']!='' && $links['nav_link']!='')
+{
+	$bold=1;
+}
+else{
+	$bold=0;
+}
+
+if($links['nav_link']!='Output' && $links['nav_link']!='Withdrawals' && $links['nav_link']!='My Network' && $links['nav_link']!= 'My Purchases' && $links['nav_link']!= 'Contracts' && $links['nav_link']!='Help & Support')
+{
+	$checkbox="show";
+}
+else{
+	$checkbox="hide";
+}
+
+?>
+
+<?php  if ($val==1){ ?>
+<span  <?php if($bold==1){?> style="font-weight:bold;" <?php } ?> > <?php echo $links['nav_link']; ?>  </span><?php if($checkbox=="show"){?><input name="child" checked="true" id="<?php echo ($links['id']); ?>" value="<?php echo $links['id'];?>" class="box" type="checkbox" onchange="changestatus(this.id,'<?php echo $country_id; ?>','<?php echo $links['nav_link'];?>','<?php echo $links['parent'];?>');"/><?php }?>
+<?php } else{ ?>
+<span <?php if($bold==1){?> style="font-weight:bold;" <?php } ?> > <?php echo $links['nav_link']; ?> </span><?php if($checkbox=="show"){ ?><input name="child" id="<?php echo ($links['id']); ?>"  value="<?php echo $links['id'];?>" class="box"   type="checkbox" onchange="changestatus(this.id,'<?php echo $country_id; ?>','<?php echo $links['nav_link'];?>','<?php echo $links['parent'];?>');"/><?php }?>
+<?php } ?>	
+
+	 </div>
+	</br>
+	
+	
+<?php 
+}
+}
+?>
+
+
+<input type="hidden" value="<?php echo $_POST['country'];?>" id="countryCode" name="countryCode">
+
+</div>
+</div>
+
+
+
+</div>
+
+<!-- /.row --> <!-- /.row --></div>
+<!-- /#page-wrapper --></div>
+
+<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+<script>
+function changestatus(id,countryid,navlink,parent)
+{
+	
+	
+     var userid=id;
+    
+     var nav_link=navlink;
+    
+     var parent=parent;
+     var country_id=countryid;
+     var token = $('#token').val();
+     
+     if($("#"+id).is(':checked'))
+ 	{
+ 	
+ 		var action="checked";
+ 	}
+ 	else
+ 	{
+ 		
+ 		var action="unchecked";
+ 	}
+
+	var ccode=$('#countryCode').val();
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Menu/changestatus",
+			type: "POST",    
+		    data: "id="+userid+"&navlink="+nav_link+"&parent="+parent+"&countryid="+country_id+"&action="+action+'&token'+token,
+	  		success: function(response)
+	   		{
+				
+				alert(response);   
+				
+	   		}
+		});
+}
+
+function allChangestatus(id)
+{		
+	if($("#"+id).is(':checked'))
+	{
+	
+		$('.box').each(function(){
+            this.checked = true;
+        });
+		
+		var action="checked";
+	}
+	else
+	{
+		$('.box').each(function(){
+            this.checked = false;
+        });
+		
+		var action="unchecked";
+	}
+	
+	var ccode=$('#countryCode').val();
+	 $.ajax({
+			url:"<?php echo BASEPATH; ?>/Menu/allchangestatus",
+			type: "POST",    
+		    data: "ccode="+ccode+"&nav_id="+id+"&action="+action,
+	  		success: function(response)
+	   		{
+				alert(response);      			
+	   		}
+	});
+}
+
+
+
+
+
+</script>

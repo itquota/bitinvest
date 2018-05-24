@@ -1,0 +1,183 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+<style>
+		.clearfix {
+ 			 margin-top:-1px;
+		}
+
+</style>
+
+<div id="innerpage-wrapper">
+	<div class="row lightgraybg">
+		<div class="col-lg-12 offset-1">
+			<h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+		</div>
+	</div>
+	<div class="row">
+		<ol class="breadcrumb">
+			<li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+			<li>Manage Gallery</li>
+		</ol>
+		<div class="clearfix">&nbsp;</div>
+		<div class="col-lg-12">
+			<div class="row">
+				<div class="col-md-8">
+					<?php $authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+					if(!empty($authUserNamespace->msg) && $authUserNamespace->msg!='')
+					{
+					?>
+					   <div class="form-group">
+						<label for="" class="lblTxt alert alert-success" style="margin-bottom:0px;"><?php echo $authUserNamespace->msg; ?></label>
+
+					  </div>
+					 <?php $authUserNamespace->msg=""; 
+					//	echo $authUserNamespace->msg;
+					}?>
+					<?php if(!empty($authUserNamespace->msgErr) && $authUserNamespace->msgErr!='')
+					{
+					?>
+						<label for="" class="lblTxt alert alert-danger" style="margin-bottom:0px;"><?php echo $authUserNamespace->msgErr; ?></label>
+
+					 <?php $authUserNamespace->msgErr=""; }?>									
+				</div>
+				<div class="col-md-4"align="right">
+					<a href="<?php echo BASEPATH; ?>/Addgallery">
+						<button
+							style="float: right; margin-right: 2%;"
+							class="btn btn-default Commonbtn"
+							type="submit">
+							ADD NEW
+						</button>
+					</a>				
+				</div>
+			
+			</div>
+		</div>
+		<div class="clearfix">&nbsp;</div>
+		<div class="col-lg-12 ">
+			<div class="clearfix lightgraybg">
+				<div class="bs-example table-responsive" data-example-id="bordered-table">
+					<table id="data-table-simple" class="table table-bordered innertbl display" cellspacing="0">
+						<thead>
+							<tr>
+								<th class="sortdesc">Sr. No</th>
+								<th class="sortboth">Title</th>
+								<th class="sortboth">Cover Image</th>
+								<th class="sortboth">Status</th>
+								<th class="sortboth">Action</th> 
+							</tr>
+						</thead>
+						<tbody>
+							<?php
+								$j=1;
+								for($i=0;$i<sizeof($this->resultmanagebanner);$i++){
+							?>
+							<tr>
+								<td scope="row"><?php echo $j;  ?></td>
+
+								<td><?php echo $this->resultmanagebanner[$i]['title']; ?></td>
+								<td><img
+									name="image"
+									id="image"
+									value=""
+									style="width: 50px; height: 50px;"
+									class="profile-pic"
+									src="data:image/jpeg;base64,<?php echo base64_encode($this->resultmanagebanner[$i]['title_image']);?>"
+								/></td>			
+
+								 <td>
+											 <?php if($this->resultmanagebanner[$i]['status']=='1'){?>
+											 <a href='#'
+											 id="link<?php echo $this->resultmanagebanner[$i]['id'];?>"
+											 name="<?php echo  $this->resultmanagebanner[$i]['status'];?>"
+											 onclick="getmembership('<?php echo $this->resultmanagebanner[$i]['id']; ?>','<?php echo $this->resultmanagebanner[$i]['status'];?>');">Active</a>   
+											<?php }else{?>
+											<a href='#'
+											id="link<?php echo $this->resultmanagebanner[$i]['id'];?>"
+											name="<?php echo $this->resultmanagebanner[$i]['status'];?>"
+											onclick="getmembership('<?php echo $this->resultmanagebanner[$i]['id']; ?>','<?php echo $this->resultmanagebanner[$i]['status'];?>');">Inactive</a>
+											<?php }?>
+											</td>
+								<td>
+									<form method="post" action="<?php echo BASEPATH; ?>/Editgallery" name="form" id="form<?php echo $this->resultmanagebanner[$i]['id'];?>">
+										<input type="hidden" value="<?php echo $this->resultmanagebanner[$i]['id'];?>" id="<?php echo $this->resultmanagebanner[$i]['id'];?>" name="id">
+										<a href="#" onclick="document.getElementById('form<?php echo $this->resultmanagebanner[$i]['id'];?>').submit()">Edit</a>
+										<span>&nbsp;/&nbsp;</span><a href="#" onclick="deletegallery('<?php echo $this->resultmanagebanner[$i]['id']; ?>');">Delete</a>
+								
+									</form>
+									
+
+								</td>
+
+							</tr>
+							<?php $j++;} ?>
+						</tbody>
+					</table>
+				</div>
+			</div> 
+		</div>
+	</div>
+</div>
+<script data-cfasync="false"  type="text/javascript">
+function getmembership(id,status){
+	var memberid=id;
+	var memberstatus=status;
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/Managegallery/changestatus", 
+			type: "POST",    
+		    data: 'memberid='+memberid+'&memberstatus='+memberstatus,
+		    async:false,
+				success:function(response)
+				{
+				 var data=JSON.parse(response);
+
+					if(data['success']=='1')
+					{
+						$('a#link'+id).attr('onclick','getmembership('+id+','+1+')').text('Active');
+					}
+					 else
+					{
+						$('a#link'+id).attr('onclick','getmembership('+id+','+0+')').text('Inactive');
+					}
+			
+				
+				}
+				
+		 });
+		
+		
+	}
+	
+function deletegallery(id){
+	var id=id;
+	$.ajax({
+			url:"<?php echo BASEPATH; ?>/Managegallery/deletegallery", 
+			type: "POST",    
+		    data: 'id='+id,
+		    async:false,
+				success:function(response)
+				{
+				 var data=JSON.parse(response);
+
+					if (data) {
+						window.location = '<?php echo BASEPATH;?>/Managegallery';
+					}					
+				
+				}
+				
+		 });
+		
+		
+	}	
+	            
+</script>
+	      
+
+
+
+

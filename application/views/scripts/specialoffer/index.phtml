@@ -1,0 +1,341 @@
+<?php 
+	$authUserNamespace = new Zend_Session_Namespace('Gbc_Auth');
+	$misc_obj = new Gbc_Model_Custom_Miscellaneous();
+	$misc_obj->generateToken();
+?>
+
+
+ <style>
+.form-group {
+    display: inline-block;
+    margin-right: 25px;
+    width: 300px;
+}
+</style>
+
+<div id="innerpage-wrapper">
+            <div class="row lightgraybg">
+                <div class="col-lg-12 offset-1">
+                    <h1 class="page-header gain-bit-Titletxt innpercontentPad"></h1>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            <div class="row">
+              <ol class="breadcrumb">
+                  <li class="active"><a href="<?php echo BASEPATH?>/Admindashboard">Home</a> > </li>
+                  <li>Special Offers</li>
+  
+            </ol>
+           
+   
+<div class="clearfix">&nbsp;</div>
+
+        <div class="col-lg-12 ">
+      
+            <div class="clearfix lightgraybg">
+
+                <div class="bs-example table-responsive" data-example-id="bordered-table"> 
+
+             
+                    <table id="data-table-simple"  class="table table-bordered innertbl display" cellspacing="0">
+                     <thead>
+                    <tr>
+                       <th class="sortdesc">Sr.<br>No </th>
+                        <th class="sortboth">PRIZE</th> 
+                        <th class="sortboth">PAIRS</th>
+                         <th class="sortboth">STATUS</th> 
+                          <th class="sortboth">CHANGE STATUS</th> 
+                          <th class="sortboth">ACTION</th>
+                           <th class="sortboth">TIME PERIOD</th>  
+                          
+                           
+                     </tr> 
+                 </thead>
+                  <tbody>
+                    <?php 
+        		$j=1;
+       foreach($this->result as $result){?> 
+                   <!--   <tr>
+                     <td scope="row">1</td> 
+                     <td>&nbsp;</td>
+                      <td>No data available in table</td> 
+                      <td>&nbsp;</td>-->
+                    <tr>
+                     <td scope="row"><?php echo $j;?></td> 
+                     <td><?php echo $result['prize'];?></td>
+                      <td><?php echo $result['pairs'];?></td> 
+                      <td><?php //echo $result['status'];
+        
+        
+        				$offer_status = $result['status'];
+							if($offer_status==0){
+							echo "Inactive";
+							}else if($offer_status==1){
+								echo "Active";
+						}
+						else{
+						echo "Cancelled";
+					}
+        
+        ?></td>
+        	 <td><div class="button"> <a class="confirmation" href="#" onclick="changestatus(<?php
+                                                                                              echo $result['id'];
+                                                                                               ?>,<?php
+                                                                                              echo $result['status'];
+                                                                                               ?>)">
+                          <?php 
+							$offer_status = $result['status'];
+							if($offer_status==0){
+								echo "Activate";
+							}else if($offer_status==1){
+								echo "Deactivate";
+							}
+							else{
+								echo "";
+								}
+						?>	
+                      </a> </div></td>
+    
+ 						<td>
+ 						<form method="post" action="<?php echo BASEPATH; ?>/Editoffer" name="form" id="form<?php echo $result['id'];?>">
+			
+			
+						<input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="token" name="token">
+			
+						<input type="hidden" value="<?php echo $result['id'];?>" id="<?php echo $result['id'];?>" name="offerid">
+			
+						<a href="#" onclick="document.getElementById('form<?php echo $result['id'];?>').submit()">Edit</a>
+			
+						</form>
+					
+						</td>
+	
+ 
+                     <!--   <td>
+                      
+                      
+               
+                     
+			<a href="<?php echo BASEPATH; ?>/Editoffer?id=<?php echo $result['id'];?>">Edit</a>
+			
+                      </td>-->
+                      <td>
+                      <?php if(!empty($result['duration']) && $result['duration']!='') { echo $result['duration']; } else { echo ""; } ?> 
+                      </td>
+                  </tr> 
+
+               
+
+                
+
+                  
+
+
+               
+             <?php $j++;} ?>
+             
+             
+                 </tbody>
+                  </table> 
+              </div>
+
+        </div>
+		
+    </div>
+
+       
+
+    
+       <!--  <div class="col-lg-6 col-lg-offset-3 col-xs-offset-1 center-text ">
+           <ul class="pagination pagination-sm">
+              <li><a href="#"><img src="images/leftarw.png" alt=""></a></li>
+              <li class="active"><a href="#">1</a></li>
+              <li><a href="#">2</a></li>
+              <li><a href="#">3</a></li>
+              <li><a href="#">4</a></li>
+              <li><a href="#">5</a></li>
+              <li><a href="#"><img src="images/rightarw.png" alt=""></a> </li> 
+      </ul>
+    </div>-->
+    <?php  // echo "<div align='center'>".$this->pagination($this->pagination_config)."</div>";
+			//	echo "<div>&nbsp;</div>";?>
+			
+			 <div class="clearfix">&nbsp;</div>  
+				
+         <div class="panel panel-primary buynowbox col-lg-12">
+
+              <div class="panel-heading buynowbox Titleheading faqtitlebg">
+               Add Special Offer
+              </div>
+
+              <div class="panel-body revenuebg">
+              
+            
+			
+          <form method="post" action="<?php echo BASEPATH;?>/Specialoffer" id="specialoffer">
+
+
+
+   <div class="err1">
+    <label for="" style="color:green;" class="lblTxt"></label>
+
+ </div>
+
+   <div class="form-group">
+    <label for="" class="lblTxt">Prize</label>
+
+     <input type="text" name="prize" id="prize" class="form-control CommonInputBox"  placeholder="Enter Prize" value="">
+
+
+      
+  </div>
+  
+  <div class="form-group">
+    <label for="" class="lblTxt">Pairs</label>
+
+     <input type="text" name="pairs" id="pairs" class="form-control CommonInputBox isnumber"  placeholder="Enter Pairs" value="">
+
+
+      
+  </div>
+
+  <div class="form-group">
+    <label for="" class="lblTxt">Direct Dairs</label>
+
+     <input type="text" name="direct_pairs" id="direct_pairs" class="form-control CommonInputBox isnumber"  placeholder="Enter Direct Dairs" value="">
+
+
+      
+  </div>
+
+
+
+   <div>
+        <input type="hidden" value="<?php echo $authUserNamespace->token;?>" id="tokn" name="tokn">   
+		<button type="button" name="specialoffer"  id="specialoffer" class="btn btn-default Commonbtn" onclick="editoffer();">SUBMIT</button>
+	</div> 
+  
+</form>
+  		</div>
+     </div>
+      
+    </div>
+            
+          
+  </div>
+          
+<script>
+				function changestatus(id,status)
+				{				
+					var token = $('#token').val();
+	                            var x=confirm('It will Active/Inactive Special Offer as well');
+	                            if(x)
+	                            {
+					$.ajax({
+	                 type: 'POST',
+	                url: "<?php echo BASEPATH; ?>/Changeoffer" ,
+					data:"offerId="+id+"&status_value="+status+"&token="+token,
+	                  success: function (data) {
+	                   //alert(data);return false;
+					   if(data=='true')
+					   {
+							alert("Status Of the Offer has been changed  succesfully. You will now be navigated back to Special offers page.");
+	                                     window.location ="<?php echo BASEPATH ;?>/Specialoffer";
+						//location.reload();
+					   }
+	                   else{
+	                       alert(data);return false;
+	                   }
+	                   
+	                }
+	
+	               
+	               
+	            	});
+				}
+			}
+				function editoffer()
+				{
+					var price=$('#prize').val();
+					var pairs=$('#pairs').val();
+					var direct_pairs=$('#direct_pairs').val();
+					var token = $('#tokn').val();
+
+					if((price).trim()==''){
+						$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Prize.</label>');
+						return false;
+					}	
+					if((pairs).trim()==''){
+						$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Pairs.</label>');
+						return false;
+					}	
+					/*if(isNaN(pairs))
+				     {
+				         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Pairs should be numbers only.</label>');
+				         return false;
+				     }*/
+					if((direct_pairs).trim()==''){
+						$(".err1").html('<label for="" class="lblTxt" style="color:red;">Please enter Direct Pairs.</label>');
+						return false;
+					}	
+					/*if(isNaN(direct_pairs))
+				     {
+				         $(".err1").html('<label class="lblTxt" for="" style="color:red;">Direct Pairs should be numbers only.</label>');
+				         return false;
+				     }*/
+	
+					else{
+						var dataString ='price='+price+'&pairs='+pairs+'&direct_pairs='+direct_pairs+'&token='+token;
+						$.ajax({
+							
+							url:"<?php echo BASEPATH;?>/Specialoffer/offer", 
+							type: "POST",    
+						    data: dataString,
+						
+					  		success:function(response)
+					  		{
+								 var data=JSON.parse(response);
+								 
+								 if(data['success']!='')
+								 {
+										//alert("Data inserted successfully");
+								         $(".err1").html('<label class="lblTxt" for="" style="color:green;">'+data['success']+'</label>');
+										window.location = "<?php echo BASEPATH;?>/Specialoffer";
+								 }
+								 else
+								 {
+									 
+									  $(".err1").html('<label class="lblTxt" for="" style="color:red;">'+data['failure']+'</label>');
+									 // window.location = "<?php echo BASEPATH;?>/Specialoffer";
+								 }
+								
+								
+							}
+								
+							
+						 });
+						return true;
+					}
+					
+				}
+				function namefunc(name)
+				{
+					var pattern12 = new RegExp(/^[a-zA-Z ]+$/);
+					return pattern12.test(name);
+				}
+				function phone_number(MobileNumber)
+				{
+				    var patte1 = new RegExp(/^[0-9]+$/);
+					return patte1.test(MobileNumber);
+				}
+
+				function Changebanner(banner_id,banner_status)
+				{
+					alert(banner_id);
+					alert(banner_status);return;
+				}		
+
+				
+			
+</script>

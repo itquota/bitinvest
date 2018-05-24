@@ -1,0 +1,305 @@
+<?php $authUserNamespace = new Zend_Session_Namespace("Aranca_Auth"); ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Aranca: Research.Analyze.Communicate</title>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/crud.js"></script>
+<script type="text/javascript" src="<?php echo BASEPATH;?>/js/jquery-1.4.2.min.js"></script>
+<script language="JavaScript" src="<?php echo BASEPATH;?>/shared/htmlDatePicker1.js" type="text/javascript"></script>
+<link href="<?php echo BASEPATH;?>/shared/htmlDatePicker.css" rel="stylesheet" />
+<script src="<?php echo BASEPATH;?>/js/jquery.alerts.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="<?php echo BASEPATH;?>/css/jquery.alerts.css" />
+<link rel="stylesheet" type="text/css"  href="<?php echo BASEPATH;?>/shared/style.css" />
+<!--<script type="text/javascript" src="<?php echo BASEPATH;?>/shared/jquery-1.js"></script>
+--><script type="text/javascript" src="<?php echo BASEPATH; ?>/js/jquery.ui.core.js"></script>
+<script type="text/javascript">
+
+window.onload=function()
+{	
+	var pmid=document.getElementById('projectmanager').value;
+
+	<?php if(isset($this->pro_type) && $this->pro_type=="adhoc") { ?> countworking(pmid,'adhoc'); <?php }?>
+	<?php if(isset($this->pro_type) && $this->pro_type=="contract") { ?> countworking(pmid,'contract'); <?php }?>
+	
+}
+
+function save1()
+{		
+		saveForm('<?php echo BASEPATH;?>/project/closure','closure_form','closure_form');
+}
+
+ function sample(value)
+ {
+	// alert(value);
+	$('#hiddensampleattached').val(value);
+ }
+ function feedbacksent1(value)
+ {
+	$('#hiddenfeedbacksent').val(value);
+	 
+ }
+
+ function triggermail1(value)
+ {
+	 $('#hiddentriggermail').val(value);
+	 
+ }
+
+ function casestudy1(value)
+ {
+	 $('#hiddencasestudy').val(value);
+	 
+ }
+
+ function projecttobeclosed1(value)
+ {
+	 $('#hiddenprojectclosedopen').val(value);
+	 
+ }
+
+ function countworking(id,type)
+ {
+ 	//alert(id);
+
+ 	var counter="0";
+ 	var projecttype=type;
+ 	$.ajax({
+ 		url: "<?php echo BASEPATH; ?>/project/workingproject",
+ 		type: "POST",    
+ 		data: "empid="+id+"&type="+projecttype,
+ 	    success: function(response)
+ 	    { 
+ 			j=0;
+ 			
+ 			if((response!="") && (response!=null))
+ 				 { 
+ 					
+ 				 var jsonObject = JSON.parse(response);
+ 				 for(m=0;m<jsonObject.length;m++)
+ 					{
+ 						
+ 							var occupacycount= jsonObject[m]['count'];
+ 							//alert(option_element);	
+ 							document.getElementById('occ').innerHTML="";	
+ 							if(occupacycount==1)
+ 							document.getElementById('occ').innerHTML=":working on " +occupacycount+" project";	
+ 							else
+ 								document.getElementById('occ').innerHTML=":working on " +occupacycount+" projects";			
+ 							
+ 							
+ 						}					
+ 				}
+ 			
+ 				
+ 		}
+ 	});
+ }
+ 
+</script>
+<style type="text/css">
+#holder {
+margin-bottom:0px;!important
+}
+
+</style>
+</head>
+<body>
+<form  action="" id="closure_form" name="closure_form" method="post" enctype="multipart/form-data">
+<div id="subheader">
+	<div class="wrapper">
+	<?php
+		 global $rand;
+		 function RandNumber($e){
+		 
+		 $rand="";
+		 for($i=0;$i<$e;$i++){
+		 $rand =  $rand .  rand(0, 9); 
+		 }
+		 return $rand;
+		
+		 } 
+	?>
+	<?php if($this->common_list && $this->common_list !=""){?>
+	<?php foreach ($this->common_list as $common_list){
+		//print_r($common_list->budgeted_hrs);exit;
+	?>
+	
+	<input type="hidden" name="annprojectid" id="annprojectid" value="<?php if(isset($common_list->annproject_id) && $common_list->annproject_id!=""){echo $common_list->annproject_id;}?>" >
+   	  <h5>Project Closure</h5>
+        <hr>
+		<br class="clear">
+        <div id="holder" style="width:756px;">
+        	<label>Project Title<em>*</em></label>
+            <input name="projecttitle" id="projecttitle" type="text" value="<?php if(isset($common_list->title) && $common_list->title!=""){echo $common_list->title;}?>" class="field" style="width:660px;" errortag="Project Title"/>
+        	<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projecttitle_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+  		<div id="holder" style="margin:0;width:140px;"><strong>Project ID:</strong> <input style="width:78px;float:right;" type="text" value='<?php if(isset($common_list->project_id) && $common_list->project_id !=""){ echo $common_list->project_id;} else {echo RandNumber(10);}?>' name="projectid" id="projectid" class="projectid" readonly/></div>
+        <br class="clear">
+        <div id="holder" style="width:275px;">
+        	<label>Client Name<em>*</em></label>
+            <select name="clientname" id="clientname" class="field med" errortag="Client Name">
+              <option value="">Please Select</option>
+            <?php	foreach ($this->clientname_list as $clientname_list){?>
+			<option  <?php if(isset($common_list->client_id)) {if($clientname_list->id == $common_list->client_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($clientname_list->id) && $clientname_list->id !=""){ echo $clientname_list->id;}?>"><?php echo $clientname_list->name;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientname_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+  		<div id="holder" style="width:300px;">
+        	<label style="width:98px;">Practice<em>*</em></label>
+            <select name="practice" id="practice" class="field med" errortag="Practice">
+              <option value="">Please Select</option>
+              	<?php	foreach ($this->practice_list as $practice_list){?>
+			<option <?php if(isset($common_list->practice_id)) {if($practice_list->practiceid == $common_list->practice_id) {?> selected="selected" <?php }} ?> value="<?php  if(isset($practice_list->practiceid) && $practice_list->practiceid !=""){ echo $practice_list->practiceid;}?>"<?php if($this->practice==$practice_list->practiceid) echo "selected";?>><?php echo $practice_list->value;?></option>
+			<?php } ?> 	
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="practice_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        </div>
+        <div <?php if($authUserNamespace->designation_id=="14"){?>style="display:none;" <?php }?>id="holder" style="margin:0;width:301px;">
+        	<label>Project Manager<em>*</em></label>
+            <select name="projectmanager" id="projectmanager" class="field med" errortag="Project Manager" <?php if(isset($this->pro_type) && $this->pro_type=="adhoc") {?>onchange="countworking(this.value,'adhoc');" <?php } else if(isset($this->pro_type) && $this->pro_type=="contract") {?> onchange="countworking(this.value,'contract');" <?php }?> >
+              <option value="">Please Select</option>
+            <?php	foreach ($this->projectmanager_list as $projectmanager_list){?>
+			<option <?php if(isset($common_list->pr_manager)) {if($projectmanager_list->m_id == $common_list->pr_manager) {?> selected="selected" <?php }} ?> value="<?php  if(isset($projectmanager_list->m_id) && $projectmanager_list->m_id !=""){ echo $projectmanager_list->m_id;}?>"<?php if($this->projectmanager==$projectmanager_list->m_id) echo "selected";?>><?php echo $projectmanager_list->managername;?></option>
+			<?php } ?>
+            </select>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectmanager_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            <br>
+            <div class="small" style="margin:0 0 8px 106px;"><strong>Occupancy</strong><span id="occ">: Working on projects</span></div>
+        </div>
+        <br class="clear">
+  <div id="holder" style="margin-right:43px;width:274px;">
+        	<label>Start Date<em>*</em></label>
+            <input name="startdate" id="startdate" type="text" class="field calendar" value="<?php if(isset($common_list->st_date) && $common_list->st_date !=""){ echo $common_list->st_date;}?>"  readonly onClick="GetDate(this);" style="width:179px;" errortag="Start Date"/>
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="startdate_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      </div>
+      <div id="holder" style="width:274px;">
+        	<label>End Date<em>*</em></label>
+            <input name="enddate" id="enddate" type="text" class="field calendar" value="<?php if(isset($common_list->end_date) && $common_list->end_date  !=""){ echo $common_list->end_date ;}?>"  readonly onClick="GetDate(this);" style="width:179px;" errortag="End Date"/>
+      		<div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="enddate_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      </div>
+      <div id="holder" style="width:304px;">
+        	<label>Sample Attached<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="sampleattached" type="radio" <?php if (isset($common_list->sample_att) && $common_list->sample_att!="" && $common_list->sample_att == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle" onclick="sample(this.value);"/>Yes</label>
+            	<label class="options"><input name="sampleattached" type="radio" <?php if (isset($common_list->sample_att) && $common_list->sample_att!="" && $common_list->sample_att == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle" onclick="sample(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="sampleattached_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      		<input type="hidden" name="hiddensampleattached" id="hiddensampleattached" value="N" />
+        </div>
+        <br class="clear">
+        <div id="holder" style="margin:0 5px 0 -20px;width:326px;">
+        	<label>Client Feedback Sent<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="feedbacksent" type="radio" <?php if (isset($common_list->clienfeedback_sent) && $common_list->clienfeedback_sent !="" && $common_list->clienfeedback_sent  == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle" onclick="feedbacksent1(this.value);"/>Yes</label>
+            	<label class="options"><input name="feedbacksent" type="radio" <?php if (isset($common_list->clienfeedback_sent) && $common_list->clienfeedback_sent !="" && $common_list->clienfeedback_sent  == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle" onclick="feedbacksent1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="feedbacksent_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+      		<input type="hidden" name="hiddenfeedbacksent" id="hiddenfeedbacksent" value="N" />
+        </div>
+        <div id="holder" style="width:274px;">
+        	<label>Tigger Mail<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="triggermail" type="radio" <?php if (isset($common_list->trigger_mail) && $common_list->trigger_mail!="" && $common_list->trigger_mail == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle" onclick="triggermail1(this.value);"/>Yes</label>
+            	<label class="options"><input name="triggermail" type="radio" <?php if (isset($common_list->trigger_mail) && $common_list->trigger_mail!="" && $common_list->trigger_mail == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle" onclick="triggermail1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="triggermail_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+       		<input type="hidden" name="hiddentriggermail" id="hiddentriggermail" value="N" />
+        </div>
+        
+        <div id="holder" style="margin:0 0 0 -15px;width:325px;">
+        	<label>Case Study Attached<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="casestudy" type="radio" <?php if (isset($common_list->case_att) && $common_list->case_att!="" && $common_list->case_att == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle" onclick="casestudy1(this.value);"/>Yes</label>
+            	<label class="options"><input name="casestudy" type="radio" <?php if (isset($common_list->case_att) && $common_list->case_att!="" && $common_list->case_att == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle" onclick="casestudy1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="casestudy_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        	<input type="hidden" name="hiddencasestudy" id="hiddencasestudy" value="N" />
+        </div>
+        <br class="clear">
+        <div id="holder" style="margin:0 0 0 -15px;width:320px;">
+        	<label>Project to be closed<em>*</em></label>
+            <div class="dual">
+            	<label class="options"><input name="projectclosedopen" type="radio" <?php if (isset($common_list->pr_closed  ) && $common_list->pr_closed !="" && $common_list->pr_closed  == 'Y'){?>checked="checked"<?php }?> value="Y" style="vertical-align:middle" onclick="projecttobeclosed1(this.value);"/>Yes</label>
+            	<label class="options"><input name="projectclosedopen" type="radio" <?php if (isset($common_list->pr_closed  ) && $common_list->pr_closed !="" && $common_list->pr_closed  == 'N'){?>checked="checked"<?php }?> value="N" style="vertical-align:middle" onclick="projecttobeclosed1(this.value);"/>No</label>
+            </div>
+            <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectclosedopen_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+        	<input type="hidden" name="hiddenprojectclosedopen" id="hiddenprojectclosedopen" value="N" />
+        </div>
+  		
+        
+        
+  </div>
+    <br class="clear" />
+</div>
+<div id="contentbg">
+	<div class="frame">
+    	<br class="clear">
+    	<!--Starts Here -->
+   	  	<div class="wrapper">
+   	  	  <div class="block">
+            <div id="holder" style="width:288px;"><span class="option">Budgeted Hrs<em>*</em></span><br>
+              <input name="budgetedhrs" id="budgetedhrs" value="<?php if(isset($common_list->budgeted_hrs) && $common_list->budgeted_hrs!=""){echo $common_list->budgeted_hrs;}?>" type="text" class="field" errortag="Budgeted Hrs"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="budgetedhrs_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            
+            <div id="holder" style="width:288px;"><span class="option">Actual Hrs<em></em></span><br>
+              <input name="actualhrs" id="actualhrs" type="text" class="field" errortag="Actual Hrs" value="<?php if(isset($this->actualhrs) && $this->actualhrs!="" ) echo $this->actualhrs;?>" readonly="readonly"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="actualhrs_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            <br class="clear">
+          </div>
+          <div class="block">
+            <div id="holder" style="width:288px;"><span class="option">PM Comments<em>*</em></span><br>
+              <input name="pmcomments" id="pmcomments" type="text" class="field" value="<?php if(isset($common_list->pm_comments) && $common_list->pm_comments!=""){echo $common_list->pm_comments;}?>" errortag="PM Comments"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="pmcomments_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            
+            <div id="holder" style="width:288px;"><span class="option">Project Learnings<em>*</em></span><br>
+              <input name="projectlearnings" id="projectlearnings" type="text" class="field" value="<?php if(isset($common_list->pr_learnings) && $common_list->pr_learnings!=""){echo $common_list->pr_learnings;}?>" errortag="Project Learnings"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="projectlearnings_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            <br class="clear">
+          </div>
+          <div class="block">
+            <div id="holder" style="width:288px;"><span class="option">Client Feedback<em>*</em></span><br>
+              <input name="clientfeedback" id="clientfeedback" type="text" class="field" value="<?php if(isset($common_list->client_feedback) && $common_list->client_feedback!=""){echo $common_list->client_feedback;}?>" errortag="Client Feedback"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="clientfeedback_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            
+            <div id="holder" style="width:288px;"><span class="option">Links to PE forms<em>*</em></span><br>
+              <input name="linkstope" id="linkstope" type="text" class="field" value="<?php if(isset($common_list->links) && $common_list->links!=""){echo $common_list->links;}?>" errortag="Links to PE forms"/>
+              <div class="clearBoth">&nbsp;</div>
+      		<span class="message" id="linkstope_error" style=" margin: 0 0 0 78px;">&nbsp;</span>
+            </div>
+            <br class="clear">
+          </div>
+          
+          <div class="flow_right"><input name="Submit" type="button" onclick="save1();" value="Submit" class="searchbg"/></div>
+          <br class="clear">
+        </div>
+        <!--Ends Here -->  
+        <?php } } ?>  
+    </div>    
+</div>
+</form>
+</body>
+</html>
